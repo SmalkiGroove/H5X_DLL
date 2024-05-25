@@ -25,6 +25,12 @@
     <Filter Include="x64">
       <UniqueIdentifier>{529c2f3a-7650-45c4-84c3-5f52695c3b56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\patches\Core">
+      <UniqueIdentifier>{cf0ba43a-fa94-4398-9b64-0c8c0e590f63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\Artefacts">
+      <UniqueIdentifier>{455fcc9d-acf4-40f8-8b36-7f30ab2908ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -88,6 +94,15 @@
     </ClCompile>
     <ClCompile Include="pugixml.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnableScripts.cpp">
+      <Filter>Source Files\patches\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ModHealth.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureCount.cpp">
+      <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

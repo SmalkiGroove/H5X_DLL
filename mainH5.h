@@ -46,7 +46,12 @@ struct assembly_patch {
 
 extern std::vector<assembly_patch> assembly_patches;
 
+
 // patches
+
+void Scripts_init(pugi::xml_document& doc);
+void CreatureCount_init(pugi::xml_document& doc);
+
 void ArcaneRenewalFix_init(pugi::xml_document& doc);
 void EmpoweredArmageddon_init(pugi::xml_document& doc);
 void EnlightenmentForBarbsFix_init(pugi::xml_document& doc);
@@ -55,3 +60,5 @@ void SnareFix_init(pugi::xml_document& doc);
 void RuneOfTheDragonForm_init(pugi::xml_document& doc);
 void CombatAIFix_init(pugi::xml_document& doc);
 void AgilityFix_init(pugi::xml_document& doc);
+
+void Health_init(pugi::xml_document& doc);
