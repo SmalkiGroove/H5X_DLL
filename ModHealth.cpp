@@ -14,7 +14,7 @@ int Health_return = 0x004BC4FA;
 void Health_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, Health_fork, 6, Health, 0, 0, 0 });
 }
-
+ 
 __declspec(naked) void Health() {
     __asm
     {
@@ -25,7 +25,7 @@ __declspec(naked) void Health() {
         mov ecx, esi                                 // set hero struct pointer to ecx for function call
         call dword ptr ds : [eax + 0x74]             // get equipped artifacts list from hero struct
         mov ecx, eax                                 // set equipped artifacts list to ecx for function call
-        call 0x00CA6680                              // call function CountEquippedArtifact(ECX:artifact_list, ESP:artifact_id)
+        call[count_equipped_artifact]                // call function CountEquippedArtifact(ECX:artifact_list, ESP:artifact_id)
         test al, al                                  // check if value al is 0 and set result in zf
         je HEALTH_BONUS_2                            // jump to label if zf is 0
         add ebp, 0x1                                 // increase hp bonus value by 1
@@ -35,7 +35,7 @@ __declspec(naked) void Health() {
         mov ecx, esi                                 // set hero struct pointer to ecx for function call
         call dword ptr ds : [eax + 0x74]             // get equipped artifacts list from hero struct
         mov ecx, eax                                 // set equipped artifacts list to ecx for function call
-        call 0x00CA6680                              // call function CountEquippedArtifact(ECX:hero, ESP:artifact_id)
+        call[count_equipped_artifact]                // call function CountEquippedArtifact(ECX:hero, ESP:artifact_id)
         test al, al                                  // check if value al is 0 and set result in zf
         je HEALTH_BONUS_3                            // jump to label if zf is 0
         add ebp, 0x1                                 // increase hp bonus value by 1
@@ -45,7 +45,7 @@ __declspec(naked) void Health() {
         mov ecx, esi                                 // set hero struct pointer to ecx for function call
         call dword ptr ds : [eax + 0x74]             // get equipped artifacts list from hero struct
         mov ecx, eax                                 // set equipped artifacts list to ecx for function call
-        call 0x00CA6680                              // call function CountEquippedArtifact(ECX:hero, ESP:artifact_id)
+        call[count_equipped_artifact]                // call function CountEquippedArtifact(ECX:hero, ESP:artifact_id)
         test al, al                                  // check if value al is 0 and set result in zf
         je HEALTH_BONUS_4                            // jump to label if zf is 0
         add ebp, 0x3                                 // increase hp bonus value by 3
@@ -55,17 +55,15 @@ __declspec(naked) void Health() {
         mov ecx, esi                                 // set hero struct pointer to ecx for function call
         call dword ptr ds : [eax + 0x74]             // get equipped artifacts list from hero struct
         mov ecx, eax                                 // set equipped artifacts list to ecx for function call
-        call 0x00CA6680                              // call function CountEquippedArtifact(ECX:hero, ESP:artifact_id)
+        call[count_equipped_artifact]                // call function CountEquippedArtifact(ECX:hero, ESP:artifact_id)
         test al, al                                  // check if value al is 0 and set result in zf
         je HEALTH_BONUS_END                          // jump to label if zf is 0
         
         mov ecx, dword ptr ds : [ebx + 0x1C]         // set creature id into ecx for function call
-        call 0x0089FBF0                              // call function GetCreatureData(ECX:creature_id)
+        call[get_creature_data]                      // call function GetCreatureData(ECX:creature_id)
         mov eax, dword ptr ds : [eax + 0x64]         // set creature health from data array into eax
-        push eax                                     // push creature health value to the stack
-        shr 0x4                                      // divide value by 16 rounded down
-        add 0x1                                      // add 1 to the value
-        pop eax                                      // set value from the stack to eax
+        shr eax, 0x4                                 // divide value by 16 rounded down
+        add eax, 0x1                                 // add 1 to the value
         add ebp, eax                                 // add this value to the current bonus hp value
         
     HEALTH_BONUS_END:

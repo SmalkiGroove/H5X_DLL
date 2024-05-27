@@ -10,6 +10,8 @@ SkillIdFromStrFunc skill_id_from_str = (SkillIdFromStrFunc)0x009F5C90;
 ReturnMasteryIdFunc mastery_id_from_str = (ReturnMasteryIdFunc)0x00ACFEF0;
 ReturnSpellIdFunc spell_id_from_str = (ReturnSpellIdFunc)0x009F29C0;
 IsSpellEmpoweredFunc is_spell_empowered = (IsSpellEmpoweredFunc)0x00A34100;
+CountEquippedArtifactFunc count_equipped_artifact = (CountEquippedArtifactFunc)0x00CA6680;
+GetCreatureDataFunc get_creature_data = (GetCreatureDataFunc)0x0089FBF0;
 
 void initLog() {
     if (logs_enabled) {

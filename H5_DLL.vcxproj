@@ -134,7 +134,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>C:\Users\dred\source\repos\H5_DLL\H5_DLL.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>D:\Workspace\H5Mod\H5X_DLL\H5_DLL.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)/Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bz2.lib;libzippp_static.lib;zip.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>

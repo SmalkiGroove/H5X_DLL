@@ -65,4 +65,10 @@ int spell_id_from_str_precursor(std::string spell_name);
 typedef bool(__thiscall* IsSpellEmpoweredFunc)(int* spell);
 extern IsSpellEmpoweredFunc is_spell_empowered;
 
+typedef int(__thiscall* CountEquippedArtifactFunc)(int* artifact);
+extern CountEquippedArtifactFunc count_equipped_artifact;
+
+typedef int(__thiscall* GetCreatureDataFunc)(int* creature);
+extern GetCreatureDataFunc get_creature_data;
+
 #endif
