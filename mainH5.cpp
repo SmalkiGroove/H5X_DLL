@@ -6,8 +6,12 @@
 std::vector<assembly_patch> assembly_patches;
 
 void init_patches(pugi::xml_document& doc) {
+
     Scripts_init(doc);
-    CreatureCount_init(doc);
+    Pest_init(doc);
+    HeroScreenUI_init(doc);
+    BattlefieldSize_init(doc);
+
     ArcaneRenewalFix_init(doc);
     EmpoweredArmageddon_init(doc);
     EnlightenmentForBarbsFix_init(doc);
@@ -16,7 +20,10 @@ void init_patches(pugi::xml_document& doc) {
     RuneOfTheDragonForm_init(doc);
     CombatAIFix_init(doc);
     AgilityFix_init(doc);
+
     Health_init(doc);
+
+    SplitStack_init(doc);
 }
 
 int main() {

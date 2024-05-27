@@ -36,7 +36,7 @@ enum patch_type {
 struct assembly_patch {
     patch_type type;
     long address;
-    int size;
+    size_t size;
     void* hookedFunction;
     int value_int;
     float value_float;
@@ -50,7 +50,9 @@ extern std::vector<assembly_patch> assembly_patches;
 // patches
 
 void Scripts_init(pugi::xml_document& doc);
-void CreatureCount_init(pugi::xml_document& doc);
+void Pest_init(pugi::xml_document& doc);
+void HeroScreenUI_init(pugi::xml_document& doc);
+void BattlefieldSize_init(pugi::xml_document& doc);
 
 void ArcaneRenewalFix_init(pugi::xml_document& doc);
 void EmpoweredArmageddon_init(pugi::xml_document& doc);
@@ -62,3 +64,5 @@ void CombatAIFix_init(pugi::xml_document& doc);
 void AgilityFix_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
+
+void SplitStack_init(pugi::xml_document& doc);

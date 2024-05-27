@@ -31,6 +31,9 @@
     <Filter Include="Source Files\patches\Artefacts">
       <UniqueIdentifier>{455fcc9d-acf4-40f8-8b36-7f30ab2908ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\patches\Other">
+      <UniqueIdentifier>{9ad162a5-d4fd-4d02-85f2-ba4567aeecb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -101,7 +104,19 @@
     <ClCompile Include="ModHealth.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
-    <ClCompile Include="CreatureCount.cpp">
+    <ClCompile Include="EnablePEST.cpp">
+      <Filter>Source Files\patches\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="StackSplit1.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="TrainingGrounds.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroScreenUI.cpp">
+      <Filter>Source Files\patches\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="BattlefieldSize.cpp">
       <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
   </ItemGroup>
