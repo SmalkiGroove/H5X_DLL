@@ -34,6 +34,12 @@
     <Filter Include="Source Files\patches\Other">
       <UniqueIdentifier>{9ad162a5-d4fd-4d02-85f2-ba4567aeecb6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\patches\Combat">
+      <UniqueIdentifier>{78f5ea88-b8f6-4446-af0d-fc3db085973a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\Skills">
+      <UniqueIdentifier>{3df49db5-5726-4fe1-954c-44a96950899c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -118,6 +124,27 @@
     </ClCompile>
     <ClCompile Include="BattlefieldSize.cpp">
       <Filter>Source Files\patches\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AtbTweaks.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseMorale.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureSpellpower.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="FirstAidTent.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="BallistaCatapult.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMaxSkills.cpp">
+      <Filter>Source Files\patches\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementalWarriors.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

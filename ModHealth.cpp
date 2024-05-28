@@ -6,16 +6,16 @@
 // (169) Ring of Supernatural Strength : +3 HP
 // (190) Celestial Justicar's Armor : +6% HP (rounded up)
 
-void Health();
+void HealthFork();
 
 int Health_fork = 0x004BC4F4;
 int Health_return = 0x004BC4FA;
 
 void Health_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, Health_fork, 6, Health, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_HOOK, Health_fork, 6, HealthFork, 0, 0, 0 });
 }
- 
-__declspec(naked) void Health() {
+
+__declspec(naked) void HealthFork() {
     __asm
     {
         lea ebp, dword ptr ds : [edi + eax * 2]      // vanilla ring of vitality

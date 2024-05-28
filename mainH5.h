@@ -51,6 +51,7 @@ extern std::vector<assembly_patch> assembly_patches;
 
 void Scripts_init(pugi::xml_document& doc);
 void Pest_init(pugi::xml_document& doc);
+void HeroMaxSkills_init(pugi::xml_document& doc);
 void HeroScreenUI_init(pugi::xml_document& doc);
 void BattlefieldSize_init(pugi::xml_document& doc);
 
@@ -62,7 +63,23 @@ void SnareFix_init(pugi::xml_document& doc);
 void RuneOfTheDragonForm_init(pugi::xml_document& doc);
 void CombatAIFix_init(pugi::xml_document& doc);
 void AgilityFix_init(pugi::xml_document& doc);
+void RetaliationStrikeFix_init(pugi::xml_document& doc);
+
+void AtbTweaks_init(pugi::xml_document& doc);
+void CreatureSpellpower_init(pugi::xml_document& doc);
+void FirstAidTent_init(pugi::xml_document& doc);
+void BallistaCatapult_init(pugi::xml_document& doc);
+
+void Avengers_init(pugi::xml_document& doc);
+void Arcanism_init(pugi::xml_document& doc);
+void EnlightenmentStats_init(pugi::xml_document& doc);
+void ElementalWarriors_init(pugi::xml_document& doc);
+void OffDefFormation_init(pugi::xml_document& doc);
+void ChillingBones_init(pugi::xml_document& doc);
+void ErraticMana_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
 
+void BaseMorale_init(pugi::xml_document& doc);
 void SplitStack_init(pugi::xml_document& doc);
+//void TrainingGrounds_init(pugi::xml_document& doc);

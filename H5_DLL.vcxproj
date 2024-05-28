@@ -194,16 +194,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AgilityFix.cpp" />
+    <ClCompile Include="AtbTweaks.cpp" />
+    <ClCompile Include="BallistaCatapult.cpp" />
+    <ClCompile Include="BaseMorale.cpp" />
     <ClCompile Include="BattlefieldSize.cpp" />
     <ClCompile Include="CombatAIFix.cpp" />
+    <ClCompile Include="CreatureSpellpower.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="ElementalWarriors.cpp" />
     <ClCompile Include="EliteCastersFix.cpp" />
     <ClCompile Include="EnablePEST.cpp" />
     <ClCompile Include="EnableScripts.cpp" />
+    <ClCompile Include="FirstAidTent.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="ArcaneRenewalFix.cpp" />
     <ClCompile Include="EmpoweredArmageddonFixes.cpp" />
     <ClCompile Include="EnlightenmentForBarbsFix.cpp" />
+    <ClCompile Include="HeroMaxSkills.cpp" />
     <ClCompile Include="HeroScreenUI.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
     <ClCompile Include="ModHealth.cpp" />

@@ -9,6 +9,7 @@ void init_patches(pugi::xml_document& doc) {
 
     Scripts_init(doc);
     Pest_init(doc);
+    HeroMaxSkills_init(doc);
     HeroScreenUI_init(doc);
     BattlefieldSize_init(doc);
 
@@ -20,10 +21,26 @@ void init_patches(pugi::xml_document& doc) {
     RuneOfTheDragonForm_init(doc);
     CombatAIFix_init(doc);
     AgilityFix_init(doc);
+    RetaliationStrikeFix_init(doc);
+
+    AtbTweaks_init(doc);
+    CreatureSpellpower_init(doc);
+    FirstAidTent_init(doc);
+    BallistaCatapult_init(doc);
+
+    Avengers_init(doc);
+    Arcanism_init(doc);
+    EnlightenmentStats_init(doc);
+    ElementalWarriors_init(doc);
+    OffDefFormation_init(doc);
+    ChillingBones_init(doc);
+    ErraticMana_init(doc);
 
     Health_init(doc);
 
+    BaseMorale_init(doc);
     SplitStack_init(doc);
+    //TrainingGrounds_init(doc);
 }
 
 int main() {
