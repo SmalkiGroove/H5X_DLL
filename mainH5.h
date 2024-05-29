@@ -67,6 +67,9 @@ void RetaliationStrikeFix_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
+void BattleDiveTweak_init(pugi::xml_document& doc);
+void EnergyChannelTweak_init(pugi::xml_document& doc);
+void PawStrikeTweak_init(pugi::xml_document& doc);
 void FirstAidTent_init(pugi::xml_document& doc);
 void BallistaCatapult_init(pugi::xml_document& doc);
 
@@ -79,7 +82,9 @@ void ChillingBones_init(pugi::xml_document& doc);
 void ErraticMana_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
+void Morale_init(pugi::xml_document& doc);
+void Luck_init(pugi::xml_document& doc);
 
 void BaseMorale_init(pugi::xml_document& doc);
 void SplitStack_init(pugi::xml_document& doc);
-//void TrainingGrounds_init(pugi::xml_document& doc);
+void TrainingGrounds_init(pugi::xml_document& doc);

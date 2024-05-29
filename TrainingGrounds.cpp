@@ -15,13 +15,45 @@ void TrainingGrounds_init(pugi::xml_document& doc) {
 __declspec(naked) void TrainingGrounds_Towngate() {
 	__asm
 	{
-		// TODO
+		push esi
+		mov esi, dword ptr ss : [esp + 0x20]
+		cmp esi, 0xD
+		jne LABEL_TG1
+		mov bl, 0x1
+		pop esi
+		ret
+	LABEL_TG1:
+		test eax, eax
+		je LABEL_TG2
+		mov bl, 0x1
+		pop esi
+		ret
+	LABEL_TG2:
+		xor bl,bl
+		pop esi
+		ret
 	}
 }
 
 __declspec(naked) void TrainingGrounds_Garrison() {
 	__asm
 	{
-		// TODO
+		push esi
+		mov esi, dword ptr ss : [esp + 0x20]
+		cmp esi, 0xD
+		jne LABEL_TG1
+		mov eax, 0x1
+		pop esi
+		ret
+	LABEL_TG1:
+		test eax, eax
+		je LABEL_TG2
+		mov eax, 0x1
+		pop esi
+		ret
+	LABEL_TG2:
+		xor eax, eax
+		pop esi
+		ret
 	}
 }

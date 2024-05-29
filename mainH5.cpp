@@ -25,7 +25,10 @@ void init_patches(pugi::xml_document& doc) {
 
     AtbTweaks_init(doc);
     CreatureSpellpower_init(doc);
-    FirstAidTent_init(doc);
+    BattleDiveTweak_init(doc);
+    EnergyChannelTweak_init(doc);
+    PawStrikeTweak_init(doc);
+    //FirstAidTent_init(doc);
     BallistaCatapult_init(doc);
 
     Avengers_init(doc);
@@ -37,10 +40,12 @@ void init_patches(pugi::xml_document& doc) {
     ErraticMana_init(doc);
 
     Health_init(doc);
+    Morale_init(doc);
+    Luck_init(doc);
 
     BaseMorale_init(doc);
     SplitStack_init(doc);
-    //TrainingGrounds_init(doc);
+    TrainingGrounds_init(doc);
 }
 
 int main() {

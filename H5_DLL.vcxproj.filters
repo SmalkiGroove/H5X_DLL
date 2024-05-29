@@ -146,6 +146,36 @@
     <ClCompile Include="ElementalWarriors.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
+    <ClCompile Include="RetaliationStrikeFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="OffensiveDefensiveFormation.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="EnlightenmentStats.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="Avengers.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="Arcanism.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="ChillingBones.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="ErraticMana.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAbilitiesTweaks.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="ModLuck.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="ModMorale.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="x86\MinHook.dll">
