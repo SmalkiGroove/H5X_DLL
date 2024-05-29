@@ -23,6 +23,11 @@ void init_patches(pugi::xml_document& doc) {
     AgilityFix_init(doc);
     RetaliationStrikeFix_init(doc);
 
+    HeroMovement_init(doc);
+    CovenMistressTweak_init(doc);
+    MasterOfElementsTweak_init(doc);
+    EmbalmerTweak_init(doc);
+
     AtbTweaks_init(doc);
     CreatureSpellpower_init(doc);
     BattleDiveTweak_init(doc);
@@ -30,6 +35,7 @@ void init_patches(pugi::xml_document& doc) {
     PawStrikeTweak_init(doc);
     //FirstAidTent_init(doc);
     BallistaCatapult_init(doc);
+    TowerDamage_init(doc);
 
     Avengers_init(doc);
     Arcanism_init(doc);
@@ -46,6 +52,7 @@ void init_patches(pugi::xml_document& doc) {
     BaseMorale_init(doc);
     SplitStack_init(doc);
     TrainingGrounds_init(doc);
+    BarbarianShrineExp_init(doc);
 }
 
 int main() {

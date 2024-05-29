@@ -65,6 +65,11 @@ void CombatAIFix_init(pugi::xml_document& doc);
 void AgilityFix_init(pugi::xml_document& doc);
 void RetaliationStrikeFix_init(pugi::xml_document& doc);
 
+void HeroMovement_init(pugi::xml_document& doc);
+void CovenMistressTweak_init(pugi::xml_document& doc);
+void MasterOfElementsTweak_init(pugi::xml_document& doc);
+void EmbalmerTweak_init(pugi::xml_document& doc);
+
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
 void BattleDiveTweak_init(pugi::xml_document& doc);
@@ -72,6 +77,7 @@ void EnergyChannelTweak_init(pugi::xml_document& doc);
 void PawStrikeTweak_init(pugi::xml_document& doc);
 void FirstAidTent_init(pugi::xml_document& doc);
 void BallistaCatapult_init(pugi::xml_document& doc);
+void TowerDamage_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Arcanism_init(pugi::xml_document& doc);
@@ -88,3 +94,4 @@ void Luck_init(pugi::xml_document& doc);
 void BaseMorale_init(pugi::xml_document& doc);
 void SplitStack_init(pugi::xml_document& doc);
 void TrainingGrounds_init(pugi::xml_document& doc);
+void BarbarianShrineExp_init(pugi::xml_document& doc);

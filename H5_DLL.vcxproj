@@ -198,6 +198,7 @@
     <ClCompile Include="AtbTweaks.cpp" />
     <ClCompile Include="Avengers.cpp" />
     <ClCompile Include="BallistaCatapult.cpp" />
+    <ClCompile Include="BarbarianShrineExp.cpp" />
     <ClCompile Include="BaseMorale.cpp" />
     <ClCompile Include="BattlefieldSize.cpp" />
     <ClCompile Include="ChillingBones.cpp" />
@@ -217,8 +218,11 @@
     <ClCompile Include="EmpoweredArmageddonFixes.cpp" />
     <ClCompile Include="EnlightenmentForBarbsFix.cpp" />
     <ClCompile Include="HeroMaxSkills.cpp" />
+    <ClCompile Include="HeroMovement.cpp" />
     <ClCompile Include="HeroScreenUI.cpp" />
+    <ClCompile Include="HeroSpecTweaks.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
+    <ClCompile Include="LevelCurve.cpp" />
     <ClCompile Include="ModHealth.cpp" />
     <ClCompile Include="ModLuck.cpp" />
     <ClCompile Include="ModMorale.cpp" />
@@ -228,6 +232,7 @@
     <ClCompile Include="RuneOfTheDragonForm.cpp" />
     <ClCompile Include="SnareFix.cpp" />
     <ClCompile Include="StackSplit1.cpp" />
+    <ClCompile Include="TowerDamage.cpp" />
     <ClCompile Include="TrainingGrounds.cpp" />
     <ClCompile Include="utility_functions.cpp" />
     <ClCompile Include="pch.cpp">

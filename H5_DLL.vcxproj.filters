@@ -40,6 +40,12 @@
     <Filter Include="Source Files\patches\Skills">
       <UniqueIdentifier>{3df49db5-5726-4fe1-954c-44a96950899c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\patches\Spells">
+      <UniqueIdentifier>{59792d36-aaeb-4d7b-841e-d6a77b90fea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\Heroes">
+      <UniqueIdentifier>{69d73a8a-e1df-4872-a03c-af68e1f2f233}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -175,6 +181,21 @@
     </ClCompile>
     <ClCompile Include="ModMorale.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="BarbarianShrineExp.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMovement.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroSpecTweaks.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelCurve.cpp">
+      <Filter>Source Files\patches\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="TowerDamage.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
