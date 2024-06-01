@@ -201,11 +201,14 @@
     <ClCompile Include="BarbarianShrineExp.cpp" />
     <ClCompile Include="BaseMorale.cpp" />
     <ClCompile Include="BattlefieldSize.cpp" />
+    <ClCompile Include="ChainLightning.cpp" />
     <ClCompile Include="ChillingBones.cpp" />
+    <ClCompile Include="ColdDeathFix.cpp" />
     <ClCompile Include="CombatAIFix.cpp" />
     <ClCompile Include="CreatureAbilitiesTweaks.cpp" />
     <ClCompile Include="CreatureSpellpower.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Earthquake.cpp" />
     <ClCompile Include="ElementalWarriors.cpp" />
     <ClCompile Include="EliteCastersFix.cpp" />
     <ClCompile Include="EnablePEST.cpp" />
@@ -213,6 +216,7 @@
     <ClCompile Include="EnlightenmentStats.cpp" />
     <ClCompile Include="ErraticMana.cpp" />
     <ClCompile Include="FirstAidTent.cpp" />
+    <ClCompile Include="Frenzy.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="ArcaneRenewalFix.cpp" />
     <ClCompile Include="EmpoweredArmageddonFixes.cpp" />
@@ -242,6 +246,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="mainH5.cpp" />
+    <ClCompile Include="Vulnerability.cpp" />
+    <ClCompile Include="WarMachineTier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

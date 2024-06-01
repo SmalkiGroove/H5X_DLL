@@ -64,6 +64,7 @@ void RuneOfTheDragonForm_init(pugi::xml_document& doc);
 void CombatAIFix_init(pugi::xml_document& doc);
 void AgilityFix_init(pugi::xml_document& doc);
 void RetaliationStrikeFix_init(pugi::xml_document& doc);
+void ColdDeathFix_init(pugi::xml_document& doc);
 
 void HeroMovement_init(pugi::xml_document& doc);
 void CovenMistressTweak_init(pugi::xml_document& doc);
@@ -91,7 +92,13 @@ void Health_init(pugi::xml_document& doc);
 void Morale_init(pugi::xml_document& doc);
 void Luck_init(pugi::xml_document& doc);
 
+void ChainLightning_init(pugi::xml_document& doc);
+void Earthquake_init(pugi::xml_document& doc);
+void Vulnerability_init(pugi::xml_document& doc);
+void Frenzy_init(pugi::xml_document& doc);
+
 void BaseMorale_init(pugi::xml_document& doc);
 void SplitStack_init(pugi::xml_document& doc);
 void TrainingGrounds_init(pugi::xml_document& doc);
 void BarbarianShrineExp_init(pugi::xml_document& doc);
+void WarMachineTier_init(pugi::xml_document& doc);

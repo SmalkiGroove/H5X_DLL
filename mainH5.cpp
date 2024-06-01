@@ -22,6 +22,7 @@ void init_patches(pugi::xml_document& doc) {
     CombatAIFix_init(doc);
     AgilityFix_init(doc);
     RetaliationStrikeFix_init(doc);
+    ColdDeathFix_init(doc);
 
     HeroMovement_init(doc);
     CovenMistressTweak_init(doc);
@@ -49,10 +50,16 @@ void init_patches(pugi::xml_document& doc) {
     Morale_init(doc);
     Luck_init(doc);
 
+    ChainLightning_init(doc);
+    Earthquake_init(doc);
+    Vulnerability_init(doc);
+    Frenzy_init(doc);
+
     BaseMorale_init(doc);
     SplitStack_init(doc);
     TrainingGrounds_init(doc);
     BarbarianShrineExp_init(doc);
+    WarMachineTier_init(doc);
 }
 
 int main() {
