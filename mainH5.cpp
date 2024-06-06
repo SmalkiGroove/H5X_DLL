@@ -7,59 +7,59 @@ std::vector<assembly_patch> assembly_patches;
 
 void init_patches(pugi::xml_document& doc) {
 
-    Scripts_init(doc);
-    Pest_init(doc);
-    HeroMaxSkills_init(doc);
-    HeroScreenUI_init(doc);
-    BattlefieldSize_init(doc);
+    Scripts_init(doc);                     // OK
+    Pest_init(doc);                        // 
+    HeroMaxSkills_init(doc);               // 
+    HeroScreenUI_init(doc);                // OK
+    BattlefieldSize_init(doc);             // OK
 
-    ArcaneRenewalFix_init(doc);
-    EmpoweredArmageddon_init(doc);
-    EnlightenmentForBarbsFix_init(doc);
-    ImbueBalista_init(doc);
-    SnareFix_init(doc);
-    RuneOfTheDragonForm_init(doc);
-    CombatAIFix_init(doc);
-    AgilityFix_init(doc);
-    RetaliationStrikeFix_init(doc);
-    ColdDeathFix_init(doc);
+    ArcaneRenewalFix_init(doc);            // OK
+    EmpoweredArmageddon_init(doc);         // OK
+    EnlightenmentForBarbsFix_init(doc);    // OK
+    ImbueBalista_init(doc);                // OK
+    SnareFix_init(doc);                    // OK
+    RuneOfTheDragonForm_init(doc);         // OK
+    CombatAIFix_init(doc);                 // OK
+    AgilityFix_init(doc);                  // OK
+    RetaliationStrikeFix_init(doc);        //
+    ColdDeathFix_init(doc);                //
 
-    HeroMovement_init(doc);
-    CovenMistressTweak_init(doc);
-    MasterOfElementsTweak_init(doc);
-    EmbalmerTweak_init(doc);
+    HeroMovement_init(doc);                //
+    CovenMistressTweak_init(doc);          //
+    MasterOfElementsTweak_init(doc);       //
+    EmbalmerTweak_init(doc);               //
 
-    AtbTweaks_init(doc);
-    CreatureSpellpower_init(doc);
-    BattleDiveTweak_init(doc);
-    EnergyChannelTweak_init(doc);
-    PawStrikeTweak_init(doc);
-    //FirstAidTent_init(doc);
-    BallistaCatapult_init(doc);
-    TowerDamage_init(doc);
+    AtbTweaks_init(doc);                   // OK
+    CreatureSpellpower_init(doc);          // 
+    BattleDiveTweak_init(doc);             //
+    EnergyChannelTweak_init(doc);          //
+    PawStrikeTweak_init(doc);              //
+    //FirstAidTent_init(doc);                //
+    BallistaCatapult_init(doc);            //
+    TowerDamage_init(doc);                 //
 
-    Avengers_init(doc);
-    Arcanism_init(doc);
-    EnlightenmentStats_init(doc);
-    ElementalWarriors_init(doc);
-    OffDefFormation_init(doc);
-    ChillingBones_init(doc);
-    ErraticMana_init(doc);
+    Avengers_init(doc);                    // 
+    Arcanism_init(doc);                    //
+    EnlightenmentStats_init(doc);          //
+    ElementalWarriors_init(doc);           //
+    OffDefFormation_init(doc);             //
+    ChillingBones_init(doc);               //
+    ErraticMana_init(doc);                 //
 
-    Health_init(doc);
-    Morale_init(doc);
-    Luck_init(doc);
+    Health_init(doc);                      //
+    Morale_init(doc);                      //
+    Luck_init(doc);                        //
 
-    ChainLightning_init(doc);
-    Earthquake_init(doc);
-    Vulnerability_init(doc);
-    Frenzy_init(doc);
-
-    BaseMorale_init(doc);
-    SplitStack_init(doc);
-    TrainingGrounds_init(doc);
-    BarbarianShrineExp_init(doc);
-    WarMachineTier_init(doc);
+    //ChainLightning_init(doc);              //
+    //Earthquake_init(doc);                  //
+    //Vulnerability_init(doc);               //
+    //Frenzy_init(doc);                      //
+    
+    BaseMorale_init(doc);                  // OK
+    SplitStack_init(doc);                  // OK
+    TrainingGrounds_init(doc);             //
+    BarbarianShrineExp_init(doc);          //
+    WarMachineTier_init(doc);              // OK
 }
 
 int main() {

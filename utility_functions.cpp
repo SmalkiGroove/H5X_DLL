@@ -44,7 +44,7 @@ void assignByteToAddress(long addrPtr, const int* value) {
     *(uint8_t*)addrPtr = static_cast<uint8_t>(*value);
 }
 
-void JumpToFunction(void* targetAddress, void* destinationFunction, int len, int patch_type)
+void JumpToFunction(void* targetAddress, void* destinationFunction, size_t len, int patch_type)
 {
     DWORD oldProtect;
     if (!VirtualProtect(reinterpret_cast<LPVOID>(targetAddress), len, PAGE_EXECUTE_READWRITE, &oldProtect)) {
@@ -68,7 +68,7 @@ void JumpToFunction(void* targetAddress, void* destinationFunction, int len, int
     }
 }
 
-void ConditionalJumpToFunction(void* targetAddress, void* destinationFunction, int len, unsigned short patch_type)
+void ConditionalJumpToFunction(void* targetAddress, void* destinationFunction, size_t len, unsigned short patch_type)
 {
     DWORD oldProtect;
     if (!VirtualProtect(reinterpret_cast<LPVOID>(targetAddress), len, PAGE_EXECUTE_READWRITE, &oldProtect)) {
@@ -92,7 +92,7 @@ void ConditionalJumpToFunction(void* targetAddress, void* destinationFunction, i
     }
 }
 
-void AssignNopToAddressRange(int* hookAddress, int len) {
+void AssignNopToAddressRange(int* hookAddress, size_t len) {
     DWORD oldProtect;
     if (!VirtualProtect(reinterpret_cast<LPVOID>(hookAddress), len, PAGE_EXECUTE_READWRITE, &oldProtect)) {
         writeLog(ERRROR, "Cannot enable the current protection settings!");
