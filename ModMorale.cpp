@@ -18,43 +18,43 @@ __declspec(naked) void MoraleFork() {
     __asm
     {
         neg eax
-        lea esi, dword ptr ds : [esi + eax * 2]
+        lea esi, dword ptr [esi + eax * 2]
 
-        mov eax, dword ptr ds : [edi]
+        mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr ds : [eax]
-        mov edx, dword ptr ds : [eax]
+        call dword ptr [eax]
+        mov edx, dword ptr [eax]
         push 0xAF
         mov ecx, eax
-        call dword ptr ds : [edx + 0x74]
+        call dword ptr [edx + 0x74]
         mov ecx, eax
         call[count_equipped_artifact]
         neg eax
-        lea esi, dword ptr ds : [esi + eax * 1]
+        lea esi, dword ptr [esi + eax * 1]
 
-        mov eax, dword ptr ds : [edi]
+        mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr ds : [eax]
-        mov edx, dword ptr ds : [eax]
+        call dword ptr [eax]
+        mov edx, dword ptr [eax]
         push 0x63
         mov ecx, eax
-        call dword ptr ds : [edx + 0x74]
+        call dword ptr [edx + 0x74]
         mov ecx, eax
         call[count_equipped_artifact]
         neg eax
-        lea esi, dword ptr ds : [esi + eax * 2]
+        lea esi, dword ptr [esi + eax * 2]
 
-        mov eax, dword ptr ds : [edi]
+        mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr ds : [eax]
-        mov edx, dword ptr ds : [eax]
+        call dword ptr [eax]
+        mov edx, dword ptr [eax]
         push 0xA4
         mov ecx, eax
-        call dword ptr ds : [edx + 0x74]
+        call dword ptr [edx + 0x74]
         mov ecx, eax
         call[count_equipped_artifact]
         neg eax
-        lea esi, dword ptr ds : [esi + eax * 1]
+        lea esi, dword ptr [esi + eax * 1]
 
         jmp[Morale_return]
     }

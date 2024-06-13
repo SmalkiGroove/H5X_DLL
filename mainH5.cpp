@@ -9,7 +9,7 @@ void init_patches(pugi::xml_document& doc) {
 
     Scripts_init(doc);                     // OK
     Pest_init(doc);                        // 
-    HeroMaxSkills_init(doc);               // 
+    HeroMaxSkills_init(doc);               // OK
     HeroScreenUI_init(doc);                // OK
     BattlefieldSize_init(doc);             // OK
 
@@ -49,11 +49,15 @@ void init_patches(pugi::xml_document& doc) {
     Health_init(doc);                      //
     Morale_init(doc);                      //
     Luck_init(doc);                        //
+    MagicResist_init(doc);                 //
+    SpellImmune_init(doc);                 //
+    StaffOfNetherworldTweak_init(doc);     //
+    WandOfSpellTweak_init(doc);            //
 
-    //ChainLightning_init(doc);              //
-    //Earthquake_init(doc);                  //
-    //Vulnerability_init(doc);               //
-    //Frenzy_init(doc);                      //
+    ChainLightning_init(doc);              //
+    Earthquake_init(doc);                  //
+    Vulnerability_init(doc);               //
+    Frenzy_init(doc);                      //
     
     BaseMorale_init(doc);                  // OK
     SplitStack_init(doc);                  // OK

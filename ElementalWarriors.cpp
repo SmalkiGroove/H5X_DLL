@@ -23,32 +23,32 @@ void ElementalWarriors_init(pugi::xml_document& doc) {
 __declspec(naked) void ElementalSummonTypeFork() {
 	__asm
 	{
-		mov edx, dword ptr ss : [ebp]
+		mov edx, dword ptr [ebp]
 		mov ebx, EarthCreatureID
 		push EarthSkillID
 		mov ecx, ebp
-		call dword ptr ds : [edx + 0x290]
+		call dword ptr [edx + 0x290]
 		test al, al
 		jne FUNCTION_RETURN
 
-		mov edx, dword ptr ss : [ebp]
+		mov edx, dword ptr [ebp]
 		mov ebx, WaterCreatureID
 		push WaterSkillID
 		mov ecx, ebp
-		call dword ptr ds : [edx + 0x290]
+		call dword ptr [edx + 0x290]
 		test al, al
 		jne FUNCTION_RETURN
 
-		mov edx, dword ptr ss : [ebp]
+		mov edx, dword ptr [ebp]
 		mov ebx, AirCreatureID
 		push AirSkillID
 		mov ecx, ebp
-		call dword ptr ds : [edx + 0x290]
+		call dword ptr [edx + 0x290]
 		test al, al
 		jne FUNCTION_RETURN
 
 		push edi
-		lea edx, dword ptr ss : [esp + 0x1C]
+		lea edx, dword ptr [esp + 0x1C]
 		jmp[ElemWarriors_return]
 
 	FUNCTION_RETURN:

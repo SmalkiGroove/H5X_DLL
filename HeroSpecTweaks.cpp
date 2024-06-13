@@ -32,26 +32,26 @@ __declspec(naked) void EmbalmerFork() {
 	__asm
 	{
 		push eax
-		mov ecx, dword ptr ds : [esi]
+		mov ecx, dword ptr [esi]
 		push ecx
-		fstp dword ptr ds : [esi]
-		mov ecx, dword ptr ds : [esi]
+		fstp dword ptr [esi]
+		mov ecx, dword ptr [esi]
 		push ecx
-		mov dword ptr ds : [esi], eax
+		mov dword ptr [esi], eax
 		//mov ecx, 0x5
 		mul ecx
-		add dword ptr ds : [edi], eax
+		add dword ptr [edi], eax
 		fld dword ptr ds : 0x00400F18 // 0
-		fimul dword ptr ds : [esi]
-		fimul dword ptr ds : [edi]
-		fistp dword ptr ds : [esi]
-		mov ecx, dword ptr ds : [esi]
-		add dword ptr ds : [edi] , ecx
+		fimul dword ptr [esi]
+		fimul dword ptr [edi]
+		fistp dword ptr [esi]
+		mov ecx, dword ptr [esi]
+		add dword ptr [edi] , ecx
 		pop ecx
-		mov dword ptr ds : [esi] , ecx
-		fld dword ptr ds : [esi]
+		mov dword ptr [esi] , ecx
+		fld dword ptr [esi]
 		pop ecx
-		mov dword ptr ds : [esi] , ecx
+		mov dword ptr [esi] , ecx
 		pop eax
 		jmp[Embalmer_return]
 	}

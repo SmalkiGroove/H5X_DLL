@@ -19,8 +19,8 @@ __declspec(naked) void BattleDiveFork() {
 		mov eax, 0x3F400000
 	BATTLE_DIVE_DAMAGE:
 		nop
-		mov dword ptr ds : [edx + esi*8], edi
-		mov dword ptr ds : [edx + esi*8 + 0x4], eax
+		mov dword ptr [edx + esi*8], edi
+		mov dword ptr [edx + esi*8 + 0x4], eax
 		ret
 	}
 }
@@ -52,8 +52,8 @@ __declspec(naked) void PawStrikeFork() {
 		cdq
 		idiv ecx
 		pop ecx
-		mov dword ptr ss : [esp + 0x10], eax
-		fild dword ptr ss : [esp + 0x10]
+		mov dword ptr [esp + 0x10], eax
+		fild dword ptr [esp + 0x10]
 		jmp[PawStrike_return]
 	}
 }

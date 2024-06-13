@@ -13,7 +13,7 @@ __declspec(naked) void ArcaneRenewalFix() {
     __asm
     {
         call[ArcaneRenewalFix_summon_creature_or_spell_on_the_battlefield];
-        mov byte ptr ss : [esp + 0x13] , 0
+        mov byte ptr [esp + 0x13] , 0
             jmp[ArcaneRenewalFix_return];
     }
 }

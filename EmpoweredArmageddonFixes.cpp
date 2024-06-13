@@ -17,7 +17,7 @@ void EmpoweredArmageddon_init(pugi::xml_document& doc) {
 __declspec(naked) void EmpoweredArmageddon_check_holly_unholly_spells() {
     __asm
     {
-        mov eax, dword ptr ds : [ebx + 0x4]
+        mov eax, dword ptr [ebx + 0x4]
         cmp eax, 0x15
         je JUMP_IF_UNHOLLY_WORD
         cmp eax, 0x23
@@ -31,7 +31,7 @@ int EmpoweredArmageddon_return = 0x0085F590;
 __declspec(naked) void EmpoweredArmageddon_WarMachines() {
     __asm
     {
-        mov eax, dword ptr ds : [ebx + 0x4]
+        mov eax, dword ptr [ebx + 0x4]
         cmp eax, 0xA
         je HIT_THE_TARGET
         sub eax, 0xE8

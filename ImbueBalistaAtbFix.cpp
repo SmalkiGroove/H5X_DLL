@@ -20,21 +20,21 @@ DWORD ImbueBalista_atb_value;
 __declspec(naked) void ImbueBalista_collect_atb() {
     __asm
     {
-        mov edx, dword ptr ss : [esp + 0x1C]
-        lea ecx, dword ptr ds : [ecx + esi + 0x4]
+        mov edx, dword ptr [esp + 0x1C]
+        lea ecx, dword ptr [ecx + esi + 0x4]
         push ecx
         push esi
         push eax
         mov esi, ecx
-        mov eax, dword ptr ds : [esi - 0x118]
-        mov ecx, dword ptr ds : [eax + 0x8]
-        lea ecx, dword ptr ds : [ecx + esi - 0x118]
-        sub ecx, dword ptr ds : [ecx - 0x4]
+        mov eax, dword ptr [esi - 0x118]
+        mov ecx, dword ptr [eax + 0x8]
+        lea ecx, dword ptr [ecx + esi - 0x118]
+        sub ecx, dword ptr [ecx - 0x4]
         sub ecx, 0x68
-        mov eax, dword ptr ds : [ecx - 0x70]
-        mov dword ptr ds : [ImbueBalista_hero] , eax
-        mov eax, dword ptr ds : [eax + 0x1C]
-        mov dword ptr ds : [ImbueBalista_atb_value] , eax
+        mov eax, dword ptr [ecx - 0x70]
+        mov dword ptr [ImbueBalista_hero] , eax
+        mov eax, dword ptr [eax + 0x1C]
+        mov dword ptr [ImbueBalista_atb_value] , eax
         pop eax
         pop esi
         pop ecx
@@ -47,9 +47,9 @@ __declspec(naked) void ImbueBalista_return_atb() {
     {
         push eax
         push esi
-        mov esi, dword ptr ds : [ImbueBalista_hero]
-        mov eax, dword ptr ds : [ImbueBalista_atb_value]
-        mov dword ptr ds : [esi + 0x1C] , eax
+        mov esi, dword ptr [ImbueBalista_hero]
+        mov eax, dword ptr [ImbueBalista_atb_value]
+        mov dword ptr [esi + 0x1C] , eax
         pop esi
         pop eax
         ret

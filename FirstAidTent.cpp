@@ -24,35 +24,35 @@ void FirstAidTent_init(pugi::xml_document& doc) {
 __declspec(naked) void FirstAidTentFork() {
 	__asm
 	{
-		mov eax, dword ptr ds : [esi + 0x4]
-		mov ecx, dword ptr ds : [eax + 0x8]
-		mov edx, dword ptr ds : [ecx + esi + 0x4]
-		lea ecx, dword ptr ds : [ecx + esi + 0x4]
-		call dword ptr ds : [edx + 0x19C]
+		mov eax, dword ptr [esi + 0x4]
+		mov ecx, dword ptr [eax + 0x8]
+		mov edx, dword ptr [ecx + esi + 0x4]
+		lea ecx, dword ptr [ecx + esi + 0x4]
+		call dword ptr [edx + 0x19C]
 		push eax
-		mov eax, dword ptr ds : [esi]
+		mov eax, dword ptr [esi]
 		mov ecx, esi
-		call dword ptr ds : [eax]
-		mov edx, dword ptr ds : [eax]
+		call dword ptr [eax]
+		mov edx, dword ptr [eax]
 		push 0x2
 		mov ecx, eax
-		call dword ptr ds : [edx + 0x174]
+		call dword ptr [edx + 0x174]
 		pop ecx
-		mov eax, dword ptr ds : [eax*4 + 0xE0915A]
+		mov eax, dword ptr [eax*4 + 0xE0915A]
 		mul ecx
-		add dword ptr ds : [edi], eax
-		mov eax, dword ptr ds : [esi + 0x4]
-		mov ecx, dword ptr ds : [eax + 0x8]
-		mov eax, dword ptr ds : [esi]
+		add dword ptr [edi], eax
+		mov eax, dword ptr [esi + 0x4]
+		mov ecx, dword ptr [eax + 0x8]
+		mov eax, dword ptr [esi]
 		mov ecx, esi
-		call dword ptr ds : [eax]
-		mov edx, dword ptr ds : [eax]
+		call dword ptr [eax]
+		mov edx, dword ptr [eax]
 		push 0xB
 		mov ecx, eax
-		call dword ptr ds : [edx + 0x174]
-		mov dword ptr ss : [esp + 0x3C], eax
-		mov eax, dword ptr ds : [esi + 0x4]
-		mov ecx, dword ptr ds : [eax + 0x8]
+		call dword ptr [edx + 0x174]
+		mov dword ptr [esp + 0x3C], eax
+		mov eax, dword ptr [esi + 0x4]
+		mov ecx, dword ptr [eax + 0x8]
 		jmp[FirstAidHeal_return]
 	}
 }

@@ -16,7 +16,7 @@ __declspec(naked) void TrainingGrounds_Towngate() {
 	__asm
 	{
 		push esi
-		mov esi, dword ptr ss : [esp + 0x20]
+		mov esi, dword ptr [esp + 0x20]
 		cmp esi, 0xD
 		jne LABEL_TG1
 		mov bl, 0x1
@@ -39,7 +39,7 @@ __declspec(naked) void TrainingGrounds_Garrison() {
 	__asm
 	{
 		push esi
-		mov esi, dword ptr ss : [esp + 0x20]
+		mov esi, dword ptr [esp + 0x20]
 		cmp esi, 0xD
 		jne LABEL_TG1
 		mov eax, 0x1

@@ -15,23 +15,23 @@ void ColdDeathFix_init(pugi::xml_document& doc) {
 __declspec(naked) void ColdDeathFork() {
 	__asm
 	{
-		mov eax, dword ptr ds : [esi]
+		mov eax, dword ptr [esi]
 		push 0x42
 		mov ecx, esi
-		call dword ptr ds : [eax + 0x28C]
+		call dword ptr [eax + 0x28C]
 		test al, al
 		jne FUNCTION_RETURN
 
-		mov eax, dword ptr ds : [esi]
+		mov eax, dword ptr [esi]
 		push 0x9
 		mov ecx, esi
-		call dword ptr ds : [eax + 0x28C]
+		call dword ptr [eax + 0x28C]
 		test al, al
 		jne FUNCTION_RETURN
 
-		mov edx, dword ptr ds : [esi]
+		mov edx, dword ptr [esi]
 		mov ecx, esi
-		call dword ptr ds : [edx + 0x1A8]
+		call dword ptr [edx + 0x1A8]
 
 		jmp[ColdDeath_return]
 	FUNCTION_RETURN:
