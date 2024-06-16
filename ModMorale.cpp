@@ -36,7 +36,7 @@ __declspec(naked) void MoraleFork() {
         mov ecx, edi
         call dword ptr [eax]
         mov edx, dword ptr [eax]
-        push 0x63
+        push 0x7D
         mov ecx, eax
         call dword ptr [edx + 0x74]
         mov ecx, eax
@@ -48,7 +48,7 @@ __declspec(naked) void MoraleFork() {
         mov ecx, edi
         call dword ptr [eax]
         mov edx, dword ptr [eax]
-        push 0xA4
+        push 0xB0
         mov ecx, eax
         call dword ptr [edx + 0x74]
         mov ecx, eax

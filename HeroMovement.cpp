@@ -4,9 +4,9 @@
 
 void HeroMovement_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_BYTE, 0x00CA9B79, 1, nullptr, 100, 0, 0, 0 }); // Movement points cost - Default
-	assembly_patches.push_back({ PATCH_INT, 0x00CA9A7D, 4, nullptr, 100, 0, 0, 0 }); // Movement points cost - Homeland
-	assembly_patches.push_back({ PATCH_INT, 0x00CA9AC7, 4, nullptr, 80, 0, 0, 0 }); // Movement points cost - Roads
-	assembly_patches.push_back({ PATCH_INT, 0x00CA9B7D, 4, nullptr, 80, 0, 0, 0 }); // Movement points cost - Ship
+	assembly_patches.push_back({ PATCH_INT, 0x00CA9A7D, 4, nullptr, 90, 0, 0, 0 }); // Movement points cost - Homeland
+	assembly_patches.push_back({ PATCH_INT, 0x00CA9AC7, 4, nullptr, 66, 0, 0, 0 }); // Movement points cost - Roads
+	assembly_patches.push_back({ PATCH_INT, 0x00CA9B7D, 4, nullptr, 75, 0, 0, 0 }); // Movement points cost - Ship
 	assembly_patches.push_back({ PATCH_INT, 0x00CA9AF1, 4, nullptr, 20, 0, 0, 0 }); // Movement points penalty - Dirt, Lava, Taiga, Sub
 	assembly_patches.push_back({ PATCH_INT, 0x00CA9AFB, 4, nullptr, 20, 0, 0, 0 }); // Movement points penalty - Sand, Snow
 

@@ -93,6 +93,7 @@ void Morale_init(pugi::xml_document& doc);
 void Luck_init(pugi::xml_document& doc);
 void MagicResist_init(pugi::xml_document& doc);
 void SpellImmune_init(pugi::xml_document& doc);
+void ElemDamage_init(pugi::xml_document& doc);
 void StaffOfNetherworldTweak_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);
 

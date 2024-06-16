@@ -51,6 +51,7 @@ void init_patches(pugi::xml_document& doc) {
     Luck_init(doc);                        //
     MagicResist_init(doc);                 //
     SpellImmune_init(doc);                 //
+    ElemDamage_init(doc);                  //
     StaffOfNetherworldTweak_init(doc);     //
     WandOfSpellTweak_init(doc);            //
 

@@ -71,4 +71,10 @@ extern CountEquippedArtifactFunc count_equipped_artifact;
 typedef int(__thiscall* GetCreatureDataFunc)(int* creature);
 extern GetCreatureDataFunc get_creature_data;
 
+typedef int(__thiscall* GetSpellElementFunc)(int* spell);
+extern GetSpellElementFunc get_spell_element;
+
+typedef int(__thiscall* Unknown1Func)(int*);
+extern Unknown1Func call_unknown_1;
+
 #endif

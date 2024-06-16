@@ -228,6 +228,7 @@
     <ClCompile Include="HeroSpecTweaks.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
     <ClCompile Include="LevelCurve.cpp" />
+    <ClCompile Include="ModElementalDamages.cpp" />
     <ClCompile Include="ModHealth.cpp" />
     <ClCompile Include="ModLuck.cpp" />
     <ClCompile Include="ModMagicResist.cpp" />

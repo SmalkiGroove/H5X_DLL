@@ -215,6 +215,18 @@
     <ClCompile Include="Vulnerability.cpp">
       <Filter>Source Files\patches\Spells</Filter>
     </ClCompile>
+    <ClCompile Include="ArtifactTweaks.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="ModMagicResist.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="ModSpellImmune.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="ModElementalDamages.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="x86\MinHook.dll">
