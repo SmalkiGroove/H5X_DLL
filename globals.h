@@ -52,6 +52,10 @@ void assignHexStringToStruct(T& structure, const std::string& hexString) {
 }
 
 // game functions
+
+typedef int(__thiscall* GetHeroDataFunc)(int*);
+extern GetHeroDataFunc get_hero_data;
+
 typedef int(__thiscall* SkillIdFromStrFunc)(int* skill);
 extern SkillIdFromStrFunc skill_id_from_str;
 

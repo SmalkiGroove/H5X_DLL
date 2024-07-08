@@ -230,8 +230,10 @@
     <ClCompile Include="LevelCurve.cpp" />
     <ClCompile Include="ModElementalDamages.cpp" />
     <ClCompile Include="ModHealth.cpp" />
+    <ClCompile Include="ModInitiative.cpp" />
     <ClCompile Include="ModLuck.cpp" />
     <ClCompile Include="ModMagicResist.cpp" />
+    <ClCompile Include="ModManaCost.cpp" />
     <ClCompile Include="ModMorale.cpp" />
     <ClCompile Include="OffensiveDefensiveFormation.cpp" />
     <ClCompile Include="pugixml.cpp" />

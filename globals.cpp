@@ -6,6 +6,7 @@ int logs_enabled = 0;
 pugi::xml_document h5_stats;
 
 // game funcs
+GetHeroDataFunc get_hero_data = (GetHeroDataFunc)0x00977700;
 SkillIdFromStrFunc skill_id_from_str = (SkillIdFromStrFunc)0x009F5C90;
 ReturnMasteryIdFunc mastery_id_from_str = (ReturnMasteryIdFunc)0x00ACFEF0;
 ReturnSpellIdFunc spell_id_from_str = (ReturnSpellIdFunc)0x009F29C0;

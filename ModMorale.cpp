@@ -4,6 +4,7 @@
 // (175) Spirit of Oppression : -1 Morale
 // (176) Crimson Scythe : -1 Morale
 // (125) Rod of Torment : -2 Morale
+// also skill Dead Man's Curse -3 Morale
 
 void MoraleFork();
 
@@ -56,6 +57,17 @@ __declspec(naked) void MoraleFork() {
         neg eax
         lea esi, dword ptr [esi + eax * 1]
 
+        mov eax, [edi + 0x4]
+        mov ecx, [eax + 0x8]
+        mov edx, [ecx + edi + 0x4]
+        lea ecx, [ecx + edi + 0x4]
+        push 0x67
+        call dword ptr [edx + 0x290]
+        test al, al
+        jz MORALE_END
+        sub esi, 0x3
+
+        MORALE_END:
         jmp[Morale_return]
     }
 }

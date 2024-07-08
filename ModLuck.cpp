@@ -5,11 +5,12 @@
 // (175) Spirit of Oppression : -1 Luck
 // (99) Cursed Dices : -2 Luck
 // (164) Cloak of Darkness : -1 Luck
+// also skill Dead Man's Curse -3 Luck
 
 void LuckFork();
 
 int Luck_fork = 0x00989E4E;
-int Luck_return = 0x00989E53;
+int Luck_return = 0x00989E70;
 
 void Luck_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, Luck_fork, 5, LuckFork, 0, 0, 0 });
@@ -57,6 +58,17 @@ __declspec(naked) void LuckFork() {
         neg eax
         lea esi, dword ptr [esi + eax * 1]
 
+        mov eax, [edi + 0x4]
+        mov ecx, [eax + 0x8]
+        mov edx, [ecx + edi + 0x4]
+        lea ecx, [ecx + edi + 0x4]
+        push 0x67
+        call dword ptr[edx + 0x290]
+        test al, al
+        jz LUCK_END
+        sub esi, 0x3
+
+        LUCK_END:
         jmp[Luck_return]
     }
 }

@@ -14,19 +14,20 @@ void TowerDamage_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_INT, 0x00BFE04D, 4, nullptr, 140, 0, 0, 0 }); // Side tower damages
 }
 
+float factor = 0.5f;
 __declspec(naked) void TowerFork() {
 	__asm
 	{
 		sub esp, 0x4
 		fild dword ptr [esp + 0xC]
 		fidiv dword ptr [esp + 0x10]
-		fmul dword ptr ds : 0x00F270C4 // ptr to '0000003F' = 0.5
+		fmul dword ptr [factor] // ptr to '0000003F' = 0.5
 		fstp dword ptr [esp]
 		fild dword ptr [esp + 0xC]
 		fimul dword ptr [esp + 0xC]
 		fidiv dword ptr [esp + 0x10]
 		fidiv dword ptr [esp + 0x10]
-		fmul dword ptr ds : 0x00F270C4 // ptr to '0000003F' = 0.5
+		fmul dword ptr [factor] // ptr to '0000003F' = 0.5
 		fadd dword ptr [esp]
 		add esp, 0x4
 		jmp[Tower_return]
