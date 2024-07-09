@@ -2,9 +2,11 @@
 
 // ADD MANA COST MODIFIERS FROM ADDITIONAL ARTIFACTS
 // (47) Ring of the Magister : -8 mana
-// (112) Fortune Band of the Saint : -1 Mana
+// (112) Fortune Band of the Saint : -1 mana
 // (186) Moonlight Coat : -25% mana
 // (101) Crown of the Frost Lord : -50% mana for frost spells
+// (151) Blazing Spellbook : -33% mana for fire spells
+// (140) Sylvan Amulet : -3 mana for nature spells
 
 void ManaCostFork();
 
@@ -59,23 +61,63 @@ __declspec(naked) void ManaCostFork() {
         mov dword ptr ss : [esp + 0x10] , esi
 
         MANACOST_3:
-        mov edx, dword ptr[ebx]
+        mov edx, dword ptr [ebx]
         mov ecx, ebx
-        call dword ptr[edx + 0x74]
+        call dword ptr [edx + 0x74]
         push 0x65
         mov ecx, eax
         call[count_equipped_artifact]
         test eax, eax
-        je MANACOST_END
+        je MANACOST_4
         mov ecx, edi
         call[get_spell_element]
         cmp eax, 0x3
-        jne MANACOST_END
+        jne MANACOST_4
         mov eax, esi
         cdq
         sub eax, edx
         sar eax, 0x1
         mov esi, eax
+        mov dword ptr ss : [esp + 0x10] , esi
+
+        MANACOST_4:
+        mov edx, dword ptr [ebx]
+        mov ecx, ebx
+        call dword ptr [edx + 0x74]
+        push 0x97
+        mov ecx, eax
+        call[count_equipped_artifact]
+        test eax, eax
+        je MANACOST_5
+        mov ecx, edi
+        call[get_spell_element]
+        cmp eax, 0x2
+        jne MANACOST_5
+        lea eax, dword ptr [esi + esi * 0x4]
+        cdq
+        sar eax, 0x3
+        sar esi, 0x3
+        add esi, eax
+        mov dword ptr ss : [esp + 0x10] , esi
+
+        MANACOST_5:
+        mov edx, dword ptr [ebx]
+        mov ecx, ebx
+        call dword ptr [edx + 0x74]
+        push 0x8C
+        mov ecx, eax
+        call[count_equipped_artifact]
+        test eax, eax
+        je MANACOST_END
+        mov ecx, edi
+        call[get_spell_school]
+        cmp eax, 0x3
+        jne MANACOST_END
+        sub esi, 0x3
+        cmp esi, 0x1
+        jge sylvan_amulet_end
+        mov esi, 0x1
+        sylvan_amulet_end:
         mov dword ptr ss : [esp + 0x10] , esi
 
         MANACOST_END:

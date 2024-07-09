@@ -56,6 +56,9 @@ void assignHexStringToStruct(T& structure, const std::string& hexString) {
 typedef int(__thiscall* GetHeroDataFunc)(int*);
 extern GetHeroDataFunc get_hero_data;
 
+typedef int(__thiscall* HasHeroSpecId)(int*);
+extern HasHeroSpecId has_hero_spec;
+
 typedef int(__thiscall* SkillIdFromStrFunc)(int* skill);
 extern SkillIdFromStrFunc skill_id_from_str;
 
@@ -77,6 +80,9 @@ extern GetCreatureDataFunc get_creature_data;
 
 typedef int(__thiscall* GetSpellElementFunc)(int* spell);
 extern GetSpellElementFunc get_spell_element;
+
+typedef int(__thiscall* GetSpellMagicSchool)(int* spell);
+extern GetSpellMagicSchool get_spell_school;
 
 typedef int(__thiscall* Unknown1Func)(int*);
 extern Unknown1Func call_unknown_1;

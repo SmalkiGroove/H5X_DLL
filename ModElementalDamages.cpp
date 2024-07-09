@@ -1,6 +1,15 @@
 #include "pch.h"
 
 // ADD ADDITIONAL ELEMENTAL DAMAGE ARTIFACTS
+// (5) Titan's Trident : from +50% to +20% to lightning spells
+// (18) Evercold Icicle : from +50% to +20% to frost spells
+// (32) Phoenix Feather's Cape : from +50% to +20% to fire spells
+// (61) Emerald Slippers : from +50% to +20% to earth spells
+// (192) Orb of Air Affinity : +33% to lightning spells
+// (193) Orb of Earth Affinity : +33% to earth spells
+// (194) Orb of Fire Affinity : +33% to fire spells
+// (195) Orb of Water Affinity : +33% to frost spells
+// (102) Altar of Elements Shard : +10% to all element spells
 
 void ElemDamageFork();
 void ElemDamageForkAlt();

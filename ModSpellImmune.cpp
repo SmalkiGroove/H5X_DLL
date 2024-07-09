@@ -1,10 +1,12 @@
 #include "pch.h"
 
 // ADD SPELL IMMUNITIES FROM ADDITIONAL ARTIFACTS
-// (140) Sylvan Amulet : Immune to Curse of the Netherworld (21)
+// (184) Forgotten Ring : Immune to Word of Light (35)
+// (180) Moonlight Band : Immune to Curse of the Netherworld (21)
 // (123) Obsidian Armor : Immune to Armageddon (10)
 // (172) Sanctuary's Crown : Immune to Hypnotize (20)
 // (165) Shantiri Breastplate : Immune to Earthquake (41)
+// (115) Cloak of the Saint : Immune to Plague (14)
 
 void SpellImmuneForkEarthquake();
 void SpellImmuneCaseEarthquake();
