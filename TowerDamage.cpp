@@ -21,13 +21,13 @@ __declspec(naked) void TowerFork() {
 		sub esp, 0x4
 		fild dword ptr [esp + 0xC]
 		fidiv dword ptr [esp + 0x10]
-		fmul dword ptr [factor] // ptr to '0000003F' = 0.5
+		fmul dword ptr [factor]
 		fstp dword ptr [esp]
 		fild dword ptr [esp + 0xC]
 		fimul dword ptr [esp + 0xC]
 		fidiv dword ptr [esp + 0x10]
 		fidiv dword ptr [esp + 0x10]
-		fmul dword ptr [factor] // ptr to '0000003F' = 0.5
+		fmul dword ptr [factor]
 		fadd dword ptr [esp]
 		add esp, 0x4
 		jmp[Tower_return]
