@@ -3,13 +3,6 @@
 // EDIT HARDCODED ARTIFACT EFFECTS
 
 
-// Lower Staff of the Netherworld init debuff
-
-void StaffOfNetherworldTweak_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_WRTE, 0x008A4639, 4, nullptr, 0, 0, 0, "49478A00" });
-	assembly_patches.push_back({ PATCH_FLOAT, 0x008A4749, 4, nullptr, 0, 0.1f, 0, 0 });
-}
-
 
 // Change Wand spells and charges
 

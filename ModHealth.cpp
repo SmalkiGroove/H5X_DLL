@@ -1,7 +1,7 @@
 #include "pch.h"
 
 // ADD BONUS HP FROM ADDITIONAL ARTIFACTS
-// (110) Steadfast Shield : +1 HP
+// (128) Plunderer Vest : +1 HP
 // (198) Shield of the Dwarven Kings : +1 HP
 // (169) Ring of Supernatural Strength : +3 HP
 // (190) Celestial Justicar's Armor : +6% HP (rounded up)
@@ -21,7 +21,7 @@ __declspec(naked) void HealthFork() {
         lea ebp, dword ptr [edi + eax * 2]           // vanilla ring of vitality
     HEALTH_BONUS_1:
         mov eax, dword ptr [esi]                     // set 4 bytes at esi into eax for later function use
-        push 0x6E                                    // push artifact 110 to the stack (esp) for function call
+        push 0x80                                    // push artifact 128 to the stack (esp) for function call
         mov ecx, esi                                 // set hero struct pointer to ecx for function call
         call dword ptr [eax + 0x74]                  // get equipped artifacts list from hero struct
         mov ecx, eax                                 // set equipped artifacts list to ecx for function call

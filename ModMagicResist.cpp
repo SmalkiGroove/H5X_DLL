@@ -1,6 +1,6 @@
 #include "pch.h"
 
-// ADD MAGIC RESISTANCE FROM ADDITIONAL ARTIFACTS
+// EDIT MAGIC RESISTANCE FROM ARTIFACTS
 // (13) Breastplate of the Forgotten Hero : 10% MR
 // (27) Boots of Interference : 15% MR
 // (174) Ancient Protection Charm : 12% MR

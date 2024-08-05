@@ -235,6 +235,8 @@
     <ClCompile Include="ModMagicResist.cpp" />
     <ClCompile Include="ModManaCost.cpp" />
     <ClCompile Include="ModMorale.cpp" />
+    <ClCompile Include="ModSpeed.cpp" />
+    <ClCompile Include="ModSpellProof.cpp" />
     <ClCompile Include="OffensiveDefensiveFormation.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="RetaliationStrikeFix.cpp" />
@@ -244,6 +246,7 @@
     <ClCompile Include="StackSplit1.cpp" />
     <ClCompile Include="TowerDamage.cpp" />
     <ClCompile Include="TrainingGrounds.cpp" />
+    <ClCompile Include="UnholyWordImmunitiesFix.cpp" />
     <ClCompile Include="utility_functions.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

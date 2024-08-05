@@ -65,6 +65,7 @@ void CombatAIFix_init(pugi::xml_document& doc);
 void AgilityFix_init(pugi::xml_document& doc);
 void RetaliationStrikeFix_init(pugi::xml_document& doc);
 void ColdDeathFix_init(pugi::xml_document& doc);
+void UnholyWordImmunitiesFix_init(pugi::xml_document& doc);
 
 void HeroMovement_init(pugi::xml_document& doc);
 void CovenMistressTweak_init(pugi::xml_document& doc);
@@ -90,13 +91,13 @@ void ErraticMana_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
 void Initiative_init(pugi::xml_document& doc);
+void Speed_init(pugi::xml_document& doc);
 void Morale_init(pugi::xml_document& doc);
 void Luck_init(pugi::xml_document& doc);
 void MagicResist_init(pugi::xml_document& doc);
 void SpellImmune_init(pugi::xml_document& doc);
 void ManaCost_init(pugi::xml_document& doc);
 void ElemDamage_init(pugi::xml_document& doc);
-void StaffOfNetherworldTweak_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);
 
 void ChainLightning_init(pugi::xml_document& doc);

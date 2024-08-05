@@ -23,38 +23,39 @@ void init_patches(pugi::xml_document& doc) {
     AgilityFix_init(doc);                  // OK
     RetaliationStrikeFix_init(doc);        //
     ColdDeathFix_init(doc);                //
+    UnholyWordImmunitiesFix_init(doc);     //
 
     HeroMovement_init(doc);                // OK
     CovenMistressTweak_init(doc);          //
     MasterOfElementsTweak_init(doc);       //
-    EmbalmerTweak_init(doc);               //
+    EmbalmerTweak_init(doc);               // OK
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
     BattleDiveTweak_init(doc);             //
     EnergyChannelTweak_init(doc);          //
     PawStrikeTweak_init(doc);              //
-    //FirstAidTent_init(doc);                //
+    FirstAidTent_init(doc);                // OK
     BallistaCatapult_init(doc);            // OK
     TowerDamage_init(doc);                 // OK
 
     Avengers_init(doc);                    // 
     Arcanism_init(doc);                    //
     EnlightenmentStats_init(doc);          // OK
-    ElementalWarriors_init(doc);           //
+    ElementalWarriors_init(doc);           // OK
     OffDefFormation_init(doc);             //
-    ChillingBones_init(doc);               //
+    ChillingBones_init(doc);               // OK
     ErraticMana_init(doc);                 //
 
     Health_init(doc);                      //
     Initiative_init(doc);                  //
+    Speed_init(doc);
     Morale_init(doc);                      // OK
     Luck_init(doc);                        // OK
     MagicResist_init(doc);                 //
     //SpellImmune_init(doc);                 //
     ManaCost_init(doc);                    //
     ElemDamage_init(doc);                  //
-    StaffOfNetherworldTweak_init(doc);     //
     WandOfSpellTweak_init(doc);            //
 
     ChainLightning_init(doc);              //

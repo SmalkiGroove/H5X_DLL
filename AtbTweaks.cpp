@@ -5,7 +5,7 @@
 float CreatureMaxStartAtb = 0.05f;
 float WaitActionAtbReset = 0.50f;
 float MassSpellAtbReset = 0.00f;
-float SorcerySpellAtbReset = 0.10f;
+float SorcerySpellAtbReset = 0.05f;
 
 void AtbTweaks_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_FLOAT, 0x00A740F7, 4, nullptr, 0, CreatureMaxStartAtb, 0, 0 });

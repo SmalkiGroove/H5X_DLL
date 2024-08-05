@@ -1,12 +1,13 @@
 #include "pch.h"
 
 // ADD MANA COST MODIFIERS FROM ADDITIONAL ARTIFACTS
-// (47) Ring of the Magister : -8 mana
+// (47) Ring of the Magister : -6 mana
 // (112) Fortune Band of the Saint : -1 mana
 // (186) Moonlight Coat : -25% mana
 // (101) Crown of the Frost Lord : -50% mana for frost spells
 // (151) Blazing Spellbook : -33% mana for fire spells
 // (140) Sylvan Amulet : -3 mana for nature spells
+// (154) Deadwood Staff : -1 mana for dark spells
 
 void ManaCostFork();
 
@@ -21,7 +22,7 @@ __declspec(naked) void ManaCostFork() {
     __asm
     {
         je MANACOST_1
-        sub esi, 0x8
+        sub esi, 0x6
         cmp esi, 0x1
         jge ring_of_magister_end
         mov esi, 0x1
@@ -108,16 +109,36 @@ __declspec(naked) void ManaCostFork() {
         mov ecx, eax
         call[count_equipped_artifact]
         test eax, eax
-        je MANACOST_END
+        je MANACOST_6
         mov ecx, edi
         call[get_spell_school]
         cmp eax, 0x3
-        jne MANACOST_END
+        jne MANACOST_6
         sub esi, 0x3
         cmp esi, 0x1
         jge sylvan_amulet_end
         mov esi, 0x1
         sylvan_amulet_end:
+        mov dword ptr ss : [esp + 0x10] , esi
+
+        MANACOST_6:
+        mov edx, dword ptr [ebx]
+        mov ecx, ebx
+        call dword ptr [edx + 0x74]
+        push 0x9A
+        mov ecx, eax
+        call[count_equipped_artifact]
+        test eax, eax
+        je MANACOST_END
+        mov ecx, edi
+        call[get_spell_school]
+        cmp eax, 0x1
+        jne MANACOST_END
+        sub esi, 0x1
+        cmp esi, 0x1
+        jge deadwood_staff_end
+        mov esi, 0x1
+        deadwood_staff_end:
         mov dword ptr ss : [esp + 0x10] , esi
 
         MANACOST_END:

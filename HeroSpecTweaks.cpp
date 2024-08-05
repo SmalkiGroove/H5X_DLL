@@ -31,28 +31,10 @@ void EmbalmerTweak_init(pugi::xml_document& doc) {
 __declspec(naked) void EmbalmerFork() {
 	__asm
 	{
-		push eax
-		mov ecx, dword ptr [esi]
-		push ecx
-		fstp dword ptr [esi]
-		mov ecx, dword ptr [esi]
-		push ecx
-		mov dword ptr [esi], eax
-		//mov ecx, 0x5
-		mul ecx
-		add dword ptr [edi], eax
-		fld dword ptr ds : 0x00400F18 // 0
-		fimul dword ptr [esi]
-		fimul dword ptr [edi]
-		fistp dword ptr [esi]
-		mov ecx, dword ptr [esi]
-		add dword ptr [edi] , ecx
-		pop ecx
-		mov dword ptr [esi] , ecx
-		fld dword ptr [esi]
-		pop ecx
-		mov dword ptr [esi] , ecx
-		pop eax
+		add eax, 0x4
+		sar eax, 0x1
+		mul eax
+		add [edi], eax
 		jmp[Embalmer_return]
 	}
 }

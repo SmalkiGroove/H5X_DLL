@@ -3,7 +3,7 @@
 // ADD LUCK DEBUFFS FROM ADDITIONAL ARTIFACTS
 // (63) Cursed Ring : change from -2 to -1 Luck
 // (175) Spirit of Oppression : -1 Luck
-// (99) Cursed Dices : -2 Luck
+// (99) Misfortune Dices : -2 Luck
 // (164) Cloak of Darkness : -1 Luck
 // also skill Dead Man's Curse -3 Luck
 
