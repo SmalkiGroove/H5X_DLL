@@ -30,7 +30,7 @@ void FirstAidTent_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_INT, 0x009771B4, 4, nullptr, 20, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771C2, 4, nullptr, 30, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771D0, 4, nullptr, 40, 0, 0, 0 });
-	assembly_patches.push_back({ PATCH_INT, 0x009771AA, 4, nullptr, 0, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_INT, 0x009771AC, 4, nullptr, 0, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771BA, 4, nullptr, 0, 0, 0, 1 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771C8, 4, nullptr, 0, 0, 0, 2 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771D6, 4, nullptr, 0, 0, 0, 3 });
@@ -61,16 +61,16 @@ __declspec(naked) void FirstAidTentFork() {
 		
 		mov eax, dword ptr [esi + 0x4]
 		mov ecx, dword ptr [eax + 0x8]
-		mov edx, dword ptr[ecx + esi + 0x4]
-		lea ecx, dword ptr[ecx + esi + 0x4]
+		mov edx, dword ptr [ecx + esi + 0x4]
+		lea ecx, dword ptr [ecx + esi + 0x4]
 
-		call dword ptr[edx + 0x23C]
-		add dword ptr[edi], eax
+		call dword ptr [edx + 0x23C]
+		add dword ptr [edi], eax
 
-		mov eax, dword ptr[esi + 0x4]
-		mov ecx, dword ptr[eax + 0x8]
-		mov edx, dword ptr[ecx + esi + 0x4]
-		lea ecx, dword ptr[ecx + esi + 0x4]
+		mov eax, dword ptr [esi + 0x4]
+		mov ecx, dword ptr [eax + 0x8]
+		mov edx, dword ptr [ecx + esi + 0x4]
+		lea ecx, dword ptr [ecx + esi + 0x4]
 
 		jmp[FirstAidHeal_return]
 	}

@@ -53,38 +53,24 @@ void assignHexStringToStruct(T& structure, const std::string& hexString) {
 
 // game functions
 
-typedef int(__thiscall* GetHeroDataFunc)(int*);
-extern GetHeroDataFunc get_hero_data;
+typedef int(__thiscall* GameFunction)(int*);
 
-typedef int(__thiscall* HasHeroSpecId)(int*);
-extern HasHeroSpecId has_hero_spec;
+extern GameFunction get_hero_data;
+extern GameFunction has_hero_spec;
 
-typedef int(__thiscall* SkillIdFromStrFunc)(int* skill);
-extern SkillIdFromStrFunc skill_id_from_str;
+extern GameFunction get_skill_id;
+extern GameFunction get_skill_mastery;
 
-typedef int(__thiscall* ReturnMasteryIdFunc)(int* mastery);
-extern ReturnMasteryIdFunc mastery_id_from_str;
+extern GameFunction count_equipped_artifact;
 
-typedef int(__thiscall* ReturnSpellIdFunc)(int*);
-extern ReturnSpellIdFunc spell_id_from_str;
-int spell_id_from_str_precursor(std::string spell_name);
+extern GameFunction get_spell_id;
+extern GameFunction get_spell_element;
+extern GameFunction get_spell_school;
+extern GameFunction is_spell_empowered;
 
-typedef bool(__thiscall* IsSpellEmpoweredFunc)(int* spell);
-extern IsSpellEmpoweredFunc is_spell_empowered;
+extern GameFunction get_creature_data;
 
-typedef int(__thiscall* CountEquippedArtifactFunc)(int* artifact);
-extern CountEquippedArtifactFunc count_equipped_artifact;
-
-typedef int(__thiscall* GetCreatureDataFunc)(int* creature);
-extern GetCreatureDataFunc get_creature_data;
-
-typedef int(__thiscall* GetSpellElementFunc)(int* spell);
-extern GetSpellElementFunc get_spell_element;
-
-typedef int(__thiscall* GetSpellMagicSchool)(int* spell);
-extern GetSpellMagicSchool get_spell_school;
-
-typedef int(__thiscall* Unknown1Func)(int*);
-extern Unknown1Func call_unknown_1;
+extern GameFunction call_unknown_1;
+extern GameFunction call_unknown_2;
 
 #endif

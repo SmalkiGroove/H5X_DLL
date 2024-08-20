@@ -71,6 +71,7 @@ void HeroMovement_init(pugi::xml_document& doc);
 void CovenMistressTweak_init(pugi::xml_document& doc);
 void MasterOfElementsTweak_init(pugi::xml_document& doc);
 void EmbalmerTweak_init(pugi::xml_document& doc);
+void StormcallerTweak_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
@@ -88,6 +89,9 @@ void ElementalWarriors_init(pugi::xml_document& doc);
 void OffDefFormation_init(pugi::xml_document& doc);
 void ChillingBones_init(pugi::xml_document& doc);
 void ErraticMana_init(pugi::xml_document& doc);
+void WeakeningStrike_init(pugi::xml_document& doc);
+void MasterOfAnimationClear_init(pugi::xml_document& doc);
+void VengefulLight_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
 void Initiative_init(pugi::xml_document& doc);
@@ -100,6 +104,7 @@ void ManaCost_init(pugi::xml_document& doc);
 void ElemDamage_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);
 
+void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);
 void Earthquake_init(pugi::xml_document& doc);
 void Vulnerability_init(pugi::xml_document& doc);

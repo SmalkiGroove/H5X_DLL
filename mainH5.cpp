@@ -23,18 +23,19 @@ void init_patches(pugi::xml_document& doc) {
     AgilityFix_init(doc);                  // OK
     RetaliationStrikeFix_init(doc);        //
     ColdDeathFix_init(doc);                //
-    UnholyWordImmunitiesFix_init(doc);     //
+    UnholyWordImmunitiesFix_init(doc);     // OK
 
     HeroMovement_init(doc);                // OK
     CovenMistressTweak_init(doc);          //
     MasterOfElementsTweak_init(doc);       //
     EmbalmerTweak_init(doc);               // OK
+    StormcallerTweak_init(doc);            // OK
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
     BattleDiveTweak_init(doc);             //
     EnergyChannelTweak_init(doc);          //
-    PawStrikeTweak_init(doc);              //
+    PawStrikeTweak_init(doc);              // OK
     FirstAidTent_init(doc);                // OK
     BallistaCatapult_init(doc);            // OK
     TowerDamage_init(doc);                 // OK
@@ -46,18 +47,22 @@ void init_patches(pugi::xml_document& doc) {
     OffDefFormation_init(doc);             //
     ChillingBones_init(doc);               // OK
     ErraticMana_init(doc);                 //
+    WeakeningStrike_init(doc);             // OK
+    MasterOfAnimationClear_init(doc);      //
+    VengefulLight_init(doc);               //
 
     Health_init(doc);                      //
     Initiative_init(doc);                  //
-    Speed_init(doc);
+    Speed_init(doc);                       // OK
     Morale_init(doc);                      // OK
     Luck_init(doc);                        // OK
     MagicResist_init(doc);                 //
     //SpellImmune_init(doc);                 //
-    ManaCost_init(doc);                    //
+    ManaCost_init(doc);                    // OK
     ElemDamage_init(doc);                  //
     WandOfSpellTweak_init(doc);            //
 
+    //LightningStun_init(doc);               //
     ChainLightning_init(doc);              //
     Earthquake_init(doc);                  // OK
     Vulnerability_init(doc);               // OK
@@ -66,7 +71,7 @@ void init_patches(pugi::xml_document& doc) {
     BaseMorale_init(doc);                  // OK
     SplitStack_init(doc);                  // OK
     TrainingGrounds_init(doc);             //
-    BarbarianShrineExp_init(doc);          //
+    BarbarianShrineExp_init(doc);          // OK
     WarMachineTier_init(doc);              // OK
 }
 

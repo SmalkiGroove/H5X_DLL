@@ -225,9 +225,14 @@
     <ClCompile Include="HeroMaxSkills.cpp" />
     <ClCompile Include="HeroMovement.cpp" />
     <ClCompile Include="HeroScreenUI.cpp" />
-    <ClCompile Include="HeroSpecTweaks.cpp" />
+    <ClCompile Include="HeroSpecEmbalmer.cpp" />
+    <ClCompile Include="HeroSpecMasterOfElements.cpp" />
+    <ClCompile Include="HeroSpecStormcaller.cpp" />
+    <ClCompile Include="HeroSpecCovenMistress.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
     <ClCompile Include="LevelCurve.cpp" />
+    <ClCompile Include="LightningStun.cpp" />
+    <ClCompile Include="MasterOfAnimation.cpp" />
     <ClCompile Include="ModElementalDamages.cpp" />
     <ClCompile Include="ModHealth.cpp" />
     <ClCompile Include="ModInitiative.cpp" />
@@ -255,8 +260,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="mainH5.cpp" />
+    <ClCompile Include="VengefulLight.cpp" />
     <ClCompile Include="Vulnerability.cpp" />
     <ClCompile Include="WarMachineTier.cpp" />
+    <ClCompile Include="WeakeningStrike.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

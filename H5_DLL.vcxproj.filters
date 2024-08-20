@@ -188,7 +188,7 @@
     <ClCompile Include="HeroMovement.cpp">
       <Filter>Source Files\patches\Heroes</Filter>
     </ClCompile>
-    <ClCompile Include="HeroSpecTweaks.cpp">
+    <ClCompile Include="HeroSpecCovenMistress.cpp">
       <Filter>Source Files\patches\Heroes</Filter>
     </ClCompile>
     <ClCompile Include="LevelCurve.cpp">
@@ -241,6 +241,27 @@
     </ClCompile>
     <ClCompile Include="ModSpellProof.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="LightningStun.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="WeakeningStrike.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroSpecStormcaller.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroSpecEmbalmer.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroSpecMasterOfElements.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="MasterOfAnimation.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="VengefulLight.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
