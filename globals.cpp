@@ -19,6 +19,19 @@ GameFunction get_creature_data = (GameFunction)0x0089FBF0;
 GameFunction call_unknown_1 = (GameFunction)0x009BB9C0;
 GameFunction call_unknown_2 = (GameFunction)0x00BCB3F0;
 
+// constants
+int consti_1 = 1;
+int consti_2 = 2;
+float constf_1 = 1.0f;
+float constf_2 = 2.0f;
+float constf_1_1 = 1.1f;
+float constf_1_2 = 1.2f;
+float constf_1_5 = 1.5f;
+float constf_0_1 = 0.1f;
+float constf_0_5 = 0.5f;
+float constf_0_8 = 0.8f;
+float constf_0_9 = 0.9f;
+
 void initLog() {
     if (logs_enabled) {
         logs.open("H5.log");

@@ -72,18 +72,21 @@ void CovenMistressTweak_init(pugi::xml_document& doc);
 void MasterOfElementsTweak_init(pugi::xml_document& doc);
 void EmbalmerTweak_init(pugi::xml_document& doc);
 void StormcallerTweak_init(pugi::xml_document& doc);
+void OverheaterTweak_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
 void BattleDiveTweak_init(pugi::xml_document& doc);
 void EnergyChannelTweak_init(pugi::xml_document& doc);
 void PawStrikeTweak_init(pugi::xml_document& doc);
+void WhipStrikeTweak_init(pugi::xml_document& doc);
 void FirstAidTent_init(pugi::xml_document& doc);
 void BallistaCatapult_init(pugi::xml_document& doc);
 void TowerDamage_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Arcanism_init(pugi::xml_document& doc);
+void ElementalVision_init(pugi::xml_document& doc);
 void EnlightenmentStats_init(pugi::xml_document& doc);
 void ElementalWarriors_init(pugi::xml_document& doc);
 void OffDefFormation_init(pugi::xml_document& doc);
@@ -94,6 +97,8 @@ void MasterOfAnimationClear_init(pugi::xml_document& doc);
 void VengefulLight_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
+void CreatureAttack_init(pugi::xml_document& doc);
+void DamageOutput_init(pugi::xml_document& doc);
 void Initiative_init(pugi::xml_document& doc);
 void Speed_init(pugi::xml_document& doc);
 void Morale_init(pugi::xml_document& doc);

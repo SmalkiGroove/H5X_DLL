@@ -27,9 +27,6 @@ void Initiative_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, HeroInitiative_fork, 6, HeroInitiativeFork, 0, 0, 0 });
 }
 
-float plunderer_shoes_bonus = 1.0f;
-float boots_of_swiftness_bonus = 2.0f;
-float harpy_boots_bonus = 1.0f;
 __declspec(naked) void CreatureInitiativeFork() {
     __asm
     {
@@ -42,7 +39,7 @@ __declspec(naked) void CreatureInitiativeFork() {
         test eax, eax
         je CRT_INIT_2
         fld dword ptr ss : [esp + 0x20]
-        fadd dword ptr [plunderer_shoes_bonus]
+        fadd dword ptr [constf_1]
         fstp dword ptr ss : [esp + 0x20]
 
         CRT_INIT_2:
@@ -52,7 +49,7 @@ __declspec(naked) void CreatureInitiativeFork() {
         test eax, eax
         je CRT_INIT_3
         fld dword ptr ss : [esp + 0x20]
-        fadd dword ptr [boots_of_swiftness_bonus]
+        fadd dword ptr [constf_2]
         fstp dword ptr ss : [esp + 0x20]
 
         CRT_INIT_3:
@@ -62,7 +59,7 @@ __declspec(naked) void CreatureInitiativeFork() {
         test eax, eax
         je CRT_INIT_END
         fld dword ptr ss : [esp + 0x20]
-        fadd dword ptr [harpy_boots_bonus]
+        fadd dword ptr [constf_1]
         fstp dword ptr ss : [esp + 0x20]
 
         CRT_INIT_END:
@@ -70,7 +67,6 @@ __declspec(naked) void CreatureInitiativeFork() {
     }
 }
 
-float val_float_1 = 1.0f;
 float staff_of_netherworld_malus = 0.15f;
 float skull_mask_malus = 0.08f;
 __declspec(naked) void CreatureInitlessFork() {
@@ -111,13 +107,34 @@ __declspec(naked) void CreatureInitlessFork() {
 }
 
 int sub_get_some_data = 0x00420DF0;
-float base_hero_bonus = 0.5f;
-float moonblade_bonus = 1.0f;
-float ring_of_celerity_bonus = 2.0f;
-float focus_ring_malus = 2.0f;
+float knowledge_to_init_ratio = 0.005f;
 __declspec(naked) void HeroInitiativeFork() {
     __asm
     {
+        mov eax, dword ptr [esi - 0x118]
+        mov ecx, dword ptr [eax + 0x8]
+        lea esi, dword ptr [ecx + esi - 0x118]
+        push edi
+        lea ecx, dword ptr ss : [esp + 0x10]
+        call[sub_get_some_data]
+        mov edx, dword ptr[esi]
+        mov ecx, esi
+        mov edi, eax
+        call dword ptr[edx + 0x23C]
+        pop eax
+        mov eax, edx
+        mov ecx, [esi - 0x6C]
+        call dword ptr [edx + 0x74]
+        mov ecx, eax
+        push 0x3A
+        call[count_equipped_artifact]
+        test eax, eax
+        je HERO_INIT_2
+        fld dword ptr ss : [esp + 0x4]
+        fadd dword ptr [constf_1]
+        fstp dword ptr ss : [esp + 0x4]
+
+        HERO_INIT_2:
         mov eax, dword ptr [esi - 0x118]
         mov ecx, dword ptr [eax + 0x8]
         lea esi, dword ptr [ecx + esi - 0x118]
@@ -130,30 +147,6 @@ __declspec(naked) void HeroInitiativeFork() {
         call dword ptr [edx + 0x23C]
         pop eax
         mov eax, edx
-        mov ecx, [esi - 0x6C]
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x3A
-        call[count_equipped_artifact]
-        test eax, eax
-        je HERO_INIT_2
-        fld dword ptr ss : [esp + 0x4]
-        fadd dword ptr [moonblade_bonus]
-        fstp dword ptr ss : [esp + 0x4]
-
-        HERO_INIT_2:
-        mov eax, dword ptr[esi - 0x118]
-        mov ecx, dword ptr[eax + 0x8]
-        lea esi, dword ptr[ecx + esi - 0x118]
-        push edi
-        lea ecx, dword ptr ss : [esp + 0x10]
-        call[sub_get_some_data]
-        mov edx, dword ptr[esi]
-        mov ecx, esi
-        mov edi, eax
-        call dword ptr[edx + 0x23C]
-        pop eax
-        mov eax, edx
         mov ecx, [esi-0x6C]
         call dword ptr [edx + 0x74]
         mov ecx, eax
@@ -162,7 +155,7 @@ __declspec(naked) void HeroInitiativeFork() {
         test eax, eax
         je HERO_INIT_3
         fld dword ptr ss : [esp + 0x4]
-        fadd dword ptr [ring_of_celerity_bonus]
+        fadd dword ptr [constf_2]
         fstp dword ptr ss : [esp + 0x4]
 
         HERO_INIT_3:
@@ -186,13 +179,30 @@ __declspec(naked) void HeroInitiativeFork() {
         test eax, eax
         je HERO_INIT_END
         fld dword ptr ss : [esp + 0x4]
-        fsub dword ptr [focus_ring_malus]
+        fsub dword ptr [constf_2]
         fstp dword ptr ss : [esp + 0x4]
 
         HERO_INIT_END:
-        fld dword ptr ss : [esp + 0x4]
-        fadd dword ptr [base_hero_bonus]
+        mov eax, dword ptr [esi - 0x118]
+        mov ecx, dword ptr [eax + 0x8]
+        lea esi, dword ptr [ecx + esi - 0x118]
+        push edi
+        lea ecx, dword ptr ss : [esp + 0x10]
+        call[sub_get_some_data]
+        mov edi, eax
+        mov edx, dword ptr [esi]
+        mov ecx, esi
+        call dword ptr [edx + 0x238]
+        pop ecx
+        mov ecx, dword ptr ss : [esp]
+        mov dword ptr ss : [esp], eax
+        fild dword ptr ss : [esp]
+        fmul dword ptr [knowledge_to_init_ratio]
+        fadd dword ptr [constf_0_1]
+        fadd dword ptr ss : [esp + 0x4]
         fstp dword ptr ss : [esp + 0x4]
+        mov dword ptr ss : [esp], ecx
+
         mov ecx, dword ptr ss : [esp + 0xC]
         test ecx, ecx
 

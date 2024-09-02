@@ -73,4 +73,20 @@ extern GameFunction get_creature_data;
 extern GameFunction call_unknown_1;
 extern GameFunction call_unknown_2;
 
+
+// constants
+
+extern int consti_1;
+extern int consti_2;
+extern float constf_1;
+extern float constf_2;
+extern float constf_1_1;
+extern float constf_1_2;
+extern float constf_1_5;
+extern float constf_0_1;
+extern float constf_0_5;
+extern float constf_0_8;
+extern float constf_0_9;
+
+
 #endif

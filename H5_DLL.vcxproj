@@ -210,6 +210,7 @@
     <ClCompile Include="CreatureSpellpower.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Earthquake.cpp" />
+    <ClCompile Include="ElementalVision.cpp" />
     <ClCompile Include="ElementalWarriors.cpp" />
     <ClCompile Include="EliteCastersFix.cpp" />
     <ClCompile Include="EnablePEST.cpp" />
@@ -227,12 +228,16 @@
     <ClCompile Include="HeroScreenUI.cpp" />
     <ClCompile Include="HeroSpecEmbalmer.cpp" />
     <ClCompile Include="HeroSpecMasterOfElements.cpp" />
+    <ClCompile Include="HeroSpecOverheater.cpp" />
     <ClCompile Include="HeroSpecStormcaller.cpp" />
     <ClCompile Include="HeroSpecCovenMistress.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
     <ClCompile Include="LevelCurve.cpp" />
     <ClCompile Include="LightningStun.cpp" />
     <ClCompile Include="MasterOfAnimation.cpp" />
+    <ClCompile Include="ModAttack.cpp" />
+    <ClCompile Include="ModDamageOutput.cpp" />
+    <ClCompile Include="ModDefense.cpp" />
     <ClCompile Include="ModElementalDamages.cpp" />
     <ClCompile Include="ModHealth.cpp" />
     <ClCompile Include="ModInitiative.cpp" />

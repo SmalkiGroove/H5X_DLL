@@ -65,8 +65,19 @@ __declspec(naked) void LuckFork() {
         push 0x67
         call dword ptr[edx + 0x290]
         test al, al
-        jz LUCK_END
+        jz LUCK_ERUINA
         sub esi, 0x3
+        
+     LUCK_ERUINA:
+        mov eax, [edi + 0x4]
+        mov ecx, [eax + 0x8]
+        mov edx, [ecx + edi + 0x4]
+        lea ecx, [ecx + edi + 0x4]
+        push 0x35
+        call dword ptr [edx + 0x294]
+        test al, al
+        jz LUCK_END
+        sub esi, 0x1
 
         LUCK_END:
         jmp[Luck_return]

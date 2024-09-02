@@ -8,7 +8,7 @@ std::vector<assembly_patch> assembly_patches;
 void init_patches(pugi::xml_document& doc) {
 
     Scripts_init(doc);                     // OK
-    Pest_init(doc);                        // 
+    Pest_init(doc);                        // OK
     HeroMaxSkills_init(doc);               // OK
     HeroScreenUI_init(doc);                // OK
     BattlefieldSize_init(doc);             // OK
@@ -21,7 +21,7 @@ void init_patches(pugi::xml_document& doc) {
     RuneOfTheDragonForm_init(doc);         // OK
     CombatAIFix_init(doc);                 // OK
     AgilityFix_init(doc);                  // OK
-    RetaliationStrikeFix_init(doc);        //
+    RetaliationStrikeFix_init(doc);        // OK
     ColdDeathFix_init(doc);                //
     UnholyWordImmunitiesFix_init(doc);     // OK
 
@@ -30,18 +30,21 @@ void init_patches(pugi::xml_document& doc) {
     MasterOfElementsTweak_init(doc);       //
     EmbalmerTweak_init(doc);               // OK
     StormcallerTweak_init(doc);            // OK
+    OverheaterTweak_init(doc);             // OK
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
     BattleDiveTweak_init(doc);             //
     EnergyChannelTweak_init(doc);          //
     PawStrikeTweak_init(doc);              // OK
+    WhipStrikeTweak_init(doc);             // OK
     FirstAidTent_init(doc);                // OK
     BallistaCatapult_init(doc);            // OK
     TowerDamage_init(doc);                 // OK
 
     Avengers_init(doc);                    // 
     Arcanism_init(doc);                    //
+    ElementalVision_init(doc);             //
     EnlightenmentStats_init(doc);          // OK
     ElementalWarriors_init(doc);           // OK
     OffDefFormation_init(doc);             //
@@ -49,9 +52,11 @@ void init_patches(pugi::xml_document& doc) {
     ErraticMana_init(doc);                 //
     WeakeningStrike_init(doc);             // OK
     MasterOfAnimationClear_init(doc);      //
-    VengefulLight_init(doc);               //
+    VengefulLight_init(doc);               // OK
 
-    Health_init(doc);                      //
+    Health_init(doc);                      // OK
+    //CreatureAttack_init(doc);              //
+    DamageOutput_init(doc);                //
     Initiative_init(doc);                  //
     Speed_init(doc);                       // OK
     Morale_init(doc);                      // OK
@@ -62,7 +67,7 @@ void init_patches(pugi::xml_document& doc) {
     ElemDamage_init(doc);                  //
     WandOfSpellTweak_init(doc);            //
 
-    //LightningStun_init(doc);               //
+    LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              //
     Earthquake_init(doc);                  // OK
     Vulnerability_init(doc);               // OK

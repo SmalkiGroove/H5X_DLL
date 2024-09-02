@@ -29,7 +29,6 @@ void ElemDamage_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, ElemDamage_fork, 11, ElemDamageFork, 0, 0, 0 });
 }
 
-float val_float_1p1 = 1.1f;
 __declspec(naked) void ElemDamageFork() {
     __asm
     {
@@ -147,7 +146,7 @@ __declspec(naked) void ElemDamageFork() {
         fnstcw word ptr [esp + 0x18]
         push 0x0
         movzx eax, word ptr [esp + 0x1C]
-        fmul dword ptr [val_float_1p1]
+        fmul dword ptr [constf_1_1]
         or ah, 0xC
         push 0x66
         mov dl, 0x1

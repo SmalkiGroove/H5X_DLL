@@ -28,8 +28,6 @@ __declspec(naked) void BattleDiveFork() {
 // Energy Channel reduce hero mana cost from 25% to 10%
 
 void EnergyChannelTweak_init(pugi::xml_document& doc) {
-	//assembly_patches.push_back({ PATCH_FLOAT, 0x00400F40, 4, nullptr, 0, 0.90f, 0, 0 });
-	//assembly_patches.push_back({ PATCH_WRTE, 0x0097828C, 4, nullptr, 0, 0, 0, "40034000" });
 	assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097828C, 4, nullptr, 0, 0.90f, 0, 0 });
 }
 
@@ -57,4 +55,14 @@ __declspec(naked) void PawStrikeFork() {
 		fild dword ptr [esp + 0x10]
 		jmp[PawStrike_return]
 	}
+}
+
+// Whip Strike spells changed
+
+void WhipStrikeTweak_init(pugi::xml_document& doc) {
+	assembly_patches.push_back({ PATCH_INT, 0x00A5E2DF, 4, nullptr, 1, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_INT, 0x00A5E2E6, 4, nullptr, 13, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_INT, 0x00A5E2F2, 4, nullptr, 17, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_WRTE, 0x00A5E2E5, 1, nullptr, 0, 0, 0, "BB" });
+	assembly_patches.push_back({ PATCH_WRTE, 0x00A5E2EA, 8, nullptr, 0, 0, 0, "83F84B7D02EB05BB" });
 }
