@@ -15,7 +15,7 @@ void ElemDamageFork();
 void ElemDamageForkAlt();
 
 int ElemDamage_fork = 0x00977086;
-int ElemDamage_return = 0x0097708B;
+int ElemDamage_return = 0x00977091;
 int ElemDamage_end = 0x0097712F;
 
 void ElemDamage_init(pugi::xml_document& doc) {
@@ -135,12 +135,12 @@ __declspec(naked) void ElemDamageFork() {
         mov ecx, dword ptr [ebp + 0x4]
         call[get_spell_element]
         cmp eax, 0x0
-        je ELEMDAMAGE_RETURN
+        je ELEMDAMAGE_6
         push 0x66
         mov ecx, edi
         call[count_equipped_artifact]
         test eax, eax
-        je ELEMDAMAGE_RETURN
+        je ELEMDAMAGE_6
         fild dword ptr [esp + 0x10]
         push 0x0
         fnstcw word ptr [esp + 0x18]
@@ -149,6 +149,32 @@ __declspec(naked) void ElemDamageFork() {
         fmul dword ptr [constf_1_1]
         or ah, 0xC
         push 0x66
+        mov dl, 0x1
+        mov ecx, ebx
+        mov dword ptr [esp + 0x1C], eax
+        fldcw word ptr [esp + 0x1C]
+        fistp dword ptr [esp + 0x1C]
+        fldcw word ptr [esp + 0x20]
+        call[call_unknown_1]
+    ELEMDAMAGE_6:
+        mov ecx, dword ptr [ebp + 0x4]
+        call[get_spell_school]
+        cmp eax, 0x0
+        jne ELEMDAMAGE_RETURN
+        push 0x95
+        mov eax, dword ptr [esi]
+        mov ecx, esi
+        call dword ptr [eax + 0x290]
+        test al, al
+        jz ELEMDAMAGE_RETURN
+        fild dword ptr [esp + 0x10]
+        push 0x0
+        fnstcw word ptr [esp + 0x18]
+        push 0x0
+        movzx eax, word ptr [esp + 0x1C]
+        fmul dword ptr [constf_1_3]
+        or ah, 0xC
+        push 0x95
         mov dl, 0x1
         mov ecx, ebx
         mov dword ptr [esp + 0x1C], eax

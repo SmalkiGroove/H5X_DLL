@@ -74,7 +74,7 @@ __declspec(naked) void MoraleFork() {
         mov edx, [ecx + edi + 0x4]
         lea ecx, [ecx + edi + 0x4]
         push 0x50
-        call dword ptr[edx + 0x294]
+        call dword ptr [edx + 0x294]
         test al, al
         jz MORALE_END
         sub esi, 0x1

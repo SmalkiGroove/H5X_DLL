@@ -44,12 +44,13 @@ void init_patches(pugi::xml_document& doc) {
 
     Avengers_init(doc);                    // 
     Arcanism_init(doc);                    //
+    CombatSkill_init(doc);                 // OK
     ElementalVision_init(doc);             //
     EnlightenmentStats_init(doc);          // OK
     ElementalWarriors_init(doc);           // OK
-    OffDefFormation_init(doc);             //
+    OffDefFormation_init(doc);             // OK
     ChillingBones_init(doc);               // OK
-    ErraticMana_init(doc);                 //
+    ErraticMana_init(doc);                 // OK
     WeakeningStrike_init(doc);             // OK
     MasterOfAnimationClear_init(doc);      //
     VengefulLight_init(doc);               // OK

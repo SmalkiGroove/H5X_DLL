@@ -86,6 +86,7 @@ void TowerDamage_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Arcanism_init(pugi::xml_document& doc);
+void CombatSkill_init(pugi::xml_document& doc);
 void ElementalVision_init(pugi::xml_document& doc);
 void EnlightenmentStats_init(pugi::xml_document& doc);
 void ElementalWarriors_init(pugi::xml_document& doc);

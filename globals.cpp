@@ -24,13 +24,17 @@ int consti_1 = 1;
 int consti_2 = 2;
 float constf_1 = 1.0f;
 float constf_2 = 2.0f;
-float constf_1_1 = 1.1f;
-float constf_1_2 = 1.2f;
-float constf_1_5 = 1.5f;
 float constf_0_1 = 0.1f;
+float constf_0_2 = 0.2f;
+float constf_0_3 = 0.3f;
 float constf_0_5 = 0.5f;
+float constf_0_7 = 0.7f;
 float constf_0_8 = 0.8f;
 float constf_0_9 = 0.9f;
+float constf_1_1 = 1.1f;
+float constf_1_2 = 1.2f;
+float constf_1_3 = 1.3f;
+float constf_1_5 = 1.5f;
 
 void initLog() {
     if (logs_enabled) {
