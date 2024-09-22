@@ -28,3 +28,7 @@ void WandOfSpellTweak_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_INT, 0x00E92370, 4, nullptr, 8, 0, 0, 0 });   //  9 - 8 charges
 	assembly_patches.push_back({ PATCH_INT, 0x00E92374, 4, nullptr, 2, 0, 0, 0 });   // 10 - 2 charges
 }
+
+void AllSeeingCrownTweak_init(pugi::xml_document& doc) {
+	assembly_patches.push_back({ PATCH_BYTE, 0x00B4C020, 1, nullptr, 127, 0, 0, 0 });
+}

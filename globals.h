@@ -70,7 +70,9 @@ extern GameFunction is_spell_empowered;
 
 extern GameFunction get_creature_data;
 
-extern GameFunction call_unknown_1;
+extern GameFunction notify_skill_buff;
+extern GameFunction notify_artifact_buff;
+
 extern GameFunction call_unknown_2;
 
 
@@ -83,7 +85,9 @@ extern float constf_2;
 extern float constf_0_1;
 extern float constf_0_2;
 extern float constf_0_3;
+extern float constf_0_4;
 extern float constf_0_5;
+extern float constf_0_6;
 extern float constf_0_7;
 extern float constf_0_8;
 extern float constf_0_9;
@@ -91,6 +95,7 @@ extern float constf_1_1;
 extern float constf_1_2;
 extern float constf_1_3;
 extern float constf_1_5;
+extern float constf_percent;
 
 
 #endif

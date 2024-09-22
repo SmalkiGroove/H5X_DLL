@@ -41,7 +41,7 @@ struct assembly_patch {
     int value_int;
     float value_float;
     double value_double;
-    char value_bytes[100];
+    char value_bytes[128];
 };
 
 extern std::vector<assembly_patch> assembly_patches;
@@ -85,6 +85,7 @@ void BallistaCatapult_init(pugi::xml_document& doc);
 void TowerDamage_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
+void Artificier_init(pugi::xml_document& doc);
 void Arcanism_init(pugi::xml_document& doc);
 void CombatSkill_init(pugi::xml_document& doc);
 void ElementalVision_init(pugi::xml_document& doc);
@@ -104,11 +105,13 @@ void Initiative_init(pugi::xml_document& doc);
 void Speed_init(pugi::xml_document& doc);
 void Morale_init(pugi::xml_document& doc);
 void Luck_init(pugi::xml_document& doc);
+void MagicProof_init(pugi::xml_document& doc);
 void MagicResist_init(pugi::xml_document& doc);
 void SpellImmune_init(pugi::xml_document& doc);
 void ManaCost_init(pugi::xml_document& doc);
 void ElemDamage_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);
+void AllSeeingCrownTweak_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);

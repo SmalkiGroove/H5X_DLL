@@ -42,7 +42,8 @@ void init_patches(pugi::xml_document& doc) {
     BallistaCatapult_init(doc);            // OK
     TowerDamage_init(doc);                 // OK
 
-    Avengers_init(doc);                    // 
+    Avengers_init(doc);                    // OK
+    Artificier_init(doc);                  //
     Arcanism_init(doc);                    //
     CombatSkill_init(doc);                 // OK
     ElementalVision_init(doc);             //
@@ -62,11 +63,13 @@ void init_patches(pugi::xml_document& doc) {
     Speed_init(doc);                       // OK
     Morale_init(doc);                      // OK
     Luck_init(doc);                        // OK
+    MagicProof_init(doc);                  //
     MagicResist_init(doc);                 //
     //SpellImmune_init(doc);                 //
     ManaCost_init(doc);                    // OK
     ElemDamage_init(doc);                  //
     WandOfSpellTweak_init(doc);            //
+    AllSeeingCrownTweak_init(doc);         //
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              //
@@ -93,7 +96,7 @@ int main() {
     init_patches(h5_stats);
     writeLog(INFO, "Commence patching...");
     for (const auto& patch : assembly_patches) {
-        unsigned char* byteArray = new unsigned char[100];
+        unsigned char* byteArray = new unsigned char[128];
         switch (patch.type) {
         case PATCH_HOOK:
             JumpToFunction((void*)patch.address, patch.hookedFunction, patch.size, 0xE9);

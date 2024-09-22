@@ -55,7 +55,7 @@ __declspec(naked) void ElemDamageFork() {
         fldcw word ptr [esp + 0x1C]
         fistp dword ptr [esp + 0x1C]
         fldcw word ptr [esp + 0x20]
-        call[call_unknown_1]
+        call[notify_artifact_buff]
     ELEMDAMAGE_2:
         mov ecx, dword ptr [ebp + 0x4]
         call[get_spell_element]
@@ -80,7 +80,7 @@ __declspec(naked) void ElemDamageFork() {
         fldcw word ptr [esp + 0x1C]
         fistp dword ptr [esp + 0x1C]
         fldcw word ptr [esp + 0x20]
-        call[call_unknown_1]
+        call[notify_artifact_buff]
     ELEMDAMAGE_3:
         mov ecx, dword ptr [ebp + 0x4]
         call[get_spell_element]
@@ -105,7 +105,7 @@ __declspec(naked) void ElemDamageFork() {
         fldcw word ptr [esp + 0x1C]
         fistp dword ptr [esp + 0x1C]
         fldcw word ptr [esp + 0x20]
-        call[call_unknown_1]
+        call[notify_artifact_buff]
     ELEMDAMAGE_4:
         mov ecx, dword ptr [ebp + 0x4]
         call[get_spell_element]
@@ -130,7 +130,7 @@ __declspec(naked) void ElemDamageFork() {
         fldcw word ptr [esp + 0x1C]
         fistp dword ptr [esp + 0x1C]
         fldcw word ptr [esp + 0x20]
-        call[call_unknown_1]
+        call[notify_artifact_buff]
     ELEMDAMAGE_5:
         mov ecx, dword ptr [ebp + 0x4]
         call[get_spell_element]
@@ -155,7 +155,7 @@ __declspec(naked) void ElemDamageFork() {
         fldcw word ptr [esp + 0x1C]
         fistp dword ptr [esp + 0x1C]
         fldcw word ptr [esp + 0x20]
-        call[call_unknown_1]
+        call[notify_artifact_buff]
     ELEMDAMAGE_6:
         mov ecx, dword ptr [ebp + 0x4]
         call[get_spell_school]
@@ -181,7 +181,7 @@ __declspec(naked) void ElemDamageFork() {
         fldcw word ptr [esp + 0x1C]
         fistp dword ptr [esp + 0x1C]
         fldcw word ptr [esp + 0x20]
-        call[call_unknown_1]
+        call[notify_skill_buff]
     ELEMDAMAGE_RETURN:
         cmp dword ptr [esp + 0x10], 0x0
         jle ELEMDAMAGE_END

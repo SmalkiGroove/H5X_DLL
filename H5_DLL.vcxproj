@@ -196,6 +196,7 @@
     <ClCompile Include="AgilityFix.cpp" />
     <ClCompile Include="Arcanism.cpp" />
     <ClCompile Include="ArtifactTweaks.cpp" />
+    <ClCompile Include="Artificier.cpp" />
     <ClCompile Include="AtbTweaks.cpp" />
     <ClCompile Include="Avengers.cpp" />
     <ClCompile Include="BallistaCatapult.cpp" />
