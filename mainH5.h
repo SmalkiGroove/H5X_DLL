@@ -110,6 +110,7 @@ void MagicResist_init(pugi::xml_document& doc);
 void SpellImmune_init(pugi::xml_document& doc);
 void ManaCost_init(pugi::xml_document& doc);
 void ElemDamage_init(pugi::xml_document& doc);
+void GoldenGoose_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);
 void AllSeeingCrownTweak_init(pugi::xml_document& doc);
 
@@ -118,9 +119,11 @@ void ChainLightning_init(pugi::xml_document& doc);
 void Earthquake_init(pugi::xml_document& doc);
 void Vulnerability_init(pugi::xml_document& doc);
 void Frenzy_init(pugi::xml_document& doc);
+void ConjureAtb_init(pugi::xml_document& doc);
 
 void BaseMorale_init(pugi::xml_document& doc);
 void SplitStack_init(pugi::xml_document& doc);
 void TrainingGrounds_init(pugi::xml_document& doc);
 void BarbarianShrineExp_init(pugi::xml_document& doc);
 void WarMachineTier_init(pugi::xml_document& doc);
+void LearnWarcries_init(pugi::xml_document& doc);

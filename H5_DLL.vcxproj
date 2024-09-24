@@ -208,6 +208,7 @@
     <ClCompile Include="ColdDeathFix.cpp" />
     <ClCompile Include="Combat.cpp" />
     <ClCompile Include="CombatAIFix.cpp" />
+    <ClCompile Include="ConjureAtb.cpp" />
     <ClCompile Include="CreatureAbilitiesTweaks.cpp" />
     <ClCompile Include="CreatureSpellpower.cpp" />
     <ClCompile Include="dllmain.cpp" />
@@ -225,6 +226,7 @@
     <ClCompile Include="ArcaneRenewalFix.cpp" />
     <ClCompile Include="EmpoweredArmageddonFixes.cpp" />
     <ClCompile Include="EnlightenmentForBarbsFix.cpp" />
+    <ClCompile Include="GoldenGoose.cpp" />
     <ClCompile Include="HeroMaxSkills.cpp" />
     <ClCompile Include="HeroMovement.cpp" />
     <ClCompile Include="HeroScreenUI.cpp" />
@@ -234,6 +236,7 @@
     <ClCompile Include="HeroSpecStormcaller.cpp" />
     <ClCompile Include="HeroSpecCovenMistress.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
+    <ClCompile Include="LearnWarcries.cpp" />
     <ClCompile Include="LevelCurve.cpp" />
     <ClCompile Include="LightningStun.cpp" />
     <ClCompile Include="MasterOfAnimation.cpp" />

@@ -43,10 +43,10 @@ void init_patches(pugi::xml_document& doc) {
     TowerDamage_init(doc);                 // OK
 
     Avengers_init(doc);                    // OK
-    Artificier_init(doc);                  //
+    Artificier_init(doc);                  // OK
     Arcanism_init(doc);                    //
     CombatSkill_init(doc);                 // OK
-    ElementalVision_init(doc);             //
+    ElementalVision_init(doc);             // OK
     EnlightenmentStats_init(doc);          // OK
     ElementalWarriors_init(doc);           // OK
     OffDefFormation_init(doc);             // OK
@@ -58,8 +58,8 @@ void init_patches(pugi::xml_document& doc) {
 
     Health_init(doc);                      // OK
     //CreatureAttack_init(doc);              //
-    DamageOutput_init(doc);                //
-    Initiative_init(doc);                  //
+    DamageOutput_init(doc);                // OK
+    Initiative_init(doc);                  // OK
     Speed_init(doc);                       // OK
     Morale_init(doc);                      // OK
     Luck_init(doc);                        // OK
@@ -67,21 +67,24 @@ void init_patches(pugi::xml_document& doc) {
     MagicResist_init(doc);                 //
     //SpellImmune_init(doc);                 //
     ManaCost_init(doc);                    // OK
-    ElemDamage_init(doc);                  //
+    ElemDamage_init(doc);                  // OK
+    GoldenGoose_init(doc);                 //
     WandOfSpellTweak_init(doc);            //
-    AllSeeingCrownTweak_init(doc);         //
+    AllSeeingCrownTweak_init(doc);         // OK
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              //
     Earthquake_init(doc);                  // OK
     Vulnerability_init(doc);               // OK
-    Frenzy_init(doc);                      //
+    Frenzy_init(doc);                      // OK
+    //ConjureAtb_init(doc);                  //
     
     BaseMorale_init(doc);                  // OK
     SplitStack_init(doc);                  // OK
     TrainingGrounds_init(doc);             //
     BarbarianShrineExp_init(doc);          // OK
     WarMachineTier_init(doc);              // OK
+    LearnWarcries_init(doc);               // OK
 }
 
 int main() {
