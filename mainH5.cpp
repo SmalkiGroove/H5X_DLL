@@ -22,20 +22,24 @@ void init_patches(pugi::xml_document& doc) {
     CombatAIFix_init(doc);                 // OK
     AgilityFix_init(doc);                  // OK
     RetaliationStrikeFix_init(doc);        // OK
-    ColdDeathFix_init(doc);                //
+    ColdDeathFix_init(doc);                // OK
+    EliteCasters_init(doc);                // OK
     UnholyWordImmunitiesFix_init(doc);     // OK
+    BookOfPowerFix_init(doc);              //
+    MasterOfFireFix_init(doc);             // OK
+    EncourageFix_init(doc);                // OK
 
     HeroMovement_init(doc);                // OK
-    CovenMistressTweak_init(doc);          //
-    MasterOfElementsTweak_init(doc);       //
+    CovenMistressTweak_init(doc);          // OK
+    MasterOfElementsTweak_init(doc);       // OK
     EmbalmerTweak_init(doc);               // OK
     StormcallerTweak_init(doc);            // OK
     OverheaterTweak_init(doc);             // OK
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
-    BattleDiveTweak_init(doc);             //
-    EnergyChannelTweak_init(doc);          //
+    BattleDiveTweak_init(doc);             // OK
+    EnergyChannelTweak_init(doc);          // OK
     PawStrikeTweak_init(doc);              // OK
     WhipStrikeTweak_init(doc);             // OK
     FirstAidTent_init(doc);                // OK
@@ -44,7 +48,7 @@ void init_patches(pugi::xml_document& doc) {
 
     Avengers_init(doc);                    // OK
     Artificier_init(doc);                  // OK
-    Arcanism_init(doc);                    //
+    Arcanism_init(doc);                    // OK
     CombatSkill_init(doc);                 // OK
     ElementalVision_init(doc);             // OK
     EnlightenmentStats_init(doc);          // OK
@@ -53,27 +57,30 @@ void init_patches(pugi::xml_document& doc) {
     ChillingBones_init(doc);               // OK
     ErraticMana_init(doc);                 // OK
     WeakeningStrike_init(doc);             // OK
-    MasterOfAnimationClear_init(doc);      //
+    MasterOfAnimationClear_init(doc);      // OK
     VengefulLight_init(doc);               // OK
+    TwilightTweak_init(doc);               // OK
 
     Health_init(doc);                      // OK
     //CreatureAttack_init(doc);              //
+    //CreatureDefense_init(doc);             //
     DamageOutput_init(doc);                // OK
     Initiative_init(doc);                  // OK
     Speed_init(doc);                       // OK
     Morale_init(doc);                      // OK
     Luck_init(doc);                        // OK
-    MagicProof_init(doc);                  //
-    MagicResist_init(doc);                 //
+    ElemProof_init(doc);                   //
+    MagicProof_init(doc);                  // OK
+    MagicResist_init(doc);                 // OK
     //SpellImmune_init(doc);                 //
     ManaCost_init(doc);                    // OK
     ElemDamage_init(doc);                  // OK
-    GoldenGoose_init(doc);                 //
+    GoldenGoose_init(doc);                 // OK
     WandOfSpellTweak_init(doc);            //
     AllSeeingCrownTweak_init(doc);         // OK
 
     LightningStun_init(doc);               // OK
-    ChainLightning_init(doc);              //
+    ChainLightning_init(doc);              // OK
     Earthquake_init(doc);                  // OK
     Vulnerability_init(doc);               // OK
     Frenzy_init(doc);                      // OK
@@ -81,7 +88,7 @@ void init_patches(pugi::xml_document& doc) {
     
     BaseMorale_init(doc);                  // OK
     SplitStack_init(doc);                  // OK
-    TrainingGrounds_init(doc);             //
+    TrainingGrounds_init(doc);             // OK
     BarbarianShrineExp_init(doc);          // OK
     WarMachineTier_init(doc);              // OK
     LearnWarcries_init(doc);               // OK

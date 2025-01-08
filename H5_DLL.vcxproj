@@ -203,6 +203,7 @@
     <ClCompile Include="BarbarianShrineExp.cpp" />
     <ClCompile Include="BaseMorale.cpp" />
     <ClCompile Include="BattlefieldSize.cpp" />
+    <ClCompile Include="BookOfPowerFixes.cpp" />
     <ClCompile Include="ChainLightning.cpp" />
     <ClCompile Include="ChillingBones.cpp" />
     <ClCompile Include="ColdDeathFix.cpp" />
@@ -218,6 +219,7 @@
     <ClCompile Include="EliteCastersFix.cpp" />
     <ClCompile Include="EnablePEST.cpp" />
     <ClCompile Include="EnableScripts.cpp" />
+    <ClCompile Include="EncourageFix.cpp" />
     <ClCompile Include="EnlightenmentStats.cpp" />
     <ClCompile Include="ErraticMana.cpp" />
     <ClCompile Include="FirstAidTent.cpp" />
@@ -240,10 +242,12 @@
     <ClCompile Include="LevelCurve.cpp" />
     <ClCompile Include="LightningStun.cpp" />
     <ClCompile Include="MasterOfAnimation.cpp" />
+    <ClCompile Include="MasterOfFireFix.cpp" />
     <ClCompile Include="ModAttack.cpp" />
     <ClCompile Include="ModDamageOutput.cpp" />
     <ClCompile Include="ModDefense.cpp" />
     <ClCompile Include="ModElementalDamages.cpp" />
+    <ClCompile Include="ModElementalResistance.cpp" />
     <ClCompile Include="ModHealth.cpp" />
     <ClCompile Include="ModInitiative.cpp" />
     <ClCompile Include="ModLuck.cpp" />
@@ -261,6 +265,7 @@
     <ClCompile Include="StackSplit1.cpp" />
     <ClCompile Include="TowerDamage.cpp" />
     <ClCompile Include="TrainingGrounds.cpp" />
+    <ClCompile Include="Twilight.cpp" />
     <ClCompile Include="UnholyWordImmunitiesFix.cpp" />
     <ClCompile Include="utility_functions.cpp" />
     <ClCompile Include="pch.cpp">
