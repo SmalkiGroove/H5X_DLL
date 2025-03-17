@@ -87,6 +87,7 @@ void WhipStrikeTweak_init(pugi::xml_document& doc);
 void FirstAidTent_init(pugi::xml_document& doc);
 void BallistaCatapult_init(pugi::xml_document& doc);
 void TowerDamage_init(pugi::xml_document& doc);
+void Fortunate_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Artificier_init(pugi::xml_document& doc);

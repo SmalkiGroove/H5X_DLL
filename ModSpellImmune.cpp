@@ -5,64 +5,93 @@
 // (180) Moonlight Band : Immune to Curse of the Netherworld (21)
 // (123) Obsidian Armor : Immune to Armageddon (10)
 // (172) Sanctuary's Crown : Immune to Hypnotize (20)
-// (165) Shantiri Breastplate : Immune to Earthquake (41)
 // (115) Cloak of the Saint : Immune to Plague (14)
+// (165) Shantiri Breastplate : Immune to Earthquake (41)
 
-void SpellImmuneForkEarthquake();
-void SpellImmuneCaseEarthquake();
+void SpellImmuneFork();
 
-#pragma pack(push, 1)
-struct HeroModifiers_Immunity_destinations {
-    uint32_t spell_wasp_regen;
-    uint32_t spell_phantom;
-    uint32_t spell_animate_dead;
-    uint32_t spell_resurrection;
-    uint32_t spell_roar_fear;
-    uint32_t spell_default;
-    void (*spell_earthquake)();
-};
-#pragma pack(pop)
-HeroModifiers_Immunity_destinations immunity_destinations;
-int Addr_return_immunity = 0x0097CD61;
-int Addr_end_immunity = 0x0097CB28;
+int Addr_fork_immunity = 0x0097CE1E;
+int Addr_return_immunity = 0x0097CE23;
+int Addr_end_immunity = 0x0097CE92;
+int Addr_apply_immunity = 0x0097CE7E;
 
 void SpellImmune_init(pugi::xml_document& doc) {
-    assignHexStringToStruct(immunity_destinations.spell_wasp_regen, "0xFFCC9700");
-    assignHexStringToStruct(immunity_destinations.spell_phantom, "0x99CC9700");
-    assignHexStringToStruct(immunity_destinations.spell_animate_dead, "0x74CC9700");
-    assignHexStringToStruct(immunity_destinations.spell_resurrection, "0x60CC9700");
-    assignHexStringToStruct(immunity_destinations.spell_roar_fear, "023CD9700");
-    assignHexStringToStruct(immunity_destinations.spell_default, "0x6CCD9700");
-
-    assembly_patches.push_back({ PATCH_HOOK, 0x0097CC59, 7, SpellImmuneForkEarthquake, 0, 0, 0 });
-    immunity_destinations.spell_earthquake = &SpellImmuneCaseEarthquake;
+    assembly_patches.push_back({ PATCH_BYTE, 0x0097CC2D, 1, nullptr, 184, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, Addr_fork_immunity, 7, SpellImmuneFork, 0, 0, 0 });
 }
 
-
-__declspec(naked) void SpellImmuneForkEarthquake() {
+__declspec(naked) void SpellImmuneFork() {
     __asm
     {
-        jmp dword ptr ds : [eax * 4 + immunity_destinations]
-    }
-}
-
-__declspec(naked) void SpellImmuneCaseEarthquake() {
-    __asm
-    {
-        // setup args for get_hero_data ?
-        call[get_hero_data]
-        mov esi, eax
-        test esi, esi
-        jz LABEL_END
         mov ecx, eax
-        mov edx, [eax]
-        call dword ptr [edx + 0x74]
-        push 0xA5
-        mov ecx, eax
+        cmp ebx, 0xA
+        jne SPELL_IMMUNITY_1
+        push 0x7B
         call[count_equipped_artifact]
         test eax, eax
+        je SKIP_TO_END
+        push 0
+        push 3
+        push 0x7B
+        jmp[Addr_apply_immunity]
+
+        SPELL_IMMUNITY_1:
+        cmp ebx, 0x14
+        jne SPELL_IMMUNITY_2
+        push 0xAC
+        call[count_equipped_artifact]
+        test eax, eax
+        je SKIP_TO_END
+        push 0
+        push 3
+        push 0xAC
+        jmp[Addr_apply_immunity]
+
+        SPELL_IMMUNITY_2:
+        cmp ebx, 0x15
+        jne SPELL_IMMUNITY_3
+        push 0xB4
+        call[count_equipped_artifact]
+        test eax, eax
+        je SKIP_TO_END
+        push 0
+        push 3
+        push 0xB4
+        jmp[Addr_apply_immunity]
+
+        SPELL_IMMUNITY_3:
+        cmp ebx, 0x29
+        jne SPELL_IMMUNITY_4
+        push 0xA5
+        call[count_equipped_artifact]
+        test eax, eax
+        je SKIP_TO_END
+        push 0
+        push 3
+        push 0xA5
+        jmp[Addr_apply_immunity]
+
+        SPELL_IMMUNITY_4:
+        cmp ebx, 0xE
+        jne RETURN_FROM_FORK
+        push 0x73
+        call[count_equipped_artifact]
+        test eax, eax
+        je SKIP_TO_END
+        push 0
+        push 3
+        push 0x73
+        jmp[Addr_apply_immunity]
+
+        RETURN_FROM_FORK:
         jmp[Addr_return_immunity]
-        LABEL_END:
+
+        SKIP_TO_END:
         jmp[Addr_end_immunity]
     }
 }
+
+/*
+ESI = spell id
+EDI = creature
+*/

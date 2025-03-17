@@ -1,0 +1,70 @@
+Artifact check :
+
+004BAE80 dragon talon crown
+004BBFFE bloody claw collar
+004BC095 bloody claw collar
+004BC13B boots of swiftness
+004BC14D ring of caution
+004BC2C4 ring oh haste
+004BC2D8 ring of celerity
+004BC2FA dragon scale armor
+004BC309 dragon scale shield
+004BC354 dragon bone greaves
+004BC371 dragon wing mantle
+004BC3A2 dragon teeth necklace
+004BC3BF dragon eye ring
+004BC3CE ogre club
+004BC3E3 ogre shield
+004BC4E6 ring of vitality
+004D9F34 no retreat
+004D9F66 no retreat
+008A3677 unicorn horn bow
+008A36A8 sandro's cloak
+008A4621 staff of the netherworld
+00976F57 titan's trident
+00976FA6 evercold icicle
+00976FF5 phoenix feathers cape
+00977044 Emerald slippers
+0097B0DD shield of crystal ice
+0097B10E dwarven smither hammer
+0097B186 ring of lightning protection
+0097B1B1 dragon flame tongue
+0097B1E2 bearhide wraps
+0097B215 cloak of sylanna
+0097CF9A staff of sar-issus
+0097D008 armor of the forgotten hero
+0097D02E boots of interference
+00984289 pendant of confluence
+00A348CD ring of sar-issus
+00B4BBC0 turban of enlightenment
+00B4BBD6 scale mail of enlightenment
+00B4C010 all seeing crown
+00B4D192 pendant of mastery
+00B4DF10 boots of the swift journey
+00B4DFE4 golden sextant
+00B4E19C sack of endless gold
+00B4E1C0 pouch of endless gold
+00B4E1F7 horn of plenty
+00B4EFC7 pendant of mastery
+00B50000 boots of the open road
+00BC036F band of conjurer
+00C25CA5 amulet of necromancy
+00C2625B amulet of necromancy
+00C5564D mask of equity
+00CD9D45 unicorn horn bow
+
+Skill check :
+
+Hero spec check :
+
+008A372B griffins
+008A3789 elven fury
+009783EC white knight
+00BC1D20 offender
+
+Game functions :
+
+00A6ACD0 morale
+00A6ABF0 luck
+
+

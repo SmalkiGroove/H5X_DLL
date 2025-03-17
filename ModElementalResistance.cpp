@@ -1,12 +1,12 @@
 #include "pch.h"
 
 // EDIT ELEMENTAL RESISTANCE ARTIFACTS
-// (9) Iceberg Shield : from +50% to +33% to fire resistance
+// (9) Iceberg Shield : from +50% to +40% to fire resistance
 // (20) Magnetic Ring : from +50% to +33% to lightning resistance
-// (43) Dragon Flame Tongue : from +50% to +20% to ice resistance
+// (43) Dragon Flame Tongue : from +50% to +40% to ice resistance
 // (62) Cloak of Sylanna : from +50% to +33% to earth resistance
 // (84) Frozen Heart : from +25% to +33% to ice resistance
-// (85) Dwarven Smithy Hummer : from +25% to +20% to fire resistance
+// (85) Phoenix Feather Cape : from +25% to +33% to fire resistance
 // (124) Elrath Divine Shield : +40% to all element resistance
 
 void ElemProofFork();
@@ -22,11 +22,11 @@ int FireProofAbility_return = 0x0097B23B;
 float elemproof = 0.67f;
 
 void ElemProof_init(pugi::xml_document& doc) {
-    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B0FF, 4, nullptr, 0, elemproof, 0, 0 });
-    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B237, 4, nullptr, 0, elemproof, 0, 0 });
-    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B1D3, 4, nullptr, 0, constf_0_8, 0, 0 });
-    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B204, 4, nullptr, 0, elemproof, 0, 0 });
-    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B130, 4, nullptr, 0, constf_0_8, 0, 0 });
+    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B0FF, 4, nullptr, 0, constf_0_6, 0, 0 }); // 9
+    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B237, 4, nullptr, 0, elemproof, 0, 0 }); // 20,62
+    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B1D3, 4, nullptr, 0, constf_0_6, 0, 0 }); // 43
+    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B204, 4, nullptr, 0, elemproof, 0, 0 }); // 84
+    assembly_patches.push_back({ PATCH_FLOAT_PTR, 0x0097B130, 4, nullptr, 0, elemproof, 0, 0 }); // 85
     assembly_patches.push_back({ PATCH_HOOK, ElemProof_fork, 6, ElemProofFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, FireProofAbility_fork, 5, FireProofAbilityFork, 0, 0, 0 });
 }

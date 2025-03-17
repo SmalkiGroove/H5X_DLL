@@ -223,6 +223,7 @@
     <ClCompile Include="EnlightenmentStats.cpp" />
     <ClCompile Include="ErraticMana.cpp" />
     <ClCompile Include="FirstAidTent.cpp" />
+    <ClCompile Include="Fortunate.cpp" />
     <ClCompile Include="Frenzy.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="ArcaneRenewalFix.cpp" />

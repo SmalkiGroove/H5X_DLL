@@ -2,7 +2,7 @@
 #include "globals.h"
 
 std::ofstream logs;
-int logs_enabled = 0;
+int logs_enabled = 1;
 pugi::xml_document h5_stats;
 
 // game funcs
@@ -18,6 +18,7 @@ GameFunction is_spell_empowered = (GameFunction)0x00A34100;
 GameFunction get_creature_data = (GameFunction)0x0089FBF0;
 GameFunction notify_skill_buff = (GameFunction)0x009BB960;
 GameFunction notify_artifact_buff = (GameFunction)0x009BB9C0;
+GameFunction call_unknown_1 = (GameFunction)0x00BCDD20;
 GameFunction call_unknown_2 = (GameFunction)0x00BCB3F0;
 
 // constants

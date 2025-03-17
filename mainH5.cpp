@@ -25,7 +25,7 @@ void init_patches(pugi::xml_document& doc) {
     ColdDeathFix_init(doc);                // OK
     EliteCasters_init(doc);                // OK
     UnholyWordImmunitiesFix_init(doc);     // OK
-    BookOfPowerFix_init(doc);              //
+    BookOfPowerFix_init(doc);              // OK
     MasterOfFireFix_init(doc);             // OK
     EncourageFix_init(doc);                // OK
 
@@ -45,6 +45,7 @@ void init_patches(pugi::xml_document& doc) {
     FirstAidTent_init(doc);                // OK
     BallistaCatapult_init(doc);            // OK
     TowerDamage_init(doc);                 // OK
+    Fortunate_init(doc);                   // OK
 
     Avengers_init(doc);                    // OK
     Artificier_init(doc);                  // OK
@@ -72,7 +73,7 @@ void init_patches(pugi::xml_document& doc) {
     ElemProof_init(doc);                   //
     MagicProof_init(doc);                  // OK
     MagicResist_init(doc);                 // OK
-    //SpellImmune_init(doc);                 //
+    SpellImmune_init(doc);                 //
     ManaCost_init(doc);                    // OK
     ElemDamage_init(doc);                  // OK
     GoldenGoose_init(doc);                 // OK

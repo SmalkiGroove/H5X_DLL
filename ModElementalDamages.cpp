@@ -3,7 +3,7 @@
 // ADD ADDITIONAL ELEMENTAL DAMAGE ARTIFACTS
 // (5) Titan's Trident : from +50% to +20% to lightning spells
 // (18) Evercold Icicle : from +50% to +20% to frost spells
-// (32) Phoenix Feather's Cape : from +50% to +20% to fire spells
+// (32) Solar Ring : from +50% to +20% to fire spells
 // (61) Emerald Slippers : from +50% to +20% to earth spells
 // (192) Orb of Air Affinity : +33% to lightning spells
 // (193) Orb of Earth Affinity : +33% to earth spells

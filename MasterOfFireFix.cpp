@@ -29,6 +29,8 @@ __declspec(naked) void MasterOfFireFix() {
         call dword ptr [edx + 0x28C]
         test al, al
         jne UNIT_IS_ARMOURED
+        test ebp, ebp
+        je HALVE_DEFENSE
         mov eax, dword ptr [ebp]
         mov ecx, ebp
         call dword ptr [eax]
@@ -40,6 +42,8 @@ __declspec(naked) void MasterOfFireFix() {
         call[count_equipped_artifact]
         test eax, eax
         jne HERO_HAS_FROZEN_HEART
+
+        HALVE_DEFENSE:
         shr ebx, 1
 
         DEFENSE_IS_ZERO:
@@ -47,10 +51,10 @@ __declspec(naked) void MasterOfFireFix() {
         UNIT_IS_ARMOURED:
         HERO_HAS_FROZEN_HEART:
         mov eax, ebx;
-        pop  edi
-        pop  esi
-        pop  ebp
-        pop  ebx
+        pop edi
+        pop esi
+        pop ebp
+        pop ebx
         add esp, 8
         ret
     }

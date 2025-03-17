@@ -73,6 +73,7 @@ extern GameFunction get_creature_data;
 extern GameFunction notify_skill_buff;
 extern GameFunction notify_artifact_buff;
 
+extern GameFunction call_unknown_1;
 extern GameFunction call_unknown_2;
 
 
