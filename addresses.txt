@@ -53,6 +53,35 @@ Artifact check :
 00C5564D mask of equity
 00CD9D45 unicorn horn bow
 
+Artfset check :
+008CF814 haven 2 class (morale debuff)
+00BBFC09 haven 3 (morale atb)
+00A65C3F ranger 2 (shooter atb)
+008CE90C ranger 2 class (attack atb)
+008A206A necro 2 (speed debuff)
+004E43CD necro 2 class (banshee howl)
+00989D15 necro 2 class (banshee howl)
+0098A1F9 necro 2 class (banshee howl)
+009BC58D necro 2 class (banshee howl)
+008A8167 necro 4 (bad morale att def)
+00C25EBB necro 4 (necromancy?)
+004BAB48 magi 2
+008A3B08 magi 2
+00BBF8EB magi 2 class & 4 (spell atb)
+004B0E5B dungeon 2 class (elem chain)
+008603AD inferno 2 class (more gating)
+0097B396 dwarven 2 (magic proof)
+00B4CD19 dwarven 2 class (spellpower)
+00BC1384 dwarven 4 (endurance/deflect)
+004BB25F ogre 2 (health)
+004BC579 ogre 2 (health)
+008CE937 ogre 2 class (attack atb)
+004BB243 dragon 4 (health)
+004BC55D dragon 4 (health)
+004BB376 dragon 4 (att/def)
+00B5053B dragon 8 (daily creature)
+00B4BBF3 enlighten 2 (more exp)
+
 Skill check :
 
 Hero spec check :
@@ -61,6 +90,7 @@ Hero spec check :
 008A3789 elven fury
 009783EC white knight
 00BC1D20 offender
+00989CF6 dark emissary
 
 Game functions :
 

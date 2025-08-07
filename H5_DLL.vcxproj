@@ -233,11 +233,14 @@
     <ClCompile Include="HeroMaxSkills.cpp" />
     <ClCompile Include="HeroMovement.cpp" />
     <ClCompile Include="HeroScreenUI.cpp" />
+    <ClCompile Include="HeroSpecElementalist.cpp" />
     <ClCompile Include="HeroSpecEmbalmer.cpp" />
+    <ClCompile Include="HeroSpecFootmen.cpp" />
     <ClCompile Include="HeroSpecMasterOfElements.cpp" />
     <ClCompile Include="HeroSpecOverheater.cpp" />
     <ClCompile Include="HeroSpecStormcaller.cpp" />
     <ClCompile Include="HeroSpecCovenMistress.cpp" />
+    <ClCompile Include="HeroSpecTemptress.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
     <ClCompile Include="LearnWarcries.cpp" />
     <ClCompile Include="LevelCurve.cpp" />

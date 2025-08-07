@@ -19,7 +19,7 @@ GameFunction get_creature_data = (GameFunction)0x0089FBF0;
 GameFunction notify_skill_buff = (GameFunction)0x009BB960;
 GameFunction notify_artifact_buff = (GameFunction)0x009BB9C0;
 GameFunction call_unknown_1 = (GameFunction)0x00BCDD20;
-GameFunction call_unknown_2 = (GameFunction)0x00BCB3F0;
+GameFunction get_defaultstats = (GameFunction)0x00BCB3F0;
 
 // constants
 int consti_1 = 1;

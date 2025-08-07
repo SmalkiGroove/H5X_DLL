@@ -35,6 +35,9 @@ void init_patches(pugi::xml_document& doc) {
     EmbalmerTweak_init(doc);               // OK
     StormcallerTweak_init(doc);            // OK
     OverheaterTweak_init(doc);             // OK
+    ElementalistChain_init(doc);           // OK
+    TemptressTweak_init(doc);              // OK
+    InfantryCommanderTweak_init(doc);      //
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK

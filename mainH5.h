@@ -77,6 +77,9 @@ void MasterOfElementsTweak_init(pugi::xml_document& doc);
 void EmbalmerTweak_init(pugi::xml_document& doc);
 void StormcallerTweak_init(pugi::xml_document& doc);
 void OverheaterTweak_init(pugi::xml_document& doc);
+void ElementalistChain_init(pugi::xml_document& doc);
+void TemptressTweak_init(pugi::xml_document& doc);
+void InfantryCommanderTweak_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);

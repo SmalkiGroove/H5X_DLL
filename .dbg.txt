@@ -1,0 +1,34 @@
+
+4B0E43: 
+eax = 0
+ebx = 1CB62C9C -> 16CC6B9C
+ecx = 0
+edx = 00E7E484
+esi = 1B4F45A0 -> 1BBAAD20
+edi = 1B4F4648 -> 1BBAADC8
+[esp] = 3DCCCCCD
+[esp+4] = 0
+[esp+8] = 004B0F76
+[esp+C] = 1B4F4648 -> 1BBAADC8
+[esp+24] = 0000006F
+
+
+4B0E89: ret
+eax = 0
+ebx = 1CB62C9C
+ecx = 1917AB00
+edx = 00E7E484
+esi = 1B4F45A0
+edi = 1B4F4648
+[esp] = 004B0F76
+[esp+4] = 1B4F4648
+[esp+8] = 004B0FA2
+[esp+C] = 00000004
+
+97DEC0
+97D671 eax
+0: 17 bless, 19 stoneskin, 12 slow
+3C: 1 magic arrow, 3 lightning bolt
+3D: 1 magic arrow
+3F: 27 wasp swarm
+

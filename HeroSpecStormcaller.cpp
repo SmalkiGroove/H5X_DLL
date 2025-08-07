@@ -37,9 +37,9 @@ __declspec(naked) void StormcallerFork() {
         mov ecx, esi
         call dword ptr [edx + 0x23C]
         mov dword ptr [esp + 0x14], eax
-        fild word ptr[esp + 0x14]
+        fild word ptr [esp + 0x14]
         fstp dword ptr [esp + 0x14]
-        call[call_unknown_2]
+        call[get_defaultstats]
         fld dword ptr [esp + 0x14]
         push 0x0
         fmul dword ptr [eax + 0x850]

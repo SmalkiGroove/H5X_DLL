@@ -74,7 +74,7 @@ extern GameFunction notify_skill_buff;
 extern GameFunction notify_artifact_buff;
 
 extern GameFunction call_unknown_1;
-extern GameFunction call_unknown_2;
+extern GameFunction get_defaultstats;
 
 
 // constants
