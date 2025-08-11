@@ -41,6 +41,7 @@ void init_patches(pugi::xml_document& doc) {
     Enlightened_init(doc);                 // OK
     ShamanMatriarchTweak_init(doc);        // OK
     LoneHunterTweak_init(doc);             // OK
+    ExhausterTweak_init(doc);              //
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
@@ -67,6 +68,7 @@ void init_patches(pugi::xml_document& doc) {
     MasterOfAnimationClear_init(doc);      // OK
     VengefulLight_init(doc);               // OK
     TwilightTweak_init(doc);               // OK
+    PariahTweak_init(doc);                 // OK
 
     Health_init(doc);                      // OK
     //CreatureAttack_init(doc);              //

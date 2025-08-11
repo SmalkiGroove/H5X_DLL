@@ -83,6 +83,7 @@ void InfantryCommanderTweak_init(pugi::xml_document& doc);
 void Enlightened_init(pugi::xml_document& doc);
 void ShamanMatriarchTweak_init(pugi::xml_document& doc);
 void LoneHunterTweak_init(pugi::xml_document& doc);
+void ExhausterTweak_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
@@ -109,6 +110,7 @@ void WeakeningStrike_init(pugi::xml_document& doc);
 void MasterOfAnimationClear_init(pugi::xml_document& doc);
 void VengefulLight_init(pugi::xml_document& doc);
 void TwilightTweak_init(pugi::xml_document& doc);
+void PariahTweak_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
 void CreatureAttack_init(pugi::xml_document& doc);

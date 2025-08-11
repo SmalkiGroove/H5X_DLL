@@ -236,6 +236,7 @@
     <ClCompile Include="HeroSpecElementalist.cpp" />
     <ClCompile Include="HeroSpecEmbalmer.cpp" />
     <ClCompile Include="HeroSpecEnlightened.cpp" />
+    <ClCompile Include="HeroSpecExhauster.cpp" />
     <ClCompile Include="HeroSpecFootmen.cpp" />
     <ClCompile Include="HeroSpecLoneHunter.cpp" />
     <ClCompile Include="HeroSpecMasterOfElements.cpp" />
@@ -264,6 +265,7 @@
     <ClCompile Include="ModSpeed.cpp" />
     <ClCompile Include="ModSpellProof.cpp" />
     <ClCompile Include="OffensiveDefensiveFormation.cpp" />
+    <ClCompile Include="Pariah.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="RetaliationStrikeFix.cpp" />
     <ClCompile Include="RuneOfTheDragonForm.cpp" />

@@ -140,7 +140,7 @@ __declspec(naked) void CreatureInitlessFork() {
 }
 
 int sub_get_some_data = 0x00420DF0;
-float knowledge_to_init_ratio = 0.005f;
+float knowledge_to_init_ratio = 0.05f;
 __declspec(naked) void HeroInitiativeFork() {
     __asm
     {
