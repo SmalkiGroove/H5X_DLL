@@ -37,7 +37,10 @@ void init_patches(pugi::xml_document& doc) {
     OverheaterTweak_init(doc);             // OK
     ElementalistChain_init(doc);           // OK
     TemptressTweak_init(doc);              // OK
-    InfantryCommanderTweak_init(doc);      //
+    InfantryCommanderTweak_init(doc);      // OK
+    Enlightened_init(doc);                 // OK
+    ShamanMatriarchTweak_init(doc);        // OK
+    LoneHunterTweak_init(doc);             // OK
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
@@ -73,7 +76,7 @@ void init_patches(pugi::xml_document& doc) {
     Speed_init(doc);                       // OK
     Morale_init(doc);                      // OK
     Luck_init(doc);                        // OK
-    ElemProof_init(doc);                   //
+    ElemProof_init(doc);                   // OK
     MagicProof_init(doc);                  // OK
     MagicResist_init(doc);                 // OK
     SpellImmune_init(doc);                 //
@@ -96,6 +99,7 @@ void init_patches(pugi::xml_document& doc) {
     BarbarianShrineExp_init(doc);          // OK
     WarMachineTier_init(doc);              // OK
     LearnWarcries_init(doc);               // OK
+    HallOfIntrigue_init(doc);              // OK
 }
 
 int main() {

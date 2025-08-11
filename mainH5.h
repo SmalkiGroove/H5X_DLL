@@ -80,6 +80,9 @@ void OverheaterTweak_init(pugi::xml_document& doc);
 void ElementalistChain_init(pugi::xml_document& doc);
 void TemptressTweak_init(pugi::xml_document& doc);
 void InfantryCommanderTweak_init(pugi::xml_document& doc);
+void Enlightened_init(pugi::xml_document& doc);
+void ShamanMatriarchTweak_init(pugi::xml_document& doc);
+void LoneHunterTweak_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
@@ -138,3 +141,4 @@ void TrainingGrounds_init(pugi::xml_document& doc);
 void BarbarianShrineExp_init(pugi::xml_document& doc);
 void WarMachineTier_init(pugi::xml_document& doc);
 void LearnWarcries_init(pugi::xml_document& doc);
+void HallOfIntrigue_init(pugi::xml_document& doc);

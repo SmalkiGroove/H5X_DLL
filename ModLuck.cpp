@@ -44,7 +44,7 @@ __declspec(naked) void LuckFork() {
         mov ecx, eax
         call[count_equipped_artifact]
         neg eax
-        lea esi, dword ptr [esi + eax * 2]
+        lea esi, dword ptr [esi + eax*2]
 
         mov eax, dword ptr [edi]
         mov ecx, edi
@@ -56,7 +56,7 @@ __declspec(naked) void LuckFork() {
         mov ecx, eax
         call[count_equipped_artifact]
         neg eax
-        lea esi, dword ptr [esi + eax * 1]
+        lea esi, dword ptr [esi + eax*1]
 
         mov eax, [edi + 0x4]
         mov ecx, [eax + 0x8]
@@ -79,7 +79,7 @@ __declspec(naked) void LuckFork() {
         jz LUCK_END
         sub esi, 0x1
 
-        LUCK_END:
+     LUCK_END:
         jmp[Luck_return]
     }
 }

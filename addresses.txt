@@ -65,8 +65,8 @@ Artfset check :
 009BC58D necro 2 class (banshee howl)
 008A8167 necro 4 (bad morale att def)
 00C25EBB necro 4 (necromancy?)
-004BAB48 magi 2
-008A3B08 magi 2
+004BAB48 magi 2 (casters mana)
+008A3B08 magi 2 (casters spellpower)
 00BBF8EB magi 2 class & 4 (spell atb)
 004B0E5B dungeon 2 class (elem chain)
 008603AD inferno 2 class (more gating)

@@ -320,6 +320,18 @@
     <ClCompile Include="HeroSpecFootmen.cpp">
       <Filter>Source Files\patches\Heroes</Filter>
     </ClCompile>
+    <ClCompile Include="HeroSpecEnlightened.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroSpecShamans.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="TownBuildingTweaks.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroSpecLoneHunter.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="x86\MinHook.dll">
