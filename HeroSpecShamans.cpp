@@ -38,6 +38,8 @@ __declspec(naked) void ShamanMatriarchSpwrFork() {
 		mov edx, dword ptr [eax]
 		mov ecx, eax
 		call dword ptr [edx + 0xC]
+		test eax, eax
+		je SHAMAN_MATRIARCH_SPWR_END
 
 		mov ecx, dword ptr [eax + 0x4]
 		mov edx, dword ptr [ecx + 0x8]

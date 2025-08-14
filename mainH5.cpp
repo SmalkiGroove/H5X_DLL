@@ -12,7 +12,7 @@ void init_patches(pugi::xml_document& doc) {
     HeroMaxSkills_init(doc);               // OK
     HeroScreenUI_init(doc);                // OK
     BattlefieldSize_init(doc);             // OK
-
+    
     ArcaneRenewalFix_init(doc);            // OK
     EmpoweredArmageddon_init(doc);         // OK
     EnlightenmentForBarbsFix_init(doc);    // OK
@@ -41,7 +41,8 @@ void init_patches(pugi::xml_document& doc) {
     Enlightened_init(doc);                 // OK
     ShamanMatriarchTweak_init(doc);        // OK
     LoneHunterTweak_init(doc);             // OK
-    ExhausterTweak_init(doc);              //
+    ExhausterTweak_init(doc);              // OK
+    WorldBreaker_init(doc);                // OK
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
@@ -90,7 +91,7 @@ void init_patches(pugi::xml_document& doc) {
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              // OK
-    Earthquake_init(doc);                  // OK
+    Earthquake_init(doc);                  // 
     Vulnerability_init(doc);               // OK
     Frenzy_init(doc);                      // OK
     //ConjureAtb_init(doc);                  //
@@ -102,6 +103,7 @@ void init_patches(pugi::xml_document& doc) {
     WarMachineTier_init(doc);              // OK
     LearnWarcries_init(doc);               // OK
     HallOfIntrigue_init(doc);              // OK
+    
 }
 
 int main() {

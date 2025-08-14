@@ -245,6 +245,7 @@
     <ClCompile Include="HeroSpecStormcaller.cpp" />
     <ClCompile Include="HeroSpecCovenMistress.cpp" />
     <ClCompile Include="HeroSpecTemptress.cpp" />
+    <ClCompile Include="HeroSpecWorldBreaker.cpp" />
     <ClCompile Include="ImbueBalistaAtbFix.cpp" />
     <ClCompile Include="LearnWarcries.cpp" />
     <ClCompile Include="LevelCurve.cpp" />

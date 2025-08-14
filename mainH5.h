@@ -84,6 +84,7 @@ void Enlightened_init(pugi::xml_document& doc);
 void ShamanMatriarchTweak_init(pugi::xml_document& doc);
 void LoneHunterTweak_init(pugi::xml_document& doc);
 void ExhausterTweak_init(pugi::xml_document& doc);
+void WorldBreaker_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
