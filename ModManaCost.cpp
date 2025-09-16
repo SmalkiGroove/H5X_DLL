@@ -2,7 +2,7 @@
 
 // ADD MANA COST MODIFIERS FROM ADDITIONAL ARTIFACTS
 // (47) Ring of the Magister : -6 mana
-// (112) Fortune Band of the Saint : -1 mana
+// (116) Genji's Hat : -1 mana
 // (186) Moonlight Coat : -25% mana
 // (101) Crown of the Frost Lord : -50% mana for frost spells
 // (151) Blazing Spellbook : -33% mana for fire spells
@@ -33,16 +33,16 @@ __declspec(naked) void ManaCostFork() {
         mov edx, dword ptr [ebx]
         mov ecx, ebx
         call dword ptr [edx + 0x74]
-        push 0x70
+        push 0x74
         mov ecx, eax
         call[count_equipped_artifact]
         test eax, eax
         je MANACOST_2
         sub esi, 0x1
         cmp esi, 0x1
-        jge fortune_band_of_the_saint_end
+        jge genjis_hat_end
         mov esi, 0x1
-        fortune_band_of_the_saint_end:
+        genjis_hat_end:
         mov dword ptr ss : [esp + 0x10] , esi
 
         MANACOST_2:

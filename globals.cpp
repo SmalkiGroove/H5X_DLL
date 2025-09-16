@@ -16,6 +16,7 @@ GameFunction get_spell_element = (GameFunction)0x00A342C0;
 GameFunction get_spell_school = (GameFunction)0x00A34350;
 GameFunction is_spell_empowered = (GameFunction)0x00A34100;
 GameFunction get_creature_data = (GameFunction)0x0089FBF0;
+GameFunction get_unit_spellproof = (GameFunction)0x0097D2A0;
 GameFunction notify_skill_buff = (GameFunction)0x009BB960;
 GameFunction notify_artifact_buff = (GameFunction)0x009BB9C0;
 GameFunction call_unknown_1 = (GameFunction)0x00BCDD20;

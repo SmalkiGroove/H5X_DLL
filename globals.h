@@ -55,6 +55,8 @@ void assignHexStringToStruct(T& structure, const std::string& hexString) {
 
 typedef int(__thiscall* GameFunction)(int*);
 
+extern GameFunction get_defaultstats;
+
 extern GameFunction get_hero_data;
 extern GameFunction has_hero_spec;
 
@@ -73,8 +75,8 @@ extern GameFunction get_creature_data;
 extern GameFunction notify_skill_buff;
 extern GameFunction notify_artifact_buff;
 
+extern GameFunction get_unit_spellproof;
 extern GameFunction call_unknown_1;
-extern GameFunction get_defaultstats;
 
 
 // constants
