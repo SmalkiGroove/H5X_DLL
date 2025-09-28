@@ -46,300 +46,339 @@
     <Filter Include="Source Files\patches\Heroes">
       <UniqueIdentifier>{69d73a8a-e1df-4872-a03c-af68e1f2f233}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\patches\Functions">
+      <UniqueIdentifier>{6775d6c7-892a-49d7-9688-4934fae2fbe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Structs">
+      <UniqueIdentifier>{d465e0a8-4229-49f2-8080-6ab0358af6fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Structs">
+      <UniqueIdentifier>{dfbb2637-a488-440a-9215-d431c8d59b2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Types">
+      <UniqueIdentifier>{abd3a7ef-8aea-4206-b048-856dc77fca4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Types">
+      <UniqueIdentifier>{6fe3c9ce-4274-44ac-b2f0-906851aafd27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="src/mainH5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="src/framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="globals.h">
+    <ClInclude Include="src/pugixml.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mainH5.h">
+    <ClInclude Include="src/globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pugixml.hpp">
+    <ClInclude Include="src/pch.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src/types/Artifacts.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="src/types/Functions.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="src/structs/Hero.h">
+      <Filter>Header Files\Structs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="src/dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="src/mainH5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utility_functions.cpp">
+    <ClCompile Include="src/globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="globals.cpp">
+    <ClCompile Include="src/pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EmpoweredArmageddonFixes.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="ArcaneRenewalFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="EnlightenmentForBarbsFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="SnareFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="mainH5.cpp">
+    <ClCompile Include="src/utility_functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImbueBalistaAtbFix.cpp">
+    <ClCompile Include="src/patches/AgilityFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
-    <ClCompile Include="RuneOfTheDragonForm.cpp">
+    <ClCompile Include="src/patches/ArcaneRenewalFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
-    <ClCompile Include="CombatAIFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
+    <ClCompile Include="src/patches/AllSeeingCrown.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
-    <ClCompile Include="AgilityFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
+    <ClCompile Include="src/patches/ArcaneBrillance.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
-    <ClCompile Include="EliteCastersFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
+    <ClCompile Include="src/patches/Arcanism.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
-    <ClCompile Include="pugixml.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src/patches/Artificier.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
-    <ClCompile Include="EnableScripts.cpp">
+    <ClCompile Include="src/patches/AtbTweaks.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Avengers.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/BallistaCatapult.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/BarbarianShrineExp.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/BarbarianSkillsLinks.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/BaseMorale.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/BattlefieldSize.cpp">
       <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
-    <ClCompile Include="ModHealth.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
+    <ClCompile Include="src/patches/BookOfPowerFixes.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
-    <ClCompile Include="EnablePEST.cpp">
+    <ClCompile Include="src/patches/ChainLightning.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ChillingBones.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ColdDeathFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Combat.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/CombatAIFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ConjureAtb.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/CreatureAbilitiesTweaks.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/CreatureSpellpower.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Earthquake.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ElementalVision.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ElementalWarriors.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/EliteCastersFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/EmpoweredArmageddonFixes.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/EnablePEST.cpp">
       <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
-    <ClCompile Include="StackSplit1.cpp">
-      <Filter>Source Files\patches\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="TrainingGrounds.cpp">
-      <Filter>Source Files\patches\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroScreenUI.cpp">
+    <ClCompile Include="src/patches/EnableScripts.cpp">
       <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
-    <ClCompile Include="BattlefieldSize.cpp">
+    <ClCompile Include="src/patches/EncourageFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/EnlightenmentForBarbsFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/EnlightenmentStats.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ErraticMana.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/FirstAidTent.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src/structs/Hero.cpp">
+      <Filter>Source Files\Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="src/types/Functions.cpp">
+      <Filter>Source Files\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecWorldBreaker.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecCovenMistress.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecElementalist.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecEmbalmer.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecEnlightened.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecExhauster.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecFootmen.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecLoneHunter.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecMasterOfElements.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecOverheater.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecShamans.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecStormcaller.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroSpecTemptress.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModAttack.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModDamageOutput.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModDefense.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModElementalDamages.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModElementalResistance.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModHealth.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModInitiative.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModLuck.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModMagicResist.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModManaCost.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModMorale.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModSpeed.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModSpellImmune.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ModSpellProof.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Fortunate.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/LevelCurve.cpp">
       <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
-    <ClCompile Include="AtbTweaks.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseMorale.cpp">
-      <Filter>Source Files\patches\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="CreatureSpellpower.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="FirstAidTent.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="BallistaCatapult.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroMaxSkills.cpp">
+    <ClCompile Include="src/patches/HeroScreenUI.cpp">
       <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
-    <ClCompile Include="ElementalWarriors.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="RetaliationStrikeFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="OffensiveDefensiveFormation.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="EnlightenmentStats.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="Avengers.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="Arcanism.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="ChillingBones.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="ErraticMana.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="CreatureAbilitiesTweaks.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="ModLuck.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModMorale.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="BarbarianShrineExp.cpp">
-      <Filter>Source Files\patches\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroMovement.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecCovenMistress.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelCurve.cpp">
+    <ClCompile Include="src/patches/HeroMaxSkills.cpp">
       <Filter>Source Files\patches\Core</Filter>
     </ClCompile>
-    <ClCompile Include="TowerDamage.cpp">
+    <ClCompile Include="src/patches/WandOfSpell.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ShieldOfCristalIce.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/GoldenGoose.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/WeakeningStrike.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/VengefulLight.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Twilight.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Pariah.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Vulnerability.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/Frenzy.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/HeroMovement.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/RetaliationStrikeFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/SnareFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/UnholyWordImmunitiesFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/ImbueBalistaAtbFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/WarMachineTier.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/RuneOfTheDragonForm.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/StackSplit1.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/LightningStun.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/LearnWarcries.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/TrainingGrounds.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/TownBuildingTweaks.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/TowerDamage.cpp">
       <Filter>Source Files\patches\Combat</Filter>
     </ClCompile>
-    <ClCompile Include="ColdDeathFix.cpp">
+    <ClCompile Include="src/patches/MasterOfFireFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
-    <ClCompile Include="WarMachineTier.cpp">
-      <Filter>Source Files\patches\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="ChainLightning.cpp">
-      <Filter>Source Files\patches\Spells</Filter>
-    </ClCompile>
-    <ClCompile Include="Earthquake.cpp">
-      <Filter>Source Files\patches\Spells</Filter>
-    </ClCompile>
-    <ClCompile Include="Frenzy.cpp">
-      <Filter>Source Files\patches\Spells</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulnerability.cpp">
-      <Filter>Source Files\patches\Spells</Filter>
-    </ClCompile>
-    <ClCompile Include="ArtifactTweaks.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModMagicResist.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModSpellImmune.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModElementalDamages.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModInitiative.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModManaCost.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModSpeed.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="UnholyWordImmunitiesFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="ModSpellProof.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="LightningStun.cpp">
-      <Filter>Source Files\patches\Spells</Filter>
-    </ClCompile>
-    <ClCompile Include="WeakeningStrike.cpp">
+    <ClCompile Include="src/patches/MasterOfAnimation.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
-    <ClCompile Include="HeroSpecStormcaller.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecEmbalmer.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecMasterOfElements.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="MasterOfAnimation.cpp">
+    <ClCompile Include="src/patches/OffensiveDefensiveFormation.cpp">
       <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="VengefulLight.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecOverheater.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="ElementalVision.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="ModAttack.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModDefense.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="ModDamageOutput.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="Combat.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="Artificier.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="ConjureAtb.cpp">
-      <Filter>Source Files\patches\Spells</Filter>
-    </ClCompile>
-    <ClCompile Include="LearnWarcries.cpp">
-      <Filter>Source Files\patches\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="GoldenGoose.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="Twilight.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="BookOfPowerFixes.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="EncourageFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="MasterOfFireFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="ModElementalResistance.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
-    <ClCompile Include="Fortunate.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecElementalist.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecTemptress.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecFootmen.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecEnlightened.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecShamans.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="TownBuildingTweaks.cpp">
-      <Filter>Source Files\patches\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecLoneHunter.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecExhauster.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
-    <ClCompile Include="Pariah.cpp">
-      <Filter>Source Files\patches\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="HeroSpecWorldBreaker.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

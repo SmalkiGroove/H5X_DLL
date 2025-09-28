@@ -50,20 +50,5 @@
     <ClCompile Include="globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EmpoweredArmageddonFixes.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="ImbueBalistaAtbFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="ArcaneRenewalFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="EnlightenmentForBarbsFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
-    <ClCompile Include="SnareFix.cpp">
-      <Filter>Source Files\patches\ToE_fixes</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

@@ -82,6 +82,7 @@
     <LinkIncremental>false</LinkIncremental>
     <ExternalIncludePath>$(SolutionDir)include;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -101,7 +102,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
@@ -109,7 +110,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>C:\Users\dred\source\repos\H5_DLL\H5_DLL.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(SolutionDir)\H5_DLL.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)/Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bz2.lib;libzippp_static.lib;zip.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -124,7 +125,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
@@ -134,7 +135,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>D:\Workspace\H5Mod\H5X_DLL\H5_DLL.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(SolutionDir)\H5_DLL.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)/Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bz2.lib;libzippp_static.lib;zip.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -147,7 +148,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
@@ -155,7 +156,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>C:\Users\dred\source\repos\H5_DLL\H5_DLL.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(SolutionDir)\H5_DLL.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)/Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bz2.lib;libzippp_static.lib;zip.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -170,7 +171,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
@@ -180,116 +181,122 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <ModuleDefinitionFile>C:\Users\dred\source\repos\H5_DLL\H5_DLL.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(SolutionDir)\H5_DLL.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)/Dependencies;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bz2.lib;libzippp_static.lib;zip.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="globals.h" />
-    <ClInclude Include="mainH5.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="pugixml.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="AgilityFix.cpp" />
-    <ClCompile Include="Arcanism.cpp" />
-    <ClCompile Include="ArtifactTweaks.cpp" />
-    <ClCompile Include="Artificier.cpp" />
-    <ClCompile Include="AtbTweaks.cpp" />
-    <ClCompile Include="Avengers.cpp" />
-    <ClCompile Include="BallistaCatapult.cpp" />
-    <ClCompile Include="BarbarianShrineExp.cpp" />
-    <ClCompile Include="BaseMorale.cpp" />
-    <ClCompile Include="BattlefieldSize.cpp" />
-    <ClCompile Include="BookOfPowerFixes.cpp" />
-    <ClCompile Include="ChainLightning.cpp" />
-    <ClCompile Include="ChillingBones.cpp" />
-    <ClCompile Include="ColdDeathFix.cpp" />
-    <ClCompile Include="Combat.cpp" />
-    <ClCompile Include="CombatAIFix.cpp" />
-    <ClCompile Include="ConjureAtb.cpp" />
-    <ClCompile Include="CreatureAbilitiesTweaks.cpp" />
-    <ClCompile Include="CreatureSpellpower.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Earthquake.cpp" />
-    <ClCompile Include="ElementalVision.cpp" />
-    <ClCompile Include="ElementalWarriors.cpp" />
-    <ClCompile Include="EliteCastersFix.cpp" />
-    <ClCompile Include="EnablePEST.cpp" />
-    <ClCompile Include="EnableScripts.cpp" />
-    <ClCompile Include="EncourageFix.cpp" />
-    <ClCompile Include="EnlightenmentStats.cpp" />
-    <ClCompile Include="ErraticMana.cpp" />
-    <ClCompile Include="FirstAidTent.cpp" />
-    <ClCompile Include="Fortunate.cpp" />
-    <ClCompile Include="Frenzy.cpp" />
-    <ClCompile Include="globals.cpp" />
-    <ClCompile Include="ArcaneRenewalFix.cpp" />
-    <ClCompile Include="EmpoweredArmageddonFixes.cpp" />
-    <ClCompile Include="EnlightenmentForBarbsFix.cpp" />
-    <ClCompile Include="GoldenGoose.cpp" />
-    <ClCompile Include="HeroMaxSkills.cpp" />
-    <ClCompile Include="HeroMovement.cpp" />
-    <ClCompile Include="HeroScreenUI.cpp" />
-    <ClCompile Include="HeroSpecElementalist.cpp" />
-    <ClCompile Include="HeroSpecEmbalmer.cpp" />
-    <ClCompile Include="HeroSpecEnlightened.cpp" />
-    <ClCompile Include="HeroSpecExhauster.cpp" />
-    <ClCompile Include="HeroSpecFootmen.cpp" />
-    <ClCompile Include="HeroSpecLoneHunter.cpp" />
-    <ClCompile Include="HeroSpecMasterOfElements.cpp" />
-    <ClCompile Include="HeroSpecOverheater.cpp" />
-    <ClCompile Include="HeroSpecShamans.cpp" />
-    <ClCompile Include="HeroSpecStormcaller.cpp" />
-    <ClCompile Include="HeroSpecCovenMistress.cpp" />
-    <ClCompile Include="HeroSpecTemptress.cpp" />
-    <ClCompile Include="HeroSpecWorldBreaker.cpp" />
-    <ClCompile Include="ImbueBalistaAtbFix.cpp" />
-    <ClCompile Include="LearnWarcries.cpp" />
-    <ClCompile Include="LevelCurve.cpp" />
-    <ClCompile Include="LightningStun.cpp" />
-    <ClCompile Include="MasterOfAnimation.cpp" />
-    <ClCompile Include="MasterOfFireFix.cpp" />
-    <ClCompile Include="ModAttack.cpp" />
-    <ClCompile Include="ModDamageOutput.cpp" />
-    <ClCompile Include="ModDefense.cpp" />
-    <ClCompile Include="ModElementalDamages.cpp" />
-    <ClCompile Include="ModElementalResistance.cpp" />
-    <ClCompile Include="ModHealth.cpp" />
-    <ClCompile Include="ModInitiative.cpp" />
-    <ClCompile Include="ModLuck.cpp" />
-    <ClCompile Include="ModMagicResist.cpp" />
-    <ClCompile Include="ModManaCost.cpp" />
-    <ClCompile Include="ModMorale.cpp" />
-    <ClCompile Include="ModSpeed.cpp" />
-    <ClCompile Include="ModSpellProof.cpp" />
-    <ClCompile Include="OffensiveDefensiveFormation.cpp" />
-    <ClCompile Include="Pariah.cpp" />
-    <ClCompile Include="pugixml.cpp" />
-    <ClCompile Include="RetaliationStrikeFix.cpp" />
-    <ClCompile Include="RuneOfTheDragonForm.cpp" />
-    <ClCompile Include="SnareFix.cpp" />
-    <ClCompile Include="ModSpellImmune.cpp" />
-    <ClCompile Include="StackSplit1.cpp" />
-    <ClCompile Include="TowerDamage.cpp" />
-    <ClCompile Include="TownBuildingTweaks.cpp" />
-    <ClCompile Include="TrainingGrounds.cpp" />
-    <ClCompile Include="Twilight.cpp" />
-    <ClCompile Include="UnholyWordImmunitiesFix.cpp" />
-    <ClCompile Include="utility_functions.cpp" />
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="src/dllmain.cpp" />
+    <ClInclude Include="src/mainH5.h" />
+    <ClCompile Include="src/mainH5.cpp" />
+    <ClInclude Include="src/framework.h" />
+    <ClInclude Include="src/pugixml.hpp" />
+    <ClInclude Include="src/globals.h" />
+    <ClCompile Include="src/globals.cpp" />
+    <ClInclude Include="src/pch.h" />
+    <ClCompile Include="src/pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="mainH5.cpp" />
-    <ClCompile Include="VengefulLight.cpp" />
-    <ClCompile Include="Vulnerability.cpp" />
-    <ClCompile Include="WarMachineTier.cpp" />
-    <ClCompile Include="WeakeningStrike.cpp" />
+    <ClCompile Include="src/utility_functions.cpp" />
+    <ClInclude Include="src/types/Artifacts.h" />
+    <ClInclude Include="src/types/Functions.h" />
+    <ClCompile Include="src/types/Functions.cpp" />
+    <ClInclude Include="src/structs/Hero.h" />
+    <ClCompile Include="src/structs/Hero.cpp" />
+    <ClCompile Include="src/patches/AgilityFix.cpp" />
+    <ClCompile Include="src/patches/AllSeeingCrown.cpp" />
+    <ClCompile Include="src/patches/ArcaneBrillance.cpp" />
+    <ClCompile Include="src/patches/Arcanism.cpp" />
+    <ClCompile Include="src/patches/Artificier.cpp" />
+    <ClCompile Include="src/patches/AtbTweaks.cpp" />
+    <ClCompile Include="src/patches/Avengers.cpp" />
+    <ClCompile Include="src/patches/BallistaCatapult.cpp" />
+    <ClCompile Include="src/patches/BarbarianShrineExp.cpp" />
+    <ClCompile Include="src/patches/BarbarianSkillsLinks.cpp" />
+    <ClCompile Include="src/patches/BaseMorale.cpp" />
+    <ClCompile Include="src/patches/BattlefieldSize.cpp" />
+    <ClCompile Include="src/patches/BookOfPowerFixes.cpp" />
+    <ClCompile Include="src/patches/ChainLightning.cpp" />
+    <ClCompile Include="src/patches/ChillingBones.cpp" />
+    <ClCompile Include="src/patches/ColdDeathFix.cpp" />
+    <ClCompile Include="src/patches/Combat.cpp" />
+    <ClCompile Include="src/patches/CombatAIFix.cpp" />
+    <ClCompile Include="src/patches/ConjureAtb.cpp" />
+    <ClCompile Include="src/patches/CreatureAbilitiesTweaks.cpp" />
+    <ClCompile Include="src/patches/CreatureSpellpower.cpp" />
+    <ClCompile Include="src/patches/Earthquake.cpp" />
+    <ClCompile Include="src/patches/ElementalVision.cpp" />
+    <ClCompile Include="src/patches/ElementalWarriors.cpp" />
+    <ClCompile Include="src/patches/EliteCastersFix.cpp" />
+    <ClCompile Include="src/patches/EnablePEST.cpp" />
+    <ClCompile Include="src/patches/EnableScripts.cpp" />
+    <ClCompile Include="src/patches/EncourageFix.cpp" />
+    <ClCompile Include="src/patches/EnlightenmentStats.cpp" />
+    <ClCompile Include="src/patches/ErraticMana.cpp" />
+    <ClCompile Include="src/patches/FirstAidTent.cpp" />
+    <ClCompile Include="src/patches/Fortunate.cpp" />
+    <ClCompile Include="src/patches/Frenzy.cpp" />
+    <ClCompile Include="src/patches/ArcaneRenewalFix.cpp" />
+    <ClCompile Include="src/patches/EmpoweredArmageddonFixes.cpp" />
+    <ClCompile Include="src/patches/EnlightenmentForBarbsFix.cpp" />
+    <ClCompile Include="src/patches/GoldenGoose.cpp" />
+    <ClCompile Include="src/patches/HeroMaxSkills.cpp" />
+    <ClCompile Include="src/patches/HeroMovement.cpp" />
+    <ClCompile Include="src/patches/HeroScreenUI.cpp" />
+    <ClCompile Include="src/patches/HeroSpecElementalist.cpp" />
+    <ClCompile Include="src/patches/HeroSpecEmbalmer.cpp" />
+    <ClCompile Include="src/patches/HeroSpecEnlightened.cpp" />
+    <ClCompile Include="src/patches/HeroSpecExhauster.cpp" />
+    <ClCompile Include="src/patches/HeroSpecFootmen.cpp" />
+    <ClCompile Include="src/patches/HeroSpecLoneHunter.cpp" />
+    <ClCompile Include="src/patches/HeroSpecMasterOfElements.cpp" />
+    <ClCompile Include="src/patches/HeroSpecOverheater.cpp" />
+    <ClCompile Include="src/patches/HeroSpecShamans.cpp" />
+    <ClCompile Include="src/patches/HeroSpecStormcaller.cpp" />
+    <ClCompile Include="src/patches/HeroSpecCovenMistress.cpp" />
+    <ClCompile Include="src/patches/HeroSpecTemptress.cpp" />
+    <ClCompile Include="src/patches/HeroSpecWorldBreaker.cpp" />
+    <ClCompile Include="src/patches/ImbueBalistaAtbFix.cpp" />
+    <ClCompile Include="src/patches/LearnWarcries.cpp" />
+    <ClCompile Include="src/patches/LevelCurve.cpp" />
+    <ClCompile Include="src/patches/LightningStun.cpp" />
+    <ClCompile Include="src/patches/MasterOfAnimation.cpp" />
+    <ClCompile Include="src/patches/MasterOfFireFix.cpp" />
+    <ClCompile Include="src/patches/ModAttack.cpp" />
+    <ClCompile Include="src/patches/ModDamageOutput.cpp" />
+    <ClCompile Include="src/patches/ModDefense.cpp" />
+    <ClCompile Include="src/patches/ModElementalDamages.cpp" />
+    <ClCompile Include="src/patches/ModElementalResistance.cpp" />
+    <ClCompile Include="src/patches/ModHealth.cpp" />
+    <ClCompile Include="src/patches/ModInitiative.cpp" />
+    <ClCompile Include="src/patches/ModLuck.cpp" />
+    <ClCompile Include="src/patches/ModMagicResist.cpp" />
+    <ClCompile Include="src/patches/ModManaCost.cpp" />
+    <ClCompile Include="src/patches/ModMorale.cpp" />
+    <ClCompile Include="src/patches/ModSpeed.cpp" />
+    <ClCompile Include="src/patches/ModSpellProof.cpp" />
+    <ClCompile Include="src/patches/OffensiveDefensiveFormation.cpp" />
+    <ClCompile Include="src/patches/Pariah.cpp" />
+    <ClCompile Include="src/patches/RetaliationStrikeFix.cpp" />
+    <ClCompile Include="src/patches/RuneOfTheDragonForm.cpp" />
+    <ClCompile Include="src/patches/ShieldOfCristalIce.cpp" />
+    <ClCompile Include="src/patches/SnareFix.cpp" />
+    <ClCompile Include="src/patches/ModSpellImmune.cpp" />
+    <ClCompile Include="src/patches/StackSplit1.cpp" />
+    <ClCompile Include="src/patches/TowerDamage.cpp" />
+    <ClCompile Include="src/patches/TownBuildingTweaks.cpp" />
+    <ClCompile Include="src/patches/TrainingGrounds.cpp" />
+    <ClCompile Include="src/patches/Twilight.cpp" />
+    <ClCompile Include="src/patches/UnholyWordImmunitiesFix.cpp" />
+    <ClCompile Include="src/patches/VengefulLight.cpp" />
+    <ClCompile Include="src/patches/Vulnerability.cpp" />
+    <ClCompile Include="src/patches/WandOfSpell.cpp" />
+    <ClCompile Include="src/patches/WarMachineTier.cpp" />
+    <ClCompile Include="src/patches/WeakeningStrike.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

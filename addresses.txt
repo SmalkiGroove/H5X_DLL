@@ -84,6 +84,37 @@ Artfset check :
 
 Skill check :
 
+00A75CF7 ballistics
+00A75FAC anatomy
+00986D91 anatomy
+004B0E2F rage of elements
+004B0F44 elemental vision
+008A0E71 familiar land
+008A0EF5 siege
+004E68AB ignite
+00977AD8 deadly cold
+008A2458 hold ground
+00860042 swarming gate
+0085FF87 gate master
+00861926 swift gating
+00861B2E urgash's call
+008A2005 storm wind
+008A285F fog veil
+009783AD arcane brillance
+0097DD33 teleport assault
+0097E51C tremors
+00980D6E plague tent
+00A594D3 last stand
+00A5AA6C flaming arrows
+00A5EFD1 flaming arrows
+00A75B6A flaming arrows
+00A5BC8E chilling bones
+00A5C024 cold steel
+00BC02EE runic shield
+00BC022E spread pain
+00BC0257 aura of energy
+00875410 barbarian skill link
+
 Hero spec check :
 
 008A372B griffins
@@ -97,4 +128,10 @@ Game functions :
 00A6ACD0 morale
 00A6ABF0 luck
 
+[+0x174] get skill mastery
+[+0x190] is hero spec
+[+0x290] is skill known
+[+0x294] is hero spec
+[+0x328] count artfset pieces
+[+0x184] atb ?
 

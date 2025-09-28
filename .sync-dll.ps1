@@ -1,4 +1,4 @@
-$game_path = "D:\Ubisoft\Heroes of Might and Magic V - Tribes of the East"
+$game_path = if ($env:H5_Folder) {$env:H5_Folder} else {"C:\Program Files (x86)\Ubisoft\Heroes of Might and Magic V - Tribes of the East"}
 
 Move-Item "Release\H5_DLL.dll" "um.dll" -Force
 Robocopy.exe "." "$game_path\bin" "um.dll" /Z /mov
