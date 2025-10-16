@@ -117,11 +117,25 @@ Skill check :
 
 Hero spec check :
 
-008A372B griffins
-008A3789 elven fury
+004E4308 haste ini
+004E437F white knight ini
+
+00634C8E white knight morale?
+
+00B4E11A peasants golds
+00B4E3D8 peasants golds
+
+008A372B griffins dive
+008A3789 elven fury spiteful
+
+
 009783EC white knight
-00BC1D20 offender
 00989CF6 dark emissary
+
+00BC1D20 offender
+0085F173 bombardier
+
+00A5AD07 evasive
 
 Game functions :
 

@@ -69,9 +69,6 @@
     <ClInclude Include="src/framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src/pugixml.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src/globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -85,6 +82,15 @@
       <Filter>Header Files\Types</Filter>
     </ClInclude>
     <ClInclude Include="src/structs/Hero.h">
+      <Filter>Header Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pugixml.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\types\Skills.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\types\Skill.h">
       <Filter>Header Files\Structs</Filter>
     </ClInclude>
   </ItemGroup>
@@ -205,9 +211,6 @@
     </ClCompile>
     <ClCompile Include="src/patches/FirstAidTent.cpp">
       <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="src/structs/Hero.cpp">
-      <Filter>Source Files\Structs</Filter>
     </ClCompile>
     <ClCompile Include="src/types/Functions.cpp">
       <Filter>Source Files\Types</Filter>
@@ -379,6 +382,18 @@
     </ClCompile>
     <ClCompile Include="src/patches/OffensiveDefensiveFormation.cpp">
       <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pugixml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\PendantOfMastery.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\LuaTweaks.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp">
+      <Filter>Source Files\patches\Heroes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

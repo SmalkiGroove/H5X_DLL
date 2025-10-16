@@ -100,6 +100,7 @@ void ShamanMatriarchTweak_init(pugi::xml_document& doc);
 void LoneHunterTweak_init(pugi::xml_document& doc);
 void ExhausterTweak_init(pugi::xml_document& doc);
 void WorldBreaker_init(pugi::xml_document& doc);
+void SpecBlackKnights_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
 void CreatureSpellpower_init(pugi::xml_document& doc);
@@ -134,6 +135,7 @@ void GoldenGoose_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);
 void AllSeeingCrownTweak_init(pugi::xml_document& doc);
 void ShieldOfCrystalIce_init(pugi::xml_document& doc);
+void PendantOfMastery_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);
@@ -148,4 +150,5 @@ void TrainingGrounds_init(pugi::xml_document& doc);
 void BarbarianShrineExp_init(pugi::xml_document& doc);
 void WarMachineTier_init(pugi::xml_document& doc);
 void LearnWarcries_init(pugi::xml_document& doc);
+void GiveHeroSkill_init(pugi::xml_document& doc);
 void HallOfIntrigue_init(pugi::xml_document& doc);

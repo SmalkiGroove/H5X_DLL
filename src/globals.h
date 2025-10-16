@@ -51,6 +51,8 @@ void assignHexStringToStruct(T& structure, const std::string& hexString) {
     }
 }
 
+int* offsetPointer(int* p, int offset);
+
 // game functions
 
 typedef int(__thiscall* GameFunction)(int*);

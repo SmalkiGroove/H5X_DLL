@@ -80,9 +80,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <ExternalIncludePath>$(SolutionDir)include;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)src;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)src;$(IncludePath)</IncludePath>
+    <SourcePath>$(SolutionDir)src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -128,6 +129,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)/Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <ForcedUsingFiles>pch.h;%(ForcedUsingFiles)</ForcedUsingFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -188,10 +190,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp" />
+    <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
+    <ClCompile Include="src\patches\LuaTweaks.cpp" />
+    <ClCompile Include="src\patches\PendantOfMastery.cpp" />
+    <ClCompile Include="src\pugixml.cpp" />
     <ClInclude Include="src/mainH5.h" />
     <ClCompile Include="src/mainH5.cpp" />
     <ClInclude Include="src/framework.h" />
-    <ClInclude Include="src/pugixml.hpp" />
     <ClInclude Include="src/globals.h" />
     <ClCompile Include="src/globals.cpp" />
     <ClInclude Include="src/pch.h" />
@@ -206,7 +211,6 @@
     <ClInclude Include="src/types/Functions.h" />
     <ClCompile Include="src/types/Functions.cpp" />
     <ClInclude Include="src/structs/Hero.h" />
-    <ClCompile Include="src/structs/Hero.cpp" />
     <ClCompile Include="src/patches/AgilityFix.cpp" />
     <ClCompile Include="src/patches/AllSeeingCrown.cpp" />
     <ClCompile Include="src/patches/ArcaneBrillance.cpp" />
@@ -297,6 +301,9 @@
     <ClCompile Include="src/patches/WandOfSpell.cpp" />
     <ClCompile Include="src/patches/WarMachineTier.cpp" />
     <ClCompile Include="src/patches/WeakeningStrike.cpp" />
+    <ClInclude Include="src\pugixml.hpp" />
+    <ClInclude Include="src\types\Skill.h" />
+    <ClInclude Include="src\types\Skills.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

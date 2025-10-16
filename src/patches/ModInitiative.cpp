@@ -16,7 +16,7 @@
 void CreatureInitiativeFork();
 void CreatureInitlessFork();
 void HeroInitiativeFork();
-void ModInitiativePercent_wrapper();
+//void ModInitiativeBonus_wrapper();
 
 int CreatureInitiative_fork = 0x004BC2BF;
 int CreatureInitiative_return = 0x004BC2D8;
@@ -25,37 +25,68 @@ int CreatureInitless_return = 0x008A464B;
 int HeroInitiative_fork = 0x00BC1F77;
 int HeroInitiative_return = 0x00BC1F7D;
 
+int mod_initiative_bonus_fork = 0x004BC2BF;
+int mod_initiative_bonus_return = 0x004BC2D8;
+
 void Initiative_init(pugi::xml_document& doc) {
-    //assembly_patches.push_back({ PATCH_HOOK, CreatureInitiative_fork, 25, CreatureInitiativeFork, 0, 0, 0 });
-    //assembly_patches.push_back({ PATCH_HOOK, CreatureInitless_fork, 42, CreatureInitlessFork, 0, 0, 0 });
-    //assembly_patches.push_back({ PATCH_HOOK, HeroInitiative_fork, 6, HeroInitiativeFork, 0, 0, 0 });
-    assembly_patches.push_back({ PATCH_HOOK, 0x004BC2BF, 6, ModInitiativePercent_wrapper, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, CreatureInitiative_fork, 25, CreatureInitiativeFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, CreatureInitless_fork, 42, CreatureInitlessFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, HeroInitiative_fork, 6, HeroInitiativeFork, 0, 0, 0 });
+    //assembly_patches.push_back({ PATCH_HOOK, mod_initiative_bonus_fork, 25, ModInitiativeBonus_wrapper, 0, 0, 0 });
+}
+/*
+float* __fastcall mod_initiative_flat_bonus(IHero* hero) {
+    int artifact_equipped = 0;
+    int init_bonus_flat = 0;
+    int* inventory = hero->instance->get_inventory;
+
+    artifact_equipped = count_equipped_artifact(inventory, ARTIFACT_PLUNDERER_SHOES);
+    init_bonus_flat = init_bonus_flat + 1 * artifact_equipped;
+
+    artifact_equipped = count_equipped_artifact(inventory, ARTIFACT_BOOTS_OF_SWIFTNESS);
+    init_bonus_flat = init_bonus_flat + 2 * artifact_equipped;
+
+    artifact_equipped = count_equipped_artifact(inventory, ARTIFACT_HARPY_BOOTS);
+    init_bonus_flat = init_bonus_flat + 1 * artifact_equipped;
+
+    return (float*)init_bonus_flat;
 }
 
-int mod_initiative_percent_return = 0x004BC2D8;
-int __fastcall mod_initiative_percent(IHero* hero_a1) {
+int __fastcall mod_initiative_percent_bonus(IHero* hero) {
     int artifact_equipped = 0;
     int init_bonus_percent = 0;
-    int* inventory = hero_a1->vtable->call_116;
+    int* inventory = hero->instance->get_inventory;
 
     artifact_equipped = count_equipped_artifact(inventory, ARTIFACT_CELESTIAL_JUSTICAR_SWORD);
     init_bonus_percent = init_bonus_percent + 15 * artifact_equipped;
 
     artifact_equipped = count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_1);
-    init_bonus_percent = init_bonus_percent + 10 * artifact_equipped;
+    init_bonus_percent = init_bonus_percent + 5 * artifact_equipped;
+
+    artifact_equipped = count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_2);
+    init_bonus_percent = init_bonus_percent + 6 * artifact_equipped;
+
+    artifact_equipped = count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_3);
+    init_bonus_percent = init_bonus_percent + 7 * artifact_equipped;
 
     return init_bonus_percent;
 }
-__declspec(naked) void ModInitiativePercent_wrapper() {
+
+__declspec(naked) void ModInitiativeBonus_wrapper() {
     __asm
     {
-        mov ecx, edi
-        call[mod_initiative_percent]
+        call[mod_initiative_flat_bonus]
+        fld dword ptr ss : [esp + 0x20]
+        fadd dword ptr [eax]
+        fstp dword ptr ss : [esp + 0x20]
+
+        call[mod_initiative_percent_bonus]
         mov esi, eax
-        jmp[mod_initiative_percent_return]
+
+        jmp[mod_initiative_bonus_return]
     }
 }
-
+*/
 
 __declspec(naked) void CreatureInitiativeFork() {
     __asm
@@ -168,7 +199,7 @@ __declspec(naked) void CreatureInitlessFork() {
 }
 
 int sub_get_some_data = 0x00420DF0;
-float knowledge_to_init_ratio = 0.05f;
+float knowledge_to_init_ratio = 0.005f;
 __declspec(naked) void HeroInitiativeFork() {
     __asm
     {

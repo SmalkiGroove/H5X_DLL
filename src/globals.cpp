@@ -10,7 +10,6 @@ GameFunction get_hero_data = (GameFunction)0x00977700;
 GameFunction has_hero_spec = (GameFunction)0x00B4B5A0;
 GameFunction get_skill_id = (GameFunction)0x009F5C90;
 GameFunction get_skill_mastery = (GameFunction)0x00ACFEF0;
-CountEquippedArtifacts count_equipped_artifact = (CountEquippedArtifacts)0x00CA6680;
 GameFunction get_spell_id = (GameFunction)0x00A34110;
 GameFunction get_spell_element = (GameFunction)0x00A342C0;
 GameFunction get_spell_school = (GameFunction)0x00A34350;
@@ -57,4 +56,8 @@ void writeLog(const char* type, const std::string& message) {
             logs.close();
         }
     }
+}
+
+int* offsetPointer(int* p, int offset) {
+    return (p + offset);
 }

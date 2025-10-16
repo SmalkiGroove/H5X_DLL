@@ -58,6 +58,7 @@ void init_patches(pugi::xml_document& doc) {
     LoneHunterTweak_init(doc);             // OK
     ExhausterTweak_init(doc);              // OK
     WorldBreaker_init(doc);                // OK
+	SpecBlackKnights_init(doc);            // OK
 
     AtbTweaks_init(doc);                   // OK
     CreatureSpellpower_init(doc);          // OK
@@ -92,6 +93,7 @@ void init_patches(pugi::xml_document& doc) {
     WandOfSpellTweak_init(doc);            //
     AllSeeingCrownTweak_init(doc);         // OK
 	//ShieldOfCrystalIce_init(doc);          //
+	PendantOfMastery_init(doc);            // OK
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              // OK
@@ -106,6 +108,7 @@ void init_patches(pugi::xml_document& doc) {
     BarbarianShrineExp_init(doc);          // OK
     WarMachineTier_init(doc);              // OK
     LearnWarcries_init(doc);               // OK
+    GiveHeroSkill_init(doc);               // OK
     HallOfIntrigue_init(doc);              // OK
     
 }

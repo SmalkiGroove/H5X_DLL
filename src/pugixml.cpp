@@ -1976,7 +1976,7 @@ PUGI_IMPL_FN bool parse_declaration_encoding(const uint8_t* data, size_t size, c
 			PUGI_IMPL_SCANCHARTYPE(ct_space);
 
 			// the only two valid delimiters are ' and "
-			uint8_t delimiter = (offset < size&& data[offset] == '"') ? '"' : '\'';
+			uint8_t delimiter = (offset < size && data[offset] == '"') ? '"' : '\'';
 
 			PUGI_IMPL_SCANCHAR(delimiter);
 
@@ -6940,7 +6940,7 @@ namespace pugi
 	PUGI_IMPL_FN xml_node_iterator xml_node_iterator::operator++(int)
 	{
 		xml_node_iterator temp = *this;
-		++* this;
+		++*this;
 		return temp;
 	}
 
@@ -6953,7 +6953,7 @@ namespace pugi
 	PUGI_IMPL_FN xml_node_iterator xml_node_iterator::operator--(int)
 	{
 		xml_node_iterator temp = *this;
-		--* this;
+		--*this;
 		return temp;
 	}
 
@@ -7001,7 +7001,7 @@ namespace pugi
 	PUGI_IMPL_FN xml_attribute_iterator xml_attribute_iterator::operator++(int)
 	{
 		xml_attribute_iterator temp = *this;
-		++* this;
+		++*this;
 		return temp;
 	}
 
@@ -7014,7 +7014,7 @@ namespace pugi
 	PUGI_IMPL_FN xml_attribute_iterator xml_attribute_iterator::operator--(int)
 	{
 		xml_attribute_iterator temp = *this;
-		--* this;
+		--*this;
 		return temp;
 	}
 
@@ -7062,7 +7062,7 @@ namespace pugi
 	PUGI_IMPL_FN xml_named_node_iterator xml_named_node_iterator::operator++(int)
 	{
 		xml_named_node_iterator temp = *this;
-		++* this;
+		++*this;
 		return temp;
 	}
 
@@ -7084,7 +7084,7 @@ namespace pugi
 	PUGI_IMPL_FN xml_named_node_iterator xml_named_node_iterator::operator--(int)
 	{
 		xml_named_node_iterator temp = *this;
-		--* this;
+		--*this;
 		return temp;
 	}
 

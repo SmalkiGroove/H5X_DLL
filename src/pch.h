@@ -12,8 +12,9 @@
 #include "mainH5.h"
 #include "globals.h"
 
-#include "types/Artifacts.h"
 #include "types/Functions.h"
+#include "types/Artifacts.h"
+#include "types/Skills.h"
 
 #include "structs/Hero.h"
 
