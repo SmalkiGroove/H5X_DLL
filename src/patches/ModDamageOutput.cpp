@@ -98,7 +98,7 @@ __declspec(naked) void AllDamageOutputFork() {
         call dword ptr [eax]
         mov edx, dword ptr [eax]
         mov ecx, eax
-        push 0x3D
+        push 0x4
         call dword ptr [edx + 0x174]
         test eax, eax
         jz COURAGE_END

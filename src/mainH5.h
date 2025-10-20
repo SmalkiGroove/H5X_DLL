@@ -85,6 +85,7 @@ void MagicResist_init(pugi::xml_document& doc);
 void SpellImmune_init(pugi::xml_document& doc);
 void ManaCost_init(pugi::xml_document& doc);
 void ElemDamage_init(pugi::xml_document& doc);
+void CreatureAbilities_init(pugi::xml_document& doc);
 
 void HeroMovement_init(pugi::xml_document& doc);
 void CovenMistressTweak_init(pugi::xml_document& doc);
@@ -124,8 +125,9 @@ void OffDefFormation_init(pugi::xml_document& doc);
 void ChillingBones_init(pugi::xml_document& doc);
 void ErraticMana_init(pugi::xml_document& doc);
 void WeakeningStrike_init(pugi::xml_document& doc);
-void MasterOfAnimationClear_init(pugi::xml_document& doc);
+void SkillEffectDisable_init(pugi::xml_document& doc);
 void VengefulLight_init(pugi::xml_document& doc);
+void ExaltationTweak_init(pugi::xml_document& doc);
 void TwilightTweak_init(pugi::xml_document& doc);
 void PariahTweak_init(pugi::xml_document& doc);
 void ArcaneBrillance_init(pugi::xml_document& doc);

@@ -37,14 +37,15 @@ __declspec(naked) void ElemProofFork() {
         ja JUMPTABLE_DEFAULT_CASE
         test ebx, ebx
         je JUMPTABLE_DEFAULT_CASE
-        mov edx, [ebx]
+
+        mov eax, [ebx]
         mov ecx, ebx
-        call dword ptr [edx + 0x74]
+        call dword ptr [eax + 0x74]
         push 0x7C
         mov ecx, eax
         call[count_equipped_artifact]
         test eax, eax
-        je JUMPTABLE_ENTRYPOINT
+        je ELEM_RESIST_MAGIC_FILTER
         push 0x0
         push 0x0
         push 0x7C
@@ -53,6 +54,28 @@ __declspec(naked) void ElemProofFork() {
         call[notify_artifact_buff]
         fld dword ptr [esp + 0x48]
         fmul dword ptr [constf_0_6]
+        fstp dword ptr [esp + 0x48]
+
+        ELEM_RESIST_MAGIC_FILTER:
+        test edi, edi
+		je JUMPTABLE_ENTRYPOINT
+        mov eax, [ebx]
+        mov ecx, ebx
+        push 0xCE
+        call dword ptr [eax + 0x174]
+        test eax, eax
+        je JUMPTABLE_ENTRYPOINT
+        xor edx, edx
+        mov eax, edi
+        sar eax, 8
+        mov ecx, 0x4
+        div ecx
+        mov ecx, ebp
+        call[get_spell_element]
+        cmp edx, eax
+        jne JUMPTABLE_ENTRYPOINT
+        fld dword ptr [esp + 0x48]
+        fmul dword ptr [constf_0_2]
         fstp dword ptr [esp + 0x48]
 
         JUMPTABLE_ENTRYPOINT:

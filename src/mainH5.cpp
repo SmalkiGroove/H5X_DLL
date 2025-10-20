@@ -43,6 +43,7 @@ void init_patches(pugi::xml_document& doc) {
     SpellImmune_init(doc);                 //
     ManaCost_init(doc);                    // OK
     ElemDamage_init(doc);                  // OK
+	CreatureAbilities_init(doc);           // OK
 
     HeroMovement_init(doc);                // OK
     CovenMistressTweak_init(doc);          // OK
@@ -82,8 +83,9 @@ void init_patches(pugi::xml_document& doc) {
     ChillingBones_init(doc);               // OK
     ErraticMana_init(doc);                 // OK
     WeakeningStrike_init(doc);             // OK
-    MasterOfAnimationClear_init(doc);      // OK
+    SkillEffectDisable_init(doc);          // 
     VengefulLight_init(doc);               // OK
+	ExaltationTweak_init(doc);			   // 
     TwilightTweak_init(doc);               // OK
     PariahTweak_init(doc);                 // OK
     ArcaneBrillance_init(doc);             // OK

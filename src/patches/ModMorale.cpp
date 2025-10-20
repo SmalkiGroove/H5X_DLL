@@ -1,22 +1,61 @@
 #include "pch.h"
 
-// ADD MORALE DEBUFFS FROM ADDITIONAL ARTIFACTS
+// ADD MORALE BUFFS FROM ADDITIONAL SOURCES
+// skill Motivation +1 Morale
+// skill Last Stand +1 Morale
+
+// ADD MORALE DEBUFFS FROM ADDITIONAL SOURCES
 // (175) Spirit of Oppression : -1 Morale
 // (176) Crimson Scythe : -1 Morale
 // (125) Rod of Torment : -2 Morale
-// also skill Dead Man's Curse -3 Morale
-// also spec 80 (Sovereign) -1 Morale
+// skill Intimidating Voice -1 Morale
+// skill Dead Man's Curse -3 Morale
+// spec 80 (Sovereign) -1 Morale
 
-void MoraleFork();
+void MoraleBuffFork();
+void MoraleDebuffFork();
 
-int Morale_fork = 0x0098A175;
-int Morale_return = 0x0098A17A;
+int MoraleBuff_fork = 0x00B4CAFB;
+int MoraleBuff_return = 0x00B4CB01;
+int MoraleDebuff_fork = 0x0098A175;
+int MoraleDebuff_return = 0x0098A17A;
 
 void Morale_init(pugi::xml_document& doc) {
-    assembly_patches.push_back({ PATCH_HOOK, Morale_fork, 5, MoraleFork, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_HOOK, MoraleBuff_fork, 6, MoraleBuffFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, MoraleDebuff_fork, 5, MoraleDebuffFork, 0, 0, 0 });
 }
 
-__declspec(naked) void MoraleFork() {
+__declspec(naked) void MoraleBuffFork() {
+    __asm
+    {
+        mov edx, dword ptr [esi]
+        push 0x3D
+        mov ecx, esi
+        call dword ptr [edx + 0x174]
+        test eax, eax
+        je MORALE_NEXT_1
+        add edi, 1
+
+        MORALE_NEXT_1:
+		mov edx, dword ptr [esi]
+        push 0x76
+        mov ecx, esi
+        call dword ptr [edx + 0x174]
+        test eax, eax
+        je MORALE_NEXT_2
+        add edi, 1
+
+        MORALE_NEXT_2:
+
+        MORALE_PARIAH:
+        mov edx, dword ptr [esi]
+        push 0x53
+		mov ecx, esi
+		jmp[MoraleBuff_return]
+    }
+}
+
+__declspec(naked) void MoraleDebuffFork() {
     __asm
     {
         neg eax
@@ -62,13 +101,22 @@ __declspec(naked) void MoraleFork() {
         mov ecx, [eax + 0x8]
         mov edx, [ecx + edi + 0x4]
         lea ecx, [ecx + edi + 0x4]
+        push 0xA2
+        call dword ptr [edx + 0x290]
+        neg eax
+        lea esi, dword ptr [esi + eax * 1]
+
+        mov eax, [edi + 0x4]
+        mov ecx, [eax + 0x8]
+        mov edx, [ecx + edi + 0x4]
+        lea ecx, [ecx + edi + 0x4]
         push 0x67
         call dword ptr [edx + 0x290]
         test al, al
         jz MORALE_SOVEREIGN
         sub esi, 0x3
 
-     MORALE_SOVEREIGN:
+        MORALE_SOVEREIGN:
         mov eax, [edi + 0x4]
         mov ecx, [eax + 0x8]
         mov edx, [ecx + edi + 0x4]
@@ -80,6 +128,6 @@ __declspec(naked) void MoraleFork() {
         sub esi, 0x1
 
         MORALE_END:
-        jmp[Morale_return]
+        jmp[MoraleDebuff_return]
     }
 }

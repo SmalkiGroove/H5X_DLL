@@ -190,8 +190,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp" />
+    <ClCompile Include="src\patches\Exaltation.cpp" />
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
+    <ClCompile Include="src\patches\ModAbilities.cpp" />
     <ClCompile Include="src\patches\PendantOfMastery.cpp" />
     <ClCompile Include="src\pugixml.cpp" />
     <ClInclude Include="src/mainH5.h" />
@@ -268,7 +270,7 @@
     <ClCompile Include="src/patches/LearnWarcries.cpp" />
     <ClCompile Include="src/patches/LevelCurve.cpp" />
     <ClCompile Include="src/patches/LightningStun.cpp" />
-    <ClCompile Include="src/patches/MasterOfAnimation.cpp" />
+    <ClCompile Include="src\patches\SkillEffectDisable.cpp" />
     <ClCompile Include="src/patches/MasterOfFireFix.cpp" />
     <ClCompile Include="src/patches/ModAttack.cpp" />
     <ClCompile Include="src/patches/ModDamageOutput.cpp" />

@@ -32,9 +32,12 @@ int __fastcall pendantofmastery_check(IHero* hero, int skill_id) {
 __declspec(naked) void PendantOfMastery_wrapper() {
 	__asm
 	{
+		test eax, eax
+		je ABSOLUTE_MASTERY_RETURN
 		mov edx, ebx
 		mov ecx, esi
 		call[pendantofmastery_check]
+		ABSOLUTE_MASTERY_RETURN:
 		jmp[PendantOfMastery_return]
 	}
 }

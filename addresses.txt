@@ -112,7 +112,8 @@ Skill check :
 00A5C024 cold steel
 00BC02EE runic shield
 00BC022E spread pain
-00BC0257 aura of energy
+00BC0257 aura of Energy
+
 00875410 barbarian skill link
 
 Hero spec check :

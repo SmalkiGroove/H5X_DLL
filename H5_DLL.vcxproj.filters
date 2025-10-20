@@ -377,7 +377,7 @@
     <ClCompile Include="src/patches/MasterOfFireFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
-    <ClCompile Include="src/patches/MasterOfAnimation.cpp">
+    <ClCompile Include="src\patches\SkillEffectDisable.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
     <ClCompile Include="src/patches/OffensiveDefensiveFormation.cpp">
@@ -394,6 +394,12 @@
     </ClCompile>
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp">
       <Filter>Source Files\patches\Heroes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\ModAbilities.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\Exaltation.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
