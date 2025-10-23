@@ -5,6 +5,13 @@
 // Perk ASSAULT_TRAINING => Violence
 // Perk ARMOR_PROTECTION => Armored
 // Perk BLOCK_CORRUPTION => Free Mind
+// Perk ? => Unlimited Retaliations
+// Perk ? => Fierce Retaliations
+// (142) Crag Hack's Helmet => Battle Rage
+// (160) Legendary Boots => Rider Charge
+// (182) Ranger's Cape => Agility
+// (162) ? => Child of Light
+// (163) ? => Flame Wave
 
 void CreatureAbilitiesFork();
 void CreatureAbilityFreeMindFork();
@@ -102,7 +109,87 @@ __declspec(naked) void CreatureAbilitiesFork() {
         jne ABILITIES_RETURN_TRUE
 
         ABILITY_CHECK_NEXT_3:
-        // Hold ground
+        // Rider Charge
+        cmp esi, 0x39
+        jne ABILITY_CHECK_NEXT_4
+
+        mov ecx, dword ptr [esp + 0x1C]
+        cmp ecx, edi
+        je ABILITIES_CHECK_NATIVE
+        mov eax, dword ptr [ecx]
+        call dword ptr [eax + 0x74]
+        mov ecx, eax
+        push 0xA0
+        call[count_equipped_artifact]
+        test eax, eax
+        jne ABILITIES_RETURN_TRUE
+
+        ABILITY_CHECK_NEXT_4:
+        // Battle Rage
+        cmp esi, 0xA2
+        jne ABILITY_CHECK_NEXT_5
+
+        mov ecx, dword ptr [esp + 0x1C]
+        cmp ecx, edi
+        je ABILITIES_CHECK_NATIVE
+        mov eax, dword ptr [ecx]
+        call dword ptr [eax + 0x74]
+        mov ecx, eax
+        push 0x8E
+        call[count_equipped_artifact]
+        test eax, eax
+        jne ABILITIES_RETURN_TRUE
+
+        ABILITY_CHECK_NEXT_5:
+        // Agility
+        cmp esi, 0x61
+        jne ABILITY_CHECK_NEXT_6
+
+        mov ecx, dword ptr [esp + 0x1C]
+        cmp ecx, edi
+        je ABILITIES_CHECK_NATIVE
+        mov eax, dword ptr [ecx]
+        call dword ptr [eax + 0x74]
+        mov ecx, eax
+        push 0xB6
+        call[count_equipped_artifact]
+        test eax, eax
+        jne ABILITIES_RETURN_TRUE
+
+        ABILITY_CHECK_NEXT_6:
+        // Child of Light
+        cmp esi, 0x8F
+        jne ABILITY_CHECK_NEXT_7
+
+        mov ecx, dword ptr [esp + 0x1C]
+        cmp ecx, edi
+        je ABILITIES_CHECK_NATIVE
+        mov eax, dword ptr [ecx]
+        call dword ptr [eax + 0x74]
+        mov ecx, eax
+        push 0xA2
+        call[count_equipped_artifact]
+        test eax, eax
+        jne ABILITIES_RETURN_TRUE
+
+        ABILITY_CHECK_NEXT_7:
+        // Flame Wave
+        cmp esi, 0xA6
+        jne ABILITY_CHECK_NEXT_8
+
+        mov ecx, dword ptr [esp + 0x1C]
+        cmp ecx, edi
+        je ABILITIES_CHECK_NATIVE
+        mov eax, dword ptr [ecx]
+        call dword ptr [eax + 0x74]
+        mov ecx, eax
+        push 0xA3
+        call[count_equipped_artifact]
+        test eax, eax
+        jne ABILITIES_RETURN_TRUE
+
+        ABILITY_CHECK_NEXT_8:
+        // Hold Ground
         cmp esi, 0xA5
         jmp[CreatureAbilities_return]
 

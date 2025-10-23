@@ -195,6 +195,7 @@
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />
     <ClCompile Include="src\patches\PendantOfMastery.cpp" />
+    <ClCompile Include="src\patches\ThunderPower.cpp" />
     <ClCompile Include="src\pugixml.cpp" />
     <ClInclude Include="src/mainH5.h" />
     <ClCompile Include="src/mainH5.cpp" />

@@ -10,7 +10,7 @@
 // (58) Moon Blade : +1 hero init
 // (107) Ring of Celerity : +2 hero init
 // (65) Ring of Caution : -2 hero init
-// (201/202/203) Artificier : 6% global init
+// (201/202/203) Artificier : 5% global init
 // Knowledge stat +0.05 per point
 
 void CreatureInitiativeFork();
@@ -147,8 +147,8 @@ __declspec(naked) void CreatureInitiativeFork() {
         call[count_equipped_artifact]
         test eax, eax
         je CRT_INIT_A3
-        lea eax, dword ptr [eax + eax * 2]
-        lea esi, dword ptr [esi + eax * 2]
+        lea eax, dword ptr [eax + eax * 4]
+        lea esi, dword ptr [esi + eax * 1]
 
         CRT_INIT_A3:
         push 0xCB
@@ -156,10 +156,8 @@ __declspec(naked) void CreatureInitiativeFork() {
         call[count_equipped_artifact]
         test eax, eax
         je CRT_INIT_END
-        mov ecx, eax
-        lea ecx, dword ptr [eax + eax * 2]
-        lea eax, dword ptr [eax + ecx * 2]
-        lea esi, dword ptr [esi + eax]
+        lea eax, dword ptr [eax + eax * 4]
+        lea esi, dword ptr [esi + eax * 1]
         CRT_INIT_END:
         jmp[CreatureInitiative_return]
     }
@@ -255,7 +253,7 @@ __declspec(naked) void HeroInitiativeFork() {
         test eax, eax
         je HERO_INIT_A2
         fld dword ptr ss : [esp + 0x4]
-        fadd dword ptr [constf_0_6]
+        fadd dword ptr [constf_0_5]
         fstp dword ptr ss : [esp + 0x4]
 
         HERO_INIT_A2:
@@ -265,7 +263,7 @@ __declspec(naked) void HeroInitiativeFork() {
         test eax, eax
         je HERO_INIT_A3
         fld dword ptr ss : [esp + 0x4]
-        fadd dword ptr [constf_0_6]
+        fadd dword ptr [constf_0_5]
         fstp dword ptr ss : [esp + 0x4]
 
         HERO_INIT_A3:
@@ -275,7 +273,7 @@ __declspec(naked) void HeroInitiativeFork() {
         test eax, eax
         je HERO_INIT_END
         fld dword ptr ss : [esp + 0x4]
-        fadd dword ptr [constf_0_6]
+        fadd dword ptr [constf_0_5]
         fstp dword ptr ss : [esp + 0x4]
 
         HERO_INIT_END:

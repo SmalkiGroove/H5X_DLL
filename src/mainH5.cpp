@@ -83,7 +83,7 @@ void init_patches(pugi::xml_document& doc) {
     ChillingBones_init(doc);               // OK
     ErraticMana_init(doc);                 // OK
     WeakeningStrike_init(doc);             // OK
-    SkillEffectDisable_init(doc);          // 
+    SkillEffectDisable_init(doc);          // OK
     VengefulLight_init(doc);               // OK
 	ExaltationTweak_init(doc);			   // 
     TwilightTweak_init(doc);               // OK
