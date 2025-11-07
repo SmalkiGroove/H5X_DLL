@@ -14,8 +14,8 @@ void ThunderPower_init(pugi::xml_document& doc) {
 __declspec(naked) void ThunderPowerFork() {
     __asm
     {
-        mov eax, [ebx]
-        mov ecx, ebx
+        mov eax, [esi]
+        mov ecx, esi
         call dword ptr [eax + 0xC]
         mov edx, [eax]
         mov ecx, eax
@@ -30,6 +30,23 @@ __declspec(naked) void ThunderPowerFork() {
         call dword ptr [eax + 0x290]
         test al, al
 		je THUNDER_POWER_RETURN
+        mov eax, dword ptr ss : [esp + 0x4]
+        push ebp
+        fild dword ptr ss : [esp]
+        fmul dword ptr [constf_0_1]
+        mov dword ptr ss : [esp], 0
+        push 1
+        push eax
+        push 0
+        push esi
+        push ecx
+        fstp dword ptr ss : [esp]
+        mov ecx, 0x4
+        xor edx, edx
+        call[get_mitigated_damage]
+        test eax, eax
+        // TODO visual effect
+        add ebp, eax
 
         THUNDER_POWER_RETURN:
         push ebp

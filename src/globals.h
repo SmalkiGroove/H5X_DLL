@@ -76,6 +76,7 @@ extern GameFunction notify_skill_buff;
 extern GameFunction notify_artifact_buff;
 
 extern GameFunction get_unit_spellproof;
+extern GameFunction get_mitigated_damage;
 extern GameFunction call_unknown_1;
 
 

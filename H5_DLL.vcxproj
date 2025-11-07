@@ -193,6 +193,7 @@
     <ClCompile Include="src\patches\Exaltation.cpp" />
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
+    <ClCompile Include="src\patches\Magnetism.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />
     <ClCompile Include="src\patches\PendantOfMastery.cpp" />
     <ClCompile Include="src\patches\ThunderPower.cpp" />

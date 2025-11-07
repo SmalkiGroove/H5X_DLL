@@ -1,12 +1,12 @@
 #include "pch.h"
 
 // ADD ABILITIES FROM OTHER SOURCES
-// Perk STUN_TRAINING => Bash
+// Perk STUN_TRAINING => Brushing Blow
 // Perk ASSAULT_TRAINING => Violence
 // Perk ARMOR_PROTECTION => Armored
 // Perk BLOCK_CORRUPTION => Free Mind
-// Perk ? => Unlimited Retaliations
-// Perk ? => Fierce Retaliations
+// Perk UNLIMITED_RETALIATIONS => Unlimited Retaliations
+// Perk FIERCE_RETALIATIONS => Fierce Retaliations
 // (142) Crag Hack's Helmet => Battle Rage
 // (160) Legendary Boots => Rider Charge
 // (182) Ranger's Cape => Agility
@@ -31,9 +31,9 @@ void CreatureAbilities_init(pugi::xml_document& doc) {
 __declspec(naked) void CreatureAbilitiesFork() {
     __asm
     {
-        // Bash
-        cmp esi, 0x1D
-        jne ABILITY_CHECK_NEXT_1
+        // Crushing Blow
+        cmp esi, 0x7B
+        jne ABILITY_CHECK_VIOLENCE
 
         mov ecx, dword ptr [ebp - 0x144]
         mov edx, dword ptr [ecx + 0x8]
@@ -56,10 +56,10 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_1:
+        ABILITY_CHECK_VIOLENCE:
         // Violence
         cmp esi, 0x6F
-        jne ABILITY_CHECK_NEXT_2
+        jne ABILITY_CHECK_ARMORED
 
         mov ecx, dword ptr [ebp - 0x144]
         mov edx, dword ptr [ecx + 0x8]
@@ -82,10 +82,10 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_2:
+        ABILITY_CHECK_ARMORED:
         // Armored
         cmp esi, 0x55
-        jne ABILITY_CHECK_NEXT_3
+        jne ABILITY_CHECK_UNLIM_RETAL
 
         mov ecx, dword ptr [ebp - 0x144]
         mov edx, dword ptr [ecx + 0x8]
@@ -108,10 +108,60 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_3:
+        ABILITY_CHECK_UNLIM_RETAL:
+		// Unlimited Retaliations
+        cmp esi, 0x6
+        jne ABILITY_CHECK_FIERCE_RETAL
+        mov ecx, dword ptr [ebp - 0x144]
+        mov edx, dword ptr [ecx + 0x8]
+        mov eax, dword ptr [edx + ebp - 0x144]
+        lea edx, dword ptr [edx + ebp - 0x144]
+        mov ecx, edx
+        call dword ptr [eax + 0xC]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx + 0xC]
+
+        cmp eax, edi
+        je ABILITIES_CHECK_NATIVE
+        mov ecx, dword ptr [eax + 0x4]
+        mov edx, dword ptr [ecx + 0x8]
+        lea ecx, dword ptr [edx + eax + 0x4]
+        mov eax, dword ptr [ecx]
+        push 0xDA
+        call dword ptr [eax + 0x290]
+        test eax, eax
+        jne ABILITIES_RETURN_TRUE
+            
+        ABILITY_CHECK_FIERCE_RETAL:
+		// Fierce Retaliations
+        cmp esi, 0x71
+        jne ABILITY_CHECK_RIDER_CHARGE
+        mov ecx, dword ptr [ebp - 0x144]
+        mov edx, dword ptr [ecx + 0x8]
+        mov eax, dword ptr [edx + ebp - 0x144]
+        lea edx, dword ptr [edx + ebp - 0x144]
+        mov ecx, edx
+        call dword ptr [eax + 0xC]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx + 0xC]
+
+        cmp eax, edi
+        je ABILITIES_CHECK_NATIVE
+        mov ecx, dword ptr [eax + 0x4]
+        mov edx, dword ptr [ecx + 0x8]
+        lea ecx, dword ptr [edx + eax + 0x4]
+        mov eax, dword ptr [ecx]
+        push 0xDB
+        call dword ptr [eax + 0x290]
+        test eax, eax
+        jne ABILITIES_RETURN_TRUE
+
+        ABILITY_CHECK_RIDER_CHARGE:
         // Rider Charge
         cmp esi, 0x39
-        jne ABILITY_CHECK_NEXT_4
+        jne ABILITY_CHECK_BATTLE_RAGE
 
         mov ecx, dword ptr [esp + 0x1C]
         cmp ecx, edi
@@ -124,10 +174,10 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_4:
+        ABILITY_CHECK_BATTLE_RAGE:
         // Battle Rage
         cmp esi, 0xA2
-        jne ABILITY_CHECK_NEXT_5
+        jne ABILITY_CHECK_AGILITY
 
         mov ecx, dword ptr [esp + 0x1C]
         cmp ecx, edi
@@ -140,10 +190,10 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_5:
+        ABILITY_CHECK_AGILITY:
         // Agility
         cmp esi, 0x61
-        jne ABILITY_CHECK_NEXT_6
+        jne ABILITY_CHECK_CHILD_OF_LIGHT
 
         mov ecx, dword ptr [esp + 0x1C]
         cmp ecx, edi
@@ -156,10 +206,10 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_6:
+        ABILITY_CHECK_CHILD_OF_LIGHT:
         // Child of Light
         cmp esi, 0x8F
-        jne ABILITY_CHECK_NEXT_7
+        jne ABILITY_CHECK_FLAME_WAVE
 
         mov ecx, dword ptr [esp + 0x1C]
         cmp ecx, edi
@@ -172,10 +222,10 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_7:
+        ABILITY_CHECK_FLAME_WAVE:
         // Flame Wave
         cmp esi, 0xA6
-        jne ABILITY_CHECK_NEXT_8
+        jne ABILITY_CHECK_HOLD_GROUND
 
         mov ecx, dword ptr [esp + 0x1C]
         cmp ecx, edi
@@ -188,7 +238,7 @@ __declspec(naked) void CreatureAbilitiesFork() {
         test eax, eax
         jne ABILITIES_RETURN_TRUE
 
-        ABILITY_CHECK_NEXT_8:
+        ABILITY_CHECK_HOLD_GROUND:
         // Hold Ground
         cmp esi, 0xA5
         jmp[CreatureAbilities_return]

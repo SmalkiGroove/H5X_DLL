@@ -71,6 +71,7 @@ void init_patches(pugi::xml_document& doc) {
     BallistaCatapult_init(doc);            // OK
     TowerDamage_init(doc);                 // OK
     Fortunate_init(doc);                   // OK
+    //Magnetism_init(doc);                   //
 
     Avengers_init(doc);                    // OK
     Artificier_init(doc);                  // OK
@@ -89,6 +90,7 @@ void init_patches(pugi::xml_document& doc) {
     TwilightTweak_init(doc);               // OK
     PariahTweak_init(doc);                 // OK
     ArcaneBrillance_init(doc);             // OK
+    ThunderPower_init(doc);                // OK
     BarbarianSkillsLinks_init(doc);        // OK
 
     GoldenGoose_init(doc);                 // OK
