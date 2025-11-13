@@ -190,6 +190,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp" />
+    <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
+    <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\Exaltation.cpp" />
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
     <ClCompile Include="src\patches\LuaTweaks.cpp" />

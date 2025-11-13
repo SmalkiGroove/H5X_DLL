@@ -407,6 +407,12 @@
     <ClCompile Include="src\patches\Magnetism.cpp">
       <Filter>Source Files\patches\Combat</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\ArtfsetExpand.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="x86\MinHook.dll">

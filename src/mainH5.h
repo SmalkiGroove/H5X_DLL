@@ -135,7 +135,9 @@ void ArcaneBrillance_init(pugi::xml_document& doc);
 void ThunderPower_init(pugi::xml_document& doc);
 void BarbarianSkillsLinks_init(pugi::xml_document& doc);
 
+void ArtfsetExpand_init(pugi::xml_document& doc);
 void GoldenGoose_init(pugi::xml_document& doc);
+void DragonArtifactTweaks_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);
 void AllSeeingCrownTweak_init(pugi::xml_document& doc);
 void ShieldOfCrystalIce_init(pugi::xml_document& doc);

@@ -86,14 +86,16 @@ void init_patches(pugi::xml_document& doc) {
     WeakeningStrike_init(doc);             // OK
     SkillEffectDisable_init(doc);          // OK
     VengefulLight_init(doc);               // OK
-	ExaltationTweak_init(doc);			   // 
+	ExaltationTweak_init(doc);			   // OK
     TwilightTweak_init(doc);               // OK
     PariahTweak_init(doc);                 // OK
     ArcaneBrillance_init(doc);             // OK
     ThunderPower_init(doc);                // OK
     BarbarianSkillsLinks_init(doc);        // OK
 
+    ArtfsetExpand_init(doc);               // OK
     GoldenGoose_init(doc);                 // OK
+    DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
     AllSeeingCrownTweak_init(doc);         // OK
 	//ShieldOfCrystalIce_init(doc);          //
