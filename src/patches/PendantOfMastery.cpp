@@ -11,7 +11,7 @@ void PendantOfMastery_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, PendantOfMastery_fork, 27, PendantOfMastery_wrapper, 0, 0, 0 });
 }
 
-int faction_skills[] = { 14, 15, 16, 17, 18, 61, 151, 172 };
+int faction_skills[] = { 4, 14, 15, 16, 17, 18, 151, 172 };
 bool is_faction_skill(int skill_id) {
 	for (int i = 0; i < sizeof(faction_skills) / sizeof(faction_skills[0]); i++) {
 		if (faction_skills[i] == skill_id) return true;

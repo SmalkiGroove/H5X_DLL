@@ -53,7 +53,9 @@ Artifact check :
 00C5564D mask of equity
 00CD9D45 unicorn horn bow
 
+
 Artfset check :
+
 008CF814 haven 2 class (morale debuff)
 00BBFC09 haven 3 (morale atb)
 00A65C3F ranger 2 (shooter atb)
@@ -81,6 +83,7 @@ Artfset check :
 004BB376 dragon 4 (att/def)
 00B5053B dragon 8 (daily creature)
 00B4BBF3 enlighten 2 (more exp)
+
 
 Skill check :
 
@@ -116,6 +119,7 @@ Skill check :
 
 00875410 barbarian skill link
 
+
 Hero spec check :
 
 004E4308 haste ini
@@ -137,6 +141,7 @@ Hero spec check :
 0085F173 bombardier
 
 00A5AD07 evasive
+
 
 Game functions :
 

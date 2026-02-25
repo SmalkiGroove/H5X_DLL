@@ -22,7 +22,7 @@ void init_patches(pugi::xml_document& doc) {
     CombatAIFix_init(doc);                 // OK
     AgilityFix_init(doc);                  // OK
     RetaliationStrikeFix_init(doc);        // OK
-    ColdDeathFix_init(doc);                // OK
+    //ColdDeathFix_init(doc);                // OK
     EliteCasters_init(doc);                // OK
     UnholyWordImmunitiesFix_init(doc);     // OK
     BookOfPowerFix_init(doc);              // OK
@@ -72,9 +72,10 @@ void init_patches(pugi::xml_document& doc) {
     TowerDamage_init(doc);                 // OK
     Fortunate_init(doc);                   // OK
     //Magnetism_init(doc);                   //
+    ChainHitCount_init(doc);               // OK
 
     Avengers_init(doc);                    // OK
-    Artificier_init(doc);                  // OK
+    //Artificier_init(doc);                  // OK
     Arcanism_init(doc);                    // OK
     CombatSkill_init(doc);                 // OK
     ElementalVision_init(doc);             // OK
@@ -100,6 +101,7 @@ void init_patches(pugi::xml_document& doc) {
     AllSeeingCrownTweak_init(doc);         // OK
 	//ShieldOfCrystalIce_init(doc);          //
 	PendantOfMastery_init(doc);            // OK
+	BloodyClawNecklace_init(doc);          // OK
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              // OK

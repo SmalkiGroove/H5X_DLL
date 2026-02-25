@@ -1,7 +1,7 @@
 #include "pch.h"
 
 // ADD ABILITIES FROM OTHER SOURCES
-// Perk STUN_TRAINING => Brushing Blow
+// Perk STUN_TRAINING => Crushing Blow
 // Perk ASSAULT_TRAINING => Violence
 // Perk ARMOR_PROTECTION => Armored
 // Perk BLOCK_CORRUPTION => Free Mind
@@ -103,7 +103,7 @@ __declspec(naked) void CreatureAbilitiesFork() {
         mov edx, dword ptr [ecx + 0x8]
         lea ecx, dword ptr [edx + eax + 0x4]
         mov eax, dword ptr [ecx]
-        push 0xD1
+        push 0xE4
         call dword ptr [eax + 0x290]
         test eax, eax
         jne ABILITIES_RETURN_TRUE
@@ -278,7 +278,7 @@ __declspec(naked) void CreatureAbilityFreeMindFork() {
 		mov edx, dword ptr [ecx + 0x8]
         lea ecx, dword ptr [edx + eax + 0x4]
         mov eax, dword ptr [ecx]
-        push 0xD0
+        push 0xE5
         call dword ptr [eax + 0x290]
         test eax, eax
         jne ABILITY_FREE_MIND_ENABLE

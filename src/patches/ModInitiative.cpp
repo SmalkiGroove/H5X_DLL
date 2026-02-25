@@ -4,12 +4,12 @@
 // (131) Plunderer Shoes : +1 creatures init
 // (57)  Boots of Swiftness : +2 creatures init
 // (157) Harpy Boots : +1 creatures init
-// (22) Celestial Justicar Sword : +15% creature init
-// (6) Staff of Netherworld : -15% enemy creatures init
+// (22)  Celestial Justicar Sword : +15% creature init
+// (6)   Staff of Netherworld : -15% enemy creatures init
 // (143) Skull Mask : -8% enemy creatures init
-// (58) Moon Blade : +1 hero init
+// (58)  Moon Blade : +1 hero init
 // (107) Ring of Celerity : +2 hero init
-// (65) Ring of Caution : -2 hero init
+// (65)  Ring of Caution : -2 hero init
 // (201/202/203) Artificier : 5% global init
 // Knowledge stat +0.05 per point
 

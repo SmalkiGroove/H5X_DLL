@@ -61,7 +61,7 @@ __declspec(naked) void ElemProofFork() {
 		je JUMPTABLE_ENTRYPOINT
         mov eax, [ebx]
         mov ecx, ebx
-        push 0xCE
+        push 0xE3
         call dword ptr [eax + 0x174]
         test eax, eax
         je JUMPTABLE_ENTRYPOINT

@@ -40,17 +40,17 @@ __declspec(naked) void HealthFork() {
         je HEALTH_BONUS_3                            // jump to label if zf is 0
         add ebp, 0x3                                 // increase hp bonus value by 3
     HEALTH_BONUS_3:
-        mov eax, dword ptr [esi]                      // set 4 bytes at esi into eax for later function use
+        mov eax, dword ptr [esi]                     // set 4 bytes at esi into eax for later function use
         push 0x9C                                    // push artifact 156 to the stack (esp) for function call
         mov ecx, esi                                 // set hero struct pointer to ecx for function call
-        call dword ptr [eax + 0x74]                   // get equipped artifacts list from hero struct
+        call dword ptr [eax + 0x74]                  // get equipped artifacts list from hero struct
         mov ecx, eax                                 // set equipped artifacts list to ecx for function call
         call[count_equipped_artifact]                // call function CountEquippedArtifact(ECX:hero, ESP:artifact_id)
         test al, al                                  // check if value al is 0 and set result in zf
         je HEALTH_BONUS_4                            // jump to label if zf is 0
-        mov ecx, dword ptr [ebx + 0x1C]               // set creature id into ecx for function call
+        mov ecx, dword ptr [ebx + 0x1C]              // set creature id into ecx for function call
         call[get_creature_data]                      // call function GetCreatureData(ECX:creature_id)
-        mov eax, dword ptr [eax + 0x64]               // set creature health from data array into eax
+        mov eax, dword ptr [eax + 0x64]              // set creature health from data array into eax
         shr eax, 0x5                                 // divide value by 32 rounded down
         add ebp, eax                                 // add this value to the current bonus hp value
     HEALTH_BONUS_4:

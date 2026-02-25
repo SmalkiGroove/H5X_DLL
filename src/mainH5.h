@@ -114,6 +114,7 @@ void BallistaCatapult_init(pugi::xml_document& doc);
 void TowerDamage_init(pugi::xml_document& doc);
 void Fortunate_init(pugi::xml_document& doc);
 void Magnetism_init(pugi::xml_document& doc);
+void ChainHitCount_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Artificier_init(pugi::xml_document& doc);
@@ -142,6 +143,7 @@ void WandOfSpellTweak_init(pugi::xml_document& doc);
 void AllSeeingCrownTweak_init(pugi::xml_document& doc);
 void ShieldOfCrystalIce_init(pugi::xml_document& doc);
 void PendantOfMastery_init(pugi::xml_document& doc);
+void BloodyClawNecklace_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);

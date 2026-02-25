@@ -11,12 +11,13 @@ int ElemWarriors_end = 0x00861696;
 int WaterCreatureID = 0x56;
 int EarthCreatureID = 0x57;
 int AirCreatureID = 0x58;
-int WaterSkillID = 0x58;
-int EarthSkillID = 0x8B;
-int AirSkillID = 0xCB;
+int WaterSkillID = 0xF3;
+int EarthSkillID = 0xF2;
+int AirSkillID = 0xF4;
 
 void ElementalWarriors_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, ElemWarriors_fork, 5, ElementalSummonTypeFork, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_BYTE, 0x00861667, 1, nullptr, 241, 0, 0, 0 }); // Pyromancy skill ID
 	assembly_patches.push_back({ PATCH_WRTE, 0x0086286F, 1, nullptr, 0, 0, 0, "EB" }); // remove 40% bonus to Pyromancy
 }
 

@@ -191,6 +191,8 @@
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
+    <ClCompile Include="src\patches\BloodyClawNecklace.cpp" />
+    <ClCompile Include="src\patches\ChainHitCount.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\Exaltation.cpp" />
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
