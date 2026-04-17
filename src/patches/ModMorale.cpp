@@ -3,6 +3,7 @@
 // ADD MORALE BUFFS FROM ADDITIONAL SOURCES
 // skill Motivation +1 Morale
 // skill Last Stand +1 Morale
+// skill Despotism -1 Morale
 
 // ADD MORALE DEBUFFS FROM ADDITIONAL SOURCES
 // (175) Spirit of Oppression : -1 Morale
@@ -46,6 +47,13 @@ __declspec(naked) void MoraleBuffFork() {
         add edi, 1
 
         MORALE_NEXT_2:
+        mov edx, dword ptr [esi]
+        push 0xFC
+        mov ecx, esi
+        call dword ptr [edx + 0x174]
+        test eax, eax
+        je MORALE_PARIAH
+        sub edi, 1
 
         MORALE_PARIAH:
         mov edx, dword ptr [esi]

@@ -17,6 +17,8 @@ __declspec(naked) void MagnetismFork() {
 	{
 		cmp ebx, edi
 		je MAGNETISM_END
+		
+		jmp MAGNETISM_RETURN
 
 
 		MAGNETISM_RETURN:

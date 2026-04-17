@@ -246,10 +246,10 @@ __declspec(naked) void CreatureAbilitiesFork() {
         ABILITIES_CHECK_NATIVE:
 		jmp[CreatureAbilities_native]
 
-        ABILITIES_RETURN_TRUE :
+        ABILITIES_RETURN_TRUE:
         jmp[CreatureAbilities_enable]
 
-        ABILITIES_RETURN_FALSE :
+        ABILITIES_RETURN_FALSE:
         jmp[CreatureAbilities_disable]
     }
 }

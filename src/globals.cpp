@@ -41,6 +41,7 @@ float constf_1_2 = 1.2f;
 float constf_1_3 = 1.3f;
 float constf_1_5 = 1.5f;
 float constf_percent = 0.01f;
+float varf = 0.0f;
 
 void initLog() {
     if (logs_enabled) {

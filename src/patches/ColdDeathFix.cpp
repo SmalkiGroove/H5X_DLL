@@ -21,7 +21,7 @@ __declspec(naked) void ColdDeathFork() {
 		mov ecx, esi
 		call dword ptr [eax + 0x28C]
 		test al, al
-		jne FUNCTION_RETURN
+		jne FUNCTION_END
 
 		// mechanical
 		mov eax, dword ptr [esi]
@@ -29,28 +29,36 @@ __declspec(naked) void ColdDeathFork() {
 		mov ecx, esi
 		call dword ptr [eax + 0x28C]
 		test al, al
-		jne FUNCTION_RETURN
+		jne FUNCTION_END
 
 		// dragon flame tongue
 		mov eax, dword ptr [esi]
 		mov ecx, esi
-		call dword ptr [eax + 0x70]
-		mov ecx, dword ptr [eax + 0x4]
-		mov edx, dword ptr [ecx + 0x8]
-		lea ecx, dword ptr [edx + eax + 0x4]
-		mov eax, dword ptr [ecx]
-		call dword ptr [eax + 0x74]
+		call dword ptr [eax + 0xC]
+		mov edx, dword ptr [eax]
 		mov ecx, eax
+		call dword ptr [edx + 0xC]
+		test eax, eax
+		je FUNCTION_RETURN
+		mov edx, dword ptr [eax]
+		mov ecx, eax
+		call dword ptr [edx]
+		mov edx, dword ptr [eax]
+		mov ecx, eax
+		call dword ptr [edx + 0x74]
+		mov ecx, eax
+		push 0x2B
 		call[count_equipped_artifact]
 		test eax, eax
-		jne FUNCTION_RETURN
+		jne FUNCTION_END
 
+	FUNCTION_RETURN:
 		mov edx, dword ptr [esi]
 		mov ecx, esi
 		call dword ptr [edx + 0x1A8]
-
 		jmp[ColdDeath_return]
-	FUNCTION_RETURN:
+
+	FUNCTION_END:
 		jmp[ColdDeath_end]
 	}
 }

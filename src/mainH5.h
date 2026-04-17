@@ -144,6 +144,7 @@ void AllSeeingCrownTweak_init(pugi::xml_document& doc);
 void ShieldOfCrystalIce_init(pugi::xml_document& doc);
 void PendantOfMastery_init(pugi::xml_document& doc);
 void BloodyClawNecklace_init(pugi::xml_document& doc);
+void SpearOfTheFrostLord_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-// INCREASE CREATRUES MAX DAMAGES BY 50%
+// INCREASE CREATRUES MAX DAMAGES BY 25%
 
 void BloodyClawNecklaceFork();
 
@@ -23,7 +23,7 @@ __declspec(naked) void BloodyClawNecklaceFork() {
 		test eax, eax
         je SKIP_BLOODYCLAWNECKLACE_BONUS
         mov ecx, edi
-        shr ecx, 1
+        shr ecx, 2
         add edi, ecx
 
         SKIP_BLOODYCLAWNECKLACE_BONUS:

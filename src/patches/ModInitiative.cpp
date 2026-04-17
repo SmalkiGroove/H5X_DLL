@@ -11,7 +11,7 @@
 // (107) Ring of Celerity : +2 hero init
 // (65)  Ring of Caution : -2 hero init
 // (201/202/203) Artificier : 5% global init
-// Knowledge stat +0.05 per point
+// Knowledge stat +0.1 per point
 
 void CreatureInitiativeFork();
 void CreatureInitlessFork();
@@ -197,7 +197,7 @@ __declspec(naked) void CreatureInitlessFork() {
 }
 
 int sub_get_some_data = 0x00420DF0;
-float knowledge_to_init_ratio = 0.005f;
+float knowledge_to_init_ratio = 0.01f;
 __declspec(naked) void HeroInitiativeFork() {
     __asm
     {

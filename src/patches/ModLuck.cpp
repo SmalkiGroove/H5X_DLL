@@ -2,7 +2,7 @@
 
 // ADD LUCK BUFFS FROM ADDITIONAL SOURCES
 // skill Avenger +mastery Luck
-// skill Precision +1 Luck
+// skill Precision +2 Luck
 
 // ADD LUCK DEBUFFS FROM ADDITIONAL SOURCES
 // (63) Cursed Ring : change from -2 to -1 Luck
@@ -29,7 +29,7 @@ __declspec(naked) void LuckBuffFork() {
     __asm
     {
         mov edx, dword ptr [esi]
-        push 0x5
+        push 0x7C
         mov ecx, esi
         call dword ptr [edx + 0x174]
         test eax, eax
