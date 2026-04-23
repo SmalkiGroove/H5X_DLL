@@ -94,6 +94,8 @@ Skill check :
 004B0F44 elemental vision
 008A0E71 familiar land
 008A0EF5 siege
+004E66B4 frost power
+009BB907 frost power
 004E68AB ignite
 00977AD8 deadly cold
 008A2458 hold ground
@@ -115,7 +117,8 @@ Skill check :
 00A5C024 cold steel
 00BC02EE runic shield
 00BC022E spread pain
-00BC0257 aura of Energy
+00BC0257 aura of energy
+00977266 secrets of destruction
 
 00875410 barbarian skill link
 

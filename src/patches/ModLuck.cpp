@@ -13,16 +13,21 @@
 
 void LuckBuffFork();
 void LuckDebuffFork();
+void LuckToggleFork();
 
 int LuckBuff_fork = 0x00B4CA2B;
 int LuckBuff_return = 0x00B4CA31;
 int LuckDebuff_fork = 0x00989E4E;
 int LuckDebuff_return = 0x00989E70;
+int LuckToggle_fork = 0x008A3F0F;
+int LuckToggle_return = 0x008A3F15;
+int LuckToggle_end = 0x008A3F3B;
 
 void Luck_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_BYTE, 0x00B4CA1E, 1, nullptr, 16, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, LuckBuff_fork, 6, LuckBuffFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, LuckDebuff_fork, 5, LuckDebuffFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, LuckToggle_fork, 6, LuckToggleFork, 0, 0, 0 });
 }
 
 __declspec(naked) void LuckBuffFork() {
@@ -107,5 +112,41 @@ __declspec(naked) void LuckDebuffFork() {
 
      LUCK_END:
         jmp[LuckDebuff_return]
+    }
+}
+
+__declspec(naked) void LuckToggleFork() {
+    __asm
+    {
+        mov edi, eax
+
+        mov eax, dword ptr [esi - 0x144]
+        mov ecx, dword ptr [eax + 0x8]
+        mov edx, dword ptr [ecx + esi - 0x144]
+		lea ecx, dword ptr [ecx + esi - 0x144]
+        call dword ptr [edx + 0xC]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx + 0xC]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx + 0x74]
+        mov ecx, eax
+        push 0xBB
+        call[count_equipped_artifact]
+        test eax, eax
+        je DRAGONSBANE_RETURN
+        mov edi, dword ptr [esi - 0x94]
+        lea ecx, dword ptr [esi - 0x94]
+        mov dword ptr ss: [esp + 0x8], ecx
+        jmp[LuckToggle_end]
+        
+        DRAGONSBANE_RETURN:
+        mov eax, edi
+        mov edi, dword ptr [esi - 0x94]
+        jmp[LuckToggle_return]
     }
 }

@@ -103,6 +103,7 @@ void init_patches(pugi::xml_document& doc) {
 	PendantOfMastery_init(doc);            // OK
 	BloodyClawNecklace_init(doc);          // OK
     SpearOfTheFrostLord_init(doc);         // OK
+    PhoenixFeatherCape_init(doc);          // OK
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              // OK

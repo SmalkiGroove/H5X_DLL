@@ -1,32 +1,86 @@
 #include "pch.h"
 
 // EDIT DAMAGE OUTPUT MODIFIERS FROM ARTIFACTS
+// (187) Dragonsbane : -100% effective defense
+// (190) Celestial Justicar Armor : -25% melee damage
 // (122) Sentinel's Shield : -10% ranged damage
 // (133) Celestial Justicar Shield : -50% ranged damage
 // (198) Shield of Dwarven Kings : -30% ranged damage
 // Skill Courage reduce all damages per Morale point
 
+void DefenseMitigationFork();
 void MeleeDamageOutputFork();
 void RangedDamageOutputFork();
 void AllDamageOutputFork();
 
-int MeleeDamageOutput_fork = 0x00A5ACF9;
-int MeleeDamageOutput_return = 0x00A5ACFF;
+int DefenseMitigation_fork = 0x00A5A925;
+int DefenseMitigation_return = 0x00A5A92E;
+int MeleeDamageOutput_fork = 0x00A5AC59;
+int MeleeDamageOutput_return = 0x00A5AC5F;
 int RangedDamageOutput_fork = 0x00A5ACF9;
 int RangedDamageOutput_return = 0x00A5ACFF;
 int AllDamageOutput_fork = 0x00A5AD6E;
 int AllDamageOutput_return = 0x00A5AD75;
 
 void DamageOutput_init(pugi::xml_document& doc) {
-    //assembly_patches.push_back({ PATCH_HOOK, MeleeDamageOutput_fork, 6, MeleeDamageOutputFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, DefenseMitigation_fork, 9, DefenseMitigationFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, MeleeDamageOutput_fork, 6, MeleeDamageOutputFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, RangedDamageOutput_fork, 6, RangedDamageOutputFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, AllDamageOutput_fork, 7, AllDamageOutputFork, 0, 0, 0 });
+}
+
+__declspec(naked) void DefenseMitigationFork() {
+    __asm
+    {
+        mov edx, dword ptr [ebx]
+        mov ecx, ebx
+        call dword ptr [edx + 0xC]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx + 0xC]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx + 0x74]
+        mov ecx, eax
+        push 0xBB
+        call[count_equipped_artifact]
+        test eax, eax
+        je DEFENSE_MITIGATION_END
+        mov dword ptr ss: [esp + 0x4], 0x0
+
+        DEFENSE_MITIGATION_END:
+        mov eax, dword ptr [ebx]
+        mov ecx, ebx
+        push 0x8A
+        jmp[DefenseMitigation_return]
+    }
 }
 
 __declspec(naked) void MeleeDamageOutputFork() {
     __asm
     {
-        
+        mov eax, dword ptr [edi]
+        mov ecx, edi
+        call dword ptr [eax]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        call dword ptr [edx + 0x74]
+        mov ecx, eax
+        push 0xBE
+        call[count_equipped_artifact]
+        test eax, eax
+        je MELEE_OUTPUT_END
+        fld dword ptr ss : [esp + 0x24]
+        fmul dword ptr [constf_0_75]
+        fstp dword ptr ss : [esp + 0x24]
+
+    MELEE_OUTPUT_END:
+        mov eax, dword ptr [edi]
+        mov ecx, edi
+        call dword ptr [eax]
         jmp[MeleeDamageOutput_return]
     }
 }
