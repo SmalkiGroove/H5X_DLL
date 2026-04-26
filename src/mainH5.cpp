@@ -46,6 +46,7 @@ void init_patches(pugi::xml_document& doc) {
 	CreatureAbilities_init(doc);           // OK
 
     HeroMovement_init(doc);                // OK
+    HeroAttackDamage_init(doc);            // OK
     CovenMistressTweak_init(doc);          // OK
     MasterOfElementsTweak_init(doc);       // OK
     EmbalmerTweak_init(doc);               // OK
@@ -77,7 +78,6 @@ void init_patches(pugi::xml_document& doc) {
     Avengers_init(doc);                    // OK
     //Artificier_init(doc);                  // OK
     Arcanism_init(doc);                    // OK
-    CombatSkill_init(doc);                 // OK
     ElementalVision_init(doc);             // OK
     EnlightenmentStats_init(doc);          // OK
     ElementalWarriors_init(doc);           // OK
@@ -99,11 +99,14 @@ void init_patches(pugi::xml_document& doc) {
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
     AllSeeingCrownTweak_init(doc);         // OK
-	//ShieldOfCrystalIce_init(doc);          //
+	ShieldOfCrystalIce_init(doc);          // OK
 	PendantOfMastery_init(doc);            // OK
 	BloodyClawNecklace_init(doc);          // OK
     SpearOfTheFrostLord_init(doc);         // OK
     PhoenixFeatherCape_init(doc);          // OK
+	CollarOfPrimalRage_init(doc);          // OK
+	CodexOfTheSaint_init(doc);		       // OK
+	StaffOfTheSaint_init(doc);             // OK
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              // OK

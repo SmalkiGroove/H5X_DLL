@@ -88,6 +88,7 @@ void ElemDamage_init(pugi::xml_document& doc);
 void CreatureAbilities_init(pugi::xml_document& doc);
 
 void HeroMovement_init(pugi::xml_document& doc);
+void HeroAttackDamage_init(pugi::xml_document& doc);
 void CovenMistressTweak_init(pugi::xml_document& doc);
 void MasterOfElementsTweak_init(pugi::xml_document& doc);
 void EmbalmerTweak_init(pugi::xml_document& doc);
@@ -119,7 +120,6 @@ void ChainHitCount_init(pugi::xml_document& doc);
 void Avengers_init(pugi::xml_document& doc);
 void Artificier_init(pugi::xml_document& doc);
 void Arcanism_init(pugi::xml_document& doc);
-void CombatSkill_init(pugi::xml_document& doc);
 void ElementalVision_init(pugi::xml_document& doc);
 void EnlightenmentStats_init(pugi::xml_document& doc);
 void ElementalWarriors_init(pugi::xml_document& doc);
@@ -146,6 +146,9 @@ void PendantOfMastery_init(pugi::xml_document& doc);
 void BloodyClawNecklace_init(pugi::xml_document& doc);
 void SpearOfTheFrostLord_init(pugi::xml_document& doc);
 void PhoenixFeatherCape_init(pugi::xml_document& doc);
+void CollarOfPrimalRage_init(pugi::xml_document& doc);
+void CodexOfTheSaint_init(pugi::xml_document& doc);
+void StaffOfTheSaint_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);

@@ -18,15 +18,27 @@ __declspec(naked) void ShieldOfCrystalIceFork() {
 		test al, al
 		je IGNITE_IMMUNITY_END
 
-		mov ecx, dword ptr [ebx - 0x6C]
-		mov eax, dword ptr [ecx]
-		push 0x9
-		call dword ptr [eax + 0x74]
+		mov eax, dword ptr [esi]
+		mov ecx, esi
+		call dword ptr [eax + 0xC]
+		mov edx, dword ptr [eax]
 		mov ecx, eax
+		call dword ptr [edx + 0xC]
+		test eax, eax
+		je IGNITE_IMMUNITY_RETURN
+		mov edx, dword ptr [eax]
+		mov ecx, eax
+		call dword ptr [edx]
+		mov edx, dword ptr [eax]
+		mov ecx, eax
+		call dword ptr [edx + 0x74]
+		mov ecx, eax
+		push 0x9
 		call[count_equipped_artifact]
 		test eax, eax
 		jne IGNITE_IMMUNITY_END
 		
+		IGNITE_IMMUNITY_RETURN:
 		mov edx, esi
 		mov ecx, ebx
 		jmp[ShieldOfCrystalIce_return]

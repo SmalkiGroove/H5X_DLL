@@ -87,6 +87,7 @@ Artfset check :
 
 Skill check :
 
+0097873B sorcery
 00A75CF7 ballistics
 00A75FAC anatomy
 00986D91 anatomy
@@ -119,6 +120,8 @@ Skill check :
 00BC022E spread pain
 00BC0257 aura of energy
 00977266 secrets of destruction
+008AB33B orcish fury
+008AB381 memory of our blood
 
 00875410 barbarian skill link
 
