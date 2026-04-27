@@ -202,6 +202,7 @@
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
     <ClCompile Include="src\patches\Magnetism.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />
+    <ClCompile Include="src\patches\ModSpellPenetration.cpp" />
     <ClCompile Include="src\patches\PendantOfMastery.cpp" />
     <ClCompile Include="src\patches\PhoenixFeartherCape.cpp" />
     <ClCompile Include="src\patches\SpearOfTheFrostLord.cpp" />

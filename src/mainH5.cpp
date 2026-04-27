@@ -38,7 +38,8 @@ void init_patches(pugi::xml_document& doc) {
     Morale_init(doc);                      // OK
     Luck_init(doc);                        // OK
     ElemProof_init(doc);                   // OK
-    MagicProof_init(doc);                  // OK
+    SpellProof_init(doc);                  // OK
+    SpellPenetration_init(doc);            // OK
     MagicResist_init(doc);                 // OK
     SpellImmune_init(doc);                 //
     ManaCost_init(doc);                    // OK
@@ -76,7 +77,7 @@ void init_patches(pugi::xml_document& doc) {
     ChainHitCount_init(doc);               // OK
 
     Avengers_init(doc);                    // OK
-    //Artificier_init(doc);                  // OK
+    Artificier_init(doc);                  // OK
     Arcanism_init(doc);                    // OK
     ElementalVision_init(doc);             // OK
     EnlightenmentStats_init(doc);          // OK

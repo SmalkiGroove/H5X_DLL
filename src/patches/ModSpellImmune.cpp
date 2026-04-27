@@ -17,13 +17,14 @@ int Addr_apply_immunity = 0x0097CE7E;
 
 void SpellImmune_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_BYTE, 0x0097CC2D, 1, nullptr, 184, 0, 0, 0 });
-    assembly_patches.push_back({ PATCH_HOOK, Addr_fork_immunity, 7, SpellImmuneFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, Addr_fork_immunity, 5, SpellImmuneFork, 0, 0, 0 });
 }
 
 __declspec(naked) void SpellImmuneFork() {
     __asm
     {
         mov ecx, eax
+
         cmp ebx, 0xA
         jne SPELL_IMMUNITY_1
         push 0x7B
@@ -84,14 +85,10 @@ __declspec(naked) void SpellImmuneFork() {
         jmp[Addr_apply_immunity]
 
         RETURN_FROM_FORK:
+        cmp ebx, 0x9
         jmp[Addr_return_immunity]
 
         SKIP_TO_END:
         jmp[Addr_end_immunity]
     }
 }
-
-/*
-ESI = spell id
-EDI = creature
-*/

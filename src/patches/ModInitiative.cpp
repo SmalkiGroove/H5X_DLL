@@ -8,6 +8,7 @@
 // (6)   Staff of Netherworld : -15% enemy creatures init
 // (143) Skull Mask : -8% enemy creatures init
 // (58)  Moon Blade : +1 hero init
+// (118) Genji's Sandals : +1 hero init
 // (107) Ring of Celerity : +2 hero init
 // (65)  Ring of Caution : -2 hero init
 // (201/202/203) Artificier : 5% global init
@@ -235,8 +236,18 @@ __declspec(naked) void HeroInitiativeFork() {
         fld dword ptr ss : [esp + 0x4]
         fadd dword ptr [constf_2]
         fstp dword ptr ss : [esp + 0x4]
-
+        
         HERO_INIT_3:
+        push 0x76
+        mov ecx, edi
+        call[count_equipped_artifact]
+        test eax, eax
+        je HERO_INIT_4
+        fld dword ptr ss : [esp + 0x4]
+        fadd dword ptr [constf_2]
+        fstp dword ptr ss : [esp + 0x4]
+
+        HERO_INIT_4:
         push 0x41
         mov ecx, edi
         call[count_equipped_artifact]

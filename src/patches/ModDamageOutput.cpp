@@ -1,7 +1,7 @@
 #include "pch.h"
 
 // EDIT DAMAGE OUTPUT MODIFIERS FROM ARTIFACTS
-// (132) Butcher Glaive : +25% melee damage
+// (132) Butcher Glaive : +15% melee damage
 // (129) Avenger Bow : +10% ranged damage
 // (187) Dragonsbane : -100% effective defense
 // (190) Celestial Justicar Armor : -25% melee damage
@@ -39,7 +39,6 @@ void DamageOutput_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, AllDamageOutput_fork, 7, AllDamageOutputFork, 0, 0, 0 });
 }
 
-const float butcherglaive_mult = 1.15f;
 __declspec(naked) void MeleeDamageInputFork() {
     __asm
     {
@@ -55,7 +54,7 @@ __declspec(naked) void MeleeDamageInputFork() {
         test eax, eax
         je MELEE_INPUT_END
         fld dword ptr ss: [esp + 0x38]
-        fmul dword ptr [butcherglaive_mult]
+        fmul dword ptr [constf_1_15]
         fstp dword ptr ss: [esp + 0x38]
 
         MELEE_INPUT_END :
