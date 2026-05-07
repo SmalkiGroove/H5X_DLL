@@ -74,7 +74,7 @@ __declspec(naked) void SpellImmuneFork() {
 
         SPELL_IMMUNITY_4:
         cmp ebx, 0xE
-        jne RETURN_FROM_FORK
+        jne SPELL_IMMUNITY_5
         push 0x73
         call[count_equipped_artifact]
         test eax, eax
@@ -82,6 +82,20 @@ __declspec(naked) void SpellImmuneFork() {
         push 0
         push 3
         push 0x73
+        jmp[Addr_apply_immunity]
+
+        SPELL_IMMUNITY_5:
+        cmp ebx, 0x11
+        jl RETURN_FROM_FORK
+        cmp ebx, 0x12
+        jg RETURN_FROM_FORK
+        push 0x80
+        call[count_equipped_artifact]
+        test eax, eax
+        je SKIP_TO_END
+        push 0
+        push 3
+        push 0x80
         jmp[Addr_apply_immunity]
 
         RETURN_FROM_FORK:

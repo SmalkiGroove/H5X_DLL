@@ -41,7 +41,7 @@ void init_patches(pugi::xml_document& doc) {
     SpellProof_init(doc);                  // OK
     SpellPenetration_init(doc);            // OK
     MagicResist_init(doc);                 // OK
-    SpellImmune_init(doc);                 //
+    SpellImmune_init(doc);                 // OK
     ManaCost_init(doc);                    // OK
     ElemDamage_init(doc);                  // OK
 	CreatureAbilities_init(doc);           // OK
@@ -73,8 +73,9 @@ void init_patches(pugi::xml_document& doc) {
     BallistaCatapult_init(doc);            // OK
     TowerDamage_init(doc);                 // OK
     Fortunate_init(doc);                   // OK
-    //Magnetism_init(doc);                   //
     ChainHitCount_init(doc);               // OK
+    //SpitefulTweak_init(doc);               //
+    //Magnetism_init(doc);                   //
 
     Avengers_init(doc);                    // OK
     Artificier_init(doc);                  // OK
@@ -108,6 +109,8 @@ void init_patches(pugi::xml_document& doc) {
 	CollarOfPrimalRage_init(doc);          // OK
 	CodexOfTheSaint_init(doc);		       // OK
 	StaffOfTheSaint_init(doc);             // OK
+	BarbarianCape_init(doc);               // OK
+    RangersArmor_init(doc);                //
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              // OK

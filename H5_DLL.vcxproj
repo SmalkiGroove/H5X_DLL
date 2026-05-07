@@ -191,11 +191,14 @@
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
+    <ClCompile Include="src\patches\BarbarianCape.cpp" />
+    <ClCompile Include="src\patches\BattleDive.cpp" />
     <ClCompile Include="src\patches\BloodyClawNecklace.cpp" />
     <ClCompile Include="src\patches\ChainHitCount.cpp" />
     <ClCompile Include="src\patches\CodexOfTheSaint.cpp" />
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
+    <ClCompile Include="src\patches\EnergyChannel.cpp" />
     <ClCompile Include="src\patches\Exaltation.cpp" />
     <ClCompile Include="src\patches\HeroAttackDamage.cpp" />
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
@@ -203,11 +206,15 @@
     <ClCompile Include="src\patches\Magnetism.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />
     <ClCompile Include="src\patches\ModSpellPenetration.cpp" />
+    <ClCompile Include="src\patches\PawStrike.cpp" />
     <ClCompile Include="src\patches\PendantOfMastery.cpp" />
     <ClCompile Include="src\patches\PhoenixFeartherCape.cpp" />
+    <ClCompile Include="src\patches\RangersArmor.cpp" />
     <ClCompile Include="src\patches\SpearOfTheFrostLord.cpp" />
+    <ClCompile Include="src\patches\Spiteful.cpp" />
     <ClCompile Include="src\patches\StaffOfTheSaint.cpp" />
     <ClCompile Include="src\patches\ThunderPower.cpp" />
+    <ClCompile Include="src\patches\WhipStrike.cpp" />
     <ClCompile Include="src\pugixml.cpp" />
     <ClInclude Include="src/mainH5.h" />
     <ClCompile Include="src/mainH5.cpp" />
@@ -244,7 +251,6 @@
     <ClCompile Include="src/patches/ColdDeathFix.cpp" />
     <ClCompile Include="src/patches/CombatAIFix.cpp" />
     <ClCompile Include="src/patches/ConjureAtb.cpp" />
-    <ClCompile Include="src/patches/CreatureAbilitiesTweaks.cpp" />
     <ClCompile Include="src/patches/CreatureSpellpower.cpp" />
     <ClCompile Include="src/patches/Earthquake.cpp" />
     <ClCompile Include="src/patches/ElementalVision.cpp" />

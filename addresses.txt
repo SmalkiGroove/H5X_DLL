@@ -130,34 +130,36 @@ Hero spec check :
 
 004E4308 haste ini
 004E437F white knight ini
-
 00634C8E white knight morale?
-
 00B4E11A peasants golds
 00B4E3D8 peasants golds
-
 008A372B griffins dive
 008A3789 elven fury spiteful
-
-
 009783EC white knight
 00989CF6 dark emissary
-
 00BC1D20 offender
 0085F173 bombardier
-
 00A5AD07 evasive
 
 
 Game functions :
 
+004BBFB0 damage-
+004BC020 damage+
+004BC0B0 speed
+004BC190 init
+004BC470 health
 00A6ACD0 morale
 00A6ABF0 luck
+004BC6D0 ballista attack
 
-[+0x174] get skill mastery
-[+0x190] is hero spec
-[+0x290] is skill known
-[+0x294] is hero spec
-[+0x328] count artfset pieces
-[+0x184] atb ?
+[+0x174]  get skill mastery
+[+0x190]  is hero spec
+[+0x290]  is skill known
+[+0x294]  is hero spec
+[+0x328]  count artfset pieces
+[+0x184]  atb ?
+[+0x24C] 00A6EE70 active spell effects
+[+0x25C] 00B4CE20 apply effect for N actions
+[+0x260] 00A73CE0 apply effect for N turns
 

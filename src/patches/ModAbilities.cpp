@@ -225,7 +225,7 @@ __declspec(naked) void CreatureAbilitiesFork() {
         ABILITY_CHECK_FLAME_WAVE:
         // Flame Wave
         cmp esi, 0xA6
-        jne ABILITY_CHECK_HOLD_GROUND
+        jne ABILITY_CHECK_COWARDICE
 
         mov ecx, dword ptr [esp + 0x1C]
         cmp ecx, edi
@@ -237,6 +237,21 @@ __declspec(naked) void CreatureAbilitiesFork() {
         call[count_equipped_artifact]
         test eax, eax
         jne ABILITIES_RETURN_TRUE
+
+        ABILITY_CHECK_COWARDICE:
+        cmp esi, 0x6A
+        jne ABILITY_CHECK_HOLD_GROUND
+
+        mov ecx, dword ptr [esp + 0x1C]
+        cmp ecx, edi
+        je ABILITIES_CHECK_NATIVE
+        mov eax, dword ptr [ecx]
+        call dword ptr [eax + 0x74]
+        mov ecx, eax
+        push 0x92
+        call[count_equipped_artifact]
+        test eax, eax
+        jne ABILITIES_RETURN_FALSE
 
         ABILITY_CHECK_HOLD_GROUND:
         // Hold Ground

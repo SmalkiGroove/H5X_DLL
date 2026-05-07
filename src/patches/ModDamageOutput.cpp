@@ -98,6 +98,8 @@ __declspec(naked) void DefenseMitigationFork() {
         mov edx, dword ptr [eax]
         mov ecx, eax
         call dword ptr [edx + 0xC]
+        test eax, eax
+        je DEFENSE_MITIGATION_END
         mov edx, dword ptr [eax]
         mov ecx, eax
         call dword ptr [edx]

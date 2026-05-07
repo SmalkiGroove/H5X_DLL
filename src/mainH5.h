@@ -117,6 +117,7 @@ void TowerDamage_init(pugi::xml_document& doc);
 void Fortunate_init(pugi::xml_document& doc);
 void Magnetism_init(pugi::xml_document& doc);
 void ChainHitCount_init(pugi::xml_document& doc);
+void SpitefulTweak_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Artificier_init(pugi::xml_document& doc);
@@ -150,6 +151,8 @@ void PhoenixFeatherCape_init(pugi::xml_document& doc);
 void CollarOfPrimalRage_init(pugi::xml_document& doc);
 void CodexOfTheSaint_init(pugi::xml_document& doc);
 void StaffOfTheSaint_init(pugi::xml_document& doc);
+void BarbarianCape_init(pugi::xml_document& doc);
+void RangersArmor_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);

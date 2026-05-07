@@ -167,9 +167,6 @@
     <ClCompile Include="src/patches/ConjureAtb.cpp">
       <Filter>Source Files\patches\Spells</Filter>
     </ClCompile>
-    <ClCompile Include="src/patches/CreatureAbilitiesTweaks.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
-    </ClCompile>
     <ClCompile Include="src/patches/CreatureSpellpower.cpp">
       <Filter>Source Files\patches\Combat</Filter>
     </ClCompile>
@@ -436,6 +433,27 @@
     </ClCompile>
     <ClCompile Include="src\patches\ModSpellPenetration.cpp">
       <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\BattleDive.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\PawStrike.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\EnergyChannel.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\WhipStrike.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\Spiteful.cpp">
+      <Filter>Source Files\patches\Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\BarbarianCape.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\RangersArmor.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
