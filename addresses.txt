@@ -90,7 +90,7 @@ Skill check :
 0097873B sorcery
 00A75CF7 ballistics
 00A75FAC anatomy
-00986D91 anatomy
+00986D91 anatomy (tent can rez)
 004B0E2F rage of elements
 004B0F44 elemental vision
 008A0E71 familiar land
@@ -138,6 +138,8 @@ Hero spec check :
 009783EC white knight
 00989CF6 dark emissary
 00BC1D20 offender
+004BC6AC ballista
+00B3B90F ballista (catapult)
 0085F173 bombardier
 00A5AD07 evasive
 
@@ -151,7 +153,8 @@ Game functions :
 004BC470 health
 00A6ACD0 morale
 00A6ABF0 luck
-004BC6D0 ballista attack
+004BC660 ballista attack
+004BC6D0 ballista damage?
 
 [+0x174]  get skill mastery
 [+0x190]  is hero spec

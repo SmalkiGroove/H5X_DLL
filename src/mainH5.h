@@ -153,6 +153,7 @@ void CodexOfTheSaint_init(pugi::xml_document& doc);
 void StaffOfTheSaint_init(pugi::xml_document& doc);
 void BarbarianCape_init(pugi::xml_document& doc);
 void RangersArmor_init(pugi::xml_document& doc);
+void RingOfDevastation_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);

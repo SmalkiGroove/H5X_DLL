@@ -110,7 +110,8 @@ void init_patches(pugi::xml_document& doc) {
 	CodexOfTheSaint_init(doc);		       // OK
 	StaffOfTheSaint_init(doc);             // OK
 	BarbarianCape_init(doc);               // OK
-    RangersArmor_init(doc);                //
+    RangersArmor_init(doc);                // OK
+    RingOfDevastation_init(doc);
 
     LightningStun_init(doc);               // OK
     ChainLightning_init(doc);              // OK

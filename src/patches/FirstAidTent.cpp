@@ -35,6 +35,7 @@ void FirstAidTent_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_INT, 0x009771C8, 4, nullptr, 0, 0, 0, 2 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771D6, 4, nullptr, 0, 0, 0, 3 });
 	assembly_patches.push_back({ PATCH_HOOK, 0x009771F0, 14, FirstAidTentFork, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_WRTE, 0x00986DA0, 1, nullptr, 0, 0, 0, "EB" }); // enable rez by default
 }
 
 __declspec(naked) void FirstAidTentFork() {
@@ -63,10 +64,23 @@ __declspec(naked) void FirstAidTentFork() {
 		mov ecx, dword ptr [eax + 0x8]
 		mov edx, dword ptr [ecx + esi + 0x4]
 		lea ecx, dword ptr [ecx + esi + 0x4]
-
 		call dword ptr [edx + 0x23C]
 		add dword ptr [edi], eax
 
+		mov eax, dword ptr [esi]
+		mov ecx, esi
+		call dword ptr [eax]
+		mov edx, dword ptr [eax]
+		push 0x6D
+		mov ecx, eax
+		call dword ptr [edx + 0x74]
+        mov ecx, eax
+        call[count_equipped_artifact]
+		test eax, eax
+		je FIRST_AID_TENT_RETURN
+		add dword ptr [edi], 0x64
+
+		FIRST_AID_TENT_RETURN:
 		mov eax, dword ptr [esi + 0x4]
 		mov ecx, dword ptr [eax + 0x8]
 		mov edx, dword ptr [ecx + esi + 0x4]

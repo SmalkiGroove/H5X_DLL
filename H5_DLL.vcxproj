@@ -210,6 +210,7 @@
     <ClCompile Include="src\patches\PendantOfMastery.cpp" />
     <ClCompile Include="src\patches\PhoenixFeartherCape.cpp" />
     <ClCompile Include="src\patches\RangersArmor.cpp" />
+    <ClCompile Include="src\patches\RingOfDevastation.cpp" />
     <ClCompile Include="src\patches\SpearOfTheFrostLord.cpp" />
     <ClCompile Include="src\patches\Spiteful.cpp" />
     <ClCompile Include="src\patches\StaffOfTheSaint.cpp" />
