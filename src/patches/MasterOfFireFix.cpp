@@ -30,7 +30,7 @@ __declspec(naked) void MasterOfFireFix() {
         test al, al
         jne UNIT_IS_ARMOURED
         test ebp, ebp
-        je HALVE_DEFENSE
+        je DEBUFF_DEFENSE
         mov eax, dword ptr [ebp]
         mov ecx, ebp
         call dword ptr [eax]
@@ -43,8 +43,12 @@ __declspec(naked) void MasterOfFireFix() {
         test eax, eax
         jne HERO_HAS_FROZEN_HEART
 
-        HALVE_DEFENSE:
-        shr ebx, 1
+        DEBUFF_DEFENSE:
+        push ebx
+        fild dword ptr ss: [esp]
+        fmul dword ptr [constf_0_7]
+        fistp dword ptr ss: [esp]
+        pop ebx
 
         DEFENSE_IS_ZERO:
         FIRE_EFFECT_NOT_PRESENT:

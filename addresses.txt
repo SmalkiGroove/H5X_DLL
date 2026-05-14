@@ -97,6 +97,8 @@ Skill check :
 008A0EF5 siege
 004E66B4 frost power
 009BB907 frost power
+009BB920 blaze power
+009BB8EE thunder power
 004E68AB ignite
 00977AD8 deadly cold
 008A2458 hold ground
@@ -146,13 +148,16 @@ Hero spec check :
 
 Game functions :
 
+004E9B90 unit stats
+004BB170 attack
+004BB2A0 defense
 004BBFB0 damage-
 004BC020 damage+
 004BC0B0 speed
 004BC190 init
 004BC470 health
-00A6ACD0 morale
-00A6ABF0 luck
+00A6ACD0 morale (cap 004BB3C0) roll 00A6B8F0
+00A6ABF0 luck (cap 004BB3F0) roll 00A6B820
 004BC660 ballista attack
 004BC6D0 ballista damage?
 
@@ -161,6 +166,14 @@ Game functions :
 [+0x290]  is skill known
 [+0x294]  is hero spec
 [+0x328]  count artfset pieces
+[+0x258]  get hero class
+[+0x23C]  get hero level
+[+0x198]  get unit attack
+[+0x19C]  get unit defense
+[+0x11C]  get unit luck (capped)
+[+0x1B0]  get unit morale (capped)
+[+0x1B8]  get unit morale (uncap)
+[+0x238]  get unit max mana
 [+0x184]  atb ?
 [+0x24C] 00A6EE70 active spell effects
 [+0x25C] 00B4CE20 apply effect for N actions

@@ -458,6 +458,18 @@
     <ClCompile Include="src\patches\RingOfDevastation.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\Artfset1Haven.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\IceFreeze.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\FireBurn.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\EarthPierce.cpp">
+      <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="x86\MinHook.dll">

@@ -21,6 +21,8 @@ __declspec(naked) void PhoenixFeatherCapeFork() {
         mov edx, dword ptr [eax]
         mov ecx, eax
         call dword ptr [edx + 0xC]
+        test eax, eax
+        je PHOENIX_FEATHER_CAPE_RETURN
         mov edx, dword ptr [eax]
         mov ecx, eax
         call dword ptr [edx]

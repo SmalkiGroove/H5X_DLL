@@ -114,6 +114,9 @@ void init_patches(pugi::xml_document& doc) {
     RingOfDevastation_init(doc);
 
     LightningStun_init(doc);               // OK
+    FireBurn_init(doc);                    // OK
+    IceFreeze_init(doc);                   // OK
+    EarthPierce_init(doc);                 // OK
     ChainLightning_init(doc);              // OK
     Earthquake_init(doc);                  // 
     Vulnerability_init(doc);               // OK

@@ -156,6 +156,9 @@ void RangersArmor_init(pugi::xml_document& doc);
 void RingOfDevastation_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
+void FireBurn_init(pugi::xml_document& doc);
+void IceFreeze_init(pugi::xml_document& doc);
+void EarthPierce_init(pugi::xml_document& doc);
 void ChainLightning_init(pugi::xml_document& doc);
 void Earthquake_init(pugi::xml_document& doc);
 void Vulnerability_init(pugi::xml_document& doc);

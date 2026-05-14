@@ -190,6 +190,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp" />
+    <ClCompile Include="src\patches\Artfset1Haven.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
     <ClCompile Include="src\patches\BarbarianCape.cpp" />
     <ClCompile Include="src\patches\BattleDive.cpp" />
@@ -198,10 +199,13 @@
     <ClCompile Include="src\patches\CodexOfTheSaint.cpp" />
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
+    <ClCompile Include="src\patches\EarthPierce.cpp" />
     <ClCompile Include="src\patches\EnergyChannel.cpp" />
     <ClCompile Include="src\patches\Exaltation.cpp" />
+    <ClCompile Include="src\patches\FireBurn.cpp" />
     <ClCompile Include="src\patches\HeroAttackDamage.cpp" />
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
+    <ClCompile Include="src\patches\IceFreeze.cpp" />
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
     <ClCompile Include="src\patches\Magnetism.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />
