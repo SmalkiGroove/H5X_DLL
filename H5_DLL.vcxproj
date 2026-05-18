@@ -196,7 +196,6 @@
     <ClCompile Include="src\patches\BattleDive.cpp" />
     <ClCompile Include="src\patches\BloodyClawNecklace.cpp" />
     <ClCompile Include="src\patches\ChainHitCount.cpp" />
-    <ClCompile Include="src\patches\CodexOfTheSaint.cpp" />
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\EarthPierce.cpp" />
@@ -209,9 +208,12 @@
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
     <ClCompile Include="src\patches\Magnetism.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />
+    <ClCompile Include="src\patches\ModAtbReset.cpp" />
+    <ClCompile Include="src\patches\ModEffectiveSpellpower.cpp" />
     <ClCompile Include="src\patches\ModSpellPenetration.cpp" />
     <ClCompile Include="src\patches\PawStrike.cpp" />
     <ClCompile Include="src\patches\PendantOfMastery.cpp" />
+    <ClCompile Include="src\patches\PerceptionOfWeakness.cpp" />
     <ClCompile Include="src\patches\PhoenixFeartherCape.cpp" />
     <ClCompile Include="src\patches\RangersArmor.cpp" />
     <ClCompile Include="src\patches\RingOfDevastation.cpp" />

@@ -146,6 +146,10 @@ Hero spec check :
 00A5AD07 evasive
 
 
+Town buildings :
+004B0DFB altar of the elements
+
+
 Game functions :
 
 004E9B90 unit stats
@@ -160,6 +164,11 @@ Game functions :
 00A6ABF0 luck (cap 004BB3F0) roll 00A6B820
 004BC660 ballista attack
 004BC6D0 ballista damage?
+00989790 defense affecting effects
+00989C40 luck affecting effects
+00989FD0 morale affecting effects
+0098A430 attack affecting effects
+00984A00 creature abilities
 
 [+0x174]  get skill mastery
 [+0x190]  is hero spec

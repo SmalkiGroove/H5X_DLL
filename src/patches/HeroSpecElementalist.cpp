@@ -4,18 +4,16 @@
 
 void ElementalistFork();
 
-int Elementalist_fork = 0x004B0E43;
-int Elementalist_return = 0x004B0E4D;
+int Elementalist_fork = 0x004B0E49;
+int Elementalist_return = 0x004B0E51;
 
 void ElementalistChain_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, Elementalist_fork, 10, ElementalistFork, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_HOOK, Elementalist_fork, 8, ElementalistFork, 0, 0, 0 });
 }
 
 __declspec(naked) void ElementalistFork() {
 	__asm
 	{
-		mov ecx, dword ptr [esi + 0x4]
-		mov edx, dword ptr [ecx + 0x8]
 		mov eax, dword ptr [edx + esi + 0x4]
 		lea ecx, dword ptr [edx + esi + 0x4]
 		call dword ptr [eax + 0x10]
@@ -26,7 +24,7 @@ __declspec(naked) void ElementalistFork() {
 		mov edx, dword ptr [ecx + 0x8]
 		lea ecx, dword ptr [edx + eax + 0x4]
 		mov eax, dword ptr [ecx]
-		push 0x92
+		push 0xF6
 		call dword ptr [eax + 0x290]
 		test al, al
 		jz ELEMENTALIST_RETURN
@@ -34,10 +32,11 @@ __declspec(naked) void ElementalistFork() {
 		fadd st(0), st(0)
 		fstp dword ptr [esp]
 
-	ELEMENTALIST_RETURN:
-		mov ecx, dword ptr [esi + 0x4]
-		mov edx, dword ptr [ecx + 0x8]
+		ELEMENTALIST_RETURN:
+		mov ecx, dword ptr[esi + 0x4]
+		mov edx, dword ptr[ecx + 0x8]
 		mov eax, dword ptr [edx + esi + 0x4]
+		lea ecx, dword ptr [edx + esi + 0x4]
 		jmp[Elementalist_return]
 	}
 }

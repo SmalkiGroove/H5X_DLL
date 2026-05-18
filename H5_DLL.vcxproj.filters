@@ -425,9 +425,6 @@
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
-    <ClCompile Include="src\patches\CodexOfTheSaint.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
     <ClCompile Include="src\patches\StaffOfTheSaint.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
@@ -469,6 +466,15 @@
     </ClCompile>
     <ClCompile Include="src\patches\EarthPierce.cpp">
       <Filter>Source Files\patches\Spells</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\ModEffectiveSpellpower.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\ModAtbReset.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\PerceptionOfWeakness.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

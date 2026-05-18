@@ -87,6 +87,7 @@ extern int consti_2;
 extern float constf_1;
 extern float constf_2;
 extern float constf_0_1;
+extern float constf_0_15;
 extern float constf_0_2;
 extern float constf_0_25;
 extern float constf_0_3;

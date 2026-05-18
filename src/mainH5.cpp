@@ -43,6 +43,8 @@ void init_patches(pugi::xml_document& doc) {
     MagicResist_init(doc);                 // OK
     SpellImmune_init(doc);                 // OK
     ManaCost_init(doc);                    // OK
+	AtbReset_init(doc);                    // OK
+    EffectiveSpellpower_init(doc);         // OK
     ElemDamage_init(doc);                  // OK
 	CreatureAbilities_init(doc);           // OK
 
@@ -81,6 +83,7 @@ void init_patches(pugi::xml_document& doc) {
     Artificier_init(doc);                  // OK
     Arcanism_init(doc);                    // OK
     ElementalVision_init(doc);             // OK
+    PerceptionOfWeakness_init(doc);
     EnlightenmentStats_init(doc);          // OK
     ElementalWarriors_init(doc);           // OK
     OffDefFormation_init(doc);             // OK
@@ -107,7 +110,6 @@ void init_patches(pugi::xml_document& doc) {
     SpearOfTheFrostLord_init(doc);         // OK
     PhoenixFeatherCape_init(doc);          // OK
 	CollarOfPrimalRage_init(doc);          // OK
-	CodexOfTheSaint_init(doc);		       // OK
 	StaffOfTheSaint_init(doc);             // OK
 	BarbarianCape_init(doc);               // OK
     RangersArmor_init(doc);                // OK

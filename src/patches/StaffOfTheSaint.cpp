@@ -11,7 +11,6 @@ void StaffOfTheSaint_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, StaffOfTheSaint_fork, 6, StaffOfTheSaintFork, 0, 0, 0 });
 }
 
-const float StaffOfTheSaint_spellpowerBonus = 7.0f;
 __declspec(naked) void StaffOfTheSaintFork() {
     __asm
     {
@@ -27,6 +26,13 @@ __declspec(naked) void StaffOfTheSaintFork() {
         test eax, eax
         je STAFF_OF_THE_SAINT_RETURN
         add ebx, 0x7
+        push 0
+        push 0
+        push 0x86
+        mov dl, 0x1
+        mov ecx, ebp
+        mov dword ptr ss: [esp + 0x1C], ebx
+        call[notify_artifact_buff]
         
         STAFF_OF_THE_SAINT_RETURN:
         mov eax, dword ptr [esi + 0x4]
