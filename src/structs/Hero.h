@@ -3,6 +3,7 @@
 #define HERO_H
 
 typedef int* (__thiscall* GetInventory)();
+typedef int (__thiscall* GetSkillMastery)(int*, int);
 
 struct Hero_vtable {
 	int* call_0;
@@ -98,7 +99,7 @@ struct Hero_vtable {
 	int* call_360;
 	int* call_364;
 	int* call_368;
-	int* get_skill_mastery;
+	GetSkillMastery get_skill_mastery;
 	int* call_376;
 	int* call_380;
 	int* call_384;
@@ -185,6 +186,10 @@ struct Hero_vtable {
 
 struct IHero {
 	Hero_vtable* instance;
+
+	int skill_mastery(int skill) {
+		return instance->get_skill_mastery((int*)this, skill);
+	}
 };
 
 #endif

@@ -1,10 +1,10 @@
 #include "pch.h"
 
 // ADD BONUS SPELLPOWER FROM ADDITIONAL SOURCES
-// Skill Blaze Power (231) : +10% for fire spells
-// Skill Frost Power (232) : +10% for ice spells
-// Skill Thunder Power (233) : +10% for lightning spells
-// Skill Earth Power (234) : +10% for earth spells
+// Skill Blaze Power (231) : +3 for fire spells
+// Skill Frost Power (232) : +3 for ice spells
+// Skill Thunder Power (233) : +3 for lightning spells
+// Skill Earth Power (234) : +3 for earth spells
 
 void EffectiveSpellpowerFork();
 
@@ -39,7 +39,8 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         push 0xE7
         call dword ptr [edx + 0x290]
         test al, al
-        add ebx, 0x4
+        je LABEL_RETURN
+        add ebx, 0x3
         push 0
         push 0
         push 0xE7
@@ -56,7 +57,8 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         push 0xE8
         call dword ptr [edx + 0x290]
         test al, al
-        add ebx, 0x4
+        je LABEL_RETURN
+        add ebx, 0x3
         push 0
         push 0
         push 0xE8
@@ -73,7 +75,8 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         push 0xE9
         call dword ptr [edx + 0x290]
         test al, al
-        add ebx, 0x4
+        je LABEL_RETURN
+        add ebx, 0x3
         push 0
         push 0
         push 0xE9
@@ -90,7 +93,8 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         push 0xEA
         call dword ptr [edx + 0x290]
         test al, al
-        add ebx, 0x4
+        je LABEL_RETURN
+        add ebx, 0x3
         push 0
         push 0
         push 0xEA

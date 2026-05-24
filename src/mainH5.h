@@ -82,12 +82,13 @@ void Luck_init(pugi::xml_document& doc);
 void ElemProof_init(pugi::xml_document& doc);
 void SpellProof_init(pugi::xml_document& doc);
 void SpellPenetration_init(pugi::xml_document& doc);
-void MagicResist_init(pugi::xml_document& doc);
+void MagicDisruption_init(pugi::xml_document& doc);
 void SpellImmune_init(pugi::xml_document& doc);
 void ManaCost_init(pugi::xml_document& doc);
 void AtbReset_init(pugi::xml_document& doc);
 void EffectiveSpellpower_init(pugi::xml_document& doc);
 void ElemDamage_init(pugi::xml_document& doc);
+void ElementsVirtuoso_init(pugi::xml_document& doc);
 void CreatureAbilities_init(pugi::xml_document& doc);
 
 void HeroMovement_init(pugi::xml_document& doc);
@@ -138,7 +139,8 @@ void ExaltationTweak_init(pugi::xml_document& doc);
 void TwilightTweak_init(pugi::xml_document& doc);
 void PariahTweak_init(pugi::xml_document& doc);
 void ArcaneBrillance_init(pugi::xml_document& doc);
-void ThunderPower_init(pugi::xml_document& doc);
+void LightningTouch_init(pugi::xml_document& doc);
+void ElementsVirtuoso_init(pugi::xml_document& doc);
 void BarbarianSkillsLinks_init(pugi::xml_document& doc);
 
 void ArtfsetExpand_init(pugi::xml_document& doc);

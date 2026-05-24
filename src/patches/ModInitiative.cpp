@@ -12,7 +12,7 @@
 // (107) Ring of Celerity : +2 hero init
 // (65)  Ring of Caution : -2 hero init
 // (201/202/203) Artificier : 5% global init
-// Knowledge stat +0.1 per point
+// Knowledge stat +0.08 per point
 
 void CreatureInitiativeFork();
 void CreatureInitlessFork();
@@ -26,8 +26,8 @@ int CreatureInitless_return = 0x008A464B;
 int HeroInitiative_fork = 0x00BC1F77;
 int HeroInitiative_return = 0x00BC1F7D;
 
-int mod_initiative_bonus_fork = 0x004BC2BF;
-int mod_initiative_bonus_return = 0x004BC2D8;
+//int mod_initiative_bonus_fork = 0x004BC2BF;
+//int mod_initiative_bonus_return = 0x004BC2D8;
 
 void Initiative_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, CreatureInitiative_fork, 25, CreatureInitiativeFork, 0, 0, 0 });

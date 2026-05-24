@@ -40,7 +40,7 @@ void init_patches(pugi::xml_document& doc) {
     ElemProof_init(doc);                   // OK
     SpellProof_init(doc);                  // OK
     SpellPenetration_init(doc);            // OK
-    MagicResist_init(doc);                 // OK
+    MagicDisruption_init(doc);             // OK
     SpellImmune_init(doc);                 // OK
     ManaCost_init(doc);                    // OK
 	AtbReset_init(doc);                    // OK
@@ -96,7 +96,8 @@ void init_patches(pugi::xml_document& doc) {
     TwilightTweak_init(doc);               // OK
     PariahTweak_init(doc);                 // OK
     ArcaneBrillance_init(doc);             // OK
-    ThunderPower_init(doc);                // OK
+    LightningTouch_init(doc);              // OK
+    ElementsVirtuoso_init(doc);
     BarbarianSkillsLinks_init(doc);        // OK
 
     ArtfsetExpand_init(doc);               // OK

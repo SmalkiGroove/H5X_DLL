@@ -26,7 +26,7 @@ __declspec(naked) void FortunateFork() {
 
 		FORTUNATE_END:
 		mov ecx, ebx
-		call[call_unknown_1]
+		call[check_week_of_balance_luck]
 		jmp[Fortunate_return]
 	}
 }

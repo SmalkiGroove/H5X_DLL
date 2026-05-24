@@ -199,6 +199,7 @@
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\EarthPierce.cpp" />
+    <ClCompile Include="src\patches\ElementsVirtuoso.cpp" />
     <ClCompile Include="src\patches\EnergyChannel.cpp" />
     <ClCompile Include="src\patches\Exaltation.cpp" />
     <ClCompile Include="src\patches\FireBurn.cpp" />
@@ -220,7 +221,7 @@
     <ClCompile Include="src\patches\SpearOfTheFrostLord.cpp" />
     <ClCompile Include="src\patches\Spiteful.cpp" />
     <ClCompile Include="src\patches\StaffOfTheSaint.cpp" />
-    <ClCompile Include="src\patches\ThunderPower.cpp" />
+    <ClCompile Include="src\patches\LightningTouch.cpp" />
     <ClCompile Include="src\patches\WhipStrike.cpp" />
     <ClCompile Include="src\pugixml.cpp" />
     <ClInclude Include="src/mainH5.h" />
@@ -305,7 +306,7 @@
     <ClCompile Include="src/patches/ModHealth.cpp" />
     <ClCompile Include="src/patches/ModInitiative.cpp" />
     <ClCompile Include="src/patches/ModLuck.cpp" />
-    <ClCompile Include="src/patches/ModMagicResist.cpp" />
+    <ClCompile Include="src\patches\ModMagicDisruption.cpp" />
     <ClCompile Include="src/patches/ModManaCost.cpp" />
     <ClCompile Include="src/patches/ModMorale.cpp" />
     <ClCompile Include="src/patches/ModSpeed.cpp" />
@@ -328,6 +329,7 @@
     <ClCompile Include="src/patches/WandOfSpell.cpp" />
     <ClCompile Include="src/patches/WarMachineTier.cpp" />
     <ClCompile Include="src/patches/WeakeningStrike.cpp" />
+    <ClInclude Include="src\patches\ElementsVirtuoso.h" />
     <ClInclude Include="src\pugixml.hpp" />
     <ClInclude Include="src\types\Skill.h" />
     <ClInclude Include="src\types\Skills.h" />

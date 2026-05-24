@@ -26,4 +26,5 @@ typedef int(__thiscall* SkillMasteryLevel)(int*, SKILL_ID);
 extern SkillMasteryLevel skill_mastery;
 
 
+
 #endif

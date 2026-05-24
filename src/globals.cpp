@@ -20,7 +20,7 @@ GameFunction get_mitigated_damage = (GameFunction)0x0097D740;
 GameFunction notify_spec_buff = (GameFunction)0x009BB930;
 GameFunction notify_skill_buff = (GameFunction)0x009BB960;
 GameFunction notify_artifact_buff = (GameFunction)0x009BB9C0;
-GameFunction call_unknown_1 = (GameFunction)0x00BCDD20;
+GameFunction check_week_of_balance_luck = (GameFunction)0x00BCDD20;
 GameFunction get_defaultstats = (GameFunction)0x00BCB3F0;
 
 // constants

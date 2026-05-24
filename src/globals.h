@@ -77,7 +77,8 @@ extern GameFunction notify_artifact_buff;
 
 extern GameFunction get_unit_spellproof;
 extern GameFunction get_mitigated_damage;
-extern GameFunction call_unknown_1;
+
+extern GameFunction check_week_of_balance_luck;
 
 
 // constants

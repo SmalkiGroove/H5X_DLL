@@ -2,16 +2,16 @@
 
 // New skill that adds 10% damage as lightning
 
-void ThunderPowerFork();
+void LightningTouchFork();
 
-int ThunderPower_fork = 0x00A63554;
-int ThunderPower_return = 0x00A63559;
+int LightningTouch_fork = 0x00A63554;
+int LightningTouch_return = 0x00A63559;
 
-void ThunderPower_init(pugi::xml_document& doc) {
-    assembly_patches.push_back({ PATCH_HOOK, ThunderPower_fork, 5, ThunderPowerFork, 0, 0, 0 });
+void LightningTouch_init(pugi::xml_document& doc) {
+    assembly_patches.push_back({ PATCH_HOOK, LightningTouch_fork, 5, LightningTouchFork, 0, 0, 0 });
 }
 
-__declspec(naked) void ThunderPowerFork() {
+__declspec(naked) void LightningTouchFork() {
     __asm
     {
         mov eax, [esi]
@@ -21,7 +21,7 @@ __declspec(naked) void ThunderPowerFork() {
         mov ecx, eax
         call dword ptr [edx + 0xC]
 		test eax, eax
-        je THUNDER_POWER_RETURN
+        je LIGHTNING_TOUCH_RETURN
         mov ecx, [eax + 0x4]
         mov edx, [ecx + 0x8]
         lea ecx, [edx + eax + 0x4]
@@ -29,7 +29,7 @@ __declspec(naked) void ThunderPowerFork() {
         push 0x2D
         call dword ptr [eax + 0x290]
         test al, al
-		je THUNDER_POWER_RETURN
+		je LIGHTNING_TOUCH_RETURN
         mov eax, dword ptr ss : [esp + 0x4]
         push ebp
         fild dword ptr ss : [esp]
@@ -48,10 +48,10 @@ __declspec(naked) void ThunderPowerFork() {
         // TODO visual effect
         add ebp, eax
 
-        THUNDER_POWER_RETURN:
+        LIGHTNING_TOUCH_RETURN:
         push ebp
         push 0
         mov edx, ebx
-        jmp[ThunderPower_return]
+        jmp[LightningTouch_return]
     }
 }

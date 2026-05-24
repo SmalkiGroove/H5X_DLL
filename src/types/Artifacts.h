@@ -3,6 +3,7 @@
 #ifndef ARTIFACTS_H
 #define ARTIFACTS_H
 
+// replace  ([A-Z0-9_]+ = [0-9]+)[^\n]*  by  $1,
 enum ARTIFACT_ID {
 	ARTIFACT_NONE = 0,
 	ARTIFACT_SWORD_OF_MIGHT = 1,
