@@ -88,6 +88,7 @@ Artfset check :
 Skill check :
 
 0097873B sorcery
+00B4E14F estates
 00A75CF7 ballistics
 00A75FAC anatomy
 00986D91 anatomy (tent can rez)
@@ -130,20 +131,75 @@ Skill check :
 
 Hero spec check :
 
+00B4E116 suzerain (gold)
+00CD3A46 suzerain (training)
 004E4308 haste ini
-004E437F white knight ini
-00634C8E white knight morale?
-00B4E11A peasants golds
-00B4E3D8 peasants golds
-008A372B griffins dive
-008A3789 elven fury spiteful
+004E437F white knight (ini)
+00634C8E white knight (morale?)
 009783EC white knight
-00989CF6 dark emissary
-00BC1D20 offender
+009BC475 white knight (ini)
+004E4CD4 chosen by gods
+00B4E11A peasants (golds)
+00B4E3D8 peasants (golds)
+008A372B griffins (dive)
+00577647 cavalry commander
+00A59119 cavalry commander (jousting)
 004BC6AC ballista
 00B3B90F ballista (catapult)
-0085F173 bombardier
+00B4DD78 wanderer
+00B4DDFF rusher (move)
+00A348AB rusher (tp cost)
+00B4DE80 rash (move)
+00B50079 rash (penalty)
+008AB2AC waylayer
+00BC0CD6 elven volley
+008A3789 elven fury (spiteful)
+00AF34EE talented warrior
+0097DB23 wasp swarm
+00989CF6 dark emissary
+0098A1D8 dark emissary (morale)
+009BC567 dark emissary (ini)
+00989915 maledictor
+00978AA5 reanimator
+009771FE tent
+00A5B49F soulhunter
+008DD210 death lord
+00B56D7B avatar of death (ability)
+0098431F mind cleaner
+0098450D poisoner
+00864809 dark ritual
+00865C35 dark ritual
+00A348E9 power bargain
 00A5AD07 evasive
+008A4434 prudent
+00B56D5A time shifter (ability)
+00AF17EC time shifter (effect)
+0097CAD8 disrupter
+00A5A604 master of elements
+00BBF418 inexhaustible
+00BC1EF5 windspeaker
+00BC1D20 offender
+00BC22AA offender (start)
+008CF8B5 explosive attack
+008CFC34 explosive attack (predict)
+0085F18B explosive attack
+0085F173 bombardier
+0097CFCD impregnable
+008602C5 gating
+004BC1F3 initiative
+004BC203 master of ini
+008A444E master of ini
+00A5AD07 evasive
+004BC513 defender (hp)
+00B578D3 researcher
+008E1D87 courtier (mood)
+008E1DDE courtier (mood)
+00AF4066 courtier (res)
+00A3484F warcries
+00A5C33F blooddrinker
+00B508CC goblins (weekly)
+008AB418 centaurs (ini)
+004BC5AB wyverns (hp)
 
 
 Town buildings :
@@ -172,8 +228,8 @@ Game functions :
 
 [+0x174]  get skill mastery
 [+0x190]  is hero spec
-[+0x290]  is skill known
-[+0x294]  is hero spec
+[+0x290] 00BC32D0 is skill known
+[+0x294] 00BC32E0 is hero spec
 [+0x328]  count artfset pieces
 [+0x258]  get hero class
 [+0x23C]  get hero level

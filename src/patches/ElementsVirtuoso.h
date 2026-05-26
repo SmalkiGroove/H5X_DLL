@@ -1,5 +1,5 @@
 #pragma once
 
-void __fastcall elementalVirtuoso_reset();
-int __fastcall elementVirtuoso_check(IHero* heroPtr, int spellElement);
-void __fastcall elementVirtuoso_cast(IHero* heroPtr, int spellElement);
+void __stdcall elementalVirtuoso_reset();
+int __fastcall elementVirtuoso_check(int* heroPtr);
+void __fastcall elementVirtuoso_cast(int* heroPtr, int spellElement);

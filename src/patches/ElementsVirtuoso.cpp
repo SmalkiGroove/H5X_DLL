@@ -2,42 +2,49 @@
 #include "ElementsVirtuoso.h"
 
 struct ElementalVirtuosoState {
-    IHero* heroPtr;
-    int  lastElem;
-    int  stacks;
+    int* heroPtr;
+    bool elem[5];
 };
 
-static ElementalVirtuosoState elementalVirtuosoSlots[2] = { {nullptr, 0, 0}, {nullptr, 0, 0} };
+static ElementalVirtuosoState elementalVirtuosoSlots[2] = {
+    {nullptr, {false, false, false, false, false}},
+    {nullptr, {false, false, false, false, false}}
+};
 
-static int elementalVirtuosoGetSlot(IHero* heroPtr) {
+static int elementalVirtuosoGetSlot(int* heroPtr) {
     if (elementalVirtuosoSlots[0].heroPtr == heroPtr) return 0;
-    if (elementalVirtuosoSlots[1].heroPtr == heroPtr) return 1;
-    if (elementalVirtuosoSlots[0].heroPtr == nullptr) { elementalVirtuosoSlots[0].heroPtr = heroPtr; return 0; }
-    if (elementalVirtuosoSlots[1].heroPtr == nullptr) { elementalVirtuosoSlots[1].heroPtr = heroPtr; return 1; }
+    else if (elementalVirtuosoSlots[1].heroPtr == heroPtr) return 1;
+    else if (elementalVirtuosoSlots[0].heroPtr == nullptr) elementalVirtuosoSlots[0].heroPtr = heroPtr;
+    else if (elementalVirtuosoSlots[1].heroPtr == nullptr) elementalVirtuosoSlots[1].heroPtr = heroPtr;
     return -1;
 }
 
-void __fastcall elementalVirtuoso_reset() {
-    elementalVirtuosoSlots[0] = { nullptr, 0, 0 };
-    elementalVirtuosoSlots[1] = { nullptr, 0, 0 };
+void __stdcall elementalVirtuoso_reset() {
+    elementalVirtuosoSlots[0] = { nullptr, {false, false, false, false, false} };
+    elementalVirtuosoSlots[1] = { nullptr, {false, false, false, false, false} };
 }
 
-int __fastcall elementVirtuoso_check(IHero* heroPtr, int spellElement) {
-    int mastery = heroPtr->skill_mastery(PERK_ELEMENTS_VIRTUOSO);
-	if (mastery == 0) return 0;
-	int slot = elementalVirtuosoGetSlot(heroPtr);
-    if (slot == -1) return 0;
-    return elementalVirtuosoSlots[slot].lastElem == spellElement ? 0 : elementalVirtuosoSlots[slot].stacks;
+int __fastcall elementVirtuoso_check(int* heroPtr) {
+    int stacks = 0;
+    if (has_skill(heroPtr, PERK_ELEMENTS_VIRTUOSO) == 1) {
+        int slot = elementalVirtuosoGetSlot(heroPtr);
+        if (slot != -1) {
+            for (int i = 1; i < 5; i++) {
+                if (elementalVirtuosoSlots[slot].elem[i]) stacks++;
+            }
+        }
+    }
+    return stacks;
 }
 
-void __fastcall elementVirtuoso_cast(IHero* heroPtr, int spellElement) {
-    int mastery = heroPtr->skill_mastery(PERK_ELEMENTS_VIRTUOSO);
-	if (mastery == 0) return;
-	int slot = elementalVirtuosoGetSlot(heroPtr);
-	if (slot == -1) return;
-	if (elementalVirtuosoSlots[slot].lastElem != spellElement) {
-		elementalVirtuosoSlots[slot].lastElem = spellElement;
-		elementalVirtuosoSlots[slot].stacks++;
+void __fastcall elementVirtuoso_cast(int* heroPtr, int spellElement) {
+    if (spellElement != 0) {
+        if (has_skill(heroPtr, PERK_ELEMENTS_VIRTUOSO) == 1) {
+            int slot = elementalVirtuosoGetSlot(heroPtr);
+            if (slot != -1) {
+                elementalVirtuosoSlots[slot].elem[spellElement] = true;
+            }
+        }
 	}
 }
 
@@ -46,19 +53,44 @@ void __fastcall elementVirtuoso_cast(IHero* heroPtr, int spellElement) {
 void ElementsVirtuosoFork1();
 void ElementsVirtuosoFork2();
 
-int ElementsVirtuoso_fork1 = 0x0056FB73;
-int ElementsVirtuoso_return1 = 0x0056FB79;
-//int ElementsVirtuoso_fork2 = 0x00976F60;
+int ElementsVirtuoso_fork1 = 0x004D8C36;
+int ElementsVirtuoso_return1 = 0x004D8C3B;
+int ElementsVirtuoso_fork2 = 0x0097E89F;
+int ElementsVirtuoso_return2 = 0x0097E8A4;
 
 void ElementsVirtuoso_init(pugi::xml_document& doc) {
-    assembly_patches.push_back({ PATCH_HOOK, ElementsVirtuoso_fork1, 6, ElementsVirtuosoFork1, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, ElementsVirtuoso_fork1, 5, ElementsVirtuosoFork1, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, ElementsVirtuoso_fork2, 5, ElementsVirtuosoFork2, 0, 0, 0 });
 }
 
 __declspec(naked) void ElementsVirtuosoFork1() {
     __asm
     {
-		call[elementalVirtuoso_reset]
-        mov al, byte ptr [esi + 0x4F0]
+        pushad
+        call elementalVirtuoso_reset
+        popad
+        mov eax, dword ptr [esi]
+        call dword ptr [eax + 0xC]
 		jmp[ElementsVirtuoso_return1]
+    }
+}
+
+__declspec(naked) void ElementsVirtuosoFork2() {
+    __asm
+    {
+        mov eax, dword ptr ss: [esp + 0x28]
+        mov ecx, dword ptr [eax + 0x4]
+        call[get_spell_id]
+        mov ecx, eax
+        call[get_spell_element]
+        mov edx, eax
+        mov ecx, esi
+        call elementVirtuoso_cast
+
+        pop edi
+        pop esi
+        mov eax, ebp
+        pop ebp
+        jmp[ElementsVirtuoso_return2]
     }
 }

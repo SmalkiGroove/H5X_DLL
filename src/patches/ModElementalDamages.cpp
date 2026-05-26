@@ -186,16 +186,14 @@ __declspec(naked) void ElemDamageFork() {
         call[notify_skill_buff]
 
         ELEMDAMAGE_ANY3:
-        mov ecx, dword ptr [ebp + 0x4]
-        call[get_spell_element]
-        mov edx, eax
         mov ecx, esi
         call[elementVirtuoso_check]
         test eax, eax
         je ELEMDAMAGE_RETURN
         push eax
         fild dword ptr ss: [esp]
-        fmul dword ptr [constf_1_1]
+        fmul dword ptr [constf_0_1]
+        fadd dword ptr [constf_1]
         pop eax
         fild dword ptr [esp + 0x10]
         push 0x0

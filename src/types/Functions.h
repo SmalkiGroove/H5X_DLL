@@ -22,8 +22,9 @@ extern IsSkilltypeSkill is_skilltype_skill;
 typedef int(__thiscall* IsSkilltypePerk)(SKILL_ID);
 extern IsSkilltypePerk is_skilltype_perk;
 
-typedef int(__thiscall* SkillMasteryLevel)(int*, SKILL_ID);
-extern SkillMasteryLevel skill_mastery;
+typedef int(__thiscall* CheckHeroSkill)(int*, SKILL_ID);
+extern CheckHeroSkill skill_mastery;
+extern CheckHeroSkill has_skill;
 
 
 

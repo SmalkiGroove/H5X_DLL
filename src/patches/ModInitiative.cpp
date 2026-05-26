@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ElementsVirtuoso.h"
 
 // ADD INITIATIVE FROM ADDITIONAL ARTIFACTS
 // (131) Plunderer Shoes : +1 creatures init
@@ -282,10 +283,22 @@ __declspec(naked) void HeroInitiativeFork() {
         mov ecx, edi
         call[count_equipped_artifact]
         test eax, eax
-        je HERO_INIT_END
+        je HERO_INIT_EV
         fld dword ptr ss : [esp + 0x4]
         fadd dword ptr [constf_0_5]
         fstp dword ptr ss : [esp + 0x4]
+
+        HERO_INIT_EV:
+        mov ecx, esi
+        call[elementVirtuoso_check]
+        test eax, eax
+        je HERO_INIT_END
+        push eax
+		fild dword ptr ss : [esp]
+        fmul dword ptr[constf_0_25]
+        pop eax
+		fadd dword ptr ss : [esp + 0x4]
+		fstp dword ptr ss : [esp + 0x4]
 
         HERO_INIT_END:
         mov eax, dword ptr [esi - 0x118]
