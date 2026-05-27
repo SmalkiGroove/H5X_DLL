@@ -196,6 +196,7 @@
     <ClCompile Include="src\patches\BattleDive.cpp" />
     <ClCompile Include="src\patches\BloodyClawNecklace.cpp" />
     <ClCompile Include="src\patches\ChainHitCount.cpp" />
+    <ClCompile Include="src\patches\ColdDeath.cpp" />
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\EarthPierce.cpp" />

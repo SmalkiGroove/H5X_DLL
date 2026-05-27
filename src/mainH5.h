@@ -139,6 +139,7 @@ void ExaltationTweak_init(pugi::xml_document& doc);
 void TwilightTweak_init(pugi::xml_document& doc);
 void PariahTweak_init(pugi::xml_document& doc);
 void ArcaneBrillance_init(pugi::xml_document& doc);
+void ColdDeathFreeze_init(pugi::xml_document& doc);
 void LightningTouch_init(pugi::xml_document& doc);
 void ElementsVirtuoso_init(pugi::xml_document& doc);
 void BarbarianSkillsLinks_init(pugi::xml_document& doc);

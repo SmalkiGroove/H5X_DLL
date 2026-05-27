@@ -44,9 +44,31 @@ __declspec(naked) void MasterOfFireFix() {
         jne HERO_HAS_FROZEN_HEART
 
         DEBUFF_DEFENSE:
+        mov eax, dword ptr [esi]
+		mov ecx, esi
+		call dword ptr [eax + 0x10]
+		mov edx, dword ptr [eax]
+		mov ecx, eax
+		call dword ptr [edx + 0xC]
+        test eax, eax
+        je debuff_defense_value
+		mov edx, dword ptr [eax]
+		mov ecx, eax
+		call dword ptr [edx]
+        mov edx, dword ptr [eax]
+		mov ecx, eax
+        push 0xA3
+		call dword ptr [edx + 0x174]
+        test eax, eax
+        debuff_defense_value:
         push ebx
         fild dword ptr ss: [esp]
+        je debuff_defense_noignite
+        fmul dword ptr [constf_0_4]
+        jmp debuff_defense_result
+        debuff_defense_noignite:
         fmul dword ptr [constf_0_7]
+        debuff_defense_result:
         fistp dword ptr ss: [esp]
         pop ebx
 

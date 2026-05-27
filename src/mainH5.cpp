@@ -83,7 +83,7 @@ void init_patches(pugi::xml_document& doc) {
     Artificier_init(doc);                  // OK
     Arcanism_init(doc);                    // OK
     ElementalVision_init(doc);             // OK
-    PerceptionOfWeakness_init(doc);
+    PerceptionOfWeakness_init(doc);        // OK
     EnlightenmentStats_init(doc);          // OK
     ElementalWarriors_init(doc);           // OK
     OffDefFormation_init(doc);             // OK
@@ -96,8 +96,9 @@ void init_patches(pugi::xml_document& doc) {
     TwilightTweak_init(doc);               // OK
     PariahTweak_init(doc);                 // OK
     ArcaneBrillance_init(doc);             // OK
+    ColdDeathFreeze_init(doc);             //
     LightningTouch_init(doc);              // OK
-    ElementsVirtuoso_init(doc);
+    ElementsVirtuoso_init(doc);            // OK
     BarbarianSkillsLinks_init(doc);        // OK
 
     ArtfsetExpand_init(doc);               // OK
