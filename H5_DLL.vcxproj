@@ -208,6 +208,7 @@
     <ClCompile Include="src\patches\HeroSpecBlackKnights.cpp" />
     <ClCompile Include="src\patches\IceFreeze.cpp" />
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
+    <ClCompile Include="src\patches\LuaSetAtbAdditive.cpp" />
     <ClCompile Include="src\patches\Magnetism.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />
     <ClCompile Include="src\patches\ModAtbReset.cpp" />

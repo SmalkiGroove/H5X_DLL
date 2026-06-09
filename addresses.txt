@@ -240,6 +240,7 @@ Game functions :
 [+0x1B8]  get unit morale (uncap)
 [+0x238]  get unit max mana
 [+0x184]  atb ?
+[+0x18C]  atb ?
 [+0x24C] 00A6EE70 active spell effects
 [+0x25C] 00B4CE20 apply effect for N actions
 [+0x260] 00A73CE0 apply effect for N turns

@@ -9,6 +9,7 @@
 // (133) Celestial Justicar Shield : -50% ranged damage
 // (198) Shield of Dwarven Kings : -30% ranged damage
 // Skill Courage reduce all damages per Morale point
+// Skill Arcane Protection reduce all damages by 0.5% per spellpower
 
 void MeleeDamageInputFork();
 void RangedDamageInputFork();
@@ -208,7 +209,7 @@ __declspec(naked) void AllDamageOutputFork() {
     __asm
     {
         test edi, edi
-        jz COURAGE_END
+        jz ALL_DAMAGE_OUTPUT_RETURN
         mov eax, dword ptr [edi]
         mov ecx, edi
         call dword ptr [eax]
@@ -217,7 +218,7 @@ __declspec(naked) void AllDamageOutputFork() {
         push 0x4
         call dword ptr [edx + 0x174]
         test eax, eax
-        jz COURAGE_END
+        jz ALL_DAMAGE_OUTPUT_MANA_SHIELD
         mov ecx, dword ptr ss : [esp + 0x20]
         mov dword ptr ss : [esp + 0x20], eax
         fild dword ptr ss : [esp + 0x20]
@@ -234,7 +235,33 @@ __declspec(naked) void AllDamageOutputFork() {
         fstp dword ptr ss : [esp + 0x18]
         mov dword ptr ss : [esp + 0x20], ecx
 
-        COURAGE_END:
+        ALL_DAMAGE_OUTPUT_MANA_SHIELD:
+        mov edx, dword ptr [edi + 0x4]
+		mov eax, dword ptr [edx + 0x8]
+        mov edx, dword ptr [eax + edi + 0x4]
+        lea ecx, dword ptr [eax + edi + 0x4]
+        push 0x36
+        call dword ptr [edx + 0x290]
+        test eax, eax
+        jz ALL_DAMAGE_OUTPUT_RETURN
+        mov edx, dword ptr [edi]
+        mov ecx, edi
+        call dword ptr [edx]
+        mov edx, dword ptr [eax]
+        mov ecx, eax
+        //push 0
+        call dword ptr [edx + 0x164]
+        sar eax, 0x1
+        test eax, eax
+        jz ALL_DAMAGE_OUTPUT_RETURN
+        push eax
+        fild dword ptr ss: [esp]
+        fmul dword ptr[constf_percent]
+        fsubr dword ptr [constf_1]
+        fmul dword ptr ss: [esp + 0x18]
+        fstp dword ptr ss: [esp + 0x18]
+
+        ALL_DAMAGE_OUTPUT_RETURN:
         mov edx, dword ptr [ebx]
         mov ecx, ebx
         call dword ptr [edx + 0xC]
