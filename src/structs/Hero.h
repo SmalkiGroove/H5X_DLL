@@ -2,18 +2,24 @@
 #ifndef HERO_H
 #define HERO_H
 
-typedef int* (__thiscall* GetInventory)();
+// AdvMap hero interface (vtable 0x00E7E484, NWorld::CHero subobject +0x1C).
+// See docs/RE_hero_stats.md for the reverse-engineering details.
+typedef int* (__thiscall* GetInventory)(int*);
 typedef int (__thiscall* GetSkillMastery)(int*, int);
+typedef int (__thiscall* GetStat)(int*);
+typedef int (__thiscall* GetMaxMana)(int*, int);
+typedef int (__thiscall* GetSpellpowerForSpell)(int*, int*);
+typedef int (__thiscall* HasHeroSpec)(int*, int);
 
 struct Hero_vtable {
 	int* call_0;
 	int* call_4;
-	int* call_8;
-	int* call_12;
-	int* call_16;
-	int* call_20;
-	int* call_24;
-	int* call_28;
+	GetStat get_luck_raw; // 0x08 (8) - 0x00B4CA10, unclamped, base + has_skill(SKILL_LUCK) bonus
+	GetStat get_morale_raw; // 0x0C (12) - 0x00B4CAE0, unclamped, base + has_skill(SKILL_LEADERSHIP) bonus
+	GetStat get_attack; // 0x10 (16) - 0x00B4CC50, total, clamped >= 0
+	GetStat get_defense; // 0x14 (20) - 0x00B4CCC0, total
+	GetStat get_spellpower; // 0x18 (24) - 0x00B4CCF0, total
+	GetStat get_knowledge; // 0x1C (28) - 0x00B4CD80, total, clamped >= 1
 	int* call_32;
 	int* call_36;
 	int* call_40;
@@ -81,12 +87,12 @@ struct Hero_vtable {
 	int* call_288;
 	int* call_292;
 	int* call_296;
-	int* call_300;
-	int* call_304;
+	GetStat get_mana_points; // 0x12C (300) - 0x00AF8160, returns [this+0x140]
+	GetMaxMana get_max_mana; // 0x130 (304) - 0x00B4C8F0, arg = knowledge, applies Intelligence bonus
 	int* call_308;
 	int* call_312;
-	int* call_316;
-	int* call_320;
+	GetStat get_luck; // 0x13C (316) - 0x00B4CB40, get_luck_raw clamped to [-5, +5]
+	GetStat get_morale; // 0x140 (320) - 0x00B4CB60, get_morale_raw clamped to [-5, +5]
 	int* call_324;
 	int* call_328;
 	int* call_332;
@@ -95,19 +101,19 @@ struct Hero_vtable {
 	int* call_344;
 	int* call_348;
 	int* call_352;
-	int* call_356;
+	GetSpellpowerForSpell get_spellpower_for_spell; // 0x164 (356) - 0x00B4B3E0, arg = spellRef, returns 8 for spellpower-independent spells
 	int* call_360;
 	int* call_364;
 	int* call_368;
-	GetSkillMastery get_skill_mastery;
+	GetSkillMastery get_skill_mastery; // 0x174 (372) - 0x00B4D150, also used as has_skill
 	int* call_376;
 	int* call_380;
 	int* call_384;
 	int* call_388;
 	int* call_392;
-	int* is_perk_learnable;
-	int* call_400;
-	int* call_404;
+	int* is_perk_learnable; // 0x18C (396)
+	HasHeroSpec has_hero_spec; // 0x190 (400) - 0x00B4B5A0, compares arg to [this+0x8C]
+	GetStat get_hero_spec; // 0x194 (404) - 0x00B4B5C0, returns [this+0x8C]
 	int* call_408;
 	int* call_412;
 	int* call_416;
@@ -156,7 +162,7 @@ struct Hero_vtable {
 	int* call_588;
 	int* call_592;
 	int* call_596;
-	int* get_hero_class;
+	GetStat get_hero_class; // 0x258 (600)
 	int* call_604;
 	int* call_608;
 	int* call_612;
@@ -187,6 +193,42 @@ struct Hero_vtable {
 struct IHero {
 	Hero_vtable* instance;
 
+	int* inventory() {
+		return instance->get_inventory((int*)this);
+	}
+	int* backpack() {
+		return instance->get_backpack((int*)this);
+	}
+	int attack() {
+		return instance->get_attack((int*)this);
+	}
+	int defense() {
+		return instance->get_defense((int*)this);
+	}
+	int spellpower() {
+		return instance->get_spellpower((int*)this);
+	}
+	int knowledge() {
+		return instance->get_knowledge((int*)this);
+	}
+	int luck() {
+		return instance->get_luck((int*)this);
+	}
+	int morale() {
+		return instance->get_morale((int*)this);
+	}
+	int mana_points() {
+		return instance->get_mana_points((int*)this);
+	}
+	int hero_class() {
+		return instance->get_hero_class((int*)this);
+	}
+	int hero_spec() {
+		return instance->get_hero_spec((int*)this);
+	}
+	bool has_spec(int spec) {
+		return instance->has_hero_spec((int*)this, spec) != 0;
+	}
 	int skill_mastery(int skill) {
 		return instance->get_skill_mastery((int*)this, skill);
 	}

@@ -21,7 +21,7 @@ bool is_faction_skill(int skill_id) {
 int __fastcall pendantofmastery_check(IHero* hero, int skill_id) {
 	if (is_faction_skill(skill_id)) {
 		int result = 0;
-		int* inventory = hero->instance->get_inventory();
+		int* inventory = hero->inventory();
 		result += count_equipped_artifact(inventory, ARTIFACT_PENDANT_OF_MASTERY);
 		int* skilltree = offsetPointer((int*)hero, -7);
 		result += skill_mastery(skilltree, PERK_ABSOLUTE_MASTERY);
