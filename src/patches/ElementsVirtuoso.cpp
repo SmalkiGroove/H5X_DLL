@@ -2,7 +2,7 @@
 #include "ElementsVirtuoso.h"
 
 struct ElementalVirtuosoState {
-    int* heroPtr;
+    ICombatHero* combatHero;
     bool elem[5];
 };
 
@@ -11,11 +11,11 @@ static ElementalVirtuosoState elementalVirtuosoSlots[2] = {
     {nullptr, {false, false, false, false, false}}
 };
 
-static int elementalVirtuosoGetSlot(int* heroPtr) {
-    if (elementalVirtuosoSlots[0].heroPtr == heroPtr) return 0;
-    else if (elementalVirtuosoSlots[1].heroPtr == heroPtr) return 1;
-    else if (elementalVirtuosoSlots[0].heroPtr == nullptr) elementalVirtuosoSlots[0].heroPtr = heroPtr;
-    else if (elementalVirtuosoSlots[1].heroPtr == nullptr) elementalVirtuosoSlots[1].heroPtr = heroPtr;
+static int elementalVirtuosoGetSlot(ICombatHero* combatHero) {
+    if (elementalVirtuosoSlots[0].combatHero == combatHero) return 0;
+    else if (elementalVirtuosoSlots[1].combatHero == combatHero) return 1;
+    else if (elementalVirtuosoSlots[0].combatHero == nullptr) elementalVirtuosoSlots[0].combatHero = combatHero;
+    else if (elementalVirtuosoSlots[1].combatHero == nullptr) elementalVirtuosoSlots[1].combatHero = combatHero;
     return -1;
 }
 
@@ -24,10 +24,10 @@ void __stdcall elementalVirtuoso_reset() {
     elementalVirtuosoSlots[1] = { nullptr, {false, false, false, false, false} };
 }
 
-int __fastcall elementVirtuoso_check(int* heroPtr) {
+int __fastcall elementVirtuoso_check(ICombatHero* combatHero) {
     int stacks = 0;
-    if (has_skill(heroPtr, PERK_ELEMENTS_VIRTUOSO) == 1) {
-        int slot = elementalVirtuosoGetSlot(heroPtr);
+    if (combatHero->has_skill(PERK_ELEMENTS_VIRTUOSO) == 1) {
+        int slot = elementalVirtuosoGetSlot(combatHero);
         if (slot != -1) {
             for (int i = 1; i < 5; i++) {
                 if (elementalVirtuosoSlots[slot].elem[i]) stacks++;
@@ -37,10 +37,10 @@ int __fastcall elementVirtuoso_check(int* heroPtr) {
     return stacks;
 }
 
-void __fastcall elementVirtuoso_cast(int* heroPtr, int spellElement) {
+void __fastcall elementVirtuoso_cast(ICombatHero* combatHero, int spellElement) {
     if (spellElement != 0) {
-        if (has_skill(heroPtr, PERK_ELEMENTS_VIRTUOSO) == 1) {
-            int slot = elementalVirtuosoGetSlot(heroPtr);
+        if (combatHero->has_skill(PERK_ELEMENTS_VIRTUOSO) == 1) {
+            int slot = elementalVirtuosoGetSlot(combatHero);
             if (slot != -1) {
                 elementalVirtuosoSlots[slot].elem[spellElement] = true;
             }

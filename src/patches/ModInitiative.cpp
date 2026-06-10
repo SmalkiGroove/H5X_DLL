@@ -62,10 +62,9 @@ static float __fastcall creature_initless_multiplier(int* inventory) {
 }
 
 // Flat hero initiative bonus.
-// combatHero = CombatHero subobject (vtable 0x00E8499C); the AdvMap hero interface
-// pointer is stored at [combatHero - 0x6C] (see docs/RE_hero_stats.md).
-static float __fastcall hero_init_bonus(int* combatHero) {
-    IHero* hero = (IHero*)combatHero[-(0x6C / 4)];
+// combatHero = CombatHero subobject (vtable 0x00E8499C, see docs/RE_hero_stats.md).
+static float __fastcall hero_init_bonus(ICombatHero* combatHero) {
+    IHero* hero = combatHero->hero();
     int* inventory = hero->inventory();
 
     float bonus = 0.1f;

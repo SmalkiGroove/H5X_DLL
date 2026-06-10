@@ -26,6 +26,9 @@ typedef int(__thiscall* CheckHeroSkill)(int*, SKILL_ID);
 extern CheckHeroSkill skill_mastery;
 extern CheckHeroSkill has_skill;
 
+typedef void(__fastcall* NotifyArtifactBuffFn)(int* context, char enabled, int artifactId, int value, int unused);
+typedef void(__fastcall* NotifySkillBuffFn)(int* context, char enabled, int skillId, int value, int unused);
+
 
 
 #endif
