@@ -125,6 +125,8 @@ __pycache__/
 # Ghidra files
 H5X.rep
 H5X.gpr
+H5X.lock
+H5X.lock~
 
 # Ghidra MCP
 h5x-ghidra-mcp/.venv

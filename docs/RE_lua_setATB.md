@@ -308,7 +308,58 @@ lua_toggleTutorialMode @ 0056d7d0   lua_unitNames @ 0056afa0
 |---|---|---|
 | `0x00E8499C` | `struct_CombatHero` (user label) | Combat hero vtable; `+0x290` = HasSkill (used widely in patches as `call [edx+0x290]`), `+0x184`/`+0x188` = GetATBInfo, `+0x18C` = SetATB |
 | `0x00E18184` | CSetATBValue command vtable | Execute at slot `+0x1C` → `0x004E0970` |
+| `0x00E1D95C` | ICombatArenaCommon vtable (in `CCombatArenaScreen`) | The "arena vtable" used by `lua_setATB`; see section 8 |
 
 Related RTTI strings found in `.rdata`:
 `.?AVCSetATBValue@NWorld@@` @ `0x00F306E8`, `.?AVCATBInfo@NWorld@@` @ `0x00F45224`,
 `.?AVCArenaATB@NWorld@@` @ `0x00F48A7C`, `"setATB"` @ `0x00E1E848`.
+
+---
+
+## 8. The combat arena vtable (`ICombatArenaCommon`)
+
+`lua_setATB` obtains the arena via
+`__RTDynamicCast(ctx, 0, SrcType, &ICombatArenaCommon_TD, 0)` with target type descriptor
+`0x00F32224` = `.?AUICombatArenaCommon@NCombatArenaScript@@`. The interface is a **virtual
+base**, so there is no single global vtable — each concrete arena class carries its own copy:
+
+| Class | ICombatArenaCommon vtable | Subobject offset | Notes |
+|---|---|---|---|
+| `NCombatArenaScript::CCombatArenaImpl` (abstract base) | `0x00E1CAD4` | `+0x10` | 17 slots; slots 0–2 = `_purecall` (never instantiated directly) |
+| `NUI::CCombatArenaScreen` (**the real combat arena**) | **`0x00E1D95C`** | `+0x57C` | 17 slots, adjustor thunks |
+| `NUI::CCombatArenaFlybyScreen` (cutscene/flyby arena) | `0x00E32C14` area | tail subobject | second implementer |
+
+At runtime, a combat script's `setATB` call goes through the `+0x57C` subobject of a
+`CCombatArenaScreen`, so the dispatched vtable is `0x00E1D95C`.
+
+### Interface slots (17 total, abstract vtable `0x00E1CAD4` ↔ screen vtable `0x00E1D95C`)
+
+| Slot | Abstract (`CCombatArenaImpl`) | Screen (`CCombatArenaScreen`) | Meaning |
+|---|---|---|---|
+| `+0x00` | `_purecall` | `0x005528E0` → `0x0053E120` | (first interface method) |
+| `+0x04` | `_purecall` | `0x005528F0` → `0x0053E110` | Post result/command (used by `lua_setATB`) |
+| `+0x08` | `_purecall` | `0x00552900` | |
+| `+0x0C` | `0x00565CA0` (forwarder) | `0x005527A0` = `add ecx,0x24; jmp 0x00565CA0` | **GetUnitByName** (returns combat unit or 0) |
+| `+0x10`–`+0x1C` | `0x00565DC0`, `0x00565E20`, `0x00565CF0`, `0x00565CD0` | `0x005527B0`–`0x005527E0` thunks | unit/arena queries |
+| `+0x20`–`+0x40` | `0x00565EC0` … `0x00566460` (several build command objects, like `FUN_00566090/300/580`) | `0x005527F0` … `0x00552910` thunks | script command factories |
+
+Note: the adjacent 8-slot vtable `0x00E1D934` (subobject `+0x588`) is a **different**
+interface of `CCombatArenaScreen` (slot `+0xC` → `0x0053ED10`, a per-unit flag setter) —
+do not confuse it with the ICombatArenaCommon vtable.
+
+### RTTI / layout facts used to derive this
+
+- `CCombatArenaImpl` class hierarchy (CHD `0x00ECB4F4`): bases =
+  self, `ICombatArenaCommon` (virtual, vbtable slot `+0x8`), `NCommonScript::IContext`
+  (primary base *inside* the ICAC subobject, same vptr), `CObjectBase` (virtual, vbtable slot `+0x4`).
+- `CCombatArenaImpl` COLs: subobject `+0x4` → vtable `0x00E1CB1C` (CObjectBase,
+  recognizable by slot `+0x18` = `0x004018B0` refcount-release), `+0x10` → `0x00E1CAD4` (ICAC).
+- `NUI::CCombatArenaScreen` (TD `0x00F32150`) embeds `CCombatArenaImpl` at `+0x174` and
+  relocates virtual bases to the object tail: `+0x554` = CObjectBase (vtable `0x00E1D9D4`),
+  `+0x57C` = ICombatArenaCommon (vtable `0x00E1D95C`), `+0x588` = unidentified 8-slot
+  interface (vtable `0x00E1D934`).
+- `NUI::CCombatArenaFlybyScreen` (TD `0x00F39368`) embeds `CCombatArenaImpl` at `+0x174`
+  too; its tail vtables: `+0x248` → `0x00E32BFC`, `+0x23C` → `0x00E32C14`,
+  `+0x230` → `0x00E32C5C`, `+0x220` → `0x00E32C7C`, `+0x0` → `0x00E32C9C`.
+- IAT note: `0x00D11A02` (seen in abstract vtables) is `jmp [0x00E0A2A0]` =
+  `MSVCR71.dll!_purecall`.

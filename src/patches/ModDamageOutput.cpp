@@ -218,7 +218,7 @@ __declspec(naked) void AllDamageOutputFork() {
         push 0x4
         call dword ptr [edx + 0x174]
         test eax, eax
-        jz ALL_DAMAGE_OUTPUT_MANA_SHIELD
+        jz ALL_DAMAGE_OUTPUT_ARCANE_PROTECTION
         mov ecx, dword ptr ss : [esp + 0x20]
         mov dword ptr ss : [esp + 0x20], eax
         fild dword ptr ss : [esp + 0x20]
@@ -235,22 +235,35 @@ __declspec(naked) void AllDamageOutputFork() {
         fstp dword ptr ss : [esp + 0x18]
         mov dword ptr ss : [esp + 0x20], ecx
 
-        ALL_DAMAGE_OUTPUT_MANA_SHIELD:
+        ALL_DAMAGE_OUTPUT_ARCANE_PROTECTION:
         mov edx, dword ptr [edi + 0x4]
 		mov eax, dword ptr [edx + 0x8]
         mov edx, dword ptr [eax + edi + 0x4]
         lea ecx, dword ptr [eax + edi + 0x4]
         push 0x36
         call dword ptr [edx + 0x290]
-        test eax, eax
+        test al, al
         jz ALL_DAMAGE_OUTPUT_RETURN
-        mov edx, dword ptr [edi]
-        mov ecx, edi
-        call dword ptr [edx]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        //push 0
-        call dword ptr [edx + 0x164]
+
+        // Total spellpower (base + skills + artifacts + combat buffs):
+        // CombatHero vtable +0x244 = GetEffectiveSpellPower(spellRef*, int flag), ret 8.
+        // spellRef = { spell* (may be 0), spellId (0 = no spell context), 0, 0, 0 }
+        xor eax, eax
+        push eax
+        push eax
+        push eax
+        push eax
+        push eax                            // zeroed 5-dword spellRef on the stack
+        mov edx, dword ptr [edi + 0x4]
+        mov eax, dword ptr [edx + 0x8]
+        mov edx, dword ptr [eax + edi + 0x4]
+        lea ecx, dword ptr [eax + edi + 0x4]
+        push 0                              // arg2 = flag (always 0 at game call sites)
+        lea eax, dword ptr [esp + 0x4]
+        push eax                            // arg1 = &spellRef
+        call dword ptr [edx + 0x244]        // eax = total spellpower, callee pops both args
+        add esp, 0x14                       // free spellRef
+
         sar eax, 0x1
         test eax, eax
         jz ALL_DAMAGE_OUTPUT_RETURN
@@ -258,8 +271,9 @@ __declspec(naked) void AllDamageOutputFork() {
         fild dword ptr ss: [esp]
         fmul dword ptr[constf_percent]
         fsubr dword ptr [constf_1]
-        fmul dword ptr ss: [esp + 0x18]
-        fstp dword ptr ss: [esp + 0x18]
+        fmul dword ptr ss: [esp + 0x1C]     // damage is at [esp+0x18] before the push
+        fstp dword ptr ss: [esp + 0x1C]
+        add esp, 0x4
 
         ALL_DAMAGE_OUTPUT_RETURN:
         mov edx, dword ptr [ebx]
