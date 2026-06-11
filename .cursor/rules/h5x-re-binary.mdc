@@ -1,0 +1,27 @@
+---
+description: H5X.exe PE layout and address conventions for reverse engineering
+alwaysApply: true
+---
+
+# H5X Binary & Addresses
+
+Target binary: **H5X.exe** (ToE 3.1 based). Image base `0x00400000`. Ghidra project: `h5x-ghidra-mcp/H5X.rep`.
+
+**Critical:** Ghidra VAs match **H5X.exe only**, not vanilla `H5_Game.exe` (different section layout).
+
+## PE sections
+
+| Section | VA start | Virtual size | Raw offset |
+|---|---|---|---|
+| `.text` | `0x00001000` | `0x00A09000` | `0x00000400` |
+| `.rdata` | `0x00A0A000` | `0x00115000` | `0x00A08600` |
+| `.data` | `0x00B1F000` | `0x001CB000` | `0x00B1C800` |
+
+File offset for `.text`: `file_offset = VA - 0x400C00`.
+
+## Patching conventions
+
+- All patch targets are **absolute VAs** in the game process (runtime memory patching).
+- Use `VirtualProtect` before writes; see `mainH5.cpp` apply loop.
+- `addresses.txt` is the developer RVA/function reference; cross-check with Ghidra for H5X.exe.
+- Named Ghidra functions use `func_*` prefix; do not rename existing labels when doing RE.

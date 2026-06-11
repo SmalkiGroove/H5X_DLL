@@ -1,0 +1,69 @@
+---
+description: Combat ATB, lua setATB/changeATB, arena vtables, and unit ATB interface
+alwaysApply: true
+---
+
+# Combat ATB & Lua Commands
+
+## Unit ATB vtable (`struct_CombatHero` @ `0x00E8499C`)
+
+| Slot | Thunk | Impl | Meaning |
+|---|---|---|---|
+| `+0x184` / `+0x188` | `0x00BC3250` | `0x008AEB40` | **GetATBInfo** → ATB info object ptr |
+| `+0x18C` | `0x00BC2E90` | `0x00A6B690` | **SetATB(float)** — callee pops arg |
+
+- Current ATB float: `[GetATBInfo() + 0x1C]` (used by `ImbueBalistaAtbFix.cpp`, `LuaChangeAtb.cpp`).
+- `SetATB` notifies via vtable `+0xFC`; crossing ready threshold (`DAT_00E0A7E4` ≈ 1.0) triggers unit-ready.
+- Thunks handle virtual inheritance per unit type; `CATBInfo+0x1C` is shared.
+
+## `setATB` engine flow (`lua_setATB` @ `0x0056CF60`)
+
+Does **not** write ATB directly — posts a command:
+
+1. Parse args (`func_ReadLuaCombatCommandArgs` / `0x00B0F690`).
+2. `arena->GetUnitByName` via ICombatArenaCommon vtable `+0x0C`.
+3. Alloc `0x14` bytes (`func_EngineAlloc`), construct **CSetATBValue** (`0x00566800`):
+   - vtable `0x00E18184`, unit @ `+0x0C`, float @ `+0x10`
+4. Post via arena vtable `+0x04`.
+
+**Execute** @ `0x004E0970` (CSetATBValue slot `+0x1C`): reads unit, calls `unit->SetATB` via vtable `+0x18C`.
+
+> Pitfall: `FUN_004E09A0` @ `0x004E09A0` is a **different** command execute — do not patch inside it.
+
+## H5X `changeATB` (`src/patches/LuaChangeAtb.cpp`)
+
+Additive ATB without hooking shared execute `0x004E0970`:
+
+1. Same arg parsing + `GetUnitByName`.
+2. Read current: `GetATBInfo` (`+0x188`) → `[info+0x1C]`.
+3. Post normal `CSetATBValue` with `current + delta`.
+
+Registration: patch combat Lua table terminator `0x00F33038`/`0x00F3303C` with `"changeATB"` + DLL handler.
+
+```lua
+changeATB("HeroName", 0.25)  -- additive
+setATB("HeroName", 1.0)      -- absolute (vanilla)
+```
+
+## Combat arena — ICombatArenaCommon
+
+Runtime arena = `CCombatArenaScreen` subobject `+0x57C`, vtable **`0x00E1D95C`**.
+
+| Slot | Meaning |
+|---|---|
+| `+0x04` | Post command (used by `lua_setATB`) |
+| `+0x0C` | **GetUnitByName** |
+
+Do not confuse with adjacent vtable `0x00E1D934` @ subobject `+0x588`.
+
+## Engine helpers (ATB/Lua)
+
+| Address | Name / role |
+|---|---|
+| `0x00878FD0` | `func_EngineAlloc` |
+| `0x004DD6E0` | `func_RefCountStore` |
+| `0x00566800` | CSetATBValue ctor |
+| `0x00B0F690` | `func_ReadLuaCombatCommandArgs` |
+| `0x00A6B690` | `func_SetUnitATB` |
+
+For other `lua_*` combat script functions, search Ghidra by name (`func_ReadLuaCombatCommandArgs` pattern).

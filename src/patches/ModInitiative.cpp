@@ -62,7 +62,7 @@ static float __fastcall creature_initless_multiplier(int* inventory) {
 }
 
 // Flat hero initiative bonus.
-// combatHero = CombatHero subobject (vtable 0x00E8499C, see docs/RE_hero_stats.md).
+// combatHero = CombatHero subobject (vtable 0x00E8499C, see .cursor/rules/h5x-re-hero-stats.mdc).
 static float __fastcall hero_init_bonus(ICombatHero* combatHero) {
     IHero* hero = combatHero->hero();
     int* inventory = hero->inventory();

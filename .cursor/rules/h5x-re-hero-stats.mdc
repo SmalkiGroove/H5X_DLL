@@ -1,0 +1,73 @@
+---
+description: CombatHero and AdvMap hero vtables — reading hero stats from patches
+alwaysApply: true
+---
+
+# Hero Stats — CombatHero vs AdvMap
+
+In combat (e.g. `AllDamageOutputFork` in `ModDamageOutput.cpp`), unit owner `edi` exposes two hero views:
+
+| Object | How to get | Vtable | Use |
+|---|---|---|---|
+| **CombatHero** | `mov edx,[edi+4]` / `mov eax,[edx+8]` / `lea ecx,[eax+edi+4]` | `0x00E8499C` | In-combat stats, skills, specs, effective spellpower |
+| **AdvMap hero** | `call [edi]` (slot 0) → `eax` | `0x00E7E484` | Persistent totals (attack/def/spellpower/knowledge) |
+
+AdvMap hero = `NWorld::CHero` subobject at `+0x1C` (RTTI `.?AVCHero@NWorld@@` @ `0x00F40324`). CombatHero reaches AdvMap hero via `mov ecx,[ecx-0x6C]`.
+
+## AdvMap hero vtable `0x00E7E484` — primary stat getters
+
+All `__thiscall`, **no stack args**, result in `eax` (totals incl. artifacts/week, clamped):
+
+| Slot | Impl | Stat |
+|---|---|---|
+| `+0x10` | `0x00B4CC50` | Attack |
+| `+0x14` | `0x00B4CCC0` | Defense |
+| `+0x18` | `0x00B4CCF0` | Spellpower |
+| `+0x1C` | `0x00B4CD80` | Knowledge (`func_GetHeroKnowledgeBase`) |
+
+Other slots: `+0x12C` current mana, `+0x174` HasSkill, `+0x190` HasHeroSpec (`has_hero_spec` in `globals.cpp` = `0x00B4B5A0`).
+
+## CombatHero vtable `0x00E8499C` — key slots
+
+Entries use vtordisp thunks (`sub ecx,[ecx-4]; sub ecx,NN; jmp impl`).
+
+| Slot | Impl | Meaning |
+|---|---|---|
+| `+0x198` | `0x00BBFE50` | Attack (combat) |
+| `+0x19C` | `0x00BBFE60` | Defense (combat) |
+| `+0x238` | `0x00BC0700` | Mana |
+| `+0x23C` | `0x00BBFB90` | Hero level |
+| `+0x240` | `0x00A6A700` | Spell school mastery (spellRef*, flag) |
+| `+0x244` | `0x00A6A7E0` | **Effective spellpower** (spellRef*, flag) — see below |
+| `+0x290` | → hero `+0x174` | **HasSkill** — test `al` |
+| `+0x294` | → hero `+0x190` | **HasHeroSpec** |
+
+**No knowledge getter** on CombatHero. For knowledge in combat, use AdvMap hero `+0x1C`.
+
+## GetEffectiveSpellPower — CombatHero `+0x244`
+
+Thunk `0x00BC3020` → `0x00A6A7E0`. Signature: `int __thiscall(ref, int flag)` — **two args, `ret 8`**.
+
+`spellRef` (5 dwords on stack): `+0x00` spell obj (may NULL), `+0x04` spell id (0 = skip school bonuses).
+
+Patch pattern (zeroed spellRef = no spell context):
+
+```asm
+xor eax, eax
+push eax; push eax; push eax; push eax; push eax   ; 5-dword spellRef
+; ecx = CombatHero subobject
+push 0
+lea eax, [esp+4]
+push eax
+call dword ptr [edx+0x244]   ; eax = effective spellpower
+add esp, 0x14
+```
+
+## The `+0x164` trap (AdvMap hero)
+
+`+0x164` (`0x00B4B3E0`) is `GetSpellPower(spellRef*)` — **`ret 4`**, one stack arg. Calling without pushing an arg desyncs the stack and may return fixed `8`. Use `+0x18` for plain total spellpower, or CombatHero `+0x244` for combat-buffed value.
+
+## Patch cross-refs
+
+- `ModDamageOutput.cpp` — Arcane Protection: `+0x290` + `+0x244`
+- `ModEffectiveSpellpower.cpp` — hooks `0x00BC00D0` skill bonus region @ `0x00BC0508`

@@ -1,0 +1,50 @@
+---
+description: func_CastSpell and named spell-casting callees in H5X.exe
+alwaysApply: true
+---
+
+# Spell Casting — `func_CastSpell` @ `0x0097D7B0`
+
+Main spell dispatch: buff/debuff branch vs spell-id jump table. Entry copies context via `func_CopySpellCastContext` (`0x00988E70`).
+
+## Already-named callees (do not rename)
+
+`func_GetSpellID`, `func_IsSpellBuffOrDebuff`, `func_IsMassSpell`, `func_CheckSpellApplyEffect`, `func_ComputeBouncingSpell`, `func_GetSpellDamage`, `func_CheckIceSpellFreeze`, `func_RezAbilities`, `func_SpellSummonElementals`, `func_SpellConjurePhoenix`, `func_SpellFirewall`, `func_GetDefaultStats`.
+
+## Key renamed helpers
+
+| Address | Name | Role |
+|---|---|---|
+| `0x00BBF000` | `func_CastSingleSpellBuff` | Single-target buff/debuff |
+| `0x00BBF1F0` | `func_CastMassSpellBuff` | Mass buff/debuff |
+| `0x004E6B60` | `func_ApplySpellDamage` | General damage applicator |
+| `0x004E6A10` | `func_ApplySpellDamageWithStun` | Spell id `0x3` |
+| `0x00A5C1C0` | `func_CheckLightningBoltMiss` | Spell id `0x2` |
+| `0x0085F330` | `func_CastAreaSpell` | AoE `0xA`, `0x15`, `0x23` |
+| `0x0085EAA0` | `func_CastLineSpell` | Line spells `0x5/6/8/ED/11D` |
+| `0x0085D260` | `func_CastChainLightning` | Spell id `0x26` |
+| `0x00860BE0` | `func_CastMeteorShower` | Spell id `0x28` |
+| `0x00976B90` | `func_PrepareSpellDamageParams` | Empowerment + week prep |
+| `0x00977E60` | `func_ComputeElementalChainDmg` | Chain overflow (≠ `func_ComputeSpellAdditionalDmg` @ `0x00977A80`) |
+| `0x00A34CD0` | `func_GetCastSpellPower` | Cast-time spellpower table |
+| `0x00A34CA0` | `func_GetCastSpellMastery` | Cast-time mastery table |
+| `0x004738F0` | `func_ClampFloat` | Float clamp (ATB after cast) |
+| `0x00C558B0` | `func_CheckSpellHitsTarget` | MR / immunity gate |
+| `0x004E4A20` | `func_IsCastATBResetBlocked` | Blocks post-cast ATB bonus |
+| `0x00BBEFD0` | `func_FinishSpellCast` | Post-cast cleanup |
+
+## Infrastructure (shared with ATB/Lua RE)
+
+| Address | Name |
+|---|---|
+| `0x00878FD0` | `func_EngineAlloc` |
+| `0x004DD6E0` | `func_RefCountStore` |
+| `0x0059F6B0` | `func_RefCountRelease` |
+
+## CombatHero ATB after spell `0x20`
+
+If skill `0x8A` and not `func_IsCastATBResetBlocked`, adds ATB via `SetATB` (`+0x18C`) after `func_ClampFloat`. Related: `func_HeroCastATBReset` @ `0x00BBF610` (not a direct callee).
+
+## Event constructors
+
+`func_CSpellFxEvent_ctor` (`0x54`), `func_CSpellCastEvent_ctor`, `func_CSpellDamageEvent_ctor`, `func_CSpellSplashEvent_ctor` — combat event ctors allocated via `func_EngineAlloc`.

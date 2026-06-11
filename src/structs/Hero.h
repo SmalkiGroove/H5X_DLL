@@ -3,7 +3,7 @@
 #define HERO_H
 
 // AdvMap hero interface (vtable 0x00E7E484, NWorld::CHero subobject +0x1C).
-// See docs/RE_hero_stats.md for the reverse-engineering details.
+// See .cursor/rules/h5x-re-hero-stats.mdc for RE details.
 typedef int* (__thiscall* GetInventory)(int*);
 typedef int (__thiscall* GetSkillMastery)(int*, int);
 typedef int (__thiscall* GetStat)(int*);
@@ -235,7 +235,7 @@ struct IHero {
 };
 
 // CombatHero interface (vtable 0x00E8499C, NWorld::CCombatHero subobject).
-// See docs/RE_hero_stats.md for the reverse-engineering details.
+// See .cursor/rules/h5x-re-hero-stats.mdc for RE details.
 // All entries go through vtordisp thunks, so calling through the vtable handles
 // the this-pointer adjustment automatically. The subobject pointer is obtained
 // with the usual vbtable pattern, e.g. from a unit owner in edi:
