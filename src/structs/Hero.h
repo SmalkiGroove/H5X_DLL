@@ -6,13 +6,6 @@
 // RE rule: .cursor/rules/h5x-re-hero-stats.mdc (auto-synced).
 #include "structs/CombatUnit.h"
 
-typedef int* (__thiscall* GetInventory)(int*);
-typedef int (__thiscall* GetMaxMana)(int*, int);
-typedef int (__thiscall* GetSpellpowerForSpell)(int*, int*);
-typedef int* (__thiscall* GetNameWString)(int*, int* out);
-typedef int (__thiscall* GetPortraitTexture)(int*);
-typedef int (__thiscall* GetAdvMapShared)(int*);
-
 struct Hero_vtable {
 	int* call_0;
 	int* call_4;

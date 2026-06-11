@@ -1,10 +1,32 @@
 #include "pch.h"
 
-CountEquippedArtifacts count_equipped_artifact = (CountEquippedArtifacts)0x00CA6680;
-CountBackpackArtifacts count_backpack_artifact = (CountBackpackArtifacts)0x00CA6B30;
+ThiscallInt_IntPtr_Int count_equipped_artifact = (ThiscallInt_IntPtr_Int)0x00CA6680;
+ThiscallInt_IntPtr_Int count_backpack_artifact = (ThiscallInt_IntPtr_Int)0x00CA6B30;
+ThiscallInt_IntPtr_Int skill_mastery = (ThiscallInt_IntPtr_Int)0x00B4D0B0;
+ThiscallInt_IntPtr_Int has_skill = (ThiscallInt_IntPtr_Int)0x00BC32D0;
 
-GetSkillData get_skill_data = (GetSkillData)0x00875370;
-IsSkilltypeSkill is_skilltype_skill = (IsSkilltypeSkill)0x00875380;
-IsSkilltypePerk is_skilltype_perk = (IsSkilltypePerk)0x008753A0;
-CheckHeroSkill skill_mastery = (CheckHeroSkill)0x00B4D0B0;
-CheckHeroSkill has_skill = (CheckHeroSkill)0x00BC32D0;
+CdeclIntPtr_Void get_defaultstats = (CdeclIntPtr_Void)0x00BCB3F0;
+ThiscallIntPtr_IntPtr get_hero_data = (ThiscallIntPtr_IntPtr)0x00977700;
+ThiscallInt_IntPtr check_week_of_balance_luck = (ThiscallInt_IntPtr)0x00BCDD20;
+
+ThiscallInt_SkillId get_skill_data = (ThiscallInt_SkillId)0x00875370;
+ThiscallInt_SkillId is_skilltype_skill = (ThiscallInt_SkillId)0x00875380;
+ThiscallInt_SkillId is_skilltype_perk = (ThiscallInt_SkillId)0x008753A0;
+ThiscallInt_IntPtr get_skill_id = (ThiscallInt_IntPtr)0x009F5C90;
+ThiscallInt_IntPtr_Int has_hero_spec = (ThiscallInt_IntPtr_Int)0x00B4B5A0;
+ThiscallInt_IntPtr get_skill_mastery = (ThiscallInt_IntPtr)0x00ACFEF0;
+
+ThiscallInt_IntPtr get_spell_id = (ThiscallInt_IntPtr)0x00A34110;
+ThiscallInt_IntPtr get_spell_element = (ThiscallInt_IntPtr)0x00A342C0;
+ThiscallInt_IntPtr get_spell_school = (ThiscallInt_IntPtr)0x00A34350;
+ThiscallInt_IntPtr is_spell_empowered = (ThiscallInt_IntPtr)0x00A34100;
+ThiscallInt_IntPtr get_unit_spellproof = (ThiscallInt_IntPtr)0x0097D2A0;
+
+ThiscallIntPtr_Int get_creature_data = (ThiscallIntPtr_Int)0x0089FBF0;
+ThiscallInt_Int_Int get_mitigated_damage = (ThiscallInt_Int_Int)0x0097D740;
+
+FastcallVoid_IntPtr_Char_3Int notify_spec_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB930;
+FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB960;
+FastcallVoid_IntPtr_Char_3Int notify_artifact_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB9C0;
+
+FastcallVoid_Int enqueue_unit_refresh = (FastcallVoid_Int)0x0050C020;

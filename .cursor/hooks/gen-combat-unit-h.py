@@ -252,16 +252,7 @@ HEADER = '''#pragma once
 // Thunks: sub ecx,[ecx-4]; sub ecx,<vtordisp>; jmp <impl>. Hero vtordisp 0x68, creature 0x94.
 // Slots tagged [shared] resolve to the same function in both vtables (see func_CombatUnit_* in Ghidra).
 
-typedef int (__thiscall* GetStat)(int*);
-typedef int (__thiscall* GetSkillMastery)(int*, int);
-typedef int (__thiscall* HasHeroSpec)(int*, int);
-typedef int* (__thiscall* GetUnitRef)(int*);
-typedef int (__thiscall* GetActiveBuffById)(int*, int);
-typedef int (__thiscall* HasCreatureAbility)(int*, int);
-typedef float (__thiscall* GetStatFloat)(int*);
-typedef int* (__thiscall* GetATBInfo)(int*);
-typedef void (__thiscall* SetATBValue)(int*, float);
-typedef int (__thiscall* GetCombatSpellpower)(int*, int*, int);
+#include "types/types.h"
 
 enum {
 \tCombatHero_vtable_addr = 0x00E8499C,

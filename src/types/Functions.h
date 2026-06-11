@@ -1,34 +1,50 @@
 #pragma once
 
-#include "Artifacts.h"
-#include "Skills.h"
-#include "structs/Hero.h"
+#include "types/types.h"
 
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-typedef int(__thiscall* CountEquippedArtifacts)(int*, ARTIFACT_ID);
-extern CountEquippedArtifacts count_equipped_artifact;
+// --- Hero / inventory ---
 
-typedef int(__thiscall* CountBackpackArtifacts)(int*, ARTIFACT_ID);
-extern CountBackpackArtifacts count_backpack_artifact;
+extern ThiscallInt_IntPtr_Int count_equipped_artifact;
+extern ThiscallInt_IntPtr_Int count_backpack_artifact;
+extern ThiscallInt_IntPtr_Int skill_mastery;
+extern ThiscallInt_IntPtr_Int has_skill;
+extern CdeclIntPtr_Void get_defaultstats;
+extern ThiscallIntPtr_IntPtr get_hero_data;
+extern ThiscallInt_IntPtr check_week_of_balance_luck;
 
-typedef int(__thiscall* GetSkillData)(SKILL_ID);
-extern GetSkillData get_skill_data;
+// --- Skills / specs ---
 
-typedef int(__thiscall* IsSkilltypeSkill)(SKILL_ID);
-extern IsSkilltypeSkill is_skilltype_skill;
+extern ThiscallInt_SkillId get_skill_data;
+extern ThiscallInt_SkillId is_skilltype_skill;
+extern ThiscallInt_SkillId is_skilltype_perk;
+extern ThiscallInt_IntPtr get_skill_id;
+extern ThiscallInt_IntPtr_Int has_hero_spec;
+extern ThiscallInt_IntPtr get_skill_mastery;
 
-typedef int(__thiscall* IsSkilltypePerk)(SKILL_ID);
-extern IsSkilltypePerk is_skilltype_perk;
+// --- Spells ---
 
-typedef int(__thiscall* CheckHeroSkill)(int*, SKILL_ID);
-extern CheckHeroSkill skill_mastery;
-extern CheckHeroSkill has_skill;
+extern ThiscallInt_IntPtr get_spell_id;
+extern ThiscallInt_IntPtr get_spell_element;
+extern ThiscallInt_IntPtr get_spell_school;
+extern ThiscallInt_IntPtr is_spell_empowered;
+extern ThiscallInt_IntPtr get_unit_spellproof;
 
-typedef void(__fastcall* NotifyArtifactBuffFn)(int* context, char enabled, int artifactId, int value, int unused);
-typedef void(__fastcall* NotifySkillBuffFn)(int* context, char enabled, int skillId, int value, int unused);
+// --- Creatures / combat ---
 
+extern ThiscallIntPtr_Int get_creature_data;
+extern ThiscallInt_Int_Int get_mitigated_damage;
 
+// --- Buff notification (engine UI hooks) ---
+
+extern FastcallVoid_IntPtr_Char_3Int notify_skill_buff;
+extern FastcallVoid_IntPtr_Char_3Int notify_artifact_buff;
+extern FastcallVoid_IntPtr_Char_3Int notify_spec_buff;
+
+// --- CRM / unit refresh ---
+
+extern FastcallVoid_Int enqueue_unit_refresh;
 
 #endif

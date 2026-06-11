@@ -12,6 +12,7 @@
 #include "mainH5.h"
 #include "globals.h"
 
+#include "types/types.h"
 #include "types/Functions.h"
 #include "types/Artifacts.h"
 #include "types/Skills.h"

@@ -240,6 +240,7 @@
     </ClCompile>
     <ClCompile Include="src/utility_functions.cpp" />
     <ClInclude Include="src/types/Artifacts.h" />
+    <ClInclude Include="src/types/types.h" />
     <ClInclude Include="src/types/Functions.h" />
     <ClCompile Include="src/types/Functions.cpp" />
     <ClInclude Include="src/structs/Hero.h" />

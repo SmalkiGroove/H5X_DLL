@@ -81,6 +81,9 @@
     <ClInclude Include="src/types/Artifacts.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
+    <ClInclude Include="src/types/types.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
     <ClInclude Include="src/types/Functions.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>

@@ -5,24 +5,6 @@ std::ofstream logs;
 int logs_enabled = 1;
 pugi::xml_document h5_stats;
 
-// game funcs
-GameFunction get_hero_data = (GameFunction)0x00977700;
-GameFunction has_hero_spec = (GameFunction)0x00B4B5A0;
-GameFunction get_skill_id = (GameFunction)0x009F5C90;
-GameFunction get_skill_mastery = (GameFunction)0x00ACFEF0;
-GameFunction get_spell_id = (GameFunction)0x00A34110;
-GameFunction get_spell_element = (GameFunction)0x00A342C0;
-GameFunction get_spell_school = (GameFunction)0x00A34350;
-GameFunction is_spell_empowered = (GameFunction)0x00A34100;
-GameFunction get_creature_data = (GameFunction)0x0089FBF0;
-GameFunction get_unit_spellproof = (GameFunction)0x0097D2A0;
-GameFunction get_mitigated_damage = (GameFunction)0x0097D740;
-GameFunction notify_spec_buff = (GameFunction)0x009BB930;
-GameFunction notify_skill_buff = (GameFunction)0x009BB960;
-GameFunction notify_artifact_buff = (GameFunction)0x009BB9C0;
-GameFunction check_week_of_balance_luck = (GameFunction)0x00BCDD20;
-GameFunction get_defaultstats = (GameFunction)0x00BCB3F0;
-
 // constants
 int consti_1 = 1;
 int consti_2 = 2;

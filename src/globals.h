@@ -53,34 +53,6 @@ void assignHexStringToStruct(T& structure, const std::string& hexString) {
 
 int* offsetPointer(int* p, int offset);
 
-// game functions
-
-typedef int(__thiscall* GameFunction)(int*);
-
-extern GameFunction get_defaultstats;
-
-extern GameFunction get_hero_data;
-extern GameFunction has_hero_spec;
-
-extern GameFunction get_skill_id;
-extern GameFunction get_skill_mastery;
-
-extern GameFunction get_spell_id;
-extern GameFunction get_spell_element;
-extern GameFunction get_spell_school;
-extern GameFunction is_spell_empowered;
-
-extern GameFunction get_creature_data;
-
-extern GameFunction notify_skill_buff;
-extern GameFunction notify_artifact_buff;
-
-extern GameFunction get_unit_spellproof;
-extern GameFunction get_mitigated_damage;
-
-extern GameFunction check_week_of_balance_luck;
-
-
 // constants
 
 extern int consti_1;
