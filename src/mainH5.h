@@ -121,7 +121,7 @@ void Fortunate_init(pugi::xml_document& doc);
 void Magnetism_init(pugi::xml_document& doc);
 void ChainHitCount_init(pugi::xml_document& doc);
 void SpitefulTweak_init(pugi::xml_document& doc);
-void LuaSetAtbAdditive_init(pugi::xml_document& doc);
+void LuaChangeAtb_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Artificier_init(pugi::xml_document& doc);

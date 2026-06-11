@@ -78,7 +78,7 @@ void init_patches(pugi::xml_document& doc) {
     ChainHitCount_init(doc);               // OK
     //SpitefulTweak_init(doc);               //
     //Magnetism_init(doc);                   //
-    //LuaSetAtbAdditive_init(doc);           // OK
+    //LuaChangeAtb_init(doc);                  // OK
 
     Avengers_init(doc);                    // OK
     Artificier_init(doc);                  // OK

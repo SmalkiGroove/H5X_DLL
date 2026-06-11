@@ -119,25 +119,43 @@ property of the shared ATB info class, not of the unit type.
 
 ---
 
-## 4. The additive patch (`src/patches/LuaSetAtbAdditive.cpp`)
+## 4. H5X mod: `changeATB` Lua command (`src/patches/LuaChangeAtb.cpp`)
 
-Goal: `setATB(unit, value)` **adds** `value` to current ATB instead of overwriting.
+Goal: combat scripts need an **additive** ATB call without changing vanilla `setATB` or the
+shared `CSetATBValue` execute path @ `0x004E0970` (which other engine commands also use).
 
-- `PATCH_HOOK` at fork `0x004E098B`, size `20` (covers `0x004E098B`–`0x004E099E`,
-  the whole tail of the execute method; the hook never returns to the original code).
-- The earlier `jz 0x004E098B` lands exactly on the hook's `jmp`; the failure path
-  (`0x004E0988`: `xor al,al; ret`) is left intact.
-- Hook logic:
-  1. `unit = [cmd+0xC]`
-  2. `info = unit->vtbl[+0x188](unit)` (GetATBInfo)
-  3. `sum = [info+0x1C] + [cmd+0x10]` (x87 `fld`/`fadd`)
-  4. `unit->vtbl[+0x18C](unit, sum)` (SetATB — callee pops the float arg)
-  5. `al = 1; ret`
-- Negative values now subtract naturally. Values crossing 1.0 are handled by `SetATB`'s
-  own threshold logic.
+### Approach
 
-Registered as `LuaSetAtbAdditive_init` in `mainH5.cpp` / `mainH5.h`, compiled via
-`H5_DLL.vcxproj`.
+- **`setATB(unit, value)`** — unchanged; still posts an absolute ATB via `CSetATBValue`.
+- **`changeATB(unit, delta)`** — new Lua command registered in the combat-script function table:
+  1. Parses args the same way as `lua_setATB` (`FUN_00b0f690`).
+  2. Resolves the unit via arena `GetUnitByName` (vtable `+0xC`).
+  3. Reads current ATB: `unit->GetATBInfo()` (vtable `+0x188`) → float at `[info+0x1C]`.
+  4. Computes `newValue = current + delta`.
+  5. Posts a normal `CSetATBValue` command (`FUN_00566800`) with `newValue` — no execute hook.
+
+### Registration
+
+The combat Lua table stores `{ const char* name, void* func }` pairs. `"setATB"` is at
+`0x00F32FE8` → `0x0056CF60`. The next slot was `{0, 0}` @ `0x00F33038` (table terminator).
+At init, the DLL patches that terminator with:
+
+| Address | Value |
+|---|---|
+| `0x00F33038` | `"changeATB"` string in DLL `.data` |
+| `0x00F3303C` | `lua_changeATB` @ DLL |
+
+Registered as `LuaChangeAtb_init` in `mainH5.cpp` / `mainH5.h`, compiled via `H5_DLL.vcxproj`.
+
+### Script usage
+
+```lua
+changeATB("HeroName", 0.25)   -- add 0.25 to current ATB
+setATB("HeroName", 1.0)       -- set ATB to 1.0 (vanilla)
+```
+
+Negative deltas subtract naturally. Values crossing the ready threshold are handled by
+`SetATB`'s own logic.
 
 ---
 
