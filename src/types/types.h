@@ -21,6 +21,8 @@ typedef void(__thiscall* ThiscallVoid_IntPtr_Float)(int*, float);
 typedef int(__thiscall* ThiscallInt_IntPtr_IntPtr_Int)(int*, int*, int);
 typedef int(__thiscall* ThiscallInt_IntPtr_IntPtr)(int*, int*);
 typedef int*(__thiscall* ThiscallIntPtr_IntPtr_IntPtr)(int*, int*);
+typedef void(__thiscall* ThiscallVoid_IntPtr_IntPtr)(int*, int*);
+typedef void(__thiscall* ThiscallVoid_IntPtr_Int)(int*, int);
 
 // CombatUnit vtable slot types
 using GetStat = ThiscallInt_IntPtr;
@@ -40,6 +42,10 @@ using GetMaxMana = ThiscallInt_IntPtr_Int;
 using GetSpellpowerForSpell = ThiscallInt_IntPtr_IntPtr;
 using GetNameWString = ThiscallIntPtr_IntPtr_IntPtr;
 using GetPortraitTexture = ThiscallInt_IntPtr;
-using GetAdvMapShared = ThiscallInt_IntPtr;
+using GetAdvMapShared = ThiscallIntPtr_Int;
+
+// AdvMap creature (NWorld::CCreature) vtable slot types
+using GetCreatureCostResources = ThiscallVoid_IntPtr_IntPtr;
+using SetCreatureCount = ThiscallVoid_IntPtr_Int;
 
 #endif
