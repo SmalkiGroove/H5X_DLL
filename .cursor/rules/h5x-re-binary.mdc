@@ -5,6 +5,7 @@ alwaysApply: true
 
 # H5X Binary & Addresses
 
+Game directory: `G:\__H5__\H5Xdev`. Executables are located in the `bin` subfolder.
 Target binary: **H5X.exe** (ToE 3.1 based). Image base `0x00400000`. Ghidra project: `h5x-ghidra-mcp/H5X.rep`.
 
 **Critical:** Ghidra VAs match **H5X.exe only**, not vanilla `H5_Game.exe` (different section layout).

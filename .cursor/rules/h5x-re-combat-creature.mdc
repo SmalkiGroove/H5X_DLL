@@ -1,0 +1,62 @@
+---
+description: CombatCreature vtable and ICombatCreature — auto-synced from Creature.h
+alwaysApply: true
+---
+
+# CombatCreature — `src/structs/Creature.h`
+
+> **Auto-generated** from `src/structs/Creature.h`. Do not edit manually; run `.cursor/hooks/sync-creature-rule.py` or save `Creature.h` (Cursor hook).
+
+Combat unit in battle exposes a **CombatCreature** subobject (`NWorld::CCombatCreature`, vtordisp **`-0x144`**). Vtable **`0X00E4FBA4`** — same slot layout as `CombatHero_vtable` (offsets `0`..`0x2A8`). Thunks: `sub ecx,[ecx-4]; sub ecx,0x94; jmp impl`.
+
+## Getting `ICombatCreature*` from a unit pointer
+
+```asm
+mov eax, [unit - 0x144]          ; vbtable
+mov ecx, [eax + 8]
+lea ecx, [ecx + unit - 0x144]    ; ICombatCreature*
+```
+
+Creature type id on the outer unit: `[unit + 0x1C]`.
+
+## CombatCreature vtable `0X00E4FBA4` — documented slots
+
+| Slot | Impl | Meaning |
+|---|---|---|
+| `0X0C` | `0X008AEAF0` | **get_creature_ref** — returns [this-0x74] |
+| `0X28` | `0X00A6D330` | **get_active_buff** — active ability/buff object by id |
+| `0X188` | `0X008AEB40` | **get_atb_info** — returns [this-0x70]; ATB float at [info+0x1C] |
+| `0X18C` | `0X00A6B690` | **set_atb** — func_SetUnitATB |
+| `0X198` | `0X008A4800` | **get_attack** — func_GetUnitAttack |
+| `0X19C` | `0X008A32B0` | **get_defense** — func_GetUnitDefense |
+| `0X1AC` | `0X00A6BD10` | **get_luck** — get_luck_raw clamped to [-5, +5] |
+| `0X1B0` | `0X00A6BD50` | **get_morale** — get_morale_raw clamped to [-5, +5] |
+| `0X1B4` | `0X00A6ABF0` | **get_luck_raw** — func_GetUnitLuck |
+| `0X1B8` | `0X00A6ACD0` | **get_morale_raw** — func_GetUnitMorale |
+| `0X1BC` | `0X008A4330` | **get_initiative** — func_ComputeUnitInitiative |
+| `0X238` | `0X008A2230` | **get_mana_points** — mana points via owner hero |
+| `0X28C` | `0X008A34C0` | **has_ability** — func_HasCreatureAbility |
+| `0X290` | `0X00A332C0` | **has_skill_stub** — always 0 on creatures |
+| `0X294` | `0X00A332C0` | **has_spec_stub** — always 0 on creatures |
+
+ATB slots share implementations with heroes (`+0x188` → `[info+0x1C]`, `+0x18C` → `func_SetUnitATB`). See `.cursor/rules/h5x-re-combat-atb.mdc` for Lua/setATB flow.
+
+`+0x290` / `+0x294` are stubs (`0x00A332C0`, always 0) — use hero `HasSkill` / `HasHeroSpec` via owner, not creature vtable.
+
+## `ICombatCreature` helpers (C++ patches)
+
+- `atb()`
+- `set_atb()`
+- `attack()`
+- `defense()`
+- `luck()`
+- `morale()`
+- `initiative()`
+- `mana_points()`
+- `active_buff()`
+- `has_ability()`
+
+## Patch cross-refs
+
+- `ModAbilities.cpp`, `ModLuck.cpp` — vbtable `-0x144` pattern
+- `LuaChangeAtb.cpp` — ATB via unit vtable `+0x188` / `+0x18C` (creature or hero thunks)

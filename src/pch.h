@@ -17,6 +17,7 @@
 #include "types/Skills.h"
 
 #include "structs/Hero.h"
+#include "structs/Creature.h"
 
 
 #endif //PCH_H

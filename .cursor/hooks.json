@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "python .cursor/hooks/sync-creature-rule.py --hook"
+      },
+      {
+        "command": "python .cursor/hooks/sync-hero-rule.py --hook"
+      }
+    ]
+  }
+}

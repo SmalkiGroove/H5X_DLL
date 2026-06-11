@@ -93,7 +93,7 @@
     <ClInclude Include="src\types\Skills.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
-    <ClInclude Include="src\types\Skill.h">
+    <ClInclude Include="src\structs\Skill.h">
       <Filter>Header Files\Structs</Filter>
     </ClInclude>
     <ClInclude Include="src\patches\ElementsVirtuoso.h">

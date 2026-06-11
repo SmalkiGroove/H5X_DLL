@@ -333,7 +333,7 @@
     <ClCompile Include="src/patches/WeakeningStrike.cpp" />
     <ClInclude Include="src\patches\ElementsVirtuoso.h" />
     <ClInclude Include="src\pugixml.hpp" />
-    <ClInclude Include="src\types\Skill.h" />
+    <ClInclude Include="src\structs\Skill.h" />
     <ClInclude Include="src\types\Skills.h" />
   </ItemGroup>
   <ItemGroup>
