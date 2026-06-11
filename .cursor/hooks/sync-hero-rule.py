@@ -19,7 +19,7 @@ ADVMAP_VTABLE_RE = re.compile(
 COMBAT_VTABLE_RE = re.compile(r"CombatHero_vtable_addr\s*=\s*(0x[0-9A-Fa-f]+)", re.I)
 SLOT_RE = re.compile(
     r"^\s*(?:[\w*]+\s+)?(\w+);\s*//\s*(0x[0-9A-Fa-f]+)"
-    r"(?:\s*\(\d+\))?\s*(?:-\s*(0x[0-9A-Fa-f]+),?\s*)?(.+)?$",
+    r"(?:\s*\(\d+\))?\s*-\s*(0x[0-9A-Fa-f]+|\w[\w /;]*)?\s*(\[shared\])?\s*(.+)?$",
     re.I,
 )
 METHOD_RE = re.compile(r"^\s*([\w*]+)\s+(\w+)\([^;]*\)\s*\{", re.I)
@@ -52,14 +52,17 @@ def parse_slots(lines: list[str]) -> list[dict]:
         match = SLOT_RE.match(line)
         if not match:
             continue
-        name, offset, impl, note = match.groups()
-        if name.startswith("call_") and not impl:
+        name, offset, impl, _shared, note = match.groups()
+        impl_hex = ""
+        if impl and impl.lower().startswith("0x"):
+            impl_hex = fmt_hex(impl)
+        if name.startswith("call_") and not impl_hex:
             continue
         slots.append(
             {
                 "name": name,
                 "offset": fmt_hex(offset),
-                "impl": fmt_hex(impl) if impl else "",
+                "impl": impl_hex,
                 "note": (note or "").strip().rstrip(","),
             }
         )

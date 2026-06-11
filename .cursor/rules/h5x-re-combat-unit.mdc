@@ -20,23 +20,195 @@ Thunk pattern: `sub ecx,[ecx-4]; sub ecx,<vtordisp>; jmp <impl>`. Calling throug
 
 | Slot | Impl | Meaning |
 |---|---|---|
-| `0x0C` | `0x008AEAF0` | **get_unit_ref** — [shared], returns [this-0x74] |
-| `0x28` | `0x00A6D330` | **get_active_buff** — [shared] |
-| `0x188` | `0x008AEB40` | **get_atb_info** — [shared], ATB float at [info+0x1C] |
-| `0x18C` | `0x00A6B690` | **set_atb** — [shared] func_SetUnitATB |
-| `0x1AC` | `0x00A6BD10` | **get_luck** — [shared] |
-| `0x1B0` | `0x00A6BD50` | **get_morale** — [shared] |
+| `0x004` | `0x008AEDC0` | `func_CombatUnit_ScalarDeletingDtor` **scalar_deleting_dtor** — func_CombatUnit_ScalarDeletingDtor |
+| `0x008` | `0x008ACDC0` | `func_CombatUnit_GetOwnerRef` **get_owner_ref** — func_CombatUnit_GetOwnerRef |
+| `0x00C` | `0x008AEAF0` | `func_CombatUnit_GetUnitRef` **get_unit_ref** — func_CombatUnit_GetUnitRef |
+| `0x010` | `0x00A6B0E0` | `func_CombatUnit_NotifyOwner` **notify_owner** — func_CombatUnit_NotifyOwner |
+| `0x020` | `0x00A69F00` | `func_CombatUnit_GetTimelineField_7C` **get_timeline_field_7c** — func_CombatUnit_GetTimelineField_7C |
+| `0x028` | `0x00A6D330` | `func_CombatUnit_GetActiveBuff` **get_active_buff** — func_CombatUnit_GetActiveBuff |
+| `0x02C` | `0x00A6D380` | `func_CombatUnit_GetBuffStackState` **get_buff_stack_state** — func_CombatUnit_GetBuffStackState |
+| `0x030` | `0x00A6EEE0` | `func_CombatUnit_CollectLinkedBuffIds` **collect_linked_buff_ids** — func_CombatUnit_CollectLinkedBuffIds |
+| `0x038` | `0x00A69E20` | `func_CombatUnit_PlayAnimSimple` **play_anim_simple** — func_CombatUnit_PlayAnimSimple |
+| `0x03C` | `0x00A69E60` | `func_CombatUnit_GetAnimPosition` **get_anim_position** — func_CombatUnit_GetAnimPosition |
+| `0x040` | `0x00A6A040` | `func_CombatUnit_GetPosition2D` **get_position_2d** — func_CombatUnit_GetPosition2D |
+| `0x04C` | `0x00B096E0` | `func_CombatUnit_GetTypeId` **get_type_id** — func_CombatUnit_GetTypeId |
+| `0x060` | `0x008AE230` | `func_CombatUnit_GetCombatUnitPtr` **get_combat_unit_ptr** — func_CombatUnit_GetCombatUnitPtr |
+| `0x064` | `0x008AE230` | `func_CombatUnit_GetCombatUnitPtr` **get_combat_unit_ptr_mi** — func_CombatUnit_GetCombatUnitPtr |
+| `0x07C` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_a** — func_CombatUnit_ReturnZero |
+| `0x080` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_b** — func_CombatUnit_ReturnZero |
+| `0x084` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_c** — func_CombatUnit_ReturnZero |
+| `0x088` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_d** — func_CombatUnit_ReturnZero |
+| `0x08C` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_e** — func_CombatUnit_ReturnZero |
+| `0x090` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_f** — func_CombatUnit_ReturnZero |
+| `0x094` | `0x008AEDE0` | `func_CombatUnit_RefreshUnitData` **refresh_unit_data** — func_CombatUnit_RefreshUnitData |
+| `0x098` | `0x00A70650` | `func_CombatUnit_OnCombatEvent` **on_combat_event** — func_CombatUnit_OnCombatEvent |
+| `0x0A0` | `0x008AE2C0` | `func_CombatUnit_GetPositionPtr` **get_position_ptr** — func_CombatUnit_GetPositionPtr |
+| `0x0A4` | `0x008AE2E0` | `func_CombatUnit_GetFacing` **get_facing** — func_CombatUnit_GetFacing |
+| `0x0A8` | `0x00A6A590` | `func_CombatUnit_ComputeAttackAnimPos` **compute_attack_anim_pos** — func_CombatUnit_ComputeAttackAnimPos |
+| `0x0AC` | `0x00A70420` | `func_CombatUnit_OnSiegeAnimHook` **on_siege_anim_hook** — func_CombatUnit_OnSiegeAnimHook |
+| `0x0B0` | `0x008AEB30` | `func_CombatUnit_GetVisualId` **get_visual_id** — func_CombatUnit_GetVisualId |
+| `0x0B4` | `0x00A70450` | `func_CombatUnit_GetAnimDuration` **get_anim_duration** — func_CombatUnit_GetAnimDuration |
+| `0x0BC` | `0x00A6D810` | `func_CombatUnit_BeginTileQuery` **begin_tile_query** — func_CombatUnit_BeginTileQuery |
+| `0x0C0` | `0x00A6D980` | `func_CombatUnit_HasTilePair` **has_tile_pair** — func_CombatUnit_HasTilePair |
+| `0x0C4` | `0x00A6D870` | `func_CombatUnit_MarkCurrentTile` **mark_current_tile** — func_CombatUnit_MarkCurrentTile |
+| `0x0C8` | `0x00A6D8B0` | `func_CombatUnit_MarkTilesFromPosition` **mark_tiles_from_position** — func_CombatUnit_MarkTilesFromPosition |
+| `0x0CC` | `0x00A6DA30` | `func_CombatUnit_TryMoveToTile` **try_move_to_tile** — func_CombatUnit_TryMoveToTile |
+| `0x0DC` | `0x00A6A910` | `func_CombatUnit_SetNeedsRefresh` **set_needs_refresh** — func_CombatUnit_SetNeedsRefresh |
+| `0x0E4` | `0x008AE3A0` | `func_CombatUnit_NotifyOwnerVtableE0` **notify_owner_vtable_e0** — func_CombatUnit_NotifyOwnerVtableE0 |
+| `0x0F4` | `0x008AE450` | `func_CombatUnit_IsSideZero` **is_side_zero** — func_CombatUnit_IsSideZero |
+| `0x0F8` | `0x008AED40` | `func_CombatUnit_GetAnimObject` **get_anim_object** — func_CombatUnit_GetAnimObject |
+| `0x0FC` | `0x00A6A2E0` | `func_CombatUnit_NotifyTimelineChange` **notify_timeline_change** — func_CombatUnit_NotifyTimelineChange |
+| `0x100` | `0x00A6F5B0` | `func_CombatUnit_ScheduleBuffAnim` **schedule_buff_anim** — func_CombatUnit_ScheduleBuffAnim |
+| `0x104` | `0x00A6F780` | `func_CombatUnit_ScheduleSpellAnim` **schedule_spell_anim** — func_CombatUnit_ScheduleSpellAnim |
+| `0x108` | `0x00A6BEC0` | `func_CombatUnit_ScheduleAttackAnim` **schedule_attack_anim** — func_CombatUnit_ScheduleAttackAnim |
+| `0x10C` | `0x00A6A370` | `func_CombatUnit_AdvanceTimeline` **advance_timeline** — func_CombatUnit_AdvanceTimeline |
+| `0x110` | `0x00A6C010` | `func_CombatUnit_AdvanceTimelineToTarget` **advance_timeline_to_target** — func_CombatUnit_AdvanceTimelineToTarget |
+| `0x11C` | `0x00A6CBC0` | `func_CombatUnit_ScheduleMovePath` **schedule_move_path** — func_CombatUnit_ScheduleMovePath |
+| `0x120` | `0x00A6FEF0` | `func_CombatUnit_ScheduleGenericAnim` **schedule_generic_anim** — func_CombatUnit_ScheduleGenericAnim |
+| `0x124` | `0x00A71810` | `func_CombatUnit_ScheduleRangedAttack` **schedule_ranged_attack** — func_CombatUnit_ScheduleRangedAttack |
+| `0x130` | `0x00A713C0` | `func_CombatUnit_ScheduleHitReact` **schedule_hit_react** — func_CombatUnit_ScheduleHitReact |
+| `0x134` | `0x00A6C990` | `func_CombatUnit_ScheduleDeathAnim` **schedule_death_anim** — func_CombatUnit_ScheduleDeathAnim |
+| `0x138` | `0x00A6C710` | `func_CombatUnit_ScheduleTimedAnim` **schedule_timed_anim** — func_CombatUnit_ScheduleTimedAnim |
+| `0x140` | `0x00A6A420` | `func_CombatUnit_PlayAnimAtTarget` **play_anim_at_target** — func_CombatUnit_PlayAnimAtTarget |
+| `0x144` | `0x00A71AD0` | `func_CombatUnit_ScheduleMultiProjectile` **schedule_multi_projectile** — func_CombatUnit_ScheduleMultiProjectile |
+| `0x148` | `0x00A71E40` | `func_CombatUnit_SchedulePhaseAnim` **schedule_phase_anim** — func_CombatUnit_SchedulePhaseAnim |
+| `0x14C` | `0x00A6DDD0` | `func_CombatUnit_BeginActionThenNotify` **begin_action_then_notify** — func_CombatUnit_BeginActionThenNotify |
+| `0x150` | `0x00A72220` | `func_CombatUnit_ScheduleMoraleAnim` **schedule_morale_anim** — func_CombatUnit_ScheduleMoraleAnim |
+| `0x154` | `0x00A71010` | `func_CombatUnit_OnTimelineReached` **on_timeline_reached** — func_CombatUnit_OnTimelineReached |
+| `0x15C` | `0x008AE5C0` | `func_CombatUnit_GetTimedStatsPtr` **get_timed_stats_ptr** — func_CombatUnit_GetTimedStatsPtr |
+| `0x168` | `0x00A6D140` | `func_CombatUnit_ScheduleBadLuckAnim` **schedule_bad_luck_anim** — func_CombatUnit_ScheduleBadLuckAnim |
+| `0x16C` | `0x00A6D1F0` | `func_CombatUnit_ScheduleGoodLuckAnim` **schedule_good_luck_anim** — func_CombatUnit_ScheduleGoodLuckAnim |
+| `0x170` | `0x00A69F10` | `func_CombatUnit_GetMaxTimelineFrame` **get_max_timeline_frame** — func_CombatUnit_GetMaxTimelineFrame |
+| `0x174` | `0x00A6A060` | `func_CombatUnit_GetInitiativeFactor` **get_initiative_factor** — func_CombatUnit_GetInitiativeFactor |
+| `0x178` | `0x00A6A260` | `func_CombatUnit_OnControlHandoff` **on_control_handoff** — func_CombatUnit_OnControlHandoff |
+| `0x17C` | `0x00A6E440` | `func_CombatUnit_ComputeNextTurnFrame` **compute_next_turn_frame** — func_CombatUnit_ComputeNextTurnFrame |
+| `0x180` | `0x00A6A210` | `func_CombatUnit_ResetATBToCurrent` **reset_atb_to_current** — func_CombatUnit_ResetATBToCurrent |
+| `0x184` | `0x008AEB40` | `func_CombatUnit_GetATBInfo` **get_atb_info_dup** — func_CombatUnit_GetATBInfo |
+| `0x188` | `0x008AEB40` | `func_CombatUnit_GetATBInfo` **get_atb_info** — func_CombatUnit_GetATBInfo |
+| `0x18C` | `0x00A6B690` | `func_SetUnitATB` **set_atb** — func_SetUnitATB |
+| `0x194` | `0x00A6DAE0` | `func_CombatUnit_GetAnimDebugName` **get_anim_debug_name** — func_CombatUnit_GetAnimDebugName |
+| `0x1AC` | `0x00A6BD10` | `func_CombatUnit_GetLuck` **get_luck** — func_CombatUnit_GetLuck |
+| `0x1B0` | `0x00A6BD50` | `func_CombatUnit_GetMorale` **get_morale** — func_CombatUnit_GetMorale |
+| `0x240` | `0x00A6A700` | `func_CombatUnit_GetSpellMastery` **get_spell_mastery** — func_CombatUnit_GetSpellMastery |
+| `0x244` | `0x00A6A7E0` | `func_CombatUnit_GetSpellpower` **get_spellpower** — func_CombatUnit_GetSpellpower |
+| `0x24C` | `0x00A6EE70` | `func_GetActiveSpellEffects` **get_active_spell_effects** — func_GetActiveSpellEffects |
+| `0x250` | `0x00A6AB80` | `func_CombatUnit_GetBuffList` **get_buff_list** — func_CombatUnit_GetBuffList |
+| `0x254` | `0x00A729B0` | `func_CombatUnit_ApplyActiveSpellEffects` **apply_active_spell_effects** — func_CombatUnit_ApplyActiveSpellEffects |
+| `0x258` | `0x00A72A30` | `func_CombatUnit_ApplySoulDrainEffects` **apply_soul_drain_effects** — func_CombatUnit_ApplySoulDrainEffects |
+| `0x25C` | `0x00A73D40` | `func_CombatUnit_ApplySpellEffect4` **apply_spell_effect_4arg** — func_CombatUnit_ApplySpellEffect4 |
+| `0x260` | `0x00A73CE0` | `func_CombatUnit_ApplySpellEffect5` **apply_spell_effect_5arg** — func_CombatUnit_ApplySpellEffect5 |
+| `0x264` | `0x00A73DA0` | `func_CombatUnit_ApplySpellEffect0` **apply_spell_effect_0arg** — func_CombatUnit_ApplySpellEffect0 |
+| `0x268` | `0x00A72C80` | `func_CombatUnit_RemoveBuffById` **remove_buff_by_id** — func_CombatUnit_RemoveBuffById |
+| `0x26C` | `0x00A6BCC0` | `func_CombatUnit_SetBuffParam` **set_buff_param** — func_CombatUnit_SetBuffParam |
+| `0x270` | `0x00A72D30` | `func_CombatUnit_RemoveBuffFiltered` **remove_buff_filtered** — func_CombatUnit_RemoveBuffFiltered |
+| `0x274` | `0x00A6DF20` | `func_CombatUnit_RefreshArtifactBuffs` **refresh_artifact_buffs** — func_CombatUnit_RefreshArtifactBuffs |
+| `0x278` | `0x00A70B20` | `func_CombatUnit_PlayMeleeAttackAnim` **play_melee_attack_anim** — func_CombatUnit_PlayMeleeAttackAnim |
+| `0x27C` | `0x00A706E0` | `func_CombatUnit_PlayRangedAttackAnim` **play_ranged_attack_anim** — func_CombatUnit_PlayRangedAttackAnim |
+| `0x280` | `0x00A69F20` | `func_CombatUnit_PlayAnimDispatch` **play_anim_dispatch** — func_CombatUnit_PlayAnimDispatch |
+| `0x284` | `0x00A70D90` | `func_CombatUnit_PlayAttackAnimAt` **play_attack_anim_at** — func_CombatUnit_PlayAttackAnimAt |
+| `0x288` | `0x00A69F90` | `func_CombatUnit_PlayPositionalAnim` **play_positional_anim** — func_CombatUnit_PlayPositionalAnim |
+| `0x298` | `0x00A73DE0` | `func_CombatUnit_AddSpellLink` **add_spell_link** — func_CombatUnit_AddSpellLink |
+| `0x29C` | `0x00A72E00` | `func_CombatUnit_RemoveSpellLinkPair` **remove_spell_link_pair** — func_CombatUnit_RemoveSpellLinkPair |
+| `0x2A0` | `0x00A72F00` | `func_CombatUnit_RemoveSpellLinksBySubId` **remove_spell_links_by_subid** — func_CombatUnit_RemoveSpellLinksBySubId |
+| `0x2A4` | `0x00A72E90` | `func_CombatUnit_RemoveSpellLinksById` **remove_spell_links_by_id** — func_CombatUnit_RemoveSpellLinksById |
+| `0x2A8` | `0x00A6D440` | `func_CombatUnit_HasSpellLink` **has_spell_link** — func_CombatUnit_HasSpellLink |
 
 ## All documented CombatUnit slots
 
 | Slot | Impl | Meaning |
 |---|---|---|
-| `0x0C` | `0x008AEAF0` | **get_unit_ref** — [shared], returns [this-0x74] |
-| `0x28` | `0x00A6D330` | **get_active_buff** — [shared] |
-| `0x188` | `0x008AEB40` | **get_atb_info** — [shared], ATB float at [info+0x1C] |
-| `0x18C` | `0x00A6B690` | **set_atb** — [shared] func_SetUnitATB |
-| `0x1AC` | `0x00A6BD10` | **get_luck** — [shared] |
-| `0x1B0` | `0x00A6BD50` | **get_morale** — [shared] |
+| `0x004` | `0x008AEDC0` | `func_CombatUnit_ScalarDeletingDtor` **scalar_deleting_dtor** — func_CombatUnit_ScalarDeletingDtor |
+| `0x008` | `0x008ACDC0` | `func_CombatUnit_GetOwnerRef` **get_owner_ref** — func_CombatUnit_GetOwnerRef |
+| `0x00C` | `0x008AEAF0` | `func_CombatUnit_GetUnitRef` **get_unit_ref** — func_CombatUnit_GetUnitRef |
+| `0x010` | `0x00A6B0E0` | `func_CombatUnit_NotifyOwner` **notify_owner** — func_CombatUnit_NotifyOwner |
+| `0x020` | `0x00A69F00` | `func_CombatUnit_GetTimelineField_7C` **get_timeline_field_7c** — func_CombatUnit_GetTimelineField_7C |
+| `0x028` | `0x00A6D330` | `func_CombatUnit_GetActiveBuff` **get_active_buff** — func_CombatUnit_GetActiveBuff |
+| `0x02C` | `0x00A6D380` | `func_CombatUnit_GetBuffStackState` **get_buff_stack_state** — func_CombatUnit_GetBuffStackState |
+| `0x030` | `0x00A6EEE0` | `func_CombatUnit_CollectLinkedBuffIds` **collect_linked_buff_ids** — func_CombatUnit_CollectLinkedBuffIds |
+| `0x038` | `0x00A69E20` | `func_CombatUnit_PlayAnimSimple` **play_anim_simple** — func_CombatUnit_PlayAnimSimple |
+| `0x03C` | `0x00A69E60` | `func_CombatUnit_GetAnimPosition` **get_anim_position** — func_CombatUnit_GetAnimPosition |
+| `0x040` | `0x00A6A040` | `func_CombatUnit_GetPosition2D` **get_position_2d** — func_CombatUnit_GetPosition2D |
+| `0x04C` | `0x00B096E0` | `func_CombatUnit_GetTypeId` **get_type_id** — func_CombatUnit_GetTypeId |
+| `0x060` | `0x008AE230` | `func_CombatUnit_GetCombatUnitPtr` **get_combat_unit_ptr** — func_CombatUnit_GetCombatUnitPtr |
+| `0x064` | `0x008AE230` | `func_CombatUnit_GetCombatUnitPtr` **get_combat_unit_ptr_mi** — func_CombatUnit_GetCombatUnitPtr |
+| `0x07C` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_a** — func_CombatUnit_ReturnZero |
+| `0x080` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_b** — func_CombatUnit_ReturnZero |
+| `0x084` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_c** — func_CombatUnit_ReturnZero |
+| `0x088` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_d** — func_CombatUnit_ReturnZero |
+| `0x08C` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_e** — func_CombatUnit_ReturnZero |
+| `0x090` | `0x00C98940` | `func_CombatUnit_ReturnZero` **stub_return_zero_f** — func_CombatUnit_ReturnZero |
+| `0x094` | `0x008AEDE0` | `func_CombatUnit_RefreshUnitData` **refresh_unit_data** — func_CombatUnit_RefreshUnitData |
+| `0x098` | `0x00A70650` | `func_CombatUnit_OnCombatEvent` **on_combat_event** — func_CombatUnit_OnCombatEvent |
+| `0x0A0` | `0x008AE2C0` | `func_CombatUnit_GetPositionPtr` **get_position_ptr** — func_CombatUnit_GetPositionPtr |
+| `0x0A4` | `0x008AE2E0` | `func_CombatUnit_GetFacing` **get_facing** — func_CombatUnit_GetFacing |
+| `0x0A8` | `0x00A6A590` | `func_CombatUnit_ComputeAttackAnimPos` **compute_attack_anim_pos** — func_CombatUnit_ComputeAttackAnimPos |
+| `0x0AC` | `0x00A70420` | `func_CombatUnit_OnSiegeAnimHook` **on_siege_anim_hook** — func_CombatUnit_OnSiegeAnimHook |
+| `0x0B0` | `0x008AEB30` | `func_CombatUnit_GetVisualId` **get_visual_id** — func_CombatUnit_GetVisualId |
+| `0x0B4` | `0x00A70450` | `func_CombatUnit_GetAnimDuration` **get_anim_duration** — func_CombatUnit_GetAnimDuration |
+| `0x0BC` | `0x00A6D810` | `func_CombatUnit_BeginTileQuery` **begin_tile_query** — func_CombatUnit_BeginTileQuery |
+| `0x0C0` | `0x00A6D980` | `func_CombatUnit_HasTilePair` **has_tile_pair** — func_CombatUnit_HasTilePair |
+| `0x0C4` | `0x00A6D870` | `func_CombatUnit_MarkCurrentTile` **mark_current_tile** — func_CombatUnit_MarkCurrentTile |
+| `0x0C8` | `0x00A6D8B0` | `func_CombatUnit_MarkTilesFromPosition` **mark_tiles_from_position** — func_CombatUnit_MarkTilesFromPosition |
+| `0x0CC` | `0x00A6DA30` | `func_CombatUnit_TryMoveToTile` **try_move_to_tile** — func_CombatUnit_TryMoveToTile |
+| `0x0DC` | `0x00A6A910` | `func_CombatUnit_SetNeedsRefresh` **set_needs_refresh** — func_CombatUnit_SetNeedsRefresh |
+| `0x0E4` | `0x008AE3A0` | `func_CombatUnit_NotifyOwnerVtableE0` **notify_owner_vtable_e0** — func_CombatUnit_NotifyOwnerVtableE0 |
+| `0x0F4` | `0x008AE450` | `func_CombatUnit_IsSideZero` **is_side_zero** — func_CombatUnit_IsSideZero |
+| `0x0F8` | `0x008AED40` | `func_CombatUnit_GetAnimObject` **get_anim_object** — func_CombatUnit_GetAnimObject |
+| `0x0FC` | `0x00A6A2E0` | `func_CombatUnit_NotifyTimelineChange` **notify_timeline_change** — func_CombatUnit_NotifyTimelineChange |
+| `0x100` | `0x00A6F5B0` | `func_CombatUnit_ScheduleBuffAnim` **schedule_buff_anim** — func_CombatUnit_ScheduleBuffAnim |
+| `0x104` | `0x00A6F780` | `func_CombatUnit_ScheduleSpellAnim` **schedule_spell_anim** — func_CombatUnit_ScheduleSpellAnim |
+| `0x108` | `0x00A6BEC0` | `func_CombatUnit_ScheduleAttackAnim` **schedule_attack_anim** — func_CombatUnit_ScheduleAttackAnim |
+| `0x10C` | `0x00A6A370` | `func_CombatUnit_AdvanceTimeline` **advance_timeline** — func_CombatUnit_AdvanceTimeline |
+| `0x110` | `0x00A6C010` | `func_CombatUnit_AdvanceTimelineToTarget` **advance_timeline_to_target** — func_CombatUnit_AdvanceTimelineToTarget |
+| `0x11C` | `0x00A6CBC0` | `func_CombatUnit_ScheduleMovePath` **schedule_move_path** — func_CombatUnit_ScheduleMovePath |
+| `0x120` | `0x00A6FEF0` | `func_CombatUnit_ScheduleGenericAnim` **schedule_generic_anim** — func_CombatUnit_ScheduleGenericAnim |
+| `0x124` | `0x00A71810` | `func_CombatUnit_ScheduleRangedAttack` **schedule_ranged_attack** — func_CombatUnit_ScheduleRangedAttack |
+| `0x130` | `0x00A713C0` | `func_CombatUnit_ScheduleHitReact` **schedule_hit_react** — func_CombatUnit_ScheduleHitReact |
+| `0x134` | `0x00A6C990` | `func_CombatUnit_ScheduleDeathAnim` **schedule_death_anim** — func_CombatUnit_ScheduleDeathAnim |
+| `0x138` | `0x00A6C710` | `func_CombatUnit_ScheduleTimedAnim` **schedule_timed_anim** — func_CombatUnit_ScheduleTimedAnim |
+| `0x140` | `0x00A6A420` | `func_CombatUnit_PlayAnimAtTarget` **play_anim_at_target** — func_CombatUnit_PlayAnimAtTarget |
+| `0x144` | `0x00A71AD0` | `func_CombatUnit_ScheduleMultiProjectile` **schedule_multi_projectile** — func_CombatUnit_ScheduleMultiProjectile |
+| `0x148` | `0x00A71E40` | `func_CombatUnit_SchedulePhaseAnim` **schedule_phase_anim** — func_CombatUnit_SchedulePhaseAnim |
+| `0x14C` | `0x00A6DDD0` | `func_CombatUnit_BeginActionThenNotify` **begin_action_then_notify** — func_CombatUnit_BeginActionThenNotify |
+| `0x150` | `0x00A72220` | `func_CombatUnit_ScheduleMoraleAnim` **schedule_morale_anim** — func_CombatUnit_ScheduleMoraleAnim |
+| `0x154` | `0x00A71010` | `func_CombatUnit_OnTimelineReached` **on_timeline_reached** — func_CombatUnit_OnTimelineReached |
+| `0x15C` | `0x008AE5C0` | `func_CombatUnit_GetTimedStatsPtr` **get_timed_stats_ptr** — func_CombatUnit_GetTimedStatsPtr |
+| `0x168` | `0x00A6D140` | `func_CombatUnit_ScheduleBadLuckAnim` **schedule_bad_luck_anim** — func_CombatUnit_ScheduleBadLuckAnim |
+| `0x16C` | `0x00A6D1F0` | `func_CombatUnit_ScheduleGoodLuckAnim` **schedule_good_luck_anim** — func_CombatUnit_ScheduleGoodLuckAnim |
+| `0x170` | `0x00A69F10` | `func_CombatUnit_GetMaxTimelineFrame` **get_max_timeline_frame** — func_CombatUnit_GetMaxTimelineFrame |
+| `0x174` | `0x00A6A060` | `func_CombatUnit_GetInitiativeFactor` **get_initiative_factor** — func_CombatUnit_GetInitiativeFactor |
+| `0x178` | `0x00A6A260` | `func_CombatUnit_OnControlHandoff` **on_control_handoff** — func_CombatUnit_OnControlHandoff |
+| `0x17C` | `0x00A6E440` | `func_CombatUnit_ComputeNextTurnFrame` **compute_next_turn_frame** — func_CombatUnit_ComputeNextTurnFrame |
+| `0x180` | `0x00A6A210` | `func_CombatUnit_ResetATBToCurrent` **reset_atb_to_current** — func_CombatUnit_ResetATBToCurrent |
+| `0x184` | `0x008AEB40` | `func_CombatUnit_GetATBInfo` **get_atb_info_dup** — func_CombatUnit_GetATBInfo |
+| `0x188` | `0x008AEB40` | `func_CombatUnit_GetATBInfo` **get_atb_info** — func_CombatUnit_GetATBInfo |
+| `0x18C` | `0x00A6B690` | `func_SetUnitATB` **set_atb** — func_SetUnitATB |
+| `0x194` | `0x00A6DAE0` | `func_CombatUnit_GetAnimDebugName` **get_anim_debug_name** — func_CombatUnit_GetAnimDebugName |
+| `0x1AC` | `0x00A6BD10` | `func_CombatUnit_GetLuck` **get_luck** — func_CombatUnit_GetLuck |
+| `0x1B0` | `0x00A6BD50` | `func_CombatUnit_GetMorale` **get_morale** — func_CombatUnit_GetMorale |
+| `0x240` | `0x00A6A700` | `func_CombatUnit_GetSpellMastery` **get_spell_mastery** — func_CombatUnit_GetSpellMastery |
+| `0x244` | `0x00A6A7E0` | `func_CombatUnit_GetSpellpower` **get_spellpower** — func_CombatUnit_GetSpellpower |
+| `0x24C` | `0x00A6EE70` | `func_GetActiveSpellEffects` **get_active_spell_effects** — func_GetActiveSpellEffects |
+| `0x250` | `0x00A6AB80` | `func_CombatUnit_GetBuffList` **get_buff_list** — func_CombatUnit_GetBuffList |
+| `0x254` | `0x00A729B0` | `func_CombatUnit_ApplyActiveSpellEffects` **apply_active_spell_effects** — func_CombatUnit_ApplyActiveSpellEffects |
+| `0x258` | `0x00A72A30` | `func_CombatUnit_ApplySoulDrainEffects` **apply_soul_drain_effects** — func_CombatUnit_ApplySoulDrainEffects |
+| `0x25C` | `0x00A73D40` | `func_CombatUnit_ApplySpellEffect4` **apply_spell_effect_4arg** — func_CombatUnit_ApplySpellEffect4 |
+| `0x260` | `0x00A73CE0` | `func_CombatUnit_ApplySpellEffect5` **apply_spell_effect_5arg** — func_CombatUnit_ApplySpellEffect5 |
+| `0x264` | `0x00A73DA0` | `func_CombatUnit_ApplySpellEffect0` **apply_spell_effect_0arg** — func_CombatUnit_ApplySpellEffect0 |
+| `0x268` | `0x00A72C80` | `func_CombatUnit_RemoveBuffById` **remove_buff_by_id** — func_CombatUnit_RemoveBuffById |
+| `0x26C` | `0x00A6BCC0` | `func_CombatUnit_SetBuffParam` **set_buff_param** — func_CombatUnit_SetBuffParam |
+| `0x270` | `0x00A72D30` | `func_CombatUnit_RemoveBuffFiltered` **remove_buff_filtered** — func_CombatUnit_RemoveBuffFiltered |
+| `0x274` | `0x00A6DF20` | `func_CombatUnit_RefreshArtifactBuffs` **refresh_artifact_buffs** — func_CombatUnit_RefreshArtifactBuffs |
+| `0x278` | `0x00A70B20` | `func_CombatUnit_PlayMeleeAttackAnim` **play_melee_attack_anim** — func_CombatUnit_PlayMeleeAttackAnim |
+| `0x27C` | `0x00A706E0` | `func_CombatUnit_PlayRangedAttackAnim` **play_ranged_attack_anim** — func_CombatUnit_PlayRangedAttackAnim |
+| `0x280` | `0x00A69F20` | `func_CombatUnit_PlayAnimDispatch` **play_anim_dispatch** — func_CombatUnit_PlayAnimDispatch |
+| `0x284` | `0x00A70D90` | `func_CombatUnit_PlayAttackAnimAt` **play_attack_anim_at** — func_CombatUnit_PlayAttackAnimAt |
+| `0x288` | `0x00A69F90` | `func_CombatUnit_PlayPositionalAnim` **play_positional_anim** — func_CombatUnit_PlayPositionalAnim |
+| `0x298` | `0x00A73DE0` | `func_CombatUnit_AddSpellLink` **add_spell_link** — func_CombatUnit_AddSpellLink |
+| `0x29C` | `0x00A72E00` | `func_CombatUnit_RemoveSpellLinkPair` **remove_spell_link_pair** — func_CombatUnit_RemoveSpellLinkPair |
+| `0x2A0` | `0x00A72F00` | `func_CombatUnit_RemoveSpellLinksBySubId` **remove_spell_links_by_subid** — func_CombatUnit_RemoveSpellLinksBySubId |
+| `0x2A4` | `0x00A72E90` | `func_CombatUnit_RemoveSpellLinksById` **remove_spell_links_by_id** — func_CombatUnit_RemoveSpellLinksById |
+| `0x2A8` | `0x00A6D440` | `func_CombatUnit_HasSpellLink` **has_spell_link** — func_CombatUnit_HasSpellLink |
 
 ## `ICombatUnit` helpers (C++ patches)
 

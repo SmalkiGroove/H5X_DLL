@@ -23,21 +23,21 @@ Creature type id on the outer unit: `[unit + 0x1C]`.
 
 | Slot | Impl | Meaning |
 |---|---|---|
-| `0x0C` | `0x008AEAF0` | **get_unit_ref** — [shared], returns [this-0x74] |
-| `0x28` | `0x00A6D330` | **get_active_buff** — [shared] |
-| `0x188` | `0x008AEB40` | **get_atb_info** — [shared], ATB float at [info+0x1C] |
+| `0x00C` | `0x008AEAF0` | **get_unit_ref** — [shared] func_CombatUnit_GetUnitRef |
+| `0x028` | `0x00A6D330` | **get_active_buff** — [shared] func_CombatUnit_GetActiveBuff |
+| `0x188` | `0x008AEB40` | **get_atb_info** — [shared] func_CombatUnit_GetATBInfo |
 | `0x18C` | `0x00A6B690` | **set_atb** — [shared] func_SetUnitATB |
-| `0x198` | | **get_attack** — - hero 0x00BBFE50, creature 0x008A4800 |
-| `0x19C` | | **get_defense** — - hero 0x00BBFE60, creature 0x008A32B0 |
-| `0x1AC` | `0x00A6BD10` | **get_luck** — [shared] |
-| `0x1B0` | `0x00A6BD50` | **get_morale** — [shared] |
-| `0x1B4` | | **get_luck_raw** — - hero 0x00BBFF00, creature 0x00A6ABF0 |
-| `0x1B8` | | **get_morale_raw** — - hero 0x00BBFFC0, creature 0x00A6ACD0 |
-| `0x1BC` | | **get_initiative** — - hero 0x00BC1EB0, creature 0x008A4330 |
-| `0x238` | | **get_mana** — - hero 0x00BC0700; creature 0x008A2230 (mana points) |
-| `0x28C` | | **has_ability** — - creature 0x008A34C0; hero: call_652 |
-| `0x290` | | **has_skill** — - hero 0x00BBFED0; creature stub 0x00A332C0 |
-| `0x294` | | **has_hero_spec** — - hero 0x00BBFEF0; creature stub 0x00A332C0 |
+| `0x198` | | **get_attack** — - hero 0x00BBFE50; creature 0x008A4800 |
+| `0x19C` | | **get_defense** — - hero 0x00BBFE60; creature 0x008A32B0 |
+| `0x1AC` | `0x00A6BD10` | **get_luck** — [shared] func_CombatUnit_GetLuck |
+| `0x1B0` | `0x00A6BD50` | **get_morale** — [shared] func_CombatUnit_GetMorale |
+| `0x1B4` | | **get_luck_raw** — - hero 0x00BBFF00; creature 0x00A6ABF0 |
+| `0x1B8` | | **get_morale_raw** — - hero 0x00BBFFC0; creature 0x00A6ACD0 |
+| `0x1BC` | | **get_initiative** — - hero 0x00BC1EB0; creature 0x008A4330 |
+| `0x238` | | **get_mana** — - hero 0x00BC0700; creature 0x008A2230 |
+| `0x28C` | | **has_ability** — - creature 0x008A34C0; hero 0x00A332C0 |
+| `0x290` | | **has_skill** — - hero 0x00BBFED0; creature 0x00A332C0 |
+| `0x294` | | **has_hero_spec** — - hero 0x00BBFEF0; creature 0x00A332C0 |
 
 ATB slots share implementations with heroes (`+0x188` → `[info+0x1C]`, `+0x18C` → `func_SetUnitATB`). See `.cursor/rules/h5x-re-combat-atb.mdc` for Lua/setATB flow.
 

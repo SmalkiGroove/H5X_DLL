@@ -22,19 +22,12 @@ CREATURE_VTORDISP_RE = re.compile(
 )
 SLOT_RE = re.compile(
     r"^\s*(?:[\w*]+\s+)?(\w+);\s*//\s*(0x[0-9A-Fa-f]+)"
-    r"(?:\s*\(\d+\))?\s*(?:-\s*(0x[0-9A-Fa-f]+),?\s*)?(.+)?$",
+    r"(?:\s*\(\d+\))?\s*-\s*(0x[0-9A-Fa-f]+)\s*(\[shared\])?\s*(.+)?$",
     re.I,
 )
 METHOD_RE = re.compile(r"^\s*([\w*]+)\s+(\w+)\([^;]*\)\s*\{", re.I)
 
-SHARED_SLOTS = {
-    "get_unit_ref",
-    "get_active_buff",
-    "get_atb_info",
-    "set_atb",
-    "get_luck",
-    "get_morale",
-}
+SHARED_TAG = "[shared]"
 
 
 def fmt_hex(value: str) -> str:
@@ -57,15 +50,28 @@ def parse_slots(lines: list[str]) -> list[dict]:
         match = SLOT_RE.match(line)
         if not match:
             continue
-        name, offset, impl, note = match.groups()
+        name, offset, impl, shared_tag, note = match.groups()
         if name.startswith("call_") and not impl:
             continue
+        note_text = (note or "").strip().rstrip(",")
+        ghidra = ""
+        if note_text:
+            parts = note_text.split()
+            if parts and parts[0].startswith("func_"):
+                ghidra = parts[0]
+            elif "func_" in note_text:
+                for part in parts:
+                    if part.startswith("func_"):
+                        ghidra = part
+                        break
         slots.append(
             {
                 "name": name,
                 "offset": fmt_hex(offset),
                 "impl": fmt_hex(impl) if impl else "",
-                "note": (note or "").strip().rstrip(","),
+                "shared": bool(shared_tag),
+                "ghidra": ghidra,
+                "note": note_text,
             }
         )
     return slots
@@ -122,15 +128,19 @@ def parse_combat_unit_h(text: str) -> dict:
 
 
 def slot_table(slots: list[dict]) -> str:
-    return "\n".join(
-        f"| `{slot['offset']}` | `{slot['impl']}` | **{slot['name']}** — {slot['note']} |"
-        for slot in slots
-        if slot["impl"]
-    )
+    rows: list[str] = []
+    for slot in slots:
+        if not slot["impl"]:
+            continue
+        ghidra = f"`{slot['ghidra']}` " if slot.get("ghidra") else ""
+        rows.append(
+            f"| `{slot['offset']}` | `{slot['impl']}` | {ghidra}**{slot['name']}** — {slot['note']} |"
+        )
+    return "\n".join(rows)
 
 
 def render_rule(data: dict) -> str:
-    shared = [s for s in data["slots"] if s["name"] in SHARED_SLOTS]
+    shared = [s for s in data["slots"] if s.get("shared")]
     documented = [s for s in data["slots"] if s["impl"]]
     method_list = "\n".join(f"- `{name}()`" for name in data["methods"])
 

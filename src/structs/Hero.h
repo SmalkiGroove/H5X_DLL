@@ -9,6 +9,9 @@
 typedef int* (__thiscall* GetInventory)(int*);
 typedef int (__thiscall* GetMaxMana)(int*, int);
 typedef int (__thiscall* GetSpellpowerForSpell)(int*, int*);
+typedef int* (__thiscall* GetNameWString)(int*, int* out);
+typedef int (__thiscall* GetPortraitTexture)(int*);
+typedef int (__thiscall* GetAdvMapShared)(int*);
 
 struct Hero_vtable {
 	int* call_0;
@@ -159,20 +162,20 @@ struct Hero_vtable {
 	int* call_580;
 	int* call_584;
 	int* call_588;
-	int* call_592;
+	GetAdvMapShared get_advmap_shared; // 0x250 (592) - 0x00B531E0 thunk → lazy-load SAdvMapHeroShared @ [this+0xD0]
 	int* call_596;
 	GetStat get_hero_class; // 0x258 (600)
 	int* call_604;
 	int* call_608;
 	int* call_612;
-	int* call_616;
+	GetNameWString get_name_wstring; // 0x268 (616) - 0x00B4D4A0, copies wchar range [this+0x6C..0x70] into out-vector
 	int* call_620;
 	int* call_624;
 	int* call_628;
 	int* call_632;
 	int* call_636;
 	int* call_640;
-	int* call_644;
+	GetPortraitTexture get_portrait_texture; // 0x284 (644) - 0x00B532F0, lazy-load STexture via SAdvMapHeroShared
 	int* call_648;
 	int* call_652;
 	int* call_656;
@@ -230,6 +233,12 @@ struct IHero {
 	}
 	int skill_mastery(int skill) {
 		return instance->get_skill_mastery((int*)this, skill);
+	}
+	int* name_wstring(int* out) {
+		return instance->get_name_wstring((int*)this, out);
+	}
+	int portrait_texture() {
+		return instance->get_portrait_texture((int*)this);
 	}
 };
 

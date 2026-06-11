@@ -11,8 +11,9 @@ Both `CCombatHero` and `CCombatCreature` share the same slot offsets on `CombatU
 
 | Slot | Thunk | Impl | Meaning |
 |---|---|---|---|
-| `+0x184` / `+0x188` | `0x00BC3250` | `0x008AEB40` | **GetATBInfo** → ATB info object ptr |
-| `+0x18C` | `0x00BC2E90` | `0x00A6B690` | **SetATB(float)** — callee pops arg |
+| `+0x184` / `+0x188` | hero/creature thunks | `0x008AEB40` | **get_atb_info** (`func_CombatUnit_GetATBInfo`) → ATB info object ptr |
+| `+0x18C` | hero/creature thunks | `0x00A6B690` | **set_atb** (`func_SetUnitATB`) — callee pops arg |
+| `+0x0FC` | hero/creature thunks | `0x00A6A2E0` | **notify_timeline_change** (`func_CombatUnit_NotifyTimelineChange`) — called from SetATB |
 
 - Current ATB float: `[GetATBInfo() + 0x1C]` (used by `ImbueBalistaAtbFix.cpp`, `LuaChangeAtb.cpp`).
 - `SetATB` notifies via vtable `+0xFC`; crossing ready threshold (`DAT_00E0A7E4` ≈ 1.0) triggers unit-ready.
