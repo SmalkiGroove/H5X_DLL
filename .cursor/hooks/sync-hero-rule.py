@@ -10,14 +10,13 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 HERO_H = REPO_ROOT / "src/structs/Hero.h"
+COMBAT_UNIT_H = REPO_ROOT / "src/structs/CombatUnit.h"
 RULE_OUT = REPO_ROOT / ".cursor/rules/h5x-re-hero-stats.mdc"
 
 ADVMAP_VTABLE_RE = re.compile(
     r"AdvMap hero interface \(vtable\s+(0x[0-9A-Fa-f]+)", re.I
 )
-COMBAT_VTABLE_RE = re.compile(
-    r"CombatHero interface \(vtable\s+(0x[0-9A-Fa-f]+)", re.I
-)
+COMBAT_VTABLE_RE = re.compile(r"CombatHero_vtable_addr\s*=\s*(0x[0-9A-Fa-f]+)", re.I)
 SLOT_RE = re.compile(
     r"^\s*(?:[\w*]+\s+)?(\w+);\s*//\s*(0x[0-9A-Fa-f]+)"
     r"(?:\s*\(\d+\))?\s*(?:-\s*(0x[0-9A-Fa-f]+),?\s*)?(.+)?$",
@@ -93,16 +92,19 @@ def split_struct_body(text: str, struct_name: str) -> list[str]:
 
 
 def parse_hero_h(text: str) -> dict:
+    combat_text = COMBAT_UNIT_H.read_text(encoding="utf-8") if COMBAT_UNIT_H.is_file() else ""
     advmap_vtable = fmt_hex(
         ADVMAP_VTABLE_RE.search(text).group(1) if ADVMAP_VTABLE_RE.search(text) else "0x00E7E484"
     )
     combat_vtable = fmt_hex(
-        COMBAT_VTABLE_RE.search(text).group(1) if COMBAT_VTABLE_RE.search(text) else "0x00E8499C"
+        COMBAT_VTABLE_RE.search(combat_text).group(1)
+        if COMBAT_VTABLE_RE.search(combat_text)
+        else "0x00E8499C"
     )
 
     lines = text.splitlines()
     advmap_slots = parse_slots(split_struct_body(text, "Hero_vtable"))
-    combat_slots = parse_slots(split_struct_body(text, "CombatHero_vtable"))
+    combat_slots = parse_slots(split_struct_body(combat_text, "CombatUnit_vtable"))
 
     spellpower_slot = next((s for s in combat_slots if s["name"] == "get_spellpower"), None)
     spellpower_trap = next(
@@ -180,7 +182,7 @@ Other documented AdvMap slots:
 
 ## CombatHero vtable `{data['combat_vtable']}` — key slots
 
-Entries use vtordisp thunks (`sub ecx,[ecx-4]; sub ecx,NN; jmp impl`).
+Shared layout: `CombatUnit_vtable` in `CombatUnit.h` (see `.cursor/rules/h5x-re-combat-unit.mdc`). Entries use vtordisp thunks (`sub ecx,[ecx-4]; sub ecx,0x68; jmp impl`).
 
 | Slot | Impl | Meaning |
 |---|---|---|
@@ -242,7 +244,7 @@ def sync_hero_rule() -> None:
 
 def should_sync_from_hook(payload: dict) -> bool:
     path = payload.get("file_path", "").replace("\\", "/")
-    return path.endswith("src/structs/Hero.h")
+    return path.endswith("src/structs/Hero.h") or path.endswith("src/structs/CombatUnit.h")
 
 
 def main() -> int:

@@ -3,6 +3,9 @@
   "hooks": {
     "afterFileEdit": [
       {
+        "command": "python .cursor/hooks/sync-combat-unit-rule.py --hook"
+      },
+      {
         "command": "python .cursor/hooks/sync-creature-rule.py --hook"
       },
       {

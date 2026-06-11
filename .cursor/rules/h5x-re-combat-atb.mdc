@@ -5,7 +5,9 @@ alwaysApply: true
 
 # Combat ATB & Lua Commands
 
-## Unit ATB vtable (`struct_CombatHero` @ `0x00E8499C`)
+## Unit ATB vtable (`CombatUnit` — hero `0x00E8499C`, creature `0x00E4FBA4`)
+
+Both `CCombatHero` and `CCombatCreature` share the same slot offsets on `CombatUnit_vtable` (`src/structs/CombatUnit.h`). ATB accessors below work on either unit type via outer-unit vtable calls.
 
 | Slot | Thunk | Impl | Meaning |
 |---|---|---|---|

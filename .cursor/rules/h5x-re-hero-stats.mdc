@@ -42,18 +42,11 @@ Other documented AdvMap slots:
 
 ## CombatHero vtable `0x00E8499C` — key slots
 
-Entries use vtordisp thunks (`sub ecx,[ecx-4]; sub ecx,NN; jmp impl`).
+Shared layout: `CombatUnit_vtable` in `CombatUnit.h` (see `.cursor/rules/h5x-re-combat-unit.mdc`). Entries use vtordisp thunks (`sub ecx,[ecx-4]; sub ecx,0x68; jmp impl`).
 
 | Slot | Impl | Meaning |
 |---|---|---|
-| `0x198` | `0x00BBFE50` | **get_attack** — IHero attack + combat bonus [this+0x3C] |
-| `0x19C` | `0x00BBFE60` | **get_defense** — IHero defense + combat bonus [this+0x40] |
-| `0x238` | `0x00BC0700` | **get_mana** — IHero get_max_mana(knowledge) + get_mana_points() |
-| `0x23C` | `0x00BBFB90` | **get_hero_level** — IHero level + combat bonus |
-| `0x240` | `0x00A6A700` | **get_spell_mastery** — args = (spellRef*, flag) |
-| `0x244` | `0x00A6A7E0` | **get_spellpower** — effective spellpower incl. combat buffs, args = (spellRef*, flag 0) |
-| `0x290` | `0x00BBFED0` | **has_skill** — forwards to IHero get_skill_mastery (+0x174) |
-| `0x294` | `0x00BBFEF0` | **has_hero_spec** — forwards to IHero has_hero_spec (+0x190) |
+
 
 **No knowledge getter** on CombatHero. For knowledge in combat, use AdvMap hero `+0x1C`.
 
@@ -61,25 +54,16 @@ Entries use vtordisp thunks (`sub ecx,[ecx-4]; sub ecx,NN; jmp impl`).
 
 | Slot | Impl | Meaning |
 |---|---|---|
-| `0x188` | `0x008AEB40` | **get_atb_info** — returns [this-0x70], current ATB float at +0x1C of the result |
-| `0x18C` | `0x00A6B690` | **set_atb** — value in [0..1] |
-| `0x198` | `0x00BBFE50` | **get_attack** — IHero attack + combat bonus [this+0x3C] |
-| `0x19C` | `0x00BBFE60` | **get_defense** — IHero defense + combat bonus [this+0x40] |
-| `0x1AC` | `0x00A6BD10` | **get_luck** — get_luck_raw clamped to [-5, +5] |
-| `0x1B0` | `0x00A6BD50` | **get_morale** — get_morale_raw clamped to [-5, +5] |
-| `0x1B4` | `0x00BBFF00` | **get_luck_raw** — IHero raw luck + combat modifiers |
-| `0x1B8` | `0x00BBFFC0` | **get_morale_raw** — IHero raw morale + combat modifiers |
-| `0x1BC` | `0x00BC1EB0` | **get_initiative** — hooked by ModInitiative |
-| `0x238` | `0x00BC0700` | **get_mana** — IHero get_max_mana(knowledge) + get_mana_points() |
-| `0x23C` | `0x00BBFB90` | **get_hero_level** — IHero level + combat bonus |
-| `0x240` | `0x00A6A700` | **get_spell_mastery** — args = (spellRef*, flag) |
-| `0x244` | `0x00A6A7E0` | **get_spellpower** — effective spellpower incl. combat buffs, args = (spellRef*, flag 0) |
-| `0x290` | `0x00BBFED0` | **has_skill** — forwards to IHero get_skill_mastery (+0x174) |
-| `0x294` | `0x00BBFEF0` | **has_hero_spec** — forwards to IHero has_hero_spec (+0x190) |
+| `0x0C` | `0x008AEAF0` | **get_unit_ref** — [shared], returns [this-0x74] |
+| `0x28` | `0x00A6D330` | **get_active_buff** — [shared] |
+| `0x188` | `0x008AEB40` | **get_atb_info** — [shared], ATB float at [info+0x1C] |
+| `0x18C` | `0x00A6B690` | **set_atb** — [shared] func_SetUnitATB |
+| `0x1AC` | `0x00A6BD10` | **get_luck** — [shared] |
+| `0x1B0` | `0x00A6BD50` | **get_morale** — [shared] |
 
 ## GetEffectiveSpellPower — CombatHero `0x244`
 
-Impl `0x00A6A7E0`. Signature: `int __thiscall(ref, int flag)` — **two args, `ret 8`**.
+Impl ``. Signature: `int __thiscall(ref, int flag)` — **two args, `ret 8`**.
 
 `spellRef` (5 dwords on stack): `+0x00` spell obj (may NULL), `+0x04` spell id (0 = skip school bonuses).
 
@@ -119,14 +103,6 @@ add esp, 0x14
 ## `ICombatHero` helpers (C++ patches)
 
 - `hero()`
-- `atb_info()`
-- `atb()`
-- `set_atb()`
-- `attack()`
-- `defense()`
-- `luck()`
-- `morale()`
-- `initiative()`
 - `mana()`
 - `hero_level()`
 - `spellpower()`

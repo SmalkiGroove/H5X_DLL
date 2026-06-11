@@ -10,9 +10,22 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CREATURE_H = REPO_ROOT / "src/structs/Creature.h"
+COMBAT_UNIT_H = REPO_ROOT / "src/structs/CombatUnit.h"
 RULE_OUT = REPO_ROOT / ".cursor/rules/h5x-re-combat-creature.mdc"
 
-VTABLE_RE = re.compile(r"vtable\s+(0x[0-9A-Fa-f]+)", re.I)
+VTABLE_RE = re.compile(r"CombatCreature_vtable_addr\s*=\s*(0x[0-9A-Fa-f]+)", re.I)
+CREATURE_TYPE_SLOTS = {
+    "get_unit_ref",
+    "get_attack",
+    "get_defense",
+    "get_luck_raw",
+    "get_morale_raw",
+    "get_initiative",
+    "get_mana",
+    "has_ability",
+    "has_skill",
+    "has_hero_spec",
+}
 SLOT_RE = re.compile(
     r"^\s*(?:[\w*]+\s+)?(\w+);\s*//\s*(0x[0-9A-Fa-f]+)"
     r"(?:\s*\(\d+\))?\s*(?:-\s*(0x[0-9A-Fa-f]+),?\s*)?(.+)?$",
@@ -30,12 +43,14 @@ def fmt_hex(value: str) -> str:
     return "0x" + value.upper()
 
 
-def parse_creature_h(text: str) -> dict:
-    vtable_match = VTABLE_RE.search(text)
-    vtable = fmt_hex(vtable_match.group(1) if vtable_match else "0x00E4FBA4")
+def split_struct_body(text: str, struct_name: str) -> list[str]:
+    match = re.search(rf"struct {struct_name}\s*\{{([\s\S]*?)^\}};", text, re.M)
+    return match.group(1).splitlines() if match else []
 
+
+def parse_slots(lines: list[str]) -> list[dict]:
     slots: list[dict] = []
-    for line in text.splitlines():
+    for line in lines:
         match = SLOT_RE.match(line)
         if not match:
             continue
@@ -50,10 +65,28 @@ def parse_creature_h(text: str) -> dict:
                 "note": (note or "").strip().rstrip(","),
             }
         )
+    return slots
+
+
+def parse_creature_h(creature_text: str, combat_text: str) -> dict:
+    vtable_match = VTABLE_RE.search(combat_text)
+    vtable = fmt_hex(vtable_match.group(1) if vtable_match else "0x00E4FBA4")
+
+    all_slots = parse_slots(split_struct_body(combat_text, "CombatUnit_vtable"))
+    slots = [s for s in all_slots if s["name"] in CREATURE_TYPE_SLOTS or s["name"] in {"get_atb_info", "set_atb", "get_active_buff", "get_luck", "get_morale"}]
+    if not slots:
+        slots = all_slots
+    # ensure ATB/set_atb included
+    for name in ("get_atb_info", "set_atb", "get_active_buff", "get_luck", "get_morale"):
+        if not any(s["name"] == name for s in slots):
+            match = next((s for s in all_slots if s["name"] == name), None)
+            if match:
+                slots.append(match)
+    slots.sort(key=lambda s: int(s["offset"], 16))
 
     methods: list[str] = []
     in_iface = False
-    for line in text.splitlines():
+    for line in creature_text.splitlines():
         if line.startswith("struct ICombatCreature"):
             in_iface = True
             continue
@@ -85,7 +118,7 @@ alwaysApply: true
 
 > **Auto-generated** from `src/structs/Creature.h`. Do not edit manually; run `.cursor/hooks/sync-creature-rule.py` or save `Creature.h` (Cursor hook).
 
-Combat unit in battle exposes a **CombatCreature** subobject (`NWorld::CCombatCreature`, vtordisp **`-0x144`**). Vtable **`{data['vtable']}`** — same slot layout as `CombatHero_vtable` (offsets `0`..`0x2A8`). Thunks: `sub ecx,[ecx-4]; sub ecx,0x94; jmp impl`.
+Combat unit in battle exposes a **CombatCreature** subobject (`NWorld::CCombatCreature`, vtordisp **`-0x144`**). Vtable **`{data['vtable']}`** — instance of shared `CombatUnit_vtable` (see `.cursor/rules/h5x-re-combat-unit.mdc`). Thunks: `sub ecx,[ecx-4]; sub ecx,0x94; jmp impl`.
 
 ## Getting `ICombatCreature*` from a unit pointer
 
@@ -119,15 +152,16 @@ ATB slots share implementations with heroes (`+0x188` → `[info+0x1C]`, `+0x18C
 
 
 def sync_creature_rule() -> None:
-    text = CREATURE_H.read_text(encoding="utf-8")
-    data = parse_creature_h(text)
+    creature_text = CREATURE_H.read_text(encoding="utf-8")
+    combat_text = COMBAT_UNIT_H.read_text(encoding="utf-8") if COMBAT_UNIT_H.is_file() else ""
+    data = parse_creature_h(creature_text, combat_text)
     RULE_OUT.parent.mkdir(parents=True, exist_ok=True)
     RULE_OUT.write_text(render_rule(data), encoding="utf-8", newline="\n")
 
 
 def should_sync_from_hook(payload: dict) -> bool:
     path = payload.get("file_path", "").replace("\\", "/")
-    return path.endswith("src/structs/Creature.h")
+    return path.endswith("src/structs/Creature.h") or path.endswith("src/structs/CombatUnit.h")
 
 
 def main() -> int:

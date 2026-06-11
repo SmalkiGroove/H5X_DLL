@@ -1,0 +1,61 @@
+---
+description: Shared CombatUnit vtable for heroes and creatures in battle — auto-synced from CombatUnit.h
+alwaysApply: true
+---
+
+# CombatUnit — shared in-combat interface
+
+> **Auto-generated** from `src/structs/CombatUnit.h`. Do not edit manually; run `.cursor/hooks/sync-combat-unit-rule.py` or save `CombatUnit.h` (Cursor hook).
+
+`NWorld::CCombatHero` and `NWorld::CCombatCreature` use **parallel vtables** with the same 171-slot layout (`CombatUnit_vtable`, offsets `0`..`0x2A8`). Ghidra shows **92/171** slots resolving to identical implementations after vtordisp thunks. Lua and engine code refer to this concept as **CombatUnit** (`CombatUnitExist`, `CombatUnitMove`, etc.) even though RTTI uses separate class names.
+
+| Type | Vtable | Vtordisp | C++ wrapper |
+|---|---|---|---|
+| **CombatHero** | `0x00E8499C` | `-0x118` | `ICombatHero` : `ICombatUnit` |
+| **CombatCreature** | `0x00E4FBA4` | `-0x144` | `ICombatCreature` : `ICombatUnit` |
+
+Thunk pattern: `sub ecx,[ecx-4]; sub ecx,<vtordisp>; jmp <impl>`. Calling through the vtable adjusts `this` automatically.
+
+## Shared slots (same impl on hero and creature)
+
+| Slot | Impl | Meaning |
+|---|---|---|
+| `0x0C` | `0x008AEAF0` | **get_unit_ref** — [shared], returns [this-0x74] |
+| `0x28` | `0x00A6D330` | **get_active_buff** — [shared] |
+| `0x188` | `0x008AEB40` | **get_atb_info** — [shared], ATB float at [info+0x1C] |
+| `0x18C` | `0x00A6B690` | **set_atb** — [shared] func_SetUnitATB |
+| `0x1AC` | `0x00A6BD10` | **get_luck** — [shared] |
+| `0x1B0` | `0x00A6BD50` | **get_morale** — [shared] |
+
+## All documented CombatUnit slots
+
+| Slot | Impl | Meaning |
+|---|---|---|
+| `0x0C` | `0x008AEAF0` | **get_unit_ref** — [shared], returns [this-0x74] |
+| `0x28` | `0x00A6D330` | **get_active_buff** — [shared] |
+| `0x188` | `0x008AEB40` | **get_atb_info** — [shared], ATB float at [info+0x1C] |
+| `0x18C` | `0x00A6B690` | **set_atb** — [shared] func_SetUnitATB |
+| `0x1AC` | `0x00A6BD10` | **get_luck** — [shared] |
+| `0x1B0` | `0x00A6BD50` | **get_morale** — [shared] |
+
+## `ICombatUnit` helpers (C++ patches)
+
+- `unit_ref()`
+- `atb_info()`
+- `atb()`
+- `set_atb()`
+- `attack()`
+- `defense()`
+- `luck()`
+- `morale()`
+- `initiative()`
+- `active_buff()`
+
+Type-specific extensions: `ICombatHero` (`Hero.h`) — spellpower, skills, specs; `ICombatCreature` (`Creature.h`) — `has_ability()`.
+
+## Patch cross-refs
+
+- `LuaChangeAtb.cpp` — ATB via outer unit vtable `+0x188` / `+0x18C` (works for both unit types)
+- `.cursor/rules/h5x-re-combat-atb.mdc` — setATB / changeATB command flow
+- `.cursor/rules/h5x-re-hero-stats.mdc` — CombatHero-specific stat getters
+- `.cursor/rules/h5x-re-combat-creature.mdc` — creature subobject access pattern
