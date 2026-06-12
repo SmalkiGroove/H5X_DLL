@@ -22,7 +22,7 @@ using GetErrorOutputFn = int(__fastcall*)(void* guard);
 using FormatMessageFn = int(__cdecl*)(const char* fmt, ...);
 using ErrorOutputFn = void(__thiscall*)(int* err, const char* msg);
 using CleanupParseFn = void(__fastcall*)(int* parseState);
-
+/*
 static float read_unit_atb(int* unit) {
 	if (!unit) return 0.f;
 	uintptr_t* vtable = *(uintptr_t**)unit;
@@ -108,3 +108,4 @@ void LuaChangeAtb_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_INT, 0x00F32F98, 4, nullptr, (int)(uintptr_t)lua_change_atb_name, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_INT, 0x00F32F9C, 4, nullptr, (int)(uintptr_t)lua_changeATB, 0, 0, 0 });
 }
+*/

@@ -491,8 +491,8 @@
     <ClCompile Include="src\patches\ColdDeath.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
-    <ClCompile Include="src\patches\LuaSetAtbAdditive.cpp">
-      <Filter>Source Files\patches\Combat</Filter>
+    <ClCompile Include="src\patches\LuaChangeAtb.cpp">
+      <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

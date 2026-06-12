@@ -121,7 +121,6 @@ void Fortunate_init(pugi::xml_document& doc);
 void Magnetism_init(pugi::xml_document& doc);
 void ChainHitCount_init(pugi::xml_document& doc);
 void SpitefulTweak_init(pugi::xml_document& doc);
-void LuaChangeAtb_init(pugi::xml_document& doc);
 
 void Avengers_init(pugi::xml_document& doc);
 void Artificier_init(pugi::xml_document& doc);
@@ -179,3 +178,4 @@ void WarMachineTier_init(pugi::xml_document& doc);
 void LearnWarcries_init(pugi::xml_document& doc);
 void GiveHeroSkill_init(pugi::xml_document& doc);
 void HallOfIntrigue_init(pugi::xml_document& doc);
+//void LuaChangeAtb_init(pugi::xml_document& doc);
