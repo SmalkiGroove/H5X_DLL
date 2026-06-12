@@ -22,7 +22,7 @@ CREATURE_VTORDISP_RE = re.compile(
 )
 SLOT_RE = re.compile(
     r"^\s*(?:[\w*]+\s+)?(\w+);\s*//\s*(0x[0-9A-Fa-f]+)"
-    r"(?:\s*\(\d+\))?\s*-\s*(0x[0-9A-Fa-f]+)\s*(\[shared\])?\s*(.+)?$",
+    r"(?:\s*\(\d+\))?\s*-\s*(?:(0x[0-9A-Fa-f]+)\s*)?(\[shared\])?\s*(.+)?$",
     re.I,
 )
 METHOD_RE = re.compile(r"^\s*([\w*]+)\s+(\w+)\([^;]*\)\s*\{", re.I)
@@ -127,21 +127,30 @@ def parse_combat_unit_h(text: str) -> dict:
     }
 
 
-def slot_table(slots: list[dict]) -> str:
+def slot_table(slots: list[dict], *, shared_only: bool = False) -> str:
     rows: list[str] = []
     for slot in slots:
-        if not slot["impl"]:
+        if shared_only and not slot.get("shared"):
             continue
-        ghidra = f"`{slot['ghidra']}` " if slot.get("ghidra") else ""
-        rows.append(
-            f"| `{slot['offset']}` | `{slot['impl']}` | {ghidra}**{slot['name']}** — {slot['note']} |"
-        )
+        if not shared_only and slot.get("shared"):
+            continue
+        if slot.get("shared"):
+            if not slot["impl"]:
+                continue
+            ghidra = f"`{slot['ghidra']}` " if slot.get("ghidra") else ""
+            rows.append(
+                f"| `{slot['offset']}` | `{slot['impl']}` | {ghidra}**{slot['name']}** — {slot['note']} |"
+            )
+        else:
+            rows.append(
+                f"| `{slot['offset']}` | **{slot['name']}** | {slot['note']} |"
+            )
     return "\n".join(rows)
 
 
 def render_rule(data: dict) -> str:
     shared = [s for s in data["slots"] if s.get("shared")]
-    documented = [s for s in data["slots"] if s["impl"]]
+    type_specific = [s for s in data["slots"] if not s.get("shared")]
     method_list = "\n".join(f"- `{name}()`" for name in data["methods"])
 
     return f"""---
@@ -166,13 +175,20 @@ Thunk pattern: `sub ecx,[ecx-4]; sub ecx,<vtordisp>; jmp <impl>`. Calling throug
 
 | Slot | Impl | Meaning |
 |---|---|---|
-{slot_table(shared)}
+{slot_table(shared, shared_only=True)}
+
+## Type-specific slots (hero vs creature impl)
+
+| Slot | Field | Hero / creature impls |
+|---|---|---|
+{slot_table(type_specific)}
 
 ## All documented CombatUnit slots
 
 | Slot | Impl | Meaning |
 |---|---|---|
-{slot_table(documented)}
+{slot_table(shared, shared_only=True)}
+{slot_table(type_specific)}
 
 ## `ICombatUnit` helpers (C++ patches)
 
