@@ -246,6 +246,7 @@
     <ClInclude Include="src/structs/Hero.h" />
     <ClCompile Include="src/patches/AgilityFix.cpp" />
     <ClCompile Include="src/patches/AllSeeingCrown.cpp" />
+    <ClCompile Include="src/patches/AnkhOfTheSaint.cpp" />
     <ClCompile Include="src/patches/ArcaneBrillance.cpp" />
     <ClCompile Include="src/patches/Arcanism.cpp" />
     <ClCompile Include="src/patches/Artificier.cpp" />

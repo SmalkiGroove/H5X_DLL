@@ -128,6 +128,9 @@
     <ClCompile Include="src/patches/AllSeeingCrown.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
+    <ClCompile Include="src/patches/AnkhOfTheSaint.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
     <ClCompile Include="src/patches/ArcaneBrillance.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>

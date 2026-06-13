@@ -102,6 +102,7 @@ void init_patches(pugi::xml_document& doc) {
     BarbarianSkillsLinks_init(doc);        // OK
 
     ArtfsetExpand_init(doc);               // OK
+    AnkhOfTheSaint_init(doc);              // OK
     GoldenGoose_init(doc);                 // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
