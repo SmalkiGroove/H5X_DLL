@@ -30,8 +30,8 @@ void init_patches(pugi::xml_document& doc) {
     EncourageFix_init(doc);                // OK
 
     Health_init(doc);                      // OK
-    //CreatureAttack_init(doc);              //
-    //CreatureDefense_init(doc);             //
+    CreatureAttack_init(doc);              // OK
+    CreatureDefense_init(doc);             // OK
     DamageOutput_init(doc);                // OK
     Initiative_init(doc);                  // OK
     Speed_init(doc);                       // OK
