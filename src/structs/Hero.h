@@ -5,6 +5,7 @@
 // AdvMap hero interface (vtable 0x00E7E484, NWorld::CHero subobject +0x1C).
 // RE rule: .cursor/rules/h5x-re-hero-stats.mdc (auto-synced).
 #include "structs/CombatUnit.h"
+#include "types/Functions.h"
 
 struct Hero_vtable {
 	int* call_0;
@@ -265,6 +266,13 @@ struct ICombatHero : ICombatUnit {
 	}
 	bool has_spec(int spec) {
 		return instance->has_hero_spec((int*)this, spec) != 0;
+	}
+	bool has_artifact(int artifact_id) {
+		IHero* advHero = hero();
+		if (!advHero || !advHero->instance) return false;
+		int* inventory = advHero->inventory();
+		if (!inventory) return false;
+		return count_equipped_artifact(inventory, artifact_id) != 0;
 	}
 };
 

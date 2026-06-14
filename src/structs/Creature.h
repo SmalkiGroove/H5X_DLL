@@ -3,6 +3,7 @@
 #define CREATURE_H
 
 #include "structs/CombatUnit.h"
+#include "structs/Hero.h"
 
 // AdvMap army stack unit (vtable 0x00E0F734, NWorld::CCreature, vtordisp -0x14).
 // Ctor FUN_0043cfa0 (EngineAlloc 0x24). RTTI .?AVCCreature@NWorld@@ @ 0x00F29C58.
@@ -127,6 +128,53 @@ struct ICreature {
 //   mov ecx, [eax + 8]
 //   lea ecx, [ecx + unit - 0x144]    ; ICombatCreature*
 // Creature type id on the outer unit: [unit + 0x1C].
+//
+// owner()  — friendly side hero (ModLuck LuckToggleFork @ 0x008A3F0F, ModAbilities @ 0x008A3759).
+// opponent() — enemy side hero (ModAttack CreatureAttackFork @ 0x008A4B5C).
+
+namespace combat_creature_detail {
+
+// Combat stack root (ModAttack esi / GetUnitAttack ECX). At is_flying hook 0x008A22D0,
+// ECX is already this pointer after the vtordisp thunk @ 0x008AEB60 — not at +0xA0.
+inline char* combat_stack_root(ICombatUnit* unit) {
+	return (char*)unit;
+}
+
+inline ICombatUnit* combat_unit_mi(char* base) {
+	if (!base)
+		return nullptr;
+	int** vbtable = *(int***)((char*)base - CombatCreature_vtordisp);
+	if (!vbtable)
+		return nullptr;
+	return (ICombatUnit*)((char*)base - CombatCreature_vtordisp + (uintptr_t)vbtable[2]);
+}
+
+inline int* call_unit_ref(int* obj) {
+	if (!obj)
+		return nullptr;
+	int** vt = *(int***)obj;
+	if (!vt)
+		return nullptr;
+	return ((GetUnitRef)vt[3])(obj);
+}
+
+inline ICombatHero* combat_hero_from_outer(int* outer) {
+	if (!outer)
+		return nullptr;
+	int** vbtable = *(int***)((char*)outer + 4);
+	if (!vbtable)
+		return nullptr;
+	return (ICombatHero*)((char*)outer + (uintptr_t)vbtable[2] + 4);
+}
+
+// ModAttack uses eax after notify_owner (+0x10) as the next this pointer.
+inline int* call_notify_owner_side(ICombatUnit* unit) {
+	if (!unit || !unit->instance)
+		return nullptr;
+	return ((ThiscallIntPtr_IntPtr)unit->instance->notify_owner)((int*)unit);
+}
+
+} // namespace combat_creature_detail
 
 struct ICombatCreature : ICombatUnit {
 	int* creature_ref() {
@@ -137,6 +185,24 @@ struct ICombatCreature : ICombatUnit {
 	}
 	bool has_ability(int ability_id) {
 		return instance->has_ability((int*)this, ability_id) != 0;
+	}
+	// Friendly side ICombatHero: 2x get_unit_ref on MI subobject (no notify_owner).
+	ICombatHero* owner() {
+		using namespace combat_creature_detail;
+		ICombatUnit* unit = combat_unit_mi(combat_stack_root(this));
+		if (!unit || !unit->instance) return nullptr;
+		int* sideRef = call_unit_ref((int*)unit);
+		int* heroOuter = call_unit_ref(sideRef);
+		return combat_hero_from_outer(heroOuter);
+	}
+	// Enemy side ICombatHero: notify_owner (+0x10) then get_unit_ref (ModAttack chain).
+	ICombatHero* opponent() {
+		using namespace combat_creature_detail;
+		ICombatUnit* unit = combat_unit_mi(combat_stack_root(this));
+		if (!unit || !unit->instance) return nullptr;
+		int* sideObj = call_notify_owner_side(unit);
+		int* heroOuter = call_unit_ref(sideObj);
+		return combat_hero_from_outer(heroOuter);
 	}
 };
 
