@@ -9,6 +9,10 @@
 // Stat helpers (func_GetCreatureHealth, func_GetCreatureStats, func_GetCreatureCostResources, …)
 // are static DB/hero-context functions — not vtable slots on this interface.
 //
+// SCreature DB (func_GetCreatureData) — patch-relevant offsets:
+//   +0x58 Speed, +0x5C Initiative, +0x60 Flying (bool, .xdb field "Flying")
+// Flying in combat: vtable is_flying @ CombatUnit +0x190 → func_GetCreatureFlying @ 0x004BA950.
+//
 // Object size 0x24. Timed-stats blob at +0x2C lives on a base/MI subobject (vtordisp -0x14).
 //
 // Army container (separate): CArmy vtable 0x00E7FF50; army slot node vtable 0x00E800AC.

@@ -305,6 +305,7 @@
     <ClCompile Include="src/patches/ModAttack.cpp" />
     <ClCompile Include="src/patches/ModDamageOutput.cpp" />
     <ClCompile Include="src/patches/ModDefense.cpp" />
+    <ClCompile Include="src\patches\PlumedBoots.cpp" />
     <ClCompile Include="src/patches/ModElementalDamages.cpp" />
     <ClCompile Include="src/patches/ModElementalResistance.cpp" />
     <ClCompile Include="src/patches/ModHealth.cpp" />

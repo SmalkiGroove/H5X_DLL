@@ -35,8 +35,15 @@ extern ThiscallInt_IntPtr get_unit_spellproof;
 // --- Creatures / combat ---
 
 extern ThiscallIntPtr_Int get_creature_data;
+extern FastcallByte_IntPtr func_GetCreatureFlying;
 extern ThiscallInt_Int_Int get_mitigated_damage;
 extern ThiscallInt_IntPtr get_unit_luck_clamped;
+extern FastcallUint_Int_IntPtr_Char get_damage_stack_count;
+extern ThiscallPtrPtr_Void construct_creature_lightning_fx_event;
+
+// --- Engine alloc ---
+
+extern StdcallPtr_Uint engine_alloc;
 
 // --- Buff notification (engine UI hooks) ---
 

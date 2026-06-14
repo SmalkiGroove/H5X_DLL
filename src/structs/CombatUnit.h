@@ -123,7 +123,7 @@ struct CombatUnit_vtable {
 	GetATBInfo get_atb_info_dup; // 0x184 (388) - 0x008AEB40 [shared] func_CombatUnit_GetATBInfo
 	GetATBInfo get_atb_info; // 0x188 (392) - 0x008AEB40 [shared] func_CombatUnit_GetATBInfo
 	SetATBValue set_atb; // 0x18C (396) - 0x00A6B690 [shared] func_SetUnitATB
-	int* get_speed_penalty; // 0x190 (400) - hero 0x00412BD0 func_ReturnTrue; creature 0x008A22D0 func_CombatCreature_GetSpeedPenalty
+	int* get_speed_penalty; // 0x190 (400) is_flying — hero 0x00412BD0 func_ReturnTrue; creature 0x008A22D0 → func_GetCreatureFlying @ 0x004BA950 (SCreature.Flying @ +0x60)
 	int* get_anim_debug_name; // 0x194 (404) - 0x00A6DAE0 [shared] func_CombatUnit_GetAnimDebugName
 	GetStat get_attack; // 0x198 (408) - hero 0x00BBFE50 func_GetHeroAttackCombat; creature 0x008A4800 func_GetUnitAttack
 	GetStat get_defense; // 0x19C (412) - hero 0x00BBFE60 func_GetHeroDefenseCombat; creature 0x008A32B0 func_GetUnitDefense
@@ -231,6 +231,10 @@ struct ICombatUnit {
 	}
 	int active_buff(int ability_id) {
 		return instance->get_active_buff((int*)this, ability_id);
+	}
+	bool is_flying() {
+		typedef char(__thiscall* IsFlyingFn)(int*);
+		return ((IsFlyingFn)instance->get_speed_penalty)((int*)this) != 0;
 	}
 };
 

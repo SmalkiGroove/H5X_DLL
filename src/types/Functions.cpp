@@ -23,8 +23,13 @@ ThiscallInt_IntPtr is_spell_empowered = (ThiscallInt_IntPtr)0x00A34100;
 ThiscallInt_IntPtr get_unit_spellproof = (ThiscallInt_IntPtr)0x0097D2A0;
 
 ThiscallIntPtr_Int get_creature_data = (ThiscallIntPtr_Int)0x0089FBF0;
+FastcallByte_IntPtr func_GetCreatureFlying = (FastcallByte_IntPtr)0x004BA950;
 ThiscallInt_Int_Int get_mitigated_damage = (ThiscallInt_Int_Int)0x0097D740;
 ThiscallInt_IntPtr get_unit_luck_clamped = (ThiscallInt_IntPtr)0x004BB3C0;
+FastcallUint_Int_IntPtr_Char get_damage_stack_count = (FastcallUint_Int_IntPtr_Char)0x00A6BD90;
+ThiscallPtrPtr_Void construct_creature_lightning_fx_event = (ThiscallPtrPtr_Void)0x00C9A620;
+
+StdcallPtr_Uint engine_alloc = (StdcallPtr_Uint)0x00878FD0;
 
 FastcallVoid_IntPtr_Char_3Int notify_spec_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB930;
 FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB960;

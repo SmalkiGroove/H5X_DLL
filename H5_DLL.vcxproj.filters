@@ -269,6 +269,9 @@
     <ClCompile Include="src/patches/ModDefense.cpp">
       <Filter>Source Files\patches\Functions</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\PlumedBoots.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
     <ClCompile Include="src/patches/ModElementalDamages.cpp">
       <Filter>Source Files\patches\Functions</Filter>
     </ClCompile>
