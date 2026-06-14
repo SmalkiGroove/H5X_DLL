@@ -76,7 +76,7 @@ void init_patches(pugi::xml_document& doc) {
     TowerDamage_init(doc);                 // OK
     Fortunate_init(doc);                   // OK
     ChainHitCount_init(doc);               // OK
-    SpitefulTweak_init(doc);
+    SpitefulTweak_init(doc);               // OK
     //Magnetism_init(doc);                   //
 
     Avengers_init(doc);                    // OK
@@ -96,7 +96,7 @@ void init_patches(pugi::xml_document& doc) {
     TwilightTweak_init(doc);               // OK
     PariahTweak_init(doc);                 // OK
     ArcaneBrillance_init(doc);             // OK
-    ColdDeathFreeze_init(doc);             //
+    ColdDeathFreeze_init(doc);             // OK
     LightningTouch_init(doc);              // OK
     ElementsVirtuoso_init(doc);            // OK
     BarbarianSkillsLinks_init(doc);        // OK
