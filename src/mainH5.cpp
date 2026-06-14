@@ -76,7 +76,7 @@ void init_patches(pugi::xml_document& doc) {
     TowerDamage_init(doc);                 // OK
     Fortunate_init(doc);                   // OK
     ChainHitCount_init(doc);               // OK
-    //SpitefulTweak_init(doc);               //
+    SpitefulTweak_init(doc);
     //Magnetism_init(doc);                   //
 
     Avengers_init(doc);                    // OK
