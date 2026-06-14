@@ -36,6 +36,7 @@ extern ThiscallInt_IntPtr get_unit_spellproof;
 
 extern ThiscallIntPtr_Int get_creature_data;
 extern ThiscallInt_Int_Int get_mitigated_damage;
+extern ThiscallInt_IntPtr get_unit_luck_clamped;
 
 // --- Buff notification (engine UI hooks) ---
 

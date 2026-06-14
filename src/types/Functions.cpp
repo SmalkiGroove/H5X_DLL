@@ -24,6 +24,7 @@ ThiscallInt_IntPtr get_unit_spellproof = (ThiscallInt_IntPtr)0x0097D2A0;
 
 ThiscallIntPtr_Int get_creature_data = (ThiscallIntPtr_Int)0x0089FBF0;
 ThiscallInt_Int_Int get_mitigated_damage = (ThiscallInt_Int_Int)0x0097D740;
+ThiscallInt_IntPtr get_unit_luck_clamped = (ThiscallInt_IntPtr)0x004BB3C0;
 
 FastcallVoid_IntPtr_Char_3Int notify_spec_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB930;
 FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB960;
