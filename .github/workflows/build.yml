@@ -1,0 +1,32 @@
+name: Build um.dll
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release (Win32)
+        run: msbuild H5_DLL.sln /p:Configuration=Release /p:Platform=x86 /p:PlatformToolset=v143 /m /v:minimal
+
+      - name: Package as um.dll
+        shell: pwsh
+        run: Copy-Item -Path Release\H5_DLL.dll -Destination um.dll -Force
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: um-dll
+          path: um.dll
+          if-no-files-found: error
