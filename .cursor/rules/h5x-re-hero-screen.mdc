@@ -1,0 +1,117 @@
+---
+description: CHeroScreen2 (NUI) vtable 0x00E79D3C — hero screen UI RE reference
+alwaysApply: true
+---
+
+# Hero Screen — `NUI::CHeroScreen2`
+
+Primary vtable **`0x00E79D3C`** belongs to **`NUI::CHeroScreen2`** (RTTI `.?AVCHeroScreen2@NUI@@` @ `0x00F39EC4`). This is the in-game hero screen widget (inventory, skills, biography, attributes panes). Not to be confused with AdvMap hero stats (`IHero` vtable `0x00E7E484` — see `.cursor/rules/h5x-re-hero-stats.mdc`).
+
+## Object lifecycle
+
+| Address | Role |
+|---|---|
+| `0x00AF7520` | **Factory** — `CCreateHeroScreen2`; `EngineAlloc(0x1B4)`, RTTI-casts arg to `NWorld::CRMVersionTracker`, calls ctor |
+| `0x00AF7280` | **Ctor** — `CHeroScreen2(CHeroScreen2*, int)`; sets vtables, calls `0x0050F4C0` base init, then `0x00AF6FE0` |
+| `0x00AF7C30` | **Alt ctor / subobject build** — same vtable layout without hero arg path |
+| `0x00AF6FE0` | **Post-ctor init** — wires ref-counted UI children @ `[this+0xD4]`, `[this+0x174]`, `[this+0xDC]`, `[this+0x140]`, `[this+0x178]`, `[this+0x184]`, `[this+0x188]`, `[this+0x190]` |
+| `0x00AF8310` | **Dtor helper** — tears down ref-counted fields |
+| `0x00AF79A0` | **List cleanup** — drains circular list @ `[this+0xB0]` |
+
+**Object size:** `0x1B4` bytes (factory alloc).
+
+## Vtable map (multiple inheritance)
+
+Constructors (`0x00AF7280` / `0x00AF7C30`) install four vptrs:
+
+| Vptr location | Vtable | Vtordisp | Typical use |
+|---|---|---|---|
+| `[this+0x00]` | **`0x00E79D3C`** | — | **Primary** — screen logic, hero bind, tab merge |
+| `[this+0x08]` | `0x00E79D2C` | — | Secondary interface (shared slots with combat stubs) |
+| vb `@ [this+0x04]` → `[vb+4]` | `0x00E79D0C` | **`-0x198`** | MI base A |
+| vb `@ [this+0x04]` → `[vb+8]` | **`0x00E79C9C`** | **`-0x1A8`** | **MI widget tree** — `FindChild`, pane visibility |
+
+Virtual-base tables: `[this+0x04]` → `0x00E79EB4`, `[this+0x0C]` → `0x00E79EA8`, `[this+0x1B0]` → `0x00E19610`.
+
+RTTI COL for primary vtable: `[vtable-4]` → `DAT_00EF768C`.
+
+### Accessing the widget-tree MI subobject
+
+Pattern used throughout hero-screen setup (`0x006CA4E0`, `0x006CA280`):
+
+```asm
+; ecx = CHeroScreen2* (primary this)
+mov eax, [ecx+4]              ; vbptr
+mov eax, [eax+8]              ; second vbase descriptor
+lea edx, [eax+ecx+4]          ; MI this for vtable 0x00E79C9C
+mov eax, [edx]                ; vtable
+call [eax+0x94]               ; find_child_widget(...)
+```
+
+Pane layout builder `func_HeroScreen_BuildPanes` @ `0x006CA280` (patched by `HeroScreenUI.cpp` @ `0x006CA3F4`) calls `+0x94` on this MI interface to resolve `"Skills"`, `"Biography"`, `"Inventory"`, etc., then `+0x44` on child widgets to show/hide.
+
+## Primary vtable `0x00E79D3C` — documented slots
+
+| Slot | Impl | Meaning |
+|---|---|---|
+| `0x004` | `0x00AF7E10` | **set_hero_context** — binds hero / CRMVersionTracker ref (`FUN_00432D30` open flow) |
+| `0x00C` | `0x00AF80F0` | **get_sub_screen_a** — returns child pane ptr |
+| `0x010` | `0x00AF8100` | **get_sub_screen_b** — returns child pane ptr |
+| `0x020` | `0x00AF2020` | **load_hero_data** — copies hero layout fields; uses `[this+0x23]`/`[this+0x24]` skill/bio panes; calls `+0x164` |
+| `0x02C` | `0x00AF4980` | **init_screen** — post-open initialization (`FUN_00432D30`, `FUN_007E1E40`) |
+| `0x034` | `0x00AF7E50` | **configure_meet_mode** — `(param, mode)` meet/single-hero layout |
+| `0x044` | `0x00AF1450` | **set_pane_visible** — `(bool)` on screen sections |
+| `0x080` | `0x00AF58C0` | **set_active_tab** — `(0/1)` skills vs bio tab highlight (`FUN_007A9E60` parent) |
+| `0x090` | `0x00AF5140` | **set_anim_float** — `(float)` timeline/anim param |
+| `0x104` | `0x00AF2840` | **max_merged_tab_index** — when not merged, max of two sub-pane indices |
+| `0x108` | `0x00AF7F00` | **is_skills_bio_merged** — `bool`; `HeroScreenUI` patch targets layout around this |
+| `0x10C` | `0x00AF1AB0` | **set_partial_visible** — `(bool)` visibility gate (`FUN_00432D30`) |
+| `0x114` | `0x00AF1BB0` | **set_layout_mode** — `1` = merged skills+bio, `2` = split panes |
+| `0x164` | `0x00AF2A60` | **get_skills_bio_widget** — returns merged or split skills/bio sub-screen |
+
+## MI widget vtable `0x00E79C9C` (vtordisp `-0x1A8`) — key slots
+
+| Slot | Impl | Meaning |
+|---|---|---|
+| `0x028` | `0x00AF81F0` | **get_child_ref** — ref-counted child access (`FUN_007A9E60` reads into parent @ `[parent+0x1D]`) |
+| `0x044` | `0x00AF81E0` | **set_widget_visible** — `(bool)` on resolved child widgets |
+| `0x094` | `0x00AA2E60`* | **find_child_widget** — `(out, flags, …)` / name lookup via prediction text (`"Skills"`, `"Biography"`, …) |
+
+\* Ghidra may label `0x00AA2E60` as `func_CombatHero_GetCombatBonus` (shared stub/thunk in `.text`); trust call-site semantics in `0x006CA4E0` / `0x006CA280`, not the accidental name collision.
+
+## Notable fields (primary `this`)
+
+| Offset | Set in | Role |
+|---|---|---|
+| `+0x23` / `+0x24` | ctor/init | Skills / biography sub-screen ptrs (`FUN_00AF2570` selects active) |
+| `+0x26` | ctor | Byte flag (meet/single layout) |
+| `+0x29`, `+0x2B` | ctor | Passed to `+0x164` child loader |
+| `+0x2E` | ctor/`0x20` | Tab index / height cache (default `9`) |
+| `+0x35`..`+0x5E` | `0x00AF6FE0` | Ref-counted UI helper objects |
+| `+0x50` | `0x00AF6FE0` | Portrait / hero visual helper (`0x00BBDA40`) |
+| `+0x60` | ctor | Float `1.0f` @ `[this+0x180]` |
+| `+0x61`..`+0x64` | `0x00AF6FE0` | Nested screen objects (`0x00AF6F20`, `0x00C585D0`, `0x0085C730`) |
+| `+0x99` | — | Byte; gates `+0x164` return path |
+| `+0xB0` | ctor | Circular list head (pane registry) |
+| `+0x144` | ctor | Byte `1` — enable flag |
+
+## Call graph (open hero screen)
+
+1. Adv-map / town code → **`0x00432D30`** (main open) or **`0x007E1E40`** (debug/arena path).
+2. **`0x00AF7520`** factory builds `CHeroScreen2`.
+3. Primary vtable **`+0x04`** binds hero; **`+0x2C`** initializes; **`+0x10C`/`+0x114`** set merged/split layout.
+4. Parent shell (`0x007A9E60` embeds screen @ `[parent+0x14]`) calls **`+0x80`** for tab index.
+5. Shell refresh **`0x006CA4E0`** resolves panes via MI **`+0x94`**, then **`0x006CA280`** builds `"Skills"` / `"Biography"` / `"Inventory"` layout (DLL patch region).
+
+## Patch cross-refs
+
+- `src/patches/HeroScreenUI.cpp` — merges Skills+Biography panes @ `0x006CA3F4` (inside `0x006CA280`)
+- Parent embed: `FUN_007A9E60` stores factory result @ `[parent+0x14]`, tab calls @ `[screen]+0x80`
+
+## Do not confuse
+
+| Vtable | Class | Purpose |
+|---|---|---|
+| **`0x00E79D3C`** | **`NUI::CHeroScreen2`** | Hero **screen UI** widget |
+| `0x00E7E484` | `NWorld::CHero` / `IHero` | AdvMap **hero stats**, inventory @ `+0x74` |
+| `0x00E8499C` | `NWorld::CCombatHero` | **Combat** hero unit interface |

@@ -118,6 +118,7 @@ void init_patches(pugi::xml_document& doc) {
     RangersArmor_init(doc);                // OK
     RingOfDevastation_init(doc);           // OK
     PlumedBoots_init(doc);                 // OK
+    Dragonsbane_init(doc);                 // OK
 
     LightningStun_init(doc);               // OK
     FireBurn_init(doc);                    // OK

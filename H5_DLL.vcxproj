@@ -199,6 +199,7 @@
     <ClCompile Include="src\patches\ColdDeath.cpp" />
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
+    <ClCompile Include="src\patches\Dragonsbane.cpp" />
     <ClCompile Include="src\patches\EarthPierce.cpp" />
     <ClCompile Include="src\patches\ElementsVirtuoso.cpp" />
     <ClCompile Include="src\patches\EnergyChannel.cpp" />

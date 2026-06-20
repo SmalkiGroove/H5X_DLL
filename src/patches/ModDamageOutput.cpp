@@ -3,7 +3,6 @@
 // EDIT DAMAGE OUTPUT MODIFIERS FROM ARTIFACTS
 // (132) Butcher Glaive : +15% melee damage
 // (129) Avenger Bow : +10% ranged damage
-// (187) Dragonsbane : -100% effective defense
 // (190) Celestial Justicar Armor : -25% melee damage
 // (122) Sentinel's Shield : -10% ranged damage
 // (133) Celestial Justicar Shield : -50% ranged damage
@@ -13,7 +12,6 @@
 
 void MeleeDamageInputFork();
 void RangedDamageInputFork();
-void DefenseMitigationFork();
 void MeleeDamageOutputFork();
 void RangedDamageOutputFork();
 void AllDamageOutputFork();
@@ -22,8 +20,6 @@ int MeleeDamageInput_fork = 0x00A58E74;
 int MeleeDamageInput_return = 0x00A58E79;
 int RangedDamageInput_fork = 0x00A58EBD;
 int RangedDamageInput_return = 0x00A58EC3;
-int DefenseMitigation_fork = 0x00A5A925;
-int DefenseMitigation_return = 0x00A5A92E;
 int MeleeDamageOutput_fork = 0x00A5AC59;
 int MeleeDamageOutput_return = 0x00A5AC5F;
 int RangedDamageOutput_fork = 0x00A5ACF9;
@@ -34,7 +30,6 @@ int AllDamageOutput_return = 0x00A5AD75;
 void DamageOutput_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, MeleeDamageInput_fork, 5, MeleeDamageInputFork, 0, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, RangedDamageInput_fork, 6, RangedDamageInputFork, 0, 0, 0, 0 });
-    assembly_patches.push_back({ PATCH_HOOK, DefenseMitigation_fork, 9, DefenseMitigationFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, MeleeDamageOutput_fork, 6, MeleeDamageOutputFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, RangedDamageOutput_fork, 6, RangedDamageOutputFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, AllDamageOutput_fork, 7, AllDamageOutputFork, 0, 0, 0 });
@@ -87,38 +82,6 @@ __declspec(naked) void RangedDamageInputFork() {
         mov eax, dword ptr [ebp + 0x4]
         mov ecx, dword ptr [eax + 0x8]
         jmp[RangedDamageInput_return]
-    }
-}
-
-__declspec(naked) void DefenseMitigationFork() {
-    __asm
-    {
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0xC]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0xC]
-        test eax, eax
-        je DEFENSE_MITIGATION_END
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0xBB
-        call[count_equipped_artifact]
-        test eax, eax
-        je DEFENSE_MITIGATION_END
-        mov dword ptr ss: [esp + 0x4], 0x0
-
-        DEFENSE_MITIGATION_END:
-        mov eax, dword ptr [ebx]
-        mov ecx, ebx
-        push 0x8A
-        jmp[DefenseMitigation_return]
     }
 }
 
