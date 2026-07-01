@@ -96,11 +96,20 @@
     <ClInclude Include="src\types\Skills.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
-    <ClInclude Include="src\structs\Skill.h">
-      <Filter>Header Files\Structs</Filter>
-    </ClInclude>
     <ClInclude Include="src\patches\ElementsVirtuoso.h">
       <Filter>Header Files\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="src\structs\CombatUnit.h">
+      <Filter>Header Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\structs\Creature.h">
+      <Filter>Header Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\types\Skill.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\types\Abilities.h">
+      <Filter>Header Files\Types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -502,6 +511,12 @@
     </ClCompile>
     <ClCompile Include="src\patches\Dragonsbane.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\Perk44EarthPenalty.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\structs\Spell.h">
+      <Filter>Header Files\Structs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

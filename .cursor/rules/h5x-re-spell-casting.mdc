@@ -20,8 +20,8 @@ Main spell dispatch: buff/debuff branch vs spell-id jump table. Entry copies con
 | `0x004E6B60` | `func_ApplySpellDamage` | General damage applicator |
 | `0x004E6A10` | `func_ApplySpellDamageWithStun` | Spell id `0x3` |
 | `0x00A5C1C0` | `func_CheckLightningBoltMiss` | Spell id `0x2` |
-| `0x0085F330` | `func_CastAreaSpell` | AoE `0xA`, `0x15`, `0x23` |
-| `0x0085EAA0` | `func_CastLineSpell` | Line spells `0x5/6/8/ED/11D` |
+| `0x0085F330` | `func_CastGlobalSpell` | Global AoE — all creatures (`0xA`, `0x15`, `0x23`, …) |
+| `0x0085EAA0` | `func_CastAreaSpell` | Tile-area spells (`0x8`, `0xED` cross, `0x11D`, `0x5/6`, …) |
 | `0x0085D260` | `func_CastChainLightning` | Spell id `0x26` |
 | `0x00860BE0` | `func_CastMeteorShower` | Spell id `0x28` |
 | `0x00976B90` | `func_PrepareSpellDamageParams` | Empowerment + week prep |

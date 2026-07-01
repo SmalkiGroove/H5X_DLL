@@ -200,6 +200,7 @@
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\Dragonsbane.cpp" />
+    <ClCompile Include="src\patches\Perk44EarthPenalty.cpp" />
     <ClCompile Include="src\patches\EarthPierce.cpp" />
     <ClCompile Include="src\patches\ElementsVirtuoso.cpp" />
     <ClCompile Include="src\patches\EnergyChannel.cpp" />
@@ -337,7 +338,11 @@
     <ClCompile Include="src/patches/WeakeningStrike.cpp" />
     <ClInclude Include="src\patches\ElementsVirtuoso.h" />
     <ClInclude Include="src\pugixml.hpp" />
-    <ClInclude Include="src\structs\Skill.h" />
+    <ClInclude Include="src\structs\CombatUnit.h" />
+    <ClInclude Include="src\structs\Creature.h" />
+    <ClInclude Include="src\structs\Spell.h" />
+    <ClInclude Include="src\types\Abilities.h" />
+    <ClInclude Include="src\types\Skill.h" />
     <ClInclude Include="src\types\Skills.h" />
   </ItemGroup>
   <ItemGroup>

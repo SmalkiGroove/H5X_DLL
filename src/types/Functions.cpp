@@ -21,6 +21,7 @@ ThiscallInt_IntPtr get_spell_element = (ThiscallInt_IntPtr)0x00A342C0;
 ThiscallInt_IntPtr get_spell_school = (ThiscallInt_IntPtr)0x00A34350;
 ThiscallInt_IntPtr is_spell_empowered = (ThiscallInt_IntPtr)0x00A34100;
 ThiscallInt_IntPtr get_unit_spellproof = (ThiscallInt_IntPtr)0x0097D2A0;
+FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int apply_spell_damage = (FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)0x004E6B60;
 
 ThiscallIntPtr_Int get_creature_data = (ThiscallIntPtr_Int)0x0089FBF0;
 FastcallByte_IntPtr func_GetCreatureFlying = (FastcallByte_IntPtr)0x004BA950;

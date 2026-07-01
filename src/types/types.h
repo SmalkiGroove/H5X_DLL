@@ -26,7 +26,9 @@ typedef int(__thiscall* ThiscallInt_IntPtr_IntPtr)(int*, int*);
 typedef int*(__thiscall* ThiscallIntPtr_IntPtr_IntPtr)(int*, int*);
 typedef void(__thiscall* ThiscallVoid_IntPtr_IntPtr)(int*, int*);
 typedef void(__thiscall* ThiscallVoid_IntPtr_Int)(int*, int);
+typedef void(__thiscall* ThiscallVoid_IntPtr_Int_Float)(int*, int, float);
 typedef char(__fastcall* FastcallByte_IntPtr)(int*);
+typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)(int*, int*, int, int, int, int);
 
 // CombatUnit vtable slot types
 using GetStat = ThiscallInt_IntPtr;

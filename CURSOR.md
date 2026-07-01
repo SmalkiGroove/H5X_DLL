@@ -103,3 +103,7 @@ Reverse-engineered definitions:
 - All balance values and target addresses are **hardcoded in source** — no runtime config is loaded.
 - The `pugi::xml_document& doc` parameter in every `*_init` is wired for future XML config but is currently passed as an empty document.
 - The `addresses.txt` file is the primary reference for game RVAs (artifacts, skills, hero specs, town buildings, unit stats, hero struct offsets).
+
+## Agent Workflow
+
+After each modification in a source file that results from a prompt, the project must be recompiled. If the compilation fails, then fix the problems until the build is successful.

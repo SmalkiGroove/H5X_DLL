@@ -162,6 +162,7 @@ void RangersArmor_init(pugi::xml_document& doc);
 void RingOfDevastation_init(pugi::xml_document& doc);
 void PlumedBoots_init(pugi::xml_document& doc);
 void Dragonsbane_init(pugi::xml_document& doc);
+void Perk44EarthPenalty_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void FireBurn_init(pugi::xml_document& doc);

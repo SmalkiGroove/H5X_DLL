@@ -2,12 +2,12 @@
 
 // (187) Dragonsbane : ignore defender SCreature base defense (keep hero/buff bonuses)
 
-void DefenseMitigationFork();
+void DragonsbaneFork();
 
-int DefenseMitigation_fork = 0x00A5A925;
-int DefenseMitigation_return = 0x00A5A92E;
+int Dragonsbane_fork = 0x00A5A925;
+int Dragonsbane_return = 0x00A5A92E;
 
-// defender_outer = combat unit outer (vtable at [outer+0]), same as ebp in DefenseMitigationFork.
+// defender_outer = combat unit outer (vtable at [outer+0]), same as ebp in DragonsbaneFork.
 // func_GetUnitDefense core (0x008A22F0) is called with ECX = outer - 0x148 (0x008A32DB).
 static constexpr int kCombatUnitOuterToDefenseCore = 0x148;
 
@@ -41,10 +41,10 @@ static int __cdecl apply_dragonsbane_defense(int defender_outer, int total_defen
 }
 
 void Dragonsbane_init(pugi::xml_document& doc) {
-    assembly_patches.push_back({ PATCH_HOOK, DefenseMitigation_fork, 9, DefenseMitigationFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, Dragonsbane_fork, 9, DragonsbaneFork, 0, 0, 0 });
 }
 
-__declspec(naked) void DefenseMitigationFork() {
+__declspec(naked) void DragonsbaneFork() {
     __asm
     {
         mov edx, dword ptr [ebx]
@@ -54,7 +54,7 @@ __declspec(naked) void DefenseMitigationFork() {
         mov ecx, eax
         call dword ptr [edx + 0xC]
         test eax, eax
-        je DEFENSE_MITIGATION_END
+        je DRAGONSBANE_END
         mov edx, dword ptr [eax]
         mov ecx, eax
         call dword ptr [edx]
@@ -65,7 +65,7 @@ __declspec(naked) void DefenseMitigationFork() {
         push ARTIFACT_DRAGONSBANE
         call[count_equipped_artifact]
         test eax, eax
-        je DEFENSE_MITIGATION_END
+        je DRAGONSBANE_END
         mov eax, dword ptr ss: [esp + 0x4]
         push eax
         push ebp
@@ -73,10 +73,10 @@ __declspec(naked) void DefenseMitigationFork() {
         add esp, 0x8
         mov dword ptr ss: [esp + 0x4], eax
 
-        DEFENSE_MITIGATION_END:
+        DRAGONSBANE_END:
         mov eax, dword ptr [ebx]
         mov ecx, ebx
         push 0x8A
-        jmp[DefenseMitigation_return]
+        jmp[Dragonsbane_return]
     }
 }

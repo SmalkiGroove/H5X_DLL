@@ -31,6 +31,7 @@ extern ThiscallInt_IntPtr get_spell_element;
 extern ThiscallInt_IntPtr get_spell_school;
 extern ThiscallInt_IntPtr is_spell_empowered;
 extern ThiscallInt_IntPtr get_unit_spellproof;
+extern FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int apply_spell_damage;
 
 // --- Creatures / combat ---
 

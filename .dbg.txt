@@ -1,3 +1,7 @@
-E4FE9C + 58 => CE6790 => X + 48
+E4FE9C + 4C => 008A8390
 
-19.CF.EC.CC => ah = EC = 11101100
+args:
+ecx = stack ptr
+[esp+8] = percent hp reduction between 0 and 1
+[esp+4] = ebp ?
+[esp+0] = return address
