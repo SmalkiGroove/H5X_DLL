@@ -200,7 +200,7 @@
     <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\Dragonsbane.cpp" />
-    <ClCompile Include="src\patches\Perk44EarthPenalty.cpp" />
+    <ClCompile Include="src\patches\Unsettle.cpp" />
     <ClCompile Include="src\patches\EarthPierce.cpp" />
     <ClCompile Include="src\patches\ElementsVirtuoso.cpp" />
     <ClCompile Include="src\patches\EnergyChannel.cpp" />

@@ -512,7 +512,7 @@
     <ClCompile Include="src\patches\Dragonsbane.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
-    <ClCompile Include="src\patches\Perk44EarthPenalty.cpp">
+    <ClCompile Include="src\patches\Unsettle.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
     <ClCompile Include="src\structs\Spell.h">

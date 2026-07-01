@@ -4,25 +4,21 @@
 #include "structs/Spell.h"
 
 // PERK_UNSETTLE: earth damage spells apply a 10% max-HP penalty per damaged stack
-// via side-stack vtable +0x38 (func_CombatSideStack_ApplyPercentMaxHpDelta @ 0x00887B10).
-// Single-target path: func_CastSpell direct damage @ 0x0097DF67.
-// Tile-area earth spells (0x8, 0xED, 0x11D) use func_CastAreaSpell @ 0x0085EAA0;
-// hook per-target ApplySpellDamage @ 0x0085ECE2.
 
-void Perk44EarthPenaltyFork();
-void Perk44EarthPenaltyAreaFork();
+void UnsettleTargetedFork();
+void UnsettleAreaFork();
 
-int Perk44EarthPenalty_fork = 0x0097DF67;
-int Perk44EarthPenalty_return = 0x0097DF6C;
-int Perk44EarthPenalty_area_fork = 0x0085ECE2;
-int Perk44EarthPenalty_area_return = 0x0085ECE7;
+int UnsettleTargeted_fork = 0x0097DF67;
+int UnsettleTargeted_return = 0x0097DF6C;
+int UnsettleArea_fork = 0x0085ECE2;
+int UnsettleArea_return = 0x0085ECE7;
 
 static bool __cdecl ShouldApplyUnsettle(int spell_id, int caster_outer);
 static void __cdecl DoApplyUnsettle(int target, int timeline);
 
-void Perk44EarthPenalty_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, Perk44EarthPenalty_fork, 5, Perk44EarthPenaltyFork, 0, 0, 0 });
-	assembly_patches.push_back({ PATCH_HOOK, Perk44EarthPenalty_area_fork, 5, Perk44EarthPenaltyAreaFork, 0, 0, 0 });
+void Unsettle_init(pugi::xml_document& doc) {
+	assembly_patches.push_back({ PATCH_HOOK, UnsettleTargeted_fork, 5, UnsettleTargetedFork, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_HOOK, UnsettleArea_fork, 5, UnsettleAreaFork, 0, 0, 0 });
 }
 
 static bool __cdecl ShouldApplyUnsettle(int spell_id, int caster_outer) {
@@ -52,7 +48,7 @@ static void __cdecl DoApplyUnsettle(int target_outer, int timeline) {
 	((ThiscallVoid_IntPtr_Int_Float)side_vt[0x4C / sizeof(void*)])(side_ptr, timeline, constf_0_1);
 }
 
-__declspec(naked) void Perk44EarthPenaltyFork() {
+__declspec(naked) void UnsettleTargetedFork() {
 	__asm {
 		push ebx
 		push esi
@@ -60,18 +56,18 @@ __declspec(naked) void Perk44EarthPenaltyFork() {
 		push eax
 
 		push esi
-		push dword ptr [ebx + 0x4]
+		push dword ptr [esp + 0x1C]
 		call ShouldApplyUnsettle
 		add esp, 8
 		test al, al
-		je PERK44_SKIP
+		je UNSETTLE_TARGET_SKIP
 
 		push ebp
 		push edi
 		call DoApplyUnsettle
 		add esp, 8
 
-		PERK44_SKIP:
+		UNSETTLE_TARGET_SKIP:
 		pop eax
 		pop edi
 		pop esi
@@ -80,11 +76,11 @@ __declspec(naked) void Perk44EarthPenaltyFork() {
 		mov edx, edi
 		mov ecx, esi
 		call apply_spell_damage
-		jmp[Perk44EarthPenalty_return]
+		jmp[UnsettleTargeted_return]
 	}
 }
 
-__declspec(naked) void Perk44EarthPenaltyAreaFork() {
+__declspec(naked) void UnsettleAreaFork() {
 	__asm {
 		push ebx
 		push esi
@@ -96,14 +92,14 @@ __declspec(naked) void Perk44EarthPenaltyAreaFork() {
 		call ShouldApplyUnsettle
 		add esp, 8
 		test al, al
-		je PERK44_AREA_SKIP
+		je UNSETTLE_AREA_SKIP
 
-		push dword ptr [esp + 0x1C]
+		push ebx
 		push ebp
 		call DoApplyUnsettle
 		add esp, 8
 
-		PERK44_AREA_SKIP:
+		UNSETTLE_AREA_SKIP:
 		pop eax
 		pop edi
 		pop esi
@@ -112,6 +108,6 @@ __declspec(naked) void Perk44EarthPenaltyAreaFork() {
 		mov edx, ebp
 		mov ecx, esi
 		call apply_spell_damage
-		jmp[Perk44EarthPenalty_area_return]
+		jmp[UnsettleArea_return]
 	}
 }
