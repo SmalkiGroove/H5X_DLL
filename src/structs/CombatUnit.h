@@ -129,7 +129,7 @@ struct CombatUnit_vtable {
 	GetStat get_defense; // 0x19C (412) - hero 0x00BBFE60 func_GetHeroDefenseCombat; creature 0x008A32B0 func_GetUnitDefense
 	int* get_field_90; // 0x1A0 (416) - hero 0x00BBF5A0 func_CombatHero_ReturnZero; creature 0x008A1010 func_CombatCreature_GetField90
 	int* get_combat_bonus; // 0x1A4 (420) - hero 0x00AA2E60 func_CombatHero_GetCombatBonus; creature 0x008A1590 func_CombatCreature_GetCombatBonus
-	int* get_creature_tier_flag; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZero; creature 0x008A0F30 func_CombatCreature_GetTierFlag
+	GetStat get_creature_tier_flag; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZero; creature 0x008A0F30 func_CombatCreature_GetTierFlag
 	GetStat get_luck; // 0x1AC (428) - 0x00A6BD10 [shared] func_CombatUnit_GetLuck
 	GetStat get_morale; // 0x1B0 (432) - 0x00A6BD50 [shared] func_CombatUnit_GetMorale
 	GetStat get_luck_raw; // 0x1B4 (436) - hero 0x00BBFF00 func_GetCreatureLuckDebuffContext; creature 0x00A6ABF0 func_GetUnitLuck

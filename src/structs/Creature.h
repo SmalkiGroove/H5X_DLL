@@ -180,6 +180,9 @@ struct ICombatCreature : ICombatUnit {
 	int* creature_ref() {
 		return instance->get_unit_ref((int*)this);
 	}
+	int hit_points() {
+		return instance->get_creature_tier_flag((int*)this);
+	}
 	int mana_points() {
 		return instance->get_mana((int*)this);
 	}

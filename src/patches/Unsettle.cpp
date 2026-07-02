@@ -3,7 +3,7 @@
 #include "structs/Creature.h"
 #include "structs/Spell.h"
 
-// PERK_UNSETTLE: earth damage spells apply a 10% max-HP penalty per damaged stack
+// PERK_UNSETTLE: earth damage spells apply a max-HP reduction of 100/max_hp per damaged stack
 
 void UnsettleTargetedFork();
 void UnsettleAreaFork();
@@ -38,14 +38,29 @@ static bool __cdecl ShouldApplyUnsettle(int spell_id, int caster_outer) {
 	return element == SPELL_ELEMENT_EARTH;
 }
 
+static float unsettle_reduction_percent(int target_outer) {
+	if (!target_outer) return 0.f;
+
+	ICombatCreature* unit = (ICombatCreature*)target_outer;
+	if (!unit->instance) return 0.f;
+
+	int hp = unit->hit_points();
+	if (hp <= 1) return 0.f;
+
+	return 1.f / (float)hp;
+}
+
 static void __cdecl DoApplyUnsettle(int target_outer, int timeline) {
 	CombatUnit_vtable* unit_vt = *(CombatUnit_vtable**)target_outer;
 	int* side_ptr = ((GetUnitRef)unit_vt->get_side_ptr_a)((int*)target_outer);
 	if (!side_ptr)
 		return;
 
-	void** side_vt = *(void***)side_ptr; // should be 0x00E4FE9C
-	((ThiscallVoid_IntPtr_Int_Float)side_vt[0x4C / sizeof(void*)])(side_ptr, timeline, constf_0_1);
+	void** side_vt = *(void***)side_ptr;
+	float reduction = unsettle_reduction_percent(target_outer);
+	if (reduction > 0.f) {
+		((ThiscallVoid_IntPtr_Int_Float)side_vt[0x4C / sizeof(void*)])(side_ptr, timeline, reduction);
+	}
 }
 
 __declspec(naked) void UnsettleTargetedFork() {
