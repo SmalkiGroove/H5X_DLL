@@ -515,6 +515,9 @@
     <ClCompile Include="src\patches\Unsettle.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\ShockingBolts.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
     <ClCompile Include="src\structs\Spell.h">
       <Filter>Header Files\Structs</Filter>
     </ClCompile>

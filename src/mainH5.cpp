@@ -120,6 +120,7 @@ void init_patches(pugi::xml_document& doc) {
     PlumedBoots_init(doc);                 // OK
     Dragonsbane_init(doc);                 // OK
     Unsettle_init(doc);                    // OK
+    ShockingBolts_init(doc);               // OK
 
     LightningStun_init(doc);               // OK
     FireBurn_init(doc);                    // OK
