@@ -1,0 +1,140 @@
+---
+description: Combat retaliation flag (+0xC8), prediction, consume, reset, and ability gates
+alwaysApply: true
+---
+
+# Combat Retaliation — can-retaliate flag
+
+Creatures normally retaliate **once per turn** (until refreshed). The engine tracks this with a **dword at outer combat unit `+0xC8`** (same field as `param_1[0x32]` when `param_1` is the outer unit pointer).
+
+| Value | `get_state_flag_7c()` (`+0x5C`) | Meaning |
+|---|---|---|
+| `0` | returns `0` | **Can** retaliate |
+| non-zero (`1`) | returns non-zero | Retaliation **consumed** — cannot retaliate until reset |
+
+Heroes always report “can retaliate” via stub `func_CombatHero_ReturnFalse` @ `0x00BBF550` (slot always `0`).
+
+## Vtable read — `get_state_flag_7c` (`CombatUnit` slot `+0x5C`)
+
+Documented in `src/structs/CombatUnit.h`. Creature impl:
+
+| Slot | Impl | Meaning |
+|---|---|---|
+| `+0x5C` | `0x008A0F20` | **get_state_flag_7c** — `func_CombatCreature_GetStateFlag7C` |
+
+```c
+// func_CombatCreature_GetStateFlag7C @ 0x008A0F20
+return *(byte*)(ICombatCreature* this - 0x7C);  // == outer unit +0xC8
+```
+
+**Read-only query** through the vtable. Does **not** consume the flag.
+
+Do not confuse with **outer unit `+0x7C`**: that offset holds a **hero/advmap pointer** (see `ModAtbReset.cpp`), not this flag.
+
+## Attack prediction — `FUN_00a5fee0` @ `0x00A5FEE0`
+
+Called from **`FUN_00a63020` @ `0x00A63020`** (attack damage prediction; sets `"retaliate"` / `"COMBAT_WILL_RETALIATE"` / `"COMBAT_PREDICTION_YES|NO"`).
+
+First gate on the **defender**:
+
+```c
+if (defender == NULL || defender->vtable[+0x5C]() != 0)
+    return "COMBAT_NO_RETALIATE";  // already consumed
+```
+
+Other ability-related prediction strings from the same function:
+
+| Ability | ID | Role in `FUN_00a5fee0` |
+|---|---|---|
+| **No enemy retaliation** | `5` (`ABILITY_NO_ENEMY_RETALIATION`) | Attacker `has_ability(5)` → `"COMBAT_NO_ENEMY_RETALIATE"` |
+| **Ranged retaliate** | `34` (`0x22`, `ABILITY_RANGED_RETALIATE`) | Ranged attack && !defender `has_ability(0x22)` → `"COMBAT_NO_SHOOTER_RETALIATE"` |
+| **Unlimited retaliation** | `6` | **Not checked** in this function |
+
+Related prediction strings (same function): `"COMBAT_NO_RETALIATE_COVARDICE"`, `"COMBAT_NO_RETALIATE_TO_FAST_ATTACKER"`, `"COMBAT_NO_BLIND_RETALIATE"`, `"COMBAT_NO_HYPNOTIZE_RETALIATE"`, etc.
+
+## Retaliation execution (reads flag; does not consume it)
+
+```
+func_CreatureAttackEffects @ 0x00A65260
+  └─ FUN_00a64e90 @ 0x00A64E90
+       ├─ FUN_00a5fee0(...)              // prediction gate (reads defender +0x5C)
+       └─ FUN_00a646b0 @ 0x00A646B0     // retaliation strike (defender → attacker)
+            ├─ FUN_00a62890 @ 0x00A62890
+            ├─ FUN_00a673c0 @ 0x00A673C0  // damage (reads +0x5C; no +0xC8 write)
+            ├─ FUN_00a629b0 @ 0x00A629B0
+            └─ FUN_00a64120 @ 0x00A64120  // skips bonus hooks if defender +0x5C set
+```
+
+`func_CombatAttackWithRedirects` @ `0x00A65D50` eventually enters `func_CreatureAttackEffects`.
+
+`FUN_00a64120` bails early when `defender->vtable[+0x5C]()` is set — consistent with “already retaliated this turn”.
+
+## Consume — set `+0xC8` to `1` (disable further retaliations)
+
+**Not** written inside `FUN_00a646b0`. Consumption uses the engine **lazy property-getter** pattern: first read through the property binding sets the field.
+
+### Primary consumer — `FUN_00bdfcf0` @ `0x00BDFCF0`
+
+```c
+// param_1 = outer combat unit*
+if (*(int*)(param_1 + 0xC8) == 0) {
+    *(int*)(param_1 + 0xC8) = 1;       // CONSUME
+    FUN_00b0fa80();
+    FUN_00bdfa50(param_1);             // property-tree init / notifications
+    // ... FUN_00b0fa90(4) callbacks ...
+    *(int*)(param_1 + 0xC8) = FUN_00b0fa90(4);
+    if (*(int*)(param_1 + 0xC8) == 0)
+        *(int*)(param_1 + 0xC8) = 1;   // force consumed
+}
+return *(int*)(param_1 + 0xC8);
+```
+
+Duplicate thunks (same logic; Ghidra may not define them as named functions):
+
+| Address | Notes |
+|---|---|
+| `~0x00AB0DB0` | Property setter entry; descriptor @ `0x00E72548` |
+| `~0x00AB0F30` | Variant @ `0x00E725A0` |
+| `~0x00AB11F0` | Variant @ `0x00E725F8` |
+
+Registered via function pointers in the property descriptor table (`0x00E7330C` / vtable `0x00E86F10`; getter ptr @ `0x00E86FA4`). **No direct `E8` callers** — invoked through property dispatch at runtime.
+
+Helper: **`FUN_00bdfa50` @ `0x00BDFA50`** (property-tree notifications on consume).
+
+### Spawn default
+
+**`FUN_00a83860` @ `0x00A83860`**: `*(byte*)(param_1 + 0xC8) = 1` on unit ctor — starts as “cannot retaliate” until combat turn refresh clears it.
+
+## Reset — set `+0xC8` to `0` (can retaliate again)
+
+| Function | Address | Action |
+|---|---|---|
+| **`FUN_00beca60`** | `0x00BECA60` | `param_1[0x32] = 0` on turn/round refresh |
+| **`FUN_00bec920`** | `0x00BEC920` | copy ctor path also clears |
+| Property vtable | `0x00E86F10` / `0x00E86F3C` | virtual turn-reset family |
+
+**`func_CombatCreature_OnTimelineRefresh` @ `0x008A6210`**: when `+0x5C` is set, clears **side-tile** flags via `FUN_008baa90` — does **not** reset unit `+0xC8`.
+
+## Ability 6 (Unlimited Retaliation)
+
+- **`FUN_00bdfcf0`** and **`FUN_00a5fee0`** do **not** check `has_ability(6)`.
+- Native unlimited retaliation likely avoids calling the consume property getter upstream, or is extended via perks (`ModAbilities.cpp` maps perk `0xDA` → ability `6`).
+- Do not assume the consume setter skips ability 6 internally.
+
+## Patch cross-refs
+
+| Goal | Target |
+|---|---|
+| Prediction / UI “will retaliate” | `FUN_00a5fee0` @ `0x00A5FEE0` |
+| Hook consume after first retaliate | `FUN_00bdfcf0` @ `0x00BDFCF0` or `mov dword [reg+0xC8], 1` in `~0xAB0DB0` thunks |
+| Turn-start refresh (allow retaliate) | `FUN_00beca60` @ `0x00BECA60` |
+| Never consume (Unlimited Retaliations mod) | Skip consume setter or NOP `+0xC8` writes; or clear `+0xC8` after each retaliate |
+| Ranged retaliation strike perk fix | `RetaliationStrikeFix.cpp` — NOP @ `0x00A6556B` (leap/shooter range check in `func_CreatureAttackEffects`) |
+
+## Related rules & sources
+
+- `.cursor/rules/h5x-re-combat-unit.mdc` — `get_state_flag_7c` @ slot `+0x5C`
+- `.cursor/rules/h5x-re-combat-creature.mdc` — `has_ability` @ `+0x28C`
+- `src/types/Abilities.h` — `ABILITY_NO_ENEMY_RETALIATION` (5), `ABILITY_UNLIMITED_RETALIATION` (6), `ABILITY_RANGED_RETALIATE` (34)
+- `src/patches/ModAbilities.cpp` — perk → ability mappings for retaliations
+- `src/patches/RetaliationStrikeFix.cpp` — ranged retaliation strike patch
