@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "structs/CombatUnit.h"
 #include "structs/Creature.h"
-#include "structs/Spell.h"
-#include "types/Abilities.h"
 
 // PERK_SHOCKING_BOLTS (Shocking Bolts): lightning damage spells consume the target's retaliation (+0xC8).
 
@@ -26,11 +24,7 @@ static void __cdecl TryShockingBolts(int caster_outer, int target_outer) {
 		return;
 
 	CombatUnit_vtable* unit_vt = *(CombatUnit_vtable**)target_outer;
-	if (((ThiscallInt_IntPtr)unit_vt->get_state_flag_7c)((int*)target_outer))
-		return;
-
-	ICombatCreature* unit = (ICombatCreature*)target_outer;
-	if (unit->has_ability(ABILITY_UNLIMITED_RETALIATION))
+	if (unit_vt->get_state_flag_7c((int*)target_outer))
 		return;
 
 	*(int*)(target_outer + 0xC8) = 1;
@@ -39,27 +33,23 @@ static void __cdecl TryShockingBolts(int caster_outer, int target_outer) {
 __declspec(naked) void ShockingBoltsFork() {
 	__asm {
 		push ebx
-		push esi
+		push ebp
 		push edi
-		push eax
-
 		push esi
-		push dword ptr [esp + 0x1C]
-		call ShouldApplyShockingBolts
+
+		push ebp
+		push edi
+		call TryShockingBolts
 		add esp, 8
-		test al, al
-		je SHOCKING_TARGET_SKIP
 
-		push edi
-		call ConsumeTargetRetaliation
-		add esp, 4
-
-		SHOCKING_TARGET_SKIP:
-		pop eax
-		pop edi
 		pop esi
+		pop edi
+		pop ebp
 		pop ebx
-		mov ebp, eax
-		jmp[ShockingBoltsTargeted_return]
+
+		push esi
+		mov edx, ebp
+		mov ecx, edi
+		jmp[ShockingBolts_return]
 	}
 }

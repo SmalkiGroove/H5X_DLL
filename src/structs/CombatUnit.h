@@ -46,7 +46,7 @@ struct CombatUnit_vtable {
 	int* get_creature_grade_byte; // 0x050 (80) - hero 0x00458480 func_ReturnOne; creature 0x008A3320 func_CombatCreature_GetGradeByte
 	int* is_owner_matching; // 0x054 (84) - hero 0x00BBF560 func_CombatHero_ReturnZeroB; creature 0x008A4250 func_CombatCreature_IsOwnerMatching
 	int* get_state_flag_70; // 0x058 (88) - hero 0x00412B40 func_ReturnFalse; creature 0x008AE210 func_CombatCreature_GetStateFlag70
-	int* get_state_flag_7c; // 0x05C (92) - hero 0x00BBF550 func_CombatHero_ReturnFalse; creature 0x008A0F20 func_CombatCreature_GetStateFlag7C
+	GetFlag get_state_flag_7c; // 0x05C (92) - hero 0x00BBF550 func_CombatHero_ReturnFalse; creature 0x008A0F20 func_CombatCreature_GetStateFlag7C
 	int* get_combat_unit_ptr; // 0x060 (96) - 0x008AE230 [shared] func_CombatUnit_GetCombatUnitPtr
 	int* get_combat_unit_ptr_mi; // 0x064 (100) - 0x008AE230 [shared] func_CombatUnit_GetCombatUnitPtr
 	int* build_runtime_data; // 0x068 (104) - hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData

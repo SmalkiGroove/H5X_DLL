@@ -28,10 +28,12 @@ typedef void(__thiscall* ThiscallVoid_IntPtr_IntPtr)(int*, int*);
 typedef void(__thiscall* ThiscallVoid_IntPtr_Int)(int*, int);
 typedef void(__thiscall* ThiscallVoid_IntPtr_Int_Float)(int*, int, float);
 typedef char(__fastcall* FastcallByte_IntPtr)(int*);
+typedef bool(__thiscall* ThiscallBool_IntPtr)(int*);
 typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)(int*, int*, int, int, int, int);
 
 // CombatUnit vtable slot types
 using GetStat = ThiscallInt_IntPtr;
+using GetFlag = ThiscallBool_IntPtr;
 using GetSkillMastery = ThiscallInt_IntPtr_Int;
 using HasHeroSpec = ThiscallInt_IntPtr_Int;
 using GetUnitRef = ThiscallIntPtr_IntPtr;
