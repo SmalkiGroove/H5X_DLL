@@ -25,8 +25,8 @@ static bool __cdecl ShouldApplyUnsettle(int spell_id, int caster_outer) {
 	if (!spell_id || !caster_outer)
 		return false;
 
-	ICombatHero* combatHero = combat_creature_detail::combat_hero_from_outer((int*)caster_outer);
-	if (!combatHero || !combatHero->has_skill(PERK_UNSETTLE))
+	CombatUnit_vtable* caster_vt = *(CombatUnit_vtable**)caster_outer;
+	if (!caster_vt->has_skill((int*)caster_outer, PERK_UNSETTLE))
 		return false;
 
 	int element = 0;
