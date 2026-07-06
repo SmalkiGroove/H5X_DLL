@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "structs/CombatUnit.h"
+#include "structs/Creature.h"
+#include "types/Functions.h"
 
-// PERK_SHOCKING_BOLTS (Shocking Bolts): lightning damage spells consume the target's retaliation (+0xC8).
+// PERK_SHOCKING_BOLTS (Shocking Bolts): lightning damage spells consume the target's retaliation.
 
 void ShockingBoltsFork();
 
@@ -23,10 +25,14 @@ static void __cdecl TryShockingBolts(int caster_outer, int target_outer) {
 		return;
 
 	CombatUnit_vtable* target_vt = *(CombatUnit_vtable**)target_outer;
-	if (target_vt->get_state_flag_7c((int*)target_outer))
+	if (((ThiscallInt_IntPtr)target_vt->get_unit_kind)((int*)target_outer) != 1)
 		return;
 
-	*(int*)(target_outer + 0xC8) = 1;
+	int* counter = (int*)(target_outer - 0x80);
+	if (*counter > 0) {
+		(*counter)--;
+		enqueue_unit_refresh(target_outer - 0x148);
+	}
 }
 
 __declspec(naked) void ShockingBoltsFork() {
