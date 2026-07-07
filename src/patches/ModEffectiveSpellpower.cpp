@@ -8,8 +8,8 @@
 
 void EffectiveSpellpowerFork();
 
-int EffectiveSpellpower_fork = 0x00BC0508;
-int EffectiveSpellpower_return = 0x00BC050E;
+int EffectiveSpellpower_fork = 0x00BC0582;
+int EffectiveSpellpower_return = 0x00BC0588;
 
 void EffectiveSpellpower_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, EffectiveSpellpower_fork, 6, EffectiveSpellpowerFork, 0, 0, 0 });
@@ -18,6 +18,9 @@ void EffectiveSpellpower_init(pugi::xml_document& doc) {
 __declspec(naked) void EffectiveSpellpowerFork() {
     __asm
     {
+        test edi, edi
+        je LABEL_RETURN
+        
         mov ecx, edi
         call[get_spell_element]
         cmp eax, 0x1
@@ -48,6 +51,7 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         mov ecx, ebp
         mov dword ptr ss: [esp + 0x1C], ebx
         call[notify_skill_buff]
+        jmp LABEL_RETURN
         
         LABEL_FROST_POWER:
         mov eax, dword ptr [esi + 0x4]
@@ -66,6 +70,7 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         mov ecx, ebp
         mov dword ptr ss: [esp + 0x1C], ebx
         call[notify_skill_buff]
+        jmp LABEL_RETURN
         
         LABEL_THUNDER_POWER:
         mov eax, dword ptr [esi + 0x4]
@@ -84,6 +89,7 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         mov ecx, ebp
         mov dword ptr ss: [esp + 0x1C], ebx
         call[notify_skill_buff]
+        jmp LABEL_RETURN
         
         LABEL_EARTH_POWER:
         mov eax, dword ptr [esi + 0x4]
@@ -104,8 +110,8 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         call[notify_skill_buff]
         
         LABEL_RETURN:
-        mov eax, dword ptr [esi + 0x4]
-        mov ecx, dword ptr [eax + 0x8]
+        mov ecx, dword ptr [esi + 0x4]
+        mov edx, dword ptr [ecx + 0x8]
         jmp[EffectiveSpellpower_return]
     }
 }
