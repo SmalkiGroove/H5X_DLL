@@ -142,6 +142,9 @@ void ArcaneBrillance_init(pugi::xml_document& doc);
 void ColdDeathFreeze_init(pugi::xml_document& doc);
 void LightningTouch_init(pugi::xml_document& doc);
 void ElementsVirtuoso_init(pugi::xml_document& doc);
+void SecretsOfDestruct_init(pugi::xml_document& doc);
+void Unsettle_init(pugi::xml_document& doc);
+void ShockingBolts_init(pugi::xml_document& doc);
 void BarbarianSkillsLinks_init(pugi::xml_document& doc);
 
 void ArtfsetExpand_init(pugi::xml_document& doc);
@@ -162,8 +165,6 @@ void RangersArmor_init(pugi::xml_document& doc);
 void RingOfDevastation_init(pugi::xml_document& doc);
 void PlumedBoots_init(pugi::xml_document& doc);
 void Dragonsbane_init(pugi::xml_document& doc);
-void Unsettle_init(pugi::xml_document& doc);
-void ShockingBolts_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void FireBurn_init(pugi::xml_document& doc);

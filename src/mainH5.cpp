@@ -99,6 +99,9 @@ void init_patches(pugi::xml_document& doc) {
     ColdDeathFreeze_init(doc);             // OK
     LightningTouch_init(doc);              // OK
     ElementsVirtuoso_init(doc);            // OK
+    SecretsOfDestruct_init(doc);           // OK
+    Unsettle_init(doc);                    // OK
+    ShockingBolts_init(doc);               // OK
     BarbarianSkillsLinks_init(doc);        // OK
 
     ArtfsetExpand_init(doc);               // OK
@@ -119,8 +122,6 @@ void init_patches(pugi::xml_document& doc) {
     RingOfDevastation_init(doc);           // OK
     PlumedBoots_init(doc);                 // OK
     Dragonsbane_init(doc);                 // OK
-    Unsettle_init(doc);                    // OK
-    ShockingBolts_init(doc);               // OK
 
     LightningStun_init(doc);               // OK
     FireBurn_init(doc);                    // OK
