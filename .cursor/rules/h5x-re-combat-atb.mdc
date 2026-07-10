@@ -15,7 +15,7 @@ Both `CCombatHero` and `CCombatCreature` share the same slot offsets on `CombatU
 | `+0x18C` | hero/creature thunks | `0x00A6B690` | **set_atb** (`func_SetUnitATB`) — callee pops arg |
 | `+0x0FC` | hero/creature thunks | `0x00A6A2E0` | **notify_timeline_change** (`func_CombatUnit_NotifyTimelineChange`) — called from SetATB |
 
-- Current ATB float: `[GetATBInfo() + 0x1C]` (used by `ImbueBalistaAtbFix.cpp`, `LuaChangeAtb.cpp`).
+- Current ATB float: `[GetPtr() + 0x1C]` (used by `ImbueBalistaAtbFix.cpp`, `LuaChangeAtb.cpp`).
 - `SetATB` notifies via vtable `+0xFC`; crossing ready threshold (`DAT_00E0A7E4` ≈ 1.0) triggers unit-ready.
 - Thunks handle virtual inheritance per unit type; `CATBInfo+0x1C` is shared.
 
@@ -38,7 +38,7 @@ Does **not** write ATB directly — posts a command:
 Additive ATB without hooking shared execute `0x004E0970`:
 
 1. Same arg parsing + `GetUnitByName`.
-2. Read current: `GetATBInfo` (`+0x188`) → `[info+0x1C]`.
+2. Read current: `GetPtr` (`+0x188`) → `[info+0x1C]`.
 3. Post normal `CSetATBValue` with `current + delta`.
 
 Registration: patch combat Lua table terminator `0x00F33038`/`0x00F3303C` with `"changeATB"` + DLL handler.

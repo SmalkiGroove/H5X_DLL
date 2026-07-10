@@ -10,12 +10,12 @@
 struct Hero_vtable {
 	int* call_0;
 	int* call_4;
-	GetStat get_luck_raw; // 0x08 (8) - 0x00B4CA10, unclamped, base + has_skill(SKILL_LUCK) bonus
-	GetStat get_morale_raw; // 0x0C (12) - 0x00B4CAE0, unclamped, base + has_skill(SKILL_LEADERSHIP) bonus
-	GetStat get_attack; // 0x10 (16) - 0x00B4CC50, total, clamped >= 0
-	GetStat get_defense; // 0x14 (20) - 0x00B4CCC0, total
-	GetStat get_spellpower; // 0x18 (24) - 0x00B4CCF0, total
-	GetStat get_knowledge; // 0x1C (28) - 0x00B4CD80, total, clamped >= 1
+	GetInt get_luck_raw; // 0x08 (8) - 0x00B4CA10, unclamped, base + has_skill(SKILL_LUCK) bonus
+	GetInt get_morale_raw; // 0x0C (12) - 0x00B4CAE0, unclamped, base + has_skill(SKILL_LEADERSHIP) bonus
+	GetInt get_attack; // 0x10 (16) - 0x00B4CC50, total, clamped >= 0
+	GetInt get_defense; // 0x14 (20) - 0x00B4CCC0, total
+	GetInt get_spellpower; // 0x18 (24) - 0x00B4CCF0, total
+	GetInt get_knowledge; // 0x1C (28) - 0x00B4CD80, total, clamped >= 1
 	int* call_32;
 	int* call_36;
 	int* call_40;
@@ -37,8 +37,8 @@ struct Hero_vtable {
 	int* call_104;
 	int* call_108;
 	int* call_112;
-	GetInventory get_inventory; // 0x74 (116)
-	GetInventory get_backpack; // 0x78 (120)
+	GetPtr get_inventory; // 0x74 (116)
+	GetPtr get_backpack; // 0x78 (120)
 	int* call_124;
 	int* call_128;
 	int* call_132;
@@ -83,12 +83,12 @@ struct Hero_vtable {
 	int* call_288;
 	int* call_292;
 	int* call_296;
-	GetStat get_mana_points; // 0x12C (300) - 0x00AF8160, returns [this+0x140]
-	GetMaxMana get_max_mana; // 0x130 (304) - 0x00B4C8F0, arg = knowledge, applies Intelligence bonus
+	GetInt get_mana_points; // 0x12C (300) - 0x00AF8160, returns [this+0x140]
+	CheckValue get_max_mana; // 0x130 (304) - 0x00B4C8F0, arg = knowledge, applies Intelligence bonus
 	int* call_308;
 	int* call_312;
-	GetStat get_luck; // 0x13C (316) - 0x00B4CB40, get_luck_raw clamped to [-5, +5]
-	GetStat get_morale; // 0x140 (320) - 0x00B4CB60, get_morale_raw clamped to [-5, +5]
+	GetInt get_luck; // 0x13C (316) - 0x00B4CB40, get_luck_raw clamped to [-5, +5]
+	GetInt get_morale; // 0x140 (320) - 0x00B4CB60, get_morale_raw clamped to [-5, +5]
 	int* call_324;
 	int* call_328;
 	int* call_332;
@@ -101,15 +101,15 @@ struct Hero_vtable {
 	int* call_360;
 	int* call_364;
 	int* call_368;
-	GetSkillMastery get_skill_mastery; // 0x174 (372) - 0x00B4D150, also used as has_skill
+	CheckValue get_skill_mastery; // 0x174 (372) - 0x00B4D150, also used as has_skill
 	int* call_376;
 	int* call_380;
 	int* call_384;
 	int* call_388;
 	int* call_392;
 	int* is_perk_learnable; // 0x18C (396)
-	HasHeroSpec has_hero_spec; // 0x190 (400) - 0x00B4B5A0, compares arg to [this+0x8C]
-	GetStat get_hero_spec; // 0x194 (404) - 0x00B4B5C0, returns [this+0x8C]
+	CheckValue has_hero_spec; // 0x190 (400) - 0x00B4B5A0, compares arg to [this+0x8C]
+	GetInt get_hero_spec; // 0x194 (404) - 0x00B4B5C0, returns [this+0x8C]
 	int* call_408;
 	int* call_412;
 	int* call_416;
@@ -158,7 +158,7 @@ struct Hero_vtable {
 	int* call_588;
 	GetAdvMapShared get_advmap_shared; // 0x250 (592) - 0x00B531E0 thunk → lazy-load SAdvMapHeroShared @ [this+0xD0]
 	int* call_596;
-	GetStat get_hero_class; // 0x258 (600)
+	GetInt get_hero_class; // 0x258 (600)
 	int* call_604;
 	int* call_608;
 	int* call_612;

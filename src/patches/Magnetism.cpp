@@ -33,7 +33,7 @@ static bool unit_has_ability(int* unit, int abilityId) {
 	if (!unit)
 		return false;
 	auto* vt = *(void***)unit;
-	auto hasAbility = (HasCreatureAbility)vt[0x28C / 4];
+	auto hasAbility = (CheckValue)vt[0x28C / 4];
 	return hasAbility(unit, abilityId) != 0;
 }
 

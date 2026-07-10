@@ -52,7 +52,7 @@ static float unsettle_reduction_percent(int target_outer) {
 
 static void __cdecl DoApplyUnsettle(int target_outer, int timeline) {
 	CombatUnit_vtable* unit_vt = *(CombatUnit_vtable**)target_outer;
-	int* side_ptr = ((GetUnitRef)unit_vt->get_side_ptr_a)((int*)target_outer);
+	int* side_ptr = ((GetPtr)unit_vt->get_side_ptr_a)((int*)target_outer);
 	if (!side_ptr)
 		return;
 

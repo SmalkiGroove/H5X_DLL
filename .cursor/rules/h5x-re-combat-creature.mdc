@@ -41,7 +41,7 @@ Creature type id on the outer unit: `[unit + 0x1C]`.
 
 ATB slots share implementations with heroes (`+0x188` → `[info+0x1C]`, `+0x18C` → `func_SetUnitATB`). See `.cursor/rules/h5x-re-combat-atb.mdc` for Lua/setATB flow.
 
-`+0x290` / `+0x294` are stubs (`0x00A332C0`, always 0) — use hero `HasSkill` / `HasHeroSpec` via owner, not creature vtable.
+`+0x290` / `+0x294` are stubs (`0x00A332C0`, always 0) — use hero `HasSkill` / `CheckValue` via owner, not creature vtable.
 
 ## `ICombatCreature` helpers (C++ patches)
 

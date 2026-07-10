@@ -37,12 +37,15 @@ int __fastcall elementVirtuoso_check(ICombatHero* combatHero) {
     return stacks;
 }
 
-void __fastcall elementVirtuoso_cast(ICombatHero* combatHero, int spellElement) {
+void __fastcall elementVirtuoso_cast(ICombatUnit* caster, int spellElement) {
     if (spellElement != 0) {
-        if (combatHero->has_skill(PERK_ELEMENTS_VIRTUOSO) == 1) {
-            int slot = elementalVirtuosoGetSlot(combatHero);
-            if (slot != -1) {
-                elementalVirtuosoSlots[slot].elem[spellElement] = true;
+        if (caster->unit_kind() == 2) {
+            ICombatHero* combatHero = (ICombatHero*)caster;
+            if (combatHero->has_skill(PERK_ELEMENTS_VIRTUOSO) == 1) {
+                int slot = elementalVirtuosoGetSlot(combatHero);
+                if (slot != -1) {
+                    elementalVirtuosoSlots[slot].elem[spellElement] = true;
+                }
             }
         }
 	}
@@ -84,7 +87,8 @@ __declspec(naked) void ElementsVirtuosoFork2() {
         mov ecx, eax
         call[get_spell_element]
         mov edx, eax
-        mov ecx, esi
+        mov eax, dword ptr ss: [esp + 0x28]
+        mov ecx, dword ptr [eax + 0x14]
         call elementVirtuoso_cast
 
         pop edi

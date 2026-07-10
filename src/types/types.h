@@ -7,6 +7,7 @@
 
 // One typedef per calling convention + argument + return signature.
 
+typedef int(__thiscall* ThisCallInt)();
 typedef int(__thiscall* ThiscallInt_IntPtr_Int)(int*, int);
 typedef int(__thiscall* ThiscallInt_IntPtr)(int*);
 typedef int(__thiscall* ThiscallInt_SkillId)(SKILL_ID);
@@ -32,21 +33,16 @@ typedef bool(__thiscall* ThiscallBool_IntPtr)(int*);
 typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)(int*, int*, int, int, int, int);
 
 // CombatUnit vtable slot types
-using GetStat = ThiscallInt_IntPtr;
+using Const = ThisCallInt;
+using GetInt = ThiscallInt_IntPtr;
 using GetFlag = ThiscallBool_IntPtr;
-using GetSkillMastery = ThiscallInt_IntPtr_Int;
-using HasHeroSpec = ThiscallInt_IntPtr_Int;
-using GetUnitRef = ThiscallIntPtr_IntPtr;
-using GetActiveBuffById = ThiscallInt_IntPtr_Int;
-using HasCreatureAbility = ThiscallInt_IntPtr_Int;
+using CheckValue = ThiscallInt_IntPtr_Int;
+using GetPtr = ThiscallIntPtr_IntPtr;
 using GetStatFloat = ThiscallFloat_IntPtr;
-using GetATBInfo = ThiscallIntPtr_IntPtr;
 using SetATBValue = ThiscallVoid_IntPtr_Float;
 using GetCombatSpellpower = ThiscallInt_IntPtr_IntPtr_Int;
 
 // AdvMap hero vtable slot types
-using GetInventory = ThiscallIntPtr_IntPtr;
-using GetMaxMana = ThiscallInt_IntPtr_Int;
 using GetSpellpowerForSpell = ThiscallInt_IntPtr_IntPtr;
 using GetNameWString = ThiscallIntPtr_IntPtr_IntPtr;
 using GetPortraitTexture = ThiscallInt_IntPtr;

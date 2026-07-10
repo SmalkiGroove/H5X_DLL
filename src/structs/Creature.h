@@ -155,7 +155,7 @@ inline int* call_unit_ref(int* obj) {
 	int** vt = *(int***)obj;
 	if (!vt)
 		return nullptr;
-	return ((GetUnitRef)vt[3])(obj);
+	return ((GetPtr)vt[3])(obj);
 }
 
 inline ICombatHero* combat_hero_from_outer(int* outer) {

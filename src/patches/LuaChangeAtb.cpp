@@ -26,8 +26,8 @@ using CleanupParseFn = void(__fastcall*)(int* parseState);
 static float read_unit_atb(int* unit) {
 	if (!unit) return 0.f;
 	uintptr_t* vtable = *(uintptr_t**)unit;
-	auto getAtbInfo = (int*(__thiscall*)(int*))vtable[0x188 / 4];
-	int* info = getAtbInfo(unit);
+	auto GetPtr = (int*(__thiscall*)(int*))vtable[0x188 / 4];
+	int* info = GetPtr(unit);
 	if (!info) return 0.f;
 	return *(float*)((char*)info + 0x1C);
 }

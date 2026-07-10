@@ -23,17 +23,17 @@ enum {
 };
 
 struct CombatUnit_vtable {
-	int* get_unit_kind; // 0x000 (0) - hero 0x00A83AA0 func_CombatHero_GetUnitKind (ret 2); creature 0x008B1E10 func_CombatCreature_GetUnitKind (ret 1)
+	Const get_unit_kind; // 0x000 (0) - hero 0x00A83AA0 func_CombatHero_GetUnitKind (ret 2); creature 0x008B1E10 func_CombatCreature_GetUnitKind (ret 1)
 	int* scalar_deleting_dtor; // 0x004 (4) - 0x008AEDC0 [shared] func_CombatUnit_ScalarDeletingDtor
 	int* get_owner_ref; // 0x008 (8) - 0x008ACDC0 [shared] func_CombatUnit_GetOwnerRef
-	GetUnitRef get_unit_ref; // 0x00C (12) - 0x008AEAF0 [shared] func_CombatUnit_GetUnitRef
+	GetPtr get_unit_ref; // 0x00C (12) - 0x008AEAF0 [shared] func_CombatUnit_GetUnitRef
 	int* notify_owner; // 0x010 (16) - 0x00A6B0E0 [shared] func_CombatUnit_NotifyOwner
 	int* init_owner_timed_stats; // 0x014 (20) - hero 0x008B1780 func_CombatHero_InitOwnerTimedStats; creature 0x008A0950 func_CombatCreature_ResolveBuffTargetUnit
 	int* get_timed_stats_subobject; // 0x018 (24) - hero 0x00A747A0 func_CombatHero_GetTimedStatsSubobject; creature 0x008A08D0 func_CombatCreature_GetTimedStatsSubobject
 	int* get_owner_army_slot; // 0x01C (28) - hero 0x00BC2A10 func_CombatHero_ReturnOne; creature 0x008A42C0 func_CombatCreature_GetOwnerArmySlot
 	int* get_timeline_field_7c; // 0x020 (32) - 0x00A69F00 [shared] func_CombatUnit_GetTimelineField_7C
 	int* ensure_portrait_loaded; // 0x024 (36) - hero 0x00BBFE20 func_CombatHero_EnsurePortraitLoaded → IHero+0x284; creature 0x008A1160 func_CombatCreature_EnsurePortraitLoaded
-	GetActiveBuffById get_active_buff; // 0x028 (40) - 0x00A6D330 [shared] func_CombatUnit_GetActiveBuff
+	CheckValue get_active_buff; // 0x028 (40) - 0x00A6D330 [shared] func_CombatUnit_GetActiveBuff
 	int* get_buff_stack_state; // 0x02C (44) - 0x00A6D380 [shared] func_CombatUnit_GetBuffStackState
 	int* collect_linked_buff_ids; // 0x030 (48) - 0x00A6EEE0 [shared] func_CombatUnit_CollectLinkedBuffIds
 	int* get_name_wstring; // 0x034 (52) - hero 0x00BBFE30 func_CombatHero_GetNameWString → IHero+0x268; creature 0x008A3240 func_CombatCreature_GetNameWString
@@ -120,20 +120,20 @@ struct CombatUnit_vtable {
 	int* on_control_handoff; // 0x178 (376) - 0x00A6A260 [shared] func_CombatUnit_OnControlHandoff
 	int* compute_next_turn_frame; // 0x17C (380) - 0x00A6E440 [shared] func_CombatUnit_ComputeNextTurnFrame
 	int* reset_atb_to_current; // 0x180 (384) - 0x00A6A210 [shared] func_CombatUnit_ResetATBToCurrent
-	GetATBInfo get_atb_info_dup; // 0x184 (388) - 0x008AEB40 [shared] func_CombatUnit_GetATBInfo
-	GetATBInfo get_atb_info; // 0x188 (392) - 0x008AEB40 [shared] func_CombatUnit_GetATBInfo
+	GetPtr get_atb_info_dup; // 0x184 (388) - 0x008AEB40 [shared] func_CombatUnit_GetATBInfo
+	GetPtr get_atb_info; // 0x188 (392) - 0x008AEB40 [shared] func_CombatUnit_GetATBInfo
 	SetATBValue set_atb; // 0x18C (396) - 0x00A6B690 [shared] func_SetUnitATB
 	int* get_speed_penalty; // 0x190 (400) is_flying — hero 0x00412BD0 func_ReturnTrue; creature 0x008A22D0 → func_GetCreatureFlying @ 0x004BA950 (SCreature.Flying @ +0x60)
 	int* get_anim_debug_name; // 0x194 (404) - 0x00A6DAE0 [shared] func_CombatUnit_GetAnimDebugName
-	GetStat get_attack; // 0x198 (408) - hero 0x00BBFE50 func_GetHeroAttackCombat; creature 0x008A4800 func_GetUnitAttack
-	GetStat get_defense; // 0x19C (412) - hero 0x00BBFE60 func_GetHeroDefenseCombat; creature 0x008A32B0 func_GetUnitDefense
+	GetInt get_attack; // 0x198 (408) - hero 0x00BBFE50 func_GetHeroAttackCombat; creature 0x008A4800 func_GetUnitAttack
+	GetInt get_defense; // 0x19C (412) - hero 0x00BBFE60 func_GetHeroDefenseCombat; creature 0x008A32B0 func_GetUnitDefense
 	int* get_field_90; // 0x1A0 (416) - hero 0x00BBF5A0 func_CombatHero_ReturnZero; creature 0x008A1010 func_CombatCreature_GetField90
 	int* get_combat_bonus; // 0x1A4 (420) - hero 0x00AA2E60 func_CombatHero_GetCombatBonus; creature 0x008A1590 func_CombatCreature_GetCombatBonus
-	GetStat get_creature_tier_flag; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZero; creature 0x008A0F30 func_CombatCreature_GetTierFlag
-	GetStat get_luck; // 0x1AC (428) - 0x00A6BD10 [shared] func_CombatUnit_GetLuck
-	GetStat get_morale; // 0x1B0 (432) - 0x00A6BD50 [shared] func_CombatUnit_GetMorale
-	GetStat get_luck_raw; // 0x1B4 (436) - hero 0x00BBFF00 func_GetCreatureLuckDebuffContext; creature 0x00A6ABF0 func_GetUnitLuck
-	GetStat get_morale_raw; // 0x1B8 (440) - hero 0x00BBFFC0 func_GetCreatureMoraleDebuffContext; creature 0x00A6ACD0 func_GetUnitMorale
+	GetInt get_creature_tier_flag; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZero; creature 0x008A0F30 func_CombatCreature_GetTierFlag
+	GetInt get_luck; // 0x1AC (428) - 0x00A6BD10 [shared] func_CombatUnit_GetLuck
+	GetInt get_morale; // 0x1B0 (432) - 0x00A6BD50 [shared] func_CombatUnit_GetMorale
+	GetInt get_luck_raw; // 0x1B4 (436) - hero 0x00BBFF00 func_GetCreatureLuckDebuffContext; creature 0x00A6ABF0 func_GetUnitLuck
+	GetInt get_morale_raw; // 0x1B8 (440) - hero 0x00BBFFC0 func_GetCreatureMoraleDebuffContext; creature 0x00A6ACD0 func_GetUnitMorale
 	GetStatFloat get_initiative; // 0x1BC (444) - hero 0x00BC1EB0 func_GetHeroInitiative; creature 0x008A4330 func_CombatCreature_GetInitiative
 	int* get_shooter_flag; // 0x1C0 (448) - hero 0x00BC2A10 func_CombatHero_ReturnOne; creature 0x008A0F90 func_CombatCreature_GetShooterFlag
 	int* get_ranged_penalty; // 0x1C4 (452) - hero 0x00C98940 func_CombatUnit_ReturnZero; creature 0x008A2610 func_CombatCreature_GetRangedPenalty
@@ -165,8 +165,8 @@ struct CombatUnit_vtable {
 	int* get_hero_mana_stub_22c; // 0x22C (556) - hero 0x00BBFAC0 func_CombatHero_GetManaStub22C; creature 0x008AE7E0 func_CombatCreature_GetManaStub22C
 	int* get_hero_mana_stub_230; // 0x230 (560) - hero 0x00BBFAE0 func_CombatHero_GetManaStub230; creature 0x00CE6720 func_CombatCreature_GetManaStub230
 	int* get_hero_mana_stub_234; // 0x234 (564) - hero 0x00BBFB80 func_GetHeroCurrentManaCombat; creature 0x008AE820 func_CombatCreature_GetManaStub234
-	GetStat get_mana; // 0x238 (568) - hero 0x00BC0700 func_GetHeroStatMaxMana; creature 0x008A2230 func_CombatCreature_GetManaPoints
-	GetStat get_hero_level; // 0x23C (572) - hero 0x00BBFB90 func_CombatHero_GetLevel; creature 0x008A2280 func_CombatCreature_GetLevel
+	GetInt get_mana; // 0x238 (568) - hero 0x00BC0700 func_GetHeroStatMaxMana; creature 0x008A2230 func_CombatCreature_GetManaPoints
+	GetInt get_hero_level; // 0x23C (572) - hero 0x00BBFB90 func_CombatHero_GetLevel; creature 0x008A2280 func_CombatCreature_GetLevel
 	GetCombatSpellpower get_spell_mastery; // 0x240 (576) - 0x00A6A700 [shared] func_CombatUnit_GetSpellMastery
 	GetCombatSpellpower get_spellpower; // 0x244 (580) - 0x00A6A7E0 [shared] func_CombatUnit_GetSpellpower
 	int* get_spellbook_ptr; // 0x248 (584) - hero 0x00BC1FA0 func_CombatHero_GetSpellbookPtr; creature 0x00A73A50 func_CombatCreature_GetSpellRef
@@ -186,9 +186,9 @@ struct CombatUnit_vtable {
 	int* play_anim_dispatch; // 0x280 (640) - 0x00A69F20 [shared] func_CombatUnit_PlayAnimDispatch
 	int* play_attack_anim_at; // 0x284 (644) - 0x00A70D90 [shared] func_CombatUnit_PlayAttackAnimAt
 	int* play_positional_anim; // 0x288 (648) - 0x00A69F90 [shared] func_CombatUnit_PlayPositionalAnim
-	HasCreatureAbility has_ability; // 0x28C (652) - hero 0x00A332C0 func_CombatUnit_ReturnZero; creature 0x008A34C0 func_CombatCreature_HasAbility
-	GetSkillMastery has_skill; // 0x290 (656) - hero 0x00BBFED0 func_HasHeroSkill; creature 0x00A332C0 func_CombatUnit_ReturnZero
-	HasHeroSpec has_hero_spec; // 0x294 (660) - hero 0x00BBFEF0 func_HasHeroSpec; creature 0x00A332C0 func_CombatUnit_ReturnZero
+	CheckValue has_ability; // 0x28C (652) - hero 0x00A332C0 func_CombatUnit_ReturnZero; creature 0x008A34C0 func_CombatCreature_HasAbility
+	CheckValue has_skill; // 0x290 (656) - hero 0x00BBFED0 func_HasHeroSkill; creature 0x00A332C0 func_CombatUnit_ReturnZero
+	CheckValue has_hero_spec; // 0x294 (660) - hero 0x00BBFEF0 func_HasHeroSpec; creature 0x00A332C0 func_CombatUnit_ReturnZero
 	int* add_spell_link; // 0x298 (664) - 0x00A73DE0 [shared] func_CombatUnit_AddSpellLink
 	int* remove_spell_link_pair; // 0x29C (668) - 0x00A72E00 [shared] func_CombatUnit_RemoveSpellLinkPair
 	int* remove_spell_links_by_subid; // 0x2A0 (672) - 0x00A72F00 [shared] func_CombatUnit_RemoveSpellLinksBySubId
@@ -202,6 +202,9 @@ using CombatCreature_vtable = CombatUnit_vtable;
 struct ICombatUnit {
 	CombatUnit_vtable* instance;
 
+	int unit_kind() {
+		return instance->get_unit_kind();
+	}
 	int* unit_ref() {
 		return instance->get_unit_ref((int*)this);
 	}
