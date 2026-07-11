@@ -23,7 +23,7 @@ enum {
 };
 
 struct CombatUnit_vtable {
-	Const get_unit_kind; // 0x000 (0) - hero 0x00A83AA0 func_CombatHero_GetUnitKind (ret 2); creature 0x008B1E10 func_CombatCreature_GetUnitKind (ret 1)
+	GetInt get_unit_kind; // 0x000 (0) - hero 0x00A83AA0 func_CombatHero_GetUnitKind (ret 2); creature 0x008B1E10 func_CombatCreature_GetUnitKind (ret 1)
 	int* scalar_deleting_dtor; // 0x004 (4) - 0x008AEDC0 [shared] func_CombatUnit_ScalarDeletingDtor
 	int* get_owner_ref; // 0x008 (8) - 0x008ACDC0 [shared] func_CombatUnit_GetOwnerRef
 	GetPtr get_unit_ref; // 0x00C (12) - 0x008AEAF0 [shared] func_CombatUnit_GetUnitRef
@@ -203,7 +203,7 @@ struct ICombatUnit {
 	CombatUnit_vtable* instance;
 
 	int unit_kind() {
-		return instance->get_unit_kind();
+		return instance->get_unit_kind((int*)this);
 	}
 	int* unit_ref() {
 		return instance->get_unit_ref((int*)this);

@@ -27,7 +27,7 @@ __declspec(naked) void MagicDisruptionFork() {
     __asm
     {
 
-        MAGIC_DISRUPTION_NEXT_LAST:
+
         mov edx, dword ptr [esi]
         mov ecx, esi
         call dword ptr [edx+0x74]
