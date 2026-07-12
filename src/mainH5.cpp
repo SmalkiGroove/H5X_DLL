@@ -22,7 +22,7 @@ void init_patches(pugi::xml_document& doc) {
     CombatAIFix_init(doc);                 // OK
     AgilityFix_init(doc);                  // OK
     RetaliationStrikeFix_init(doc);        // OK
-    PreparationUnlimRetalFix_init(doc);  // OK
+    PreparationUnlimRetalFix_init(doc);    // OK
     ColdDeathFix_init(doc);                // OK
     EliteCasters_init(doc);                // OK
     UnholyWordImmunitiesFix_init(doc);     // OK
@@ -78,7 +78,7 @@ void init_patches(pugi::xml_document& doc) {
     Fortunate_init(doc);                   // OK
     ChainHitCount_init(doc);               // OK
     SpitefulTweak_init(doc);               // OK
-    //Magnetism_init(doc);                   //
+    Magnetism_init(doc);                    // OK
 
     Avengers_init(doc);                    // OK
     Artificier_init(doc);                  // OK

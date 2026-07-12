@@ -29,8 +29,11 @@ ThiscallInt_Int_Int get_mitigated_damage = (ThiscallInt_Int_Int)0x0097D740;
 ThiscallInt_IntPtr get_unit_luck_clamped = (ThiscallInt_IntPtr)0x004BB3C0;
 FastcallUint_Int_IntPtr_Char get_damage_stack_count = (FastcallUint_Int_IntPtr_Char)0x00A6BD90;
 ThiscallPtrPtr_Void construct_creature_lightning_fx_event = (ThiscallPtrPtr_Void)0x00C9A620;
+FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int collect_adjacent_units = (FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int)0x00B3D560;
+FastcallInt_IntPtr_IntPtr_Int_Int get_unit_adjacency_roll = (FastcallInt_IntPtr_IntPtr_Int_Int)0x00A59990;
 
 StdcallPtr_Uint engine_alloc = (StdcallPtr_Uint)0x00878FD0;
+StdcallVoid_Ptr engine_free = (StdcallVoid_Ptr)0x00879240;
 
 FastcallVoid_IntPtr_Char_3Int notify_spec_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB930;
 FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB960;

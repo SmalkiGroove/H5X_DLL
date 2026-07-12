@@ -41,10 +41,13 @@ extern ThiscallInt_Int_Int get_mitigated_damage;
 extern ThiscallInt_IntPtr get_unit_luck_clamped;
 extern FastcallUint_Int_IntPtr_Char get_damage_stack_count;
 extern ThiscallPtrPtr_Void construct_creature_lightning_fx_event;
+extern FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int collect_adjacent_units;
+extern FastcallInt_IntPtr_IntPtr_Int_Int get_unit_adjacency_roll;
 
 // --- Engine alloc ---
 
 extern StdcallPtr_Uint engine_alloc;
+extern StdcallVoid_Ptr engine_free;
 
 // --- Buff notification (engine UI hooks) ---
 

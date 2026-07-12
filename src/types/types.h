@@ -17,9 +17,11 @@ typedef int*(__thiscall* ThiscallIntPtr_Int)(int);
 typedef void*(__thiscall* ThiscallPtrPtr_Void)(void*, void*);
 typedef int(__thiscall* ThiscallInt_Int_Int)(int, int);
 typedef void*(__stdcall* StdcallPtr_Uint)(unsigned int);
+typedef void(__stdcall* StdcallVoid_Ptr)(void*);
 typedef unsigned int(__fastcall* FastcallUint_Int_IntPtr_Char)(int, int*, char);
 typedef void(__fastcall* FastcallVoid_IntPtr_Char_3Int)(int*, char, int, int, int);
 typedef void(__fastcall* FastcallVoid_Int)(int);
+typedef void(__fastcall* FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int)(int*, int*, int, int, int, int, int);
 typedef float(__thiscall* ThiscallFloat_IntPtr)(int*);
 typedef void(__thiscall* ThiscallVoid_IntPtr_Float)(int*, float);
 typedef int(__thiscall* ThiscallInt_IntPtr_IntPtr_Int)(int*, int*, int);
@@ -31,6 +33,7 @@ typedef void(__thiscall* ThiscallVoid_IntPtr_Int_Float)(int*, int, float);
 typedef char(__fastcall* FastcallByte_IntPtr)(int*);
 typedef bool(__thiscall* ThiscallBool_IntPtr)(int*);
 typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)(int*, int*, int, int, int, int);
+typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_Int_Int)(int*, int*, int, int);
 
 // CombatUnit vtable slot types
 using Const = ThisCallInt;
