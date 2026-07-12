@@ -333,6 +333,7 @@
     <ClCompile Include="src/patches/TrainingGrounds.cpp" />
     <ClCompile Include="src/patches/Twilight.cpp" />
     <ClCompile Include="src/patches/UnholyWordImmunitiesFix.cpp" />
+    <ClCompile Include="src/patches/PreparationUnlimRetalFix.cpp" />
     <ClCompile Include="src/patches/VengefulLight.cpp" />
     <ClCompile Include="src/patches/Vulnerability.cpp" />
     <ClCompile Include="src/patches/WandOfSpell.cpp" />

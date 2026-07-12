@@ -22,6 +22,7 @@ void init_patches(pugi::xml_document& doc) {
     CombatAIFix_init(doc);                 // OK
     AgilityFix_init(doc);                  // OK
     RetaliationStrikeFix_init(doc);        // OK
+    PreparationUnlimRetalFix_init(doc);  // OK
     ColdDeathFix_init(doc);                // OK
     EliteCasters_init(doc);                // OK
     UnholyWordImmunitiesFix_init(doc);     // OK

@@ -64,6 +64,7 @@ void RuneOfTheDragonForm_init(pugi::xml_document& doc);
 void CombatAIFix_init(pugi::xml_document& doc);
 void AgilityFix_init(pugi::xml_document& doc);
 void RetaliationStrikeFix_init(pugi::xml_document& doc);
+void PreparationUnlimRetalFix_init(pugi::xml_document& doc);
 void ColdDeathFix_init(pugi::xml_document& doc);
 void EliteCasters_init(pugi::xml_document& doc);
 void UnholyWordImmunitiesFix_init(pugi::xml_document& doc);
