@@ -101,6 +101,9 @@ __declspec(naked) void ManaCostFork() {
         sub eax, edx
         sar eax, 0x1
         mov esi, eax
+        cmp esi, 0x1
+        jge MANA_BY_SCHOOL
+        mov esi, 0x1
         jmp MANA_BY_SCHOOL
 
         MANA_FIRE_1:
@@ -130,6 +133,9 @@ __declspec(naked) void ManaCostFork() {
         sar eax, 0x3
         sar esi, 0x3
         add esi, eax
+        cmp esi, 0x1
+        jge MANA_BY_SCHOOL
+        mov esi, 0x1
         jmp MANA_BY_SCHOOL
 
         MANA_LIGHTNING_1:

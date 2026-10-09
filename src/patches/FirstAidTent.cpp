@@ -31,9 +31,9 @@ void FirstAidTent_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_INT, 0x009771C2, 4, nullptr, 30, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771D0, 4, nullptr, 40, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_INT, 0x009771AC, 4, nullptr, 0, 0, 0, 0 });
-	assembly_patches.push_back({ PATCH_INT, 0x009771BA, 4, nullptr, 0, 0, 0, 1 });
-	assembly_patches.push_back({ PATCH_INT, 0x009771C8, 4, nullptr, 0, 0, 0, 2 });
-	assembly_patches.push_back({ PATCH_INT, 0x009771D6, 4, nullptr, 0, 0, 0, 3 });
+	assembly_patches.push_back({ PATCH_INT, 0x009771BA, 4, nullptr, 1, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_INT, 0x009771C8, 4, nullptr, 2, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_INT, 0x009771D6, 4, nullptr, 3, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, 0x009771F0, 14, FirstAidTentFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_WRTE, 0x00986DA0, 1, nullptr, 0, 0, 0, "EB" }); // enable rez by default
 }

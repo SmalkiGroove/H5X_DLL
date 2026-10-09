@@ -25,10 +25,10 @@ void ElemDamage_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ HOOK_JE, 0x00976EFE, 6, ElemDamageForkAlt, 0, 0, 0 });
     assembly_patches.push_back({ HOOK_JE, 0x00976F1F, 6, ElemDamageForkAlt, 0, 0, 0 });
     assembly_patches.push_back({ HOOK_JE, 0x00976F3B, 6, ElemDamageForkAlt, 0, 0, 0 });
-    assembly_patches.push_back({ PATCH_WRTE, 0x00977062, 6, nullptr, 0, 0, 0, "D80D1C2FE100" });
-    assembly_patches.push_back({ PATCH_WRTE, 0x00977062, 6, nullptr, 0, 0, 0, "D80D1C2FE100" });
-    assembly_patches.push_back({ PATCH_WRTE, 0x00977013, 6, nullptr, 0, 0, 0, "D80D1C2FE100" });
-    assembly_patches.push_back({ PATCH_WRTE, 0x00977062, 6, nullptr, 0, 0, 0, "D80D1C2FE100" });
+    assembly_patches.push_back({ PATCH_WRTE, 0x00976F75, 6, nullptr, 0, 0, 0, "D80D1C2FE100" }); // Titan's Trident
+    assembly_patches.push_back({ PATCH_WRTE, 0x00976FC4, 6, nullptr, 0, 0, 0, "D80D1C2FE100" }); // Evercold Icicle
+    assembly_patches.push_back({ PATCH_WRTE, 0x00977013, 6, nullptr, 0, 0, 0, "D80D1C2FE100" }); // Solar Ring
+    assembly_patches.push_back({ PATCH_WRTE, 0x00977062, 6, nullptr, 0, 0, 0, "D80D1C2FE100" }); // Emerald Slippers
     assembly_patches.push_back({ PATCH_HOOK, ElemDamage_fork, 11, ElemDamageFork, 0, 0, 0 });
 }
 
@@ -200,7 +200,7 @@ __declspec(naked) void ElemDamageFork() {
         fnstcw word ptr [esp + 0x18]
         push 0x0
         movzx eax, word ptr [esp + 0x1C]
-        fmul st(0), st(1)
+        fmulp st(1), st(0)
         or ah, 0xC
         push 0xEB
         mov dl, 0x1

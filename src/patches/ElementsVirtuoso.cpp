@@ -14,8 +14,14 @@ static ElementalVirtuosoState elementalVirtuosoSlots[2] = {
 static int elementalVirtuosoGetSlot(ICombatHero* combatHero) {
     if (elementalVirtuosoSlots[0].combatHero == combatHero) return 0;
     else if (elementalVirtuosoSlots[1].combatHero == combatHero) return 1;
-    else if (elementalVirtuosoSlots[0].combatHero == nullptr) elementalVirtuosoSlots[0].combatHero = combatHero;
-    else if (elementalVirtuosoSlots[1].combatHero == nullptr) elementalVirtuosoSlots[1].combatHero = combatHero;
+    else if (elementalVirtuosoSlots[0].combatHero == nullptr) {
+        elementalVirtuosoSlots[0].combatHero = combatHero;
+        return 0;
+    }
+    else if (elementalVirtuosoSlots[1].combatHero == nullptr) {
+        elementalVirtuosoSlots[1].combatHero = combatHero;
+        return 1;
+    }
     return -1;
 }
 

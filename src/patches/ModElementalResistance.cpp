@@ -65,13 +65,13 @@ __declspec(naked) void ElemProofFork() {
         call dword ptr [eax + 0x174]
         test eax, eax
         je JUMPTABLE_ENTRYPOINT
-        xor edx, edx
-        mov eax, edi
-        sar eax, 8
-        mov ecx, 0x4
-        div ecx
         mov ecx, ebp
         call[get_spell_element]
+        // filtered element (1..4) derived from the caster unit pointer, computed after the call (edx is not preserved)
+        mov edx, edi
+        shr edx, 8
+        and edx, 0x3
+        inc edx
         cmp edx, eax
         jne JUMPTABLE_ENTRYPOINT
         fld dword ptr [esp + 0x48]
