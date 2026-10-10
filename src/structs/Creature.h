@@ -120,7 +120,7 @@ struct ICreature {
 	}
 };
 
-// CombatCreature (vtable 0x00E4FBA4, NWorld::CCombatCreature, vtordisp -0x144).
+// CombatCreature (vtable 0x00E4FBA4, NWorld::CCombatCreature, subobject +0x148, vbptr at this-0x144).
 // RE rule: .cursor/rules/h5x-re-combat-creature.mdc (auto-synced).
 //
 // Subobject on a combat unit (from unit pointer in esi/ebp):
@@ -143,10 +143,10 @@ inline char* combat_stack_root(ICombatUnit* unit) {
 inline ICombatUnit* combat_unit_mi(char* base) {
 	if (!base)
 		return nullptr;
-	int** vbtable = *(int***)((char*)base - CombatCreature_vtordisp);
+	int** vbtable = *(int***)((char*)base - CombatCreature_vbptr_offset);
 	if (!vbtable)
 		return nullptr;
-	return (ICombatUnit*)((char*)base - CombatCreature_vtordisp + (uintptr_t)vbtable[2]);
+	return (ICombatUnit*)((char*)base - CombatCreature_vbptr_offset + (uintptr_t)vbtable[2]);
 }
 
 inline int* call_unit_ref(int* obj) {
@@ -181,7 +181,7 @@ struct ICombatCreature : ICombatUnit {
 		return instance->get_unit_ref((int*)this);
 	}
 	int hit_points() {
-		return instance->get_creature_tier_flag((int*)this);
+		return instance->get_top_creature_hp((int*)this);
 	}
 	int mana_points() {
 		return instance->get_mana((int*)this);

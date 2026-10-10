@@ -1,50 +1,139 @@
 ---
-description: func_CastSpell and named spell-casting callees in H5X.exe
+description: func_CastSpell dispatch and named spell-casting callees in H5X.exe
 alwaysApply: true
 ---
 
 # Spell Casting — `func_CastSpell` @ `0x0097D7B0`
 
-Main spell dispatch: buff/debuff branch vs spell-id jump table. Entry copies context via `func_CopySpellCastContext` (`0x00988E70`).
+Body `0x0097D7B0`–`0x0097E8AD`, `__fastcall`, ECX = spell cast context. Context `+0x14` = caster unit, `+0x18` = target unit (CombatUnit pointers; see `h5x-re-combat-unit.mdc`).
+Called from 7 sites, including `func_CheckVesselOfElrath` and `func_CheckUnitEffect`.
 
-## Already-named callees (do not rename)
+Entry copies the context with `func_CopySpellCastContext` (`0x00988E70`). If the caster has buff `0x146` with field `+0x28 == 1`, it calls `func_CleanupSpellCastContext` (`0x00988C10`) and returns without casting. Common exit is `0x0097E842`, which is also the switch default.
 
-`func_GetSpellID`, `func_IsSpellBuffOrDebuff`, `func_IsMassSpell`, `func_CheckSpellApplyEffect`, `func_ComputeBouncingSpell`, `func_GetSpellDamage`, `func_CheckIceSpellFreeze`, `func_RezAbilities`, `func_SpellSummonElementals`, `func_SpellConjurePhoenix`, `func_SpellFirewall`, `func_GetDefaultStats`.
+## Dispatch
 
-## Key renamed helpers
+1. **Buff/debuff spells** (`func_IsSpellBuffOrDebuff`):
+   - `func_IsMassSpell` selects `func_CastMassSpellBuff` or `func_CastSingleSpellBuff`.
+   - Before the cast, the effect parameter is adjusted for three spells:
+     - `0x22`: `param × 100000 + func_GetCastSpellPower` (power clamped to [0, 100000]), rounded.
+     - `0x12`: 2 if the parameter was 3, else 1.
+     - `0xD`: `func_GetCastSpellMastery` rounded, minimum 0.
+   - When context `+0x4` is `0x14` or `0x12`, it then calls `func_RefreshSpellTargets`.
+2. **All other spells:** switch on spell ID. IDs `1`–`0x27` go through the byte table `0x0097E8D4` and jump table `0x0097E8B0`. `0x28` is tested directly. IDs `0x29`–`0x11D` go through `0x0097E928` and `0x0097E8FC`.
 
-| Address | Name | Role |
+| Spell ID(s) | Case | Main callees |
 |---|---|---|
-| `0x00BBF000` | `func_CastSingleSpellBuff` | Single-target buff/debuff |
+| `0x1`, `0x2`, `0x3`, `0x4`, `0x9`, `0x119` | `0x0097DE65` | `func_GetCombatTileForSpellFx`, `func_PrepareSpellDamageParams`, `func_GetSpellDamage`, `func_ComputeElementalChainDmg`. Then the ID picks the damage call (next table). |
+| `0x5`, `0x6`, `0xED` | `0x0097DF73` | `func_CastAreaSpell` |
+| `0x7` | `0x0097DA25` | `func_ComputeBouncingSpell` |
+| `0x8`, `0x11D` | `0x0097DFA0` | `func_CastAreaSpell`, then a `CSpellFxEvent` |
+| `0xA`, `0x15`, `0x23` | `0x0097DB9D` | `func_CastGlobalSpell` |
+| `0x20` | `0x0097DBC0` | `func_CheckSpellHitsTarget`, `func_ApplySpellHitEffects`, Teleport Assault ATB (below), `func_FinishSpellCast` |
+| `0x26` | `0x0097DD9A` | `func_GetCastSpellPower`, `func_PrepareSpellDamageParams`, `func_CastChainLightning` |
+| `0x27` | `0x0097DA49` | `func_PrepareSpellDamageParams`, `func_GetSpellDamage`, `func_ComputeElementalChainDmg`, `func_ApplySpellDamage` |
+| `0x28` | `0x0097DE34` | `func_CastMeteorShower` |
+| `0x29` | `0x0097E228` | Healing (below) |
+| `0x2A`, `0x30` | `0x0097E077` | `func_RezAbilities`, then a `CSpellCastEvent`, `func_FinishSpellCast` |
+| `0x2B` | `0x0097E735` | `func_SpellSummonElementals` |
+| `0xEB` | `0x0097E74B` | `func_SpellConjurePhoenix` |
+| `0xEC` | `0x0097E761` | `func_SpellFirewall` |
+| `0x11A`, `0x11B` | `0x0097E7A1` | `func_CastTileSpell` |
+| `0x11C` | `0x0097E7B9` | `func_CastTileSpell` (3 call sites) |
+
+### Damage case `1/2/3/4/9/0x119`
+
+| ID | Call |
+|---|---|
+| `0x3` | `func_ApplySpellDamageWithStun` |
+| `0x4` | `func_CheckIceSpellFreeze` (instead of `func_ApplySpellDamage`) |
+| `0x2` | `func_CheckLightningBoltMiss`. If it returns true, no damage; otherwise `func_ApplySpellDamage`. |
+| `0x1`, `0x9`, `0x119` | `func_ApplySpellDamage` |
+
+### Spell `0x20`: Teleport Assault ATB (`0x0097DD02`)
+
+The ATB bonus goes to the **target unit** (context `+0x18`), not the caster.
+
+1. It takes the target's owner hero (via `+0x0C` twice). If that hero has `has_skill(0x8A)` (`PERK_TELEPORT_ASSAULT`) and `func_IsCastATBResetBlocked(target)` is false, it continues.
+2. It sets the target's ATB (`+0x184` → `[info+0x1C]`) to `func_ClampFloat(ATB + 0.5, 0.0, 1.25)` via `set_atb` (`+0x18C`).
+3. `func_IsCastATBResetBlocked` returns true if the unit has buff `0x13`, `0xC9`, `0x14A` or `0x150`, or if `FUN_004E48A0` returns non-zero.
+
+### Spell `0x29`: healing
+
+1. `func_GetCastSpellMastery`, `func_GetCastSpellPower`, `func_CollectSpellTargets`.
+2. `func_ApplySpellHealing`, plus a `CSpellDamageEvent` (ID `0x29`) per target.
+3. If the hero has `has_skill(0x8B)` (`PERK_SIPHON_GRACE` in `Skills.h`), it also heals adjacent targets: `func_GetAdjacentSpellTargets`, `func_IsValidSpellSplashTarget`, `func_ApplySpellHealing`, and a `CSpellSplashEvent` tagged `0x8B`.
+
+## Named helpers
+
+All are direct callees of `func_CastSpell`, and the names are Ghidra's (do not rename).
+
+| Address | Name | Verified role |
+|---|---|---|
+| `0x00A34110` | `func_GetSpellID` | Spell ID of the cast |
+| `0x00977290` | `func_IsSpellBuffOrDebuff` | Selects the buff/debuff branch |
+| `0x00A33F60` | `func_IsMassSpell` | Mass vs single buff |
+| `0x004E57D0` | `func_CheckSpellApplyEffect` | Buff branch: computes the effect parameter |
+| `0x00BBF000` | `func_CastSingleSpellBuff` | Single-target buff/debuff (calls `func_CanSpellBeAvoided`, `func_ComputeSpellDamageMultiplier`) |
 | `0x00BBF1F0` | `func_CastMassSpellBuff` | Mass buff/debuff |
-| `0x004E6B60` | `func_ApplySpellDamage` | General damage applicator |
-| `0x004E6A10` | `func_ApplySpellDamageWithStun` | Spell id `0x3` |
-| `0x00A5C1C0` | `func_CheckLightningBoltMiss` | Spell id `0x2` |
-| `0x0085F330` | `func_CastGlobalSpell` | Global AoE — all creatures (`0xA`, `0x15`, `0x23`, …) |
-| `0x0085EAA0` | `func_CastAreaSpell` | Tile-area spells (`0x8`, `0xED` cross, `0x11D`, `0x5/6`, …) |
-| `0x0085D260` | `func_CastChainLightning` | Spell id `0x26` |
-| `0x00860BE0` | `func_CastMeteorShower` | Spell id `0x28` |
-| `0x00976B90` | `func_PrepareSpellDamageParams` | Empowerment + week prep |
-| `0x00977E60` | `func_ComputeElementalChainDmg` | Chain overflow (≠ `func_ComputeSpellAdditionalDmg` @ `0x00977A80`) |
-| `0x00A34CD0` | `func_GetCastSpellPower` | Cast-time spellpower table |
-| `0x00A34CA0` | `func_GetCastSpellMastery` | Cast-time mastery table |
-| `0x004738F0` | `func_ClampFloat` | Float clamp (ATB after cast) |
-| `0x00C558B0` | `func_CheckSpellHitsTarget` | MR / immunity gate |
-| `0x004E4A20` | `func_IsCastATBResetBlocked` | Blocks post-cast ATB bonus |
-| `0x00BBEFD0` | `func_FinishSpellCast` | Post-cast cleanup |
+| `0x00AF4650` | `func_RefreshSpellTargets` | After buff casts with context `+0x4` = `0x14`/`0x12` |
+| `0x0085EDB0` | `func_ComputeBouncingSpell` | Spell `0x7` |
+| `0x00976B90` | `func_PrepareSpellDamageParams` | Calls `func_IsEmpoweredSpell` and `func_CheckWeekForElementalSpellDmg`; switch on spell ID |
+| `0x0097D600` | `func_GetSpellDamage` | Base spell damage |
+| `0x00977E60` | `func_ComputeElementalChainDmg` | Called after `func_GetSpellDamage` in the direct-damage cases; uses `func_GetSpellDamageMult`, sets prediction text. Different from `func_ComputeSpellAdditionalDmg` @ `0x00977A80`. |
+| `0x004E6B60` | `func_ApplySpellDamage` | Generic damage applicator |
+| `0x004E6A10` | `func_ApplySpellDamageWithStun` | Spell `0x3` |
+| `0x004E6600` | `func_CheckIceSpellFreeze` | Spell `0x4` |
+| `0x00A5C1C0` | `func_CheckLightningBoltMiss` | Spell `0x2`; true = missed |
+| `0x0085F330` | `func_CastGlobalSpell` | Spells `0xA`, `0x15`, `0x23` |
+| `0x0085EAA0` | `func_CastAreaSpell` | Spells `0x5`, `0x6`, `0xED`, `0x8`, `0x11D` |
+| `0x0085D260` | `func_CastChainLightning` | Spell `0x26` |
+| `0x00860BE0` | `func_CastMeteorShower` | Spell `0x28` |
+| `0x00C55A40` | `func_CastTileSpell` | Spells `0x11A`, `0x11B`, `0x11C` |
+| `0x009789B0` | `func_RezAbilities` | Spells `0x2A`, `0x30` |
+| `0x00861630` | `func_SpellSummonElementals` | Spell `0x2B` |
+| `0x00862130` | `func_SpellConjurePhoenix` | Spell `0xEB` |
+| `0x0085CDA0` | `func_SpellFirewall` | Spell `0xEC` |
+| `0x00978FF0` | `func_CollectSpellTargets` | Spell `0x29` |
+| `0x00A616E0` | `func_ApplySpellHealing` | Spell `0x29` (main targets and splash) |
+| `0x00AF55E0` | `func_GetAdjacentSpellTargets` | Spell `0x29` splash |
+| `0x00B3DE90` | `func_IsValidSpellSplashTarget` | Spell `0x29` splash |
+| `0x00C558B0` | `func_CheckSpellHitsTarget` | Spell `0x20`: hit gate before effects |
+| `0x00A5A480` | `func_ApplySpellHitEffects` | Spell `0x20` |
+| `0x00A34CD0` | `func_GetCastSpellPower` | Evaluates the spell's power table (`SSpell+0xA0..0xA4`); returns `DAT_00E0BE10` if empty |
+| `0x00A34CA0` | `func_GetCastSpellMastery` | Same for the mastery table (`SSpell+0x94..0x98`) |
+| `0x004738F0` | `func_ClampFloat` | `clamp(value, min, max)`, `ret 0xC`, result in ST0 |
+| `0x004E4A20` | `func_IsCastATBResetBlocked` | See spell `0x20` |
+| `0x00BBEFD0` | `func_FinishSpellCast` | Post-cast step for spell `0x20` and spells `0x2A`/`0x30`; calls `func_CheckVesselOfElrath` |
+| `0x00A35430` | `func_GetCombatTileForSpellFx` | Tile/position for spell FX (7 call sites) |
+| `0x00A35470` | `func_GetSpellFxTiming` | FX timing for the `CSpellFxEvent` |
+| `0x00BCB3F0` | `func_GetDefaultStats` | Global balance-constants block |
+
+## Post-cast ATB of the caster (not in `func_CastSpell`)
+
+CombatUnit vtable slot `+0x224` (`on_spell_cast`) pays the mana cost and sets post-cast ATB.
+
+| Side | Impl | Behaviour |
+|---|---|---|
+| Hero | `0x00BBF610` `func_CombatHero_GetStatStub224` (misleading Ghidra name) | ATB = 0.5 for mass spells, else based on mastery; artifact-set, perk `0xA2` and default-stats adjustments; applied via `set_atb` (`+0x18C`) |
+| Creature | `0x008A11C0` `func_CombatCreature_GetStatStub224` | Fails if current mana (`+0x234`) minus `func_ComputeUnitManaCost` is negative; otherwise writes the new mana via `+0x22C` and sets ATB via `+0x18C` |
 
 ## Infrastructure (shared with ATB/Lua RE)
 
 | Address | Name |
 |---|---|
 | `0x00878FD0` | `func_EngineAlloc` |
+| `0x00879240` | `thunk_FUN_008790b0` (`engine_free` in `Functions.cpp`) |
 | `0x004DD6E0` | `func_RefCountStore` |
 | `0x0059F6B0` | `func_RefCountRelease` |
-
-## CombatHero ATB after spell `0x20`
-
-If skill `0x8A` and not `func_IsCastATBResetBlocked`, adds ATB via `SetATB` (`+0x18C`) after `func_ClampFloat`. Related: `func_HeroCastATBReset` @ `0x00BBF610` (not a direct callee).
+| `0x008C6150` | `FUN_008c6150` (exit path) |
 
 ## Event constructors
 
-`func_CSpellFxEvent_ctor` (`0x54`), `func_CSpellCastEvent_ctor`, `func_CSpellDamageEvent_ctor`, `func_CSpellSplashEvent_ctor` — combat event ctors allocated via `func_EngineAlloc`.
+Each is allocated with `func_EngineAlloc(size)` right before the constructor call.
+
+| Ctor | Address | Size | Used by |
+|---|---|---|---|
+| `func_CSpellFxEvent_ctor` | `0x00C4E560` | `0x54` | Spells `0x8`, `0x11D` |
+| `func_CSpellCastEvent_ctor` | `0x00C9A6A0` | `0x60` | Spells `0x2A`, `0x30` |
+| `func_CSpellDamageEvent_ctor` | `0x00C9A7B0` | `0x60` | Spell `0x29` (2 sites) |
+| `func_CSpellSplashEvent_ctor` | `0x00C9B2A0` | `0x64` | Spell `0x29` splash (perk `0x8B`) |

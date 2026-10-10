@@ -16,10 +16,8 @@ HERO_VTABLE_RE = re.compile(r"CombatHero_vtable_addr\s*=\s*(0x[0-9A-Fa-f]+)", re
 CREATURE_VTABLE_RE = re.compile(
     r"CombatCreature_vtable_addr\s*=\s*(0x[0-9A-Fa-f]+)", re.I
 )
-HERO_VTORDISP_RE = re.compile(r"CombatHero_vtordisp\s*=\s*(0x[0-9A-Fa-f]+|\d+)", re.I)
-CREATURE_VTORDISP_RE = re.compile(
-    r"CombatCreature_vtordisp\s*=\s*(0x[0-9A-Fa-f]+|\d+)", re.I
-)
+def enum_re(name: str) -> re.Pattern:
+    return re.compile(rf"{name}\s*=\s*(0x[0-9A-Fa-f]+|\d+)", re.I)
 SLOT_RE = re.compile(
     r"^\s*(?:[\w*]+\s+)?(\w+);\s*//\s*(0x[0-9A-Fa-f]+)"
     r"(?:\s*\(\d+\))?\s*-\s*(?:(0x[0-9A-Fa-f]+)\s*)?(\[shared\])?\s*(.+)?$",
@@ -106,51 +104,55 @@ def parse_combat_unit_h(text: str) -> dict:
         if CREATURE_VTABLE_RE.search(text)
         else "0x00E4FBA4"
     )
-    hero_vtordisp = fmt_hex(
-        HERO_VTORDISP_RE.search(text).group(1)
-        if HERO_VTORDISP_RE.search(text)
-        else "0x118"
-    )
-    creature_vtordisp = fmt_hex(
-        CREATURE_VTORDISP_RE.search(text).group(1)
-        if CREATURE_VTORDISP_RE.search(text)
-        else "0x144"
-    )
+    def enum_value(name: str, default: str) -> str:
+        match = enum_re(name).search(text)
+        return fmt_hex(match.group(1) if match else default)
+
     slots = parse_slots(split_struct_body(text, "CombatUnit_vtable"))
     return {
         "hero_vtable": hero_vtable,
         "creature_vtable": creature_vtable,
-        "hero_vtordisp": hero_vtordisp,
-        "creature_vtordisp": creature_vtordisp,
+        "hero_subobject": enum_value("CombatHero_subobject_offset", "0x11C"),
+        "creature_subobject": enum_value("CombatCreature_subobject_offset", "0x148"),
+        "hero_vbptr": enum_value("CombatHero_vbptr_offset", "0x118"),
+        "creature_vbptr": enum_value("CombatCreature_vbptr_offset", "0x144"),
         "slots": slots,
         "methods": parse_methods(text.splitlines()),
     }
 
 
-def slot_table(slots: list[dict], *, shared_only: bool = False) -> str:
+def shared_table(slots: list[dict]) -> str:
+    return "\n".join(
+        f"| `{slot['offset']}` | **{slot['name']}** | `{slot['impl']}` | {slot['note']} |"
+        for slot in slots
+        if slot.get("shared") and slot["impl"]
+    )
+
+
+def type_table(slots: list[dict]) -> str:
+    return "\n".join(
+        f"| `{slot['offset']}` | **{slot['name']}** | {slot['note']} |"
+        for slot in slots
+        if not slot.get("shared")
+    )
+
+
+def all_slots_table(slots: list[dict]) -> str:
     rows: list[str] = []
-    for slot in slots:
-        if shared_only and not slot.get("shared"):
-            continue
-        if not shared_only and slot.get("shared"):
-            continue
+    for slot in sorted(slots, key=lambda s: int(s["offset"], 16)):
         if slot.get("shared"):
-            if not slot["impl"]:
-                continue
-            ghidra = f"`{slot['ghidra']}` " if slot.get("ghidra") else ""
-            rows.append(
-                f"| `{slot['offset']}` | `{slot['impl']}` | {ghidra}**{slot['name']}** — {slot['note']} |"
-            )
+            impls = f"shared `{slot['impl']}` {slot['note']}"
         else:
-            rows.append(
-                f"| `{slot['offset']}` | **{slot['name']}** | {slot['note']} |"
-            )
+            impls = slot["note"]
+        rows.append(f"| `{slot['offset']}` | **{slot['name']}** | {impls} |")
     return "\n".join(rows)
 
 
 def render_rule(data: dict) -> str:
-    shared = [s for s in data["slots"] if s.get("shared")]
-    type_specific = [s for s in data["slots"] if not s.get("shared")]
+    slots = data["slots"]
+    total = len(slots)
+    shared_count = sum(1 for s in slots if s.get("shared"))
+    last_offset = max((s["offset"] for s in slots), key=lambda o: int(o, 16))
     method_list = "\n".join(f"- `{name}()`" for name in data["methods"])
 
     return f"""---
@@ -162,33 +164,34 @@ alwaysApply: true
 
 > **Auto-generated** from `src/structs/CombatUnit.h`. Do not edit manually; run `.cursor/hooks/sync-combat-unit-rule.py` or save `CombatUnit.h` (Cursor hook).
 
-`NWorld::CCombatHero` and `NWorld::CCombatCreature` use **parallel vtables** with the same 171-slot layout (`CombatUnit_vtable`, offsets `0`..`0x2A8`). Ghidra shows **92/171** slots resolving to identical implementations after vtordisp thunks. Lua and engine code refer to this concept as **CombatUnit** (`CombatUnitExist`, `CombatUnitMove`, etc.) even though RTTI uses separate class names.
+`NWorld::CCombatHero` and `NWorld::CCombatCreature` use **parallel vtables** with the same {total}-slot layout (`CombatUnit_vtable`, offsets `0`..`{last_offset}`). **{shared_count}/{total}** slots resolve to identical implementations after the thunks. Lua and engine code refer to this concept as **CombatUnit** (`CombatUnitExist`, `CombatUnitMove`, etc.) even though RTTI uses separate class names.
 
-| Type | Vtable | Vtordisp | C++ wrapper |
-|---|---|---|---|
-| **CombatHero** | `{data['hero_vtable']}` | `-{data['hero_vtordisp']}` | `ICombatHero` : `ICombatUnit` |
-| **CombatCreature** | `{data['creature_vtable']}` | `-{data['creature_vtordisp']}` | `ICombatCreature` : `ICombatUnit` |
+| Type | Vtable | Subobject offset (RTTI) | vbptr from subobject `this` | C++ wrapper |
+|---|---|---|---|---|
+| **CombatHero** | `{data['hero_vtable']}` | `+{data['hero_subobject']}` | `this-{data['hero_vbptr']}` | `ICombatHero` : `ICombatUnit` |
+| **CombatCreature** | `{data['creature_vtable']}` | `+{data['creature_subobject']}` | `this-{data['creature_vbptr']}` | `ICombatCreature` : `ICombatUnit` |
 
-Thunk pattern: `sub ecx,[ecx-4]; sub ecx,<vtordisp>; jmp <impl>`. Calling through the vtable adjusts `this` automatically.
+Entries are vtordisp thunks: `sub ecx,[ecx-4]; [sub ecx,<n>;] jmp <impl>`. The fixed adjustment `n` varies per slot (hero mostly `0x68`, creature mostly `0x94`, many slots have none; exceptions are listed in the `CombatUnit.h` header). Calling through the vtable adjusts `this` automatically.
+
+Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unnamed in Ghidra; tiny stubs show their instructions). Ghidra names are kept even when misleading; text after "—" describes what the code actually does.
 
 ## Shared slots (same impl on hero and creature)
 
-| Slot | Impl | Meaning |
-|---|---|---|
-{slot_table(shared, shared_only=True)}
+| Slot | Field | Impl | Ghidra name / notes |
+|---|---|---|---|
+{shared_table(slots)}
 
 ## Type-specific slots (hero vs creature impl)
 
 | Slot | Field | Hero / creature impls |
 |---|---|---|
-{slot_table(type_specific)}
+{type_table(slots)}
 
-## All documented CombatUnit slots
+## All CombatUnit slots (by offset)
 
-| Slot | Impl | Meaning |
+| Slot | Field | Impls |
 |---|---|---|
-{slot_table(shared, shared_only=True)}
-{slot_table(type_specific)}
+{all_slots_table(slots)}
 
 ## `ICombatUnit` helpers (C++ patches)
 
