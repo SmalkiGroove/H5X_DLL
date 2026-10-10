@@ -395,6 +395,9 @@
     <ClCompile Include="src\patches\MarketExchangeRates.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
+    <ClCompile Include="src/patches/AiLogs.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src/patches/TowerDamage.cpp">
       <Filter>Source Files\patches\Combat</Filter>
     </ClCompile>

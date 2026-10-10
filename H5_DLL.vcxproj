@@ -331,6 +331,7 @@
     <ClCompile Include="src/patches/TowerDamage.cpp" />
     <ClCompile Include="src/patches/TownBuildingTweaks.cpp" />
     <ClCompile Include="src/patches/MarketExchangeRates.cpp" />
+    <ClCompile Include="src/patches/AiLogs.cpp" />
     <ClCompile Include="src/patches/TrainingGrounds.cpp" />
     <ClCompile Include="src/patches/Twilight.cpp" />
     <ClCompile Include="src/patches/UnholyWordImmunitiesFix.cpp" />

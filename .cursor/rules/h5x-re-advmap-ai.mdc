@@ -1,0 +1,122 @@
+---
+description: Adventure map AI (NWorld::CPlayerAI) — turn state machine, step handlers, data parameters, AI logs
+alwaysApply: false
+---
+
+# Adventure map AI — `NWorld::CPlayerAI`
+
+First survey (branch `advmap-ai`). Most of the CPlayerAI code (`0x00866000`–`0x00871000`) is **not defined as functions in
+Ghidra** (only reached through vtables / jump tables): decompile fails there until functions are created in Ghidra.
+Use `dumpbin -disasm -range:start,end H5X.exe` (VS 18 toolset, `14.51.x`) meanwhile.
+
+## Problems to fix (design intent)
+
+The AI ignores much of what a real player does on the adventure map:
+- It does not pick up resources and artifacts after defeating the monsters guarding them.
+- It does not capture map buildings (mines, dwellings, …).
+- It does not clear the neutral stacks around its starting town.
+- It clears only a few monsters to level up early, then rushes an enemy hero. With its difficulty bonuses (extra
+  resources, ignored creature losses in battle, extra creature growth) it is often unbeatable when it comes early.
+
+Goal: the AI should spend more time exploring and collecting everything it can before attacking. That is why H5X sets
+the `RPGStats/AI/Adventure` parameters as it does (lower aggressivity, higher cowardice, no avenger vs computer, …):
+the parameters alone do not achieve it, so the fix has to come from the exe (choice building / estimation / destination
+search).
+
+## Classes (RTTI)
+
+| Class | Notes |
+|---|---|
+| `NWorld::CPlayerAI` (`IPlayerAI`) | One per AI player. Main vtable `0x00E4C8BC` (4 slots), second vtable `0x00E4C89C` at subobject `+0x13C` |
+| `NWorld::CPlayerAIInformation` | Per-player AI info |
+| `NWorld::CDangerPool` (`IDangerPool`) | Threat bookkeeping, vtables `0x00E8AB0C` / `0x00E8AAEC` |
+| `NWorld::CStrategicGoals` / `Group` / `Table` | Strategic goals, vtables `0x00E8A084` (12 slots) … |
+| `NWorld::CConquestPlanForProvince` | vtable `0x00E71860` |
+| `NWorld::CAICmds`, `CAIArrangeTownHeroesCmd`, `CAIPurchaseCreaturesInTown`, `CAIResolveJoiningArmiesCmd`, `CAIRevisitTownCmd`, `CAISolvePuzzleMapCmd` | AI world commands |
+| `NAI::*` | 3D/AI geometry (convex hulls, octree) — **not** the adventure AI |
+
+These vtables only hold lifetime/serialization methods; the decision logic is non-virtual.
+
+## `CPlayerAI` layout (partial)
+
+| Offset | Meaning |
+|---|---|
+| `+0x08` | player |
+| `+0x0C` | world / game object (vtable `+0xA8` → current day) |
+| `+0x10` | step counter this turn (printed by "end turn: %i steps") |
+| `+0x20` | `timeToWork` (last day the AI ran) |
+| `+0x64` | per-day job bit mask, reset by `SFLB_InitDay` (`(x & 0xFFFE739C) | 0xE739C`) |
+| `+0x128` | **current step** (enum below) |
+| `+0x12C` | tick count at turn start |
+
+## Turn state machine
+
+`CPlayerAI` main vtable slot 0 = `0x0086DD40`. Its dispatcher at `0x0086DF40`: `ebx = [esi+0x128]`, `cmp ebx,0xE; ja`,
+`jmp [ebx*4 + 0x0086E14C]`. Step names from `FUN_00866550`; slot 3 (`0x00866CF0`) returns the progress-bar value per step.
+
+| # | Step | Handler | Main external callees |
+|---|---|---|---|
+| 0 | `INIT_DAY` | `0x00867440` (`CPlayerAI::SFLB_InitDay`, exported by H5X.exe) then `0x0086D750` | |
+| 1 | `MOVE_HERO` | `0x0086B400` | `0x004B94B0`, `0x0068BD20`, `0x006BD7C0` |
+| 2 | `COLLECT_PASSABLE_OBJECTS` | `0x00867520` | `0x004F6770`, `0x00C27740`, `0x00872620` |
+| 3 | `BUILD_HERO_CHOICES` | `0x0086C760` | `0x00BD7110`, `0x00A37050` |
+| 4 | `ESTIMATE_CHOICES` | `0x008667D0` | **`0x00872000`** (choice estimator) |
+| 5 | `EXECUTE_BEST_CHOICE` | `0x0086C6B0` | `0x004E6C60`, `0x004E9A00` |
+| 6 | `MANAGE_TOWNS` | `0x0086D4E0` | `0x00C283D0`, `0x009C5C60` |
+| 7 | `HIRE_HEROES` | `0x0086B0A0` | `0x0098DE60`, `0x00C02A90` |
+| 8 | `LAST_WAIT` | `0x00866700` | sets step 9 |
+| 9 | `RETURN_TURN` | `0x00868EB0` | logs "end turn: %i steps, %i.%i seconds", ends the turn |
+| 10 | `START_CHOOSE_DESTINATION` | `0x0086C570` | `0x00C27740`, `0x00872620`, `0x0063EE50` |
+| 11 | `CHOOSE_DESTINATION` | `0x0086C010` | `0x00C07100`, `0x00C076D0`, `0x00C07AD0`, `0x00C07B20`, `0x00BCC020` |
+| 12 | `MANAGE_HEROES` | `0x00869AD0` | `0x00BD7110`, `0x0074E870`, `0x00C5AF30` |
+| 13 | `STEP_REARRANGE_TOWN_HEROES` | `0x00868CA0` | `0x0068BD20` |
+| 14 | `STEP_ORDER_CARAVANS` | `0x0086A350` | `0x00CE6110`, `0x00CEA190` |
+
+Step writes (`mov [reg+0x128], n`) are spread over the handlers above; `0x00868E00` (called after `SFLB_InitDay`)
+sets the first step of the day.
+
+## Other AI code located by log strings
+
+| Function | Log string / role |
+|---|---|
+| `FUN_00A7C3B0` | "Adventure AI destinations choose log. Search Distance %d" — destination search |
+| `FUN_008D1CB0` | "AI action for %s: %s " |
+| `FUN_00607D50` | "AI make move by " (`adventure_ai_timing`) |
+| `FUN_008E70D0` | AI market trading to fit a cost ("AI exchanges … to fit cost") |
+| strings `0x00E95AC4`–`0x00E95CC4` | creature purchase / necromancy raising |
+| strings `0x00E0F854`, `0x00E64054`, `0x00E64120` | town building choices |
+| strings `0x00E182F4`–`0x00E184A0` | hero visits (Sphinx, Arena, Witch Hut) and skill/perk choice ("available skill/perk: %s (mastery %d, value %d)") |
+| strings `0x00E6E463`–`0x00E6E548` | resource values / demand / supply / money values |
+
+Developer console variables (strings): `aai_play_for_humans`, `self_adventure_ai`, `aai_proceed`, `aai_testmap`,
+`aai_step_limit`, `ai_time_limit`, `adventure_ai_timing`, `adventure_speed_ai`, `show_ai_fog`, `show_ai_geometry`.
+
+## AI action log (`../ai_#N.log`)
+
+- Global enable flag `DAT_01027180` (byte, never written by game code — developer switch); `DAT_01027181` = no flush.
+  Enabled by `src/patches/AiLogs.cpp`.
+- At map start `FUN_00B610B0(mapName)` (called from `0x007E0AD6` and `0x008099C9`) opens the 8 slots only if the flag
+  is set; existing files are deleted first.
+- Row writer gate `FUN_00B610E0`: flag set, player at `[this+0x70]` is AI (player vtable `+0x18C`), slot = player
+  number (vtable `+0x2C`) - 1.
+- 8 per-player log slots at `0x010271A8 + 0x24 * n`, initialised by `FUN_00B60340` (file `../ai_#%i.log`, relative to `bin`).
+- Writer `FUN_00B603F0`: CSV-like rows `Action, Object, ObjInfo, Value, Money, <7 resources>, Heroes, Towns`.
+- Check `FUN_00B60320` returns the flag (used e.g. by market trading logs).
+
+## Data parameters — `RPGStats/AI/Adventure` in `GameMechanics/RPGStats/DefaultStats.xdb`
+
+Type registered by `FUN_009511A0`. Overridden by H5X in `data/h5x-core.pak`.
+
+- Per difficulty (`DifficultyEasy/Normal/Hard/Heroic`): `AttackHumanAggressivityCoef`, `AttackComputerAggressivityCoef`,
+  `CowardiceVersusHuman/Computer`, `RolesSearchNear/FarMaxCost`, `ArmyPowerCoefBonusPerHeroLevel`, `ValueOfTown`,
+  `AvengerVersusHuman/ComputerCoef`, `TownBuildPeriodInDays`, `CheckTownsInDanger`, `CheckHeroesDanger`,
+  `ConsiderGarrisoningHeroToImportantTown`, `HireHeroesBase/PerTown/GlobalLimit`, `GrailSearch*`, `Threats*`,
+  `StrategicCaptureDistance`, `TownCreatureGrowthCoef`.
+- Global: `Search*` (destination search), `Roles*` (hero roles Commander / Collector / Supplier / Freelancer),
+  `SupplyDayIncomes`, `Creature*Coef` (army strength estimate), ~30 `ValueOf*`, `Siege*`, `CollectPathBonuses*`,
+  `Necromancy_*`.
+- H5X vs ToE (as of this survey, set on purpose to push the AI toward exploring instead of rushing — see
+  "Problems to fix"): aggressivity 1 → 0.5, cowardice → 0.3, `AvengerVersusComputerCoef` → 0,
+  most `CreatureOver*` / luck / morale coefs → 0.000001, `ValueOfTown` ×4, threat parameters raised.
+
+Combat AI parameters are in the sibling section `RPGStats/AI/Combat`.

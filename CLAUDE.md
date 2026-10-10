@@ -119,6 +119,7 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
   - `.cursor/rules/h5x-re-combat-unit.mdc` — full 181-slot `CombatUnit` vtable (hero `0x00E8499C`, creature `0x00E4FBA4`), impls after thunks with Ghidra names. **Auto-generated** from `src/structs/CombatUnit.h`.
   - `.cursor/rules/h5x-re-combat-atb.mdc` — ATB slots, `func_SetUnitATB` behaviour (caps at 1.25, no lower clamp), `lua_setATB` command flow, arena vtable, combat Lua function table (don't overwrite its terminator).
   - `.cursor/rules/h5x-re-spell-casting.mdc` — `func_CastSpell` @ `0x0097D7B0`: spell-ID dispatch table, named callees, event sizes, post-cast ATB.
+  - `.cursor/rules/h5x-re-advmap-ai.mdc` — adventure map AI (`NWorld::CPlayerAI`): turn step machine and handlers, AI log switch, `RPGStats/AI/Adventure` data parameters. Most of that code is not defined as functions in Ghidra yet.
 - Struct headers are the source of truth for vtables; after editing `CombatUnit.h`, `Hero.h` or `Creature.h`, regenerate the rules (Cursor does this via `afterFileEdit`; Claude Code does not):
   ```bash
   python .cursor/hooks/sync-combat-unit-rule.py
@@ -132,7 +133,7 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 - Defined but **not called** from `init_patches()`: `ConjureAtb_init` (commented out), `ArtfsetHaven4_init`, `ArtfsetRepoint_init`, `CreatureCount_init`.
 - `LuaChangeAtb_init` (Lua `changeATB(unit, delta)`, replaces the unused `RemoveAllUnits` entry) is enabled but not yet tested in game (no `// OK` marker).
 - Not in `H5_DLL.vcxproj` (not compiled): `CreatureCount.cpp`.
-- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LuaChangeAtb_init`, `MarketExchangeRates_init`.
+- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LuaChangeAtb_init`, `MarketExchangeRates_init`, `AiLogs_init` (enables the adventure AI logs `ai_#N.log`).
 - MinHook is referenced via NuGet (`packages.config`) but unused.
 
 ## Infrastructure quirks to know

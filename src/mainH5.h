@@ -187,3 +187,4 @@ void GiveHeroSkill_init(pugi::xml_document& doc);
 void HallOfIntrigue_init(pugi::xml_document& doc);
 void MarketExchangeRates_init(pugi::xml_document& doc);
 void LuaChangeAtb_init(pugi::xml_document& doc);
+void AiLogs_init(pugi::xml_document& doc);
