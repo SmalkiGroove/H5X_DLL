@@ -103,7 +103,7 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 - **Vtable calls**: `mov edx,[ecx]` / `call dword ptr [edx + 0x174]`. Slot offsets are documented in `src/structs/*.h` — reuse them rather than re-deriving.
 - **Virtual-base adjust** (reach the hero interface from a combat subobject):
   `mov eax,[edi+4]` / `mov ecx,[eax+8]` / `mov edx,[ecx+edi+4]` / `lea ecx,[ecx+edi+4]` / `call [edx+0x290]` (has_skill) or `+0x294` (has_hero_spec).
-- **Creature combat subobject**: creature code often addresses the outer unit at `[esi-0x144]` / `[esi-0x94]` (vtordisp, see `CombatUnit.h`).
+- **Combat subobjects**: from the CombatUnit subobject `this` (vtable at `+0x11C` hero / `+0x148` creature in the complete object), the object's vbptr is at `this-0x118` / `this-0x144` — hence `mov eax,[esi-0x144]; mov ecx,[eax+8]` in creature hooks. `0x68` / `0x94` are the usual vtable-thunk adjustments (`sub ecx,[ecx-4]; sub ecx,0x94`). Constants: `Combat*_subobject_offset` / `Combat*_vbptr_offset` in `CombatUnit.h`.
 - **Constants**: use `globals.h` `constf_*` as memory operands (`fmul [constf_0_5]`) instead of new magic floats; add new ones there if missing.
 - **Return**: `jmp [X_return]` where `X_return` is a global `int` holding the VA. Hooks may have several exits — e.g. `ModLuck.cpp` jumps to `LuckToggle_return` (normal path) or `LuckToggle_end` (skip the original logic).
 - **C++ helpers from asm**: put non-trivial logic in a normal C++ function declared `__fastcall` (args in `ecx`/`edx`) or `__stdcall`, and `call` it from the naked hook. Helpers shared between modules get a header next to the patch (e.g. `ElementsVirtuoso.h`, used by `ModElementalDamages.cpp` and `ModInitiative.cpp`). Typed wrappers `ICombatUnit` (`structs/CombatUnit.h`) / `ICombatHero` (`structs/Hero.h`) give C++ access to vtable slots.
@@ -112,13 +112,13 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 ## Reverse-engineering knowledge
 
 - **Ghidra is authoritative**: project `h5x-ghidra-mcp/H5X.rep`, loaded from `G:\__H5__\H5Xdev\bin\H5X.exe`. `H5_Game.exe` in the same folder is the vanilla exe — its addresses do **not** match.
-- Ghidra MCP (configured for Cursor in `.cursor/mcp.json`): decompile/disassemble by address, xrefs, rename, comments. Needs Ghidra running with the GhidraMCP plugin on port 8080.
+- Ghidra MCP (`mcp__ghidra__*` tools, configured in `.mcp.json` for Claude Code and `.cursor/mcp.json` for Cursor): decompile/disassemble by address, xrefs, rename, comments. Needs Ghidra running with the GhidraMCP plugin on port 8080; MCP servers load at session start. Raw bytes (vtables, thunks, constants) can be read from `H5X.exe` directly with the section table above.
 - Naming: functions named by the project use the `func_*` prefix. Do not rename existing labels; only name `FUN_*` ones.
 - The rules' section table lists **RVAs** (add `0x400000` for VAs). `.text` file offset = `VA − 0x400C00`.
 - Rule files (Cursor auto-loads them; in Claude Code read the relevant one on demand):
-  - `.cursor/rules/h5x-re-combat-unit.mdc` — full 171-slot `CombatUnit` vtable (hero `0x00E8499C`, creature `0x00E4FBA4`). **Auto-generated** from `src/structs/CombatUnit.h`.
-  - `.cursor/rules/h5x-re-combat-atb.mdc` — ATB get/set slots, `lua_setATB` command flow, arena vtable, Lua command table.
-  - `.cursor/rules/h5x-re-spell-casting.mdc` — `func_CastSpell` @ `0x0097D7B0` and named callees.
+  - `.cursor/rules/h5x-re-combat-unit.mdc` — full 181-slot `CombatUnit` vtable (hero `0x00E8499C`, creature `0x00E4FBA4`), impls after thunks with Ghidra names. **Auto-generated** from `src/structs/CombatUnit.h`.
+  - `.cursor/rules/h5x-re-combat-atb.mdc` — ATB slots, `func_SetUnitATB` behaviour (caps at 1.25, no lower clamp), `lua_setATB` command flow, arena vtable, combat Lua function table (don't overwrite its terminator).
+  - `.cursor/rules/h5x-re-spell-casting.mdc` — `func_CastSpell` @ `0x0097D7B0`: spell-ID dispatch table, named callees, event sizes, post-cast ATB.
 - Struct headers are the source of truth for vtables; after editing `CombatUnit.h`, `Hero.h` or `Creature.h`, regenerate the rules (Cursor does this via `afterFileEdit`; Claude Code does not):
   ```bash
   python .cursor/hooks/sync-combat-unit-rule.py
@@ -129,9 +129,10 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 ## Current state (as of this analysis)
 
 - All values are hardcoded. The `pugi::xml_document& doc` passed to every `*_init` is empty; `get*ValueFromXdb` / `getXmlTree` exist but are unused.
-- Defined but **not called** from `init_patches()`: `ConjureAtb_init`, `LuaChangeAtb_init` (both commented out; `LuaChangeAtb.cpp` body is commented out too), `ArtfsetHaven4_init`, `ArtfsetRepoint_init`, `CreatureCount_init`.
+- Defined but **not called** from `init_patches()`: `ConjureAtb_init` (commented out), `ArtfsetHaven4_init`, `ArtfsetRepoint_init`, `CreatureCount_init`.
+- `LuaChangeAtb_init` (Lua `changeATB(unit, delta)`, replaces the unused `RemoveAllUnits` entry) is enabled but not yet tested in game (no `// OK` marker).
 - Not in `H5_DLL.vcxproj` (not compiled): `CreatureCount.cpp`, `MarketExchangeRates.cpp`.
-- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`.
+- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LuaChangeAtb_init`.
 - MinHook is referenced via NuGet (`packages.config`) but unused.
 
 ## Infrastructure quirks to know

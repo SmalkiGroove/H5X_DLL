@@ -32,8 +32,8 @@ ThiscallPtrPtr_Void construct_creature_lightning_fx_event = (ThiscallPtrPtr_Void
 FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int collect_adjacent_units = (FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int)0x00B3D560;
 FastcallInt_IntPtr_IntPtr_Int_Int get_unit_adjacency_roll = (FastcallInt_IntPtr_IntPtr_Int_Int)0x00A59990;
 
-StdcallPtr_Uint engine_alloc = (StdcallPtr_Uint)0x00878FD0;
-StdcallVoid_Ptr engine_free = (StdcallVoid_Ptr)0x00879240;
+CdeclPtr_Uint engine_alloc = (CdeclPtr_Uint)0x00878FD0;
+CdeclVoid_Ptr engine_free = (CdeclVoid_Ptr)0x00879240;
 
 FastcallVoid_IntPtr_Char_3Int notify_spec_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB930;
 FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB960;

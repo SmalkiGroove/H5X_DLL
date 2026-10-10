@@ -58,20 +58,21 @@ return true
 
 > Pitfall: `FUN_004E09A0` (the function right after it) is a **different** command's execute. It calls unit `+0x40` and `+0x110`. Do not patch inside it.
 
-## H5X `changeATB` (`src/patches/LuaChangeAtb.cpp`): currently disabled
+## H5X `changeATB` (`src/patches/LuaChangeAtb.cpp`)
 
-**Status:**
-- `LuaChangeAtb_init` is commented out in `init_patches()`, and the file's body is commented out.
-- If re-enabled as is, it does not compile: line 54 passes `&parsedNameObj` (`int*`) where `ReadCombatScriptArgsFn` expects `float*`.
+`changeATB(unitName, delta)` adds `delta` (positive or negative) to the unit's current ATB. It reuses the vanilla `lua_setATB` entirely, so argument parsing, error messages and the posted `CSetATBValue` are identical:
 
-**Design** (additive ATB without hooking the shared execute at `0x004E0970`):
-1. Same argument parsing and `GetUnitByName` as `lua_setATB`.
-2. Reads the current ATB via `+0x188` → `[info+0x1C]`.
-3. Posts a normal `CSetATBValue` with `current + delta`.
+1. **Registration:** the `RemoveAllUnits` entry of the combat Lua table (`0x00F32F98` name, `0x00F32F9C` function; vanilla handler `0x0056B400`, never used by the game) becomes `"changeATB"` → `lua_changeATB`.
+2. **`lua_changeATB`** (naked): `call` to a local label, which stores its own return address in `LuaChangeAtb_setatb_return` and jumps to `lua_setATB` with `ECX` unchanged. So `lua_setATB` returns to a fixed point inside `lua_changeATB`, which then returns to Lua.
+3. **Hook in `lua_setATB` at `0x0056D0F1`** (7 bytes, `push 0x14; call EngineAlloc`; return `0x0056D0F8`). It only runs after `GetUnitByName` succeeded:
+   - `EBP` = unit.
+   - `[esp+0x1C]` = the float parsed from Lua (later copied into `CSetATBValue+0x10`).
+   - `[esp+0x54]` = `lua_setATB`'s return address.
+   - If that return address is `lua_changeATB`'s, the value becomes `max(0, current ATB + delta)`, where current ATB = `+0x188` → `[info+0x1C]`. `set_atb` then caps it at 1.25.
 
-The 1.25 cap still applies, and there is no lower clamp, so a negative delta can push ATB below 0.
+The hook doesn't use a flag, so an error thrown out of `lua_setATB` (`_CxxThrowException` in the Lua error reporter `FUN_009ACA70`) can't leave `setATB` in additive mode.
 
-**Registration:** the code replaces the **`RemoveAllUnits`** entry (`0x00F32F98` name, `0x00F32F9C` function; vanilla handler `0x0056B400`) with `"changeATB"` and the DLL handler.
+The current ATB is read when `changeATB` is called. The resulting absolute value is applied when the arena executes the posted `CSetATBValue` (not verified whether that is immediate or deferred).
 
 ```lua
 changeATB("HeroName", 0.25)  -- additive

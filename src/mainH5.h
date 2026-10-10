@@ -185,4 +185,4 @@ void WarMachineTier_init(pugi::xml_document& doc);
 void LearnWarcries_init(pugi::xml_document& doc);
 void GiveHeroSkill_init(pugi::xml_document& doc);
 void HallOfIntrigue_init(pugi::xml_document& doc);
-//void LuaChangeAtb_init(pugi::xml_document& doc);
+void LuaChangeAtb_init(pugi::xml_document& doc);

@@ -142,7 +142,7 @@ void init_patches(pugi::xml_document& doc) {
     LearnWarcries_init(doc);               // OK
     GiveHeroSkill_init(doc);               // OK
     HallOfIntrigue_init(doc);              // OK
-    //LuaChangeAtb_init(doc);                //
+    LuaChangeAtb_init(doc);                //
     
 }
 

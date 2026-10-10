@@ -46,8 +46,8 @@ extern FastcallInt_IntPtr_IntPtr_Int_Int get_unit_adjacency_roll;
 
 // --- Engine alloc ---
 
-extern StdcallPtr_Uint engine_alloc;
-extern StdcallVoid_Ptr engine_free;
+extern CdeclPtr_Uint engine_alloc;
+extern CdeclVoid_Ptr engine_free;
 
 // --- Buff notification (engine UI hooks) ---
 
