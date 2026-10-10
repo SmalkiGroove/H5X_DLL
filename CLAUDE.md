@@ -131,8 +131,8 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 - All values are hardcoded. The `pugi::xml_document& doc` passed to every `*_init` is empty; `get*ValueFromXdb` / `getXmlTree` exist but are unused.
 - Defined but **not called** from `init_patches()`: `ConjureAtb_init` (commented out), `ArtfsetHaven4_init`, `ArtfsetRepoint_init`, `CreatureCount_init`.
 - `LuaChangeAtb_init` (Lua `changeATB(unit, delta)`, replaces the unused `RemoveAllUnits` entry) is enabled but not yet tested in game (no `// OK` marker).
-- Not in `H5_DLL.vcxproj` (not compiled): `CreatureCount.cpp`, `MarketExchangeRates.cpp`.
-- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LuaChangeAtb_init`.
+- Not in `H5_DLL.vcxproj` (not compiled): `CreatureCount.cpp`.
+- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LuaChangeAtb_init`, `MarketExchangeRates_init`.
 - MinHook is referenced via NuGet (`packages.config`) but unused.
 
 ## Infrastructure quirks to know
