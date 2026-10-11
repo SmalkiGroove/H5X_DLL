@@ -31,8 +31,6 @@ template <typename T> void assignValueToAddress(T* addrPtr, const T& value) {
         return;
     }
     *addrPtr = value;
-    writeLog(INFO, "Value patched to: " + std::to_string(value));
-    writeLog(INFO, "Address pointer: " + std::to_string(reinterpret_cast<uintptr_t>(addrPtr)));
 }
 
 template <typename T>

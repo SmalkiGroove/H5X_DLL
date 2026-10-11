@@ -7,7 +7,7 @@
 
 typedef BOOL(WINAPI* TrackingCountPtr)(void* a, char* b, int c, int d);
 
-bool MMH55_LOADED = false;
+bool MOD_LOADED = false;
 
 EXTERN_DLL_EXPORT BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     {
@@ -34,15 +34,12 @@ EXTERN_DLL_EXPORT BOOL TrackingCount(void* a, char* b, int c, int d) {
     //    return FALSE;
     //}
 
-    /****** MMH55_64 CODE START *******/
-    /****** MMH55_64 CODE END *******/
-
     //BOOL result = original_function(a, b, c, d);
     //FreeLibrary(UbiStatsDLL);
    
-    if (!MMH55_LOADED) {
+    if (!MOD_LOADED) {
         main();
-        MMH55_LOADED = true;
+        MOD_LOADED = true;
     }
 
     return true;

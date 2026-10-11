@@ -72,7 +72,7 @@ void ConditionalJumpToFunction(void* targetAddress, void* destinationFunction, s
 {
     DWORD oldProtect;
     if (!VirtualProtect(reinterpret_cast<LPVOID>(targetAddress), len, PAGE_EXECUTE_READWRITE, &oldProtect)) {
-        writeLog(ERROR, "Cannot enable the current protection settings!");
+        writeLog(ERRROR, "Cannot enable the current protection settings!");
     }
 
     // Calculate the relative offset between the target and destination functions
@@ -88,7 +88,7 @@ void ConditionalJumpToFunction(void* targetAddress, void* destinationFunction, s
 
     DWORD unused;
     if (!VirtualProtect(reinterpret_cast<LPVOID>(targetAddress), sizeof(len), oldProtect, &unused)) {
-        writeLog(ERROR, "Cannot revert the current protection settings!");
+        writeLog(ERRROR, "Cannot revert the current protection settings!");
     }
 }
 
@@ -105,12 +105,6 @@ void AssignNopToAddressRange(int* hookAddress, size_t len) {
             targetAddress[i] = 0x90;
         }
     }
-}
-
-double getDoubleValueFromXdb(pugi::xml_document& doc, const char* abilityName) {
-    std::string xpath = std::string("/MMH55/") + abilityName;
-    auto node = doc.select_node(xpath.c_str()).node().text().as_double();
-    return node;
 }
 
 void assignFloatPtrToAddress(float** addrPtr, const float* value) {
@@ -132,19 +126,25 @@ void assignDoublePtrToAddress(double** addrPtr, const double* value) {
 }
 
 float getFloatValueFromXdb(pugi::xml_document& doc, const char* abilityName) {
-    std::string xpath = std::string("/MMH55/") + abilityName;
+    std::string xpath = std::string("/H5X/") + abilityName;
     auto node = doc.select_node(xpath.c_str()).node().text().as_float();
     return node;
 }
 
+double getDoubleValueFromXdb(pugi::xml_document& doc, const char* abilityName) {
+    std::string xpath = std::string("/H5X/") + abilityName;
+    auto node = doc.select_node(xpath.c_str()).node().text().as_double();
+    return node;
+}
+
 int getIntValueFromXdb(pugi::xml_document& doc, const char* abilityName) {
-    std::string xpath = std::string("/MMH55/") + abilityName;
+    std::string xpath = std::string("/H5X/") + abilityName;
     auto node = doc.select_node(xpath.c_str()).node().text().as_int();
     return node;
 }
 
 std::string getStringValueFromXdb(pugi::xml_document& doc, const char* abilityName) {
-    std::string xpath = std::string("/MMH55/") + abilityName;
+    std::string xpath = std::string("/H5X/") + abilityName;
     auto node = doc.select_node(xpath.c_str()).node().text().as_string();
     return node;
 }
