@@ -6,6 +6,7 @@
 // one column per bought resource. Value = units sold per unit bought, or gold received per unit sold
 // when buying gold.
 // New row 1 (one market) = old row 9; same-category trades reach 1:1 at 9 markets / neutral markets.
+// Neutral markets open the market screen (FUN_0062D770) with a hard-coded count of 3: set to 9 (best rates).
 // Week of Trade (week 0x34): rates of 3 more markets (capped at 9) instead of the vanilla halving of every
 // value, which also halved the gold received when selling and allowed buy/convert/sell gold loops.
 
@@ -48,6 +49,8 @@ void MarketExchangeRates_init(pugi::xml_document& doc) {
 	}
 	assembly_patches.push_back({ PATCH_HOOK, MarketCount_fork, 10, MarketCountFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_NOP, 0x008E7C0C, 5, nullptr, 0, 0, 0, 0 }); // call func_CheckWeekOfTradeRate
+	assembly_patches.push_back({ PATCH_BYTE, 0x005A7D2E, 1, nullptr, 9, 0, 0, 0 });  // neutral market: push 3 -> push 9
+	assembly_patches.push_back({ PATCH_BYTE, 0x005A871C, 1, nullptr, 9, 0, 0, 0 });  // neutral market: push 3 -> push 9
 }
 
 __declspec(naked) void MarketCountFork() {

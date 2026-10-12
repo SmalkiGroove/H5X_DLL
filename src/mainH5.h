@@ -52,6 +52,7 @@ extern std::vector<assembly_patch> assembly_patches;
 void Scripts_init(pugi::xml_document& doc);
 void Pest_init(pugi::xml_document& doc);
 void HeroMaxSkills_init(pugi::xml_document& doc);
+void LevelCurve_init(pugi::xml_document& doc);
 void HeroScreenUI_init(pugi::xml_document& doc);
 void BattlefieldSize_init(pugi::xml_document& doc);
 

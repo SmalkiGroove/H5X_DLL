@@ -10,6 +10,7 @@ void init_patches(pugi::xml_document& doc) {
     Scripts_init(doc);                     // OK
     Pest_init(doc);                        // OK
     HeroMaxSkills_init(doc);               // OK
+    LevelCurve_init(doc);                  //
     HeroScreenUI_init(doc);                // OK
     BattlefieldSize_init(doc);             // OK
     
@@ -78,7 +79,7 @@ void init_patches(pugi::xml_document& doc) {
     Fortunate_init(doc);                   // OK
     ChainHitCount_init(doc);               // OK
     SpitefulTweak_init(doc);               // OK
-    Magnetism_init(doc);                    // OK
+    Magnetism_init(doc);                   // OK
 
     Avengers_init(doc);                    // OK
     Artificier_init(doc);                  // OK
@@ -142,8 +143,8 @@ void init_patches(pugi::xml_document& doc) {
     LearnWarcries_init(doc);               // OK
     GiveHeroSkill_init(doc);               // OK
     HallOfIntrigue_init(doc);              // OK
-    MarketExchangeRates_init(doc);         //
-    LuaChangeAtb_init(doc);                //
+    MarketExchangeRates_init(doc);         // OK
+    LuaChangeAtb_init(doc);                // OK
     
 }
 

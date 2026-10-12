@@ -132,7 +132,7 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 - Defined but **not called** from `init_patches()`: `ConjureAtb_init` (commented out), `ArtfsetHaven4_init`, `ArtfsetRepoint_init`, `CreatureCount_init`.
 - `LuaChangeAtb_init` (Lua `changeATB(unit, delta)`, replaces the unused `RemoveAllUnits` entry) is enabled but not yet tested in game (no `// OK` marker).
 - Not in `H5_DLL.vcxproj` (not compiled): `CreatureCount.cpp`.
-- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LuaChangeAtb_init`, `MarketExchangeRates_init`.
+- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `MarketExchangeRates_init`, `LevelCurve_init` (hero XP table and max level; same values as the static `h5m_level-curve.yml` edits already in H5X.exe).
 - MinHook is referenced via NuGet (`packages.config`) but unused.
 
 ## Infrastructure quirks to know
