@@ -75,6 +75,77 @@ These vtables only hold lifetime/serialization methods; the decision logic is no
 Step writes (`mov [reg+0x128], n`) are spread over the handlers above; `0x00868E00` (called after `SFLB_InitDay`)
 sets the first step of the day.
 
+## Destination candidates (`CHOOSE_DESTINATION`)
+
+Call chain (all addresses verified in H5X.exe):
+
+1. **`FUN_0086C010`** (step 11 handler) prepares the search on the global search object **`0x00FE8618`**
+   (`0x00C07xxx` methods: `FUN_0086EF40` init, `FUN_00CEB670` start cell, `FUN_00C07AD0` / `C07B20` / `C07B60` /
+   `C076C0` / `C07920` setup, `FUN_00C08BE0` = wave spread, timed → log `Wave spread: search limit = …`).
+   Per-hero objects built before: `[CPlayerAI+0xC8] = FUN_00BC5B30(world, hero)` (**evaluator**, below) and
+   `[CPlayerAI+0xD8] = FUN_00BCC020(world, hero)`. Then calls `FUN_00A7B630` at `0x0086C4EC`
+   (also called from `FUN_008675F0` @ `0x008678E2`).
+2. **`FUN_00A7B630` — selection loop.** Calls the builder, logs `found %i destinations` / `no destinations found`,
+   optionally adds entries with `FUN_00A79700`, then scores each entry with `FUN_00A78940` and keeps the best
+   (logs `new best` / `discarded, A <= B` / `discarded bonus …` / `discarded neutral for positive previous` via
+   `FUN_00A7A0C0`). Ends with `no suitable destination found, search not finished` if nothing is better than staying.
+3. **`FUN_00A7AF80` — candidate builder.** Walks the reachable points of the wave spread (`[0x00FE8618+0xDC]`,
+   map grid at `+0xA8`). For each point: cost limits (`FUN_00A7C1D0` / `FUN_00A7C390`), map object at the point
+   (`FUN_009D1570`, `0x00A7B224`), accessor slot `+0x00` non-null → skipped, **role filter `FUN_00A78400`**,
+   dedup by object (keeps the cheaper path), skips owner-garrison and some `+0x54` cases, then calls
+   **`FUN_00A78B60`** and **appends the entry (`FUN_00A7C940` @ `0x00A7B495`) only if its value is positive**:
+   `0x00A7B46F call FUN_008664C0` (value > 0) or `FUN_00A78340` (cost ≥ 300 and "neutral" entry). **Candidates with a
+   value ≤ 0 are dropped here without any log line.** At the end it also scores one more entry built from the hero's
+   `+0x1C` object (role not identified).
+   Entries are `0x48` bytes; value at `+0x08` (`int level; …; int64 amount` — compared level first), cost at `+0x18`.
+4. **`FUN_00A78B60` — per-object filter + score.** Rejects the object if its interface accessor `+0x4C` is non-null,
+   handles attractor/script targets, then calls the evaluator: `evaluator->vtable[0](entry+8, object, entry, cost)`.
+   The large remaining block deals with owned/guarded/hero objects (battle simulations via `FUN_00BC3AF0`).
+5. **Evaluator `NWorld::CEventValuePool`** (vtable `0x00E84E1C`, ctor `FUN_00BC5A80`, 0x40 bytes).
+   Slot 0 **`FUN_00BC5740`**: cached value (`FUN_00BC5B80`) or the object's own AI estimator (object accessor
+   `+0x6C` → sub-object `this-0x30`; estimator `+0x04` = applies to this hero, `+0x00` = value), else fallback
+   **`FUN_00BC5480`**: switches the world to simulation (`+0x138/+0x13C`), measures the player's worth
+   (`FUN_00872220`), applies the object to the hero (world `+0x74`), measures again → **value = worth after − before**.
+   Then scripted attractors (`SetAIHeroAttractor`: ± `SearchPositive/NegativeAttractorValue`, 2 = level 3) and
+   `FUN_00BC5710`.
+
+### Role filter `FUN_00A78400` (`__thiscall`, ECX = object, EAX = hero)
+
+Hero AI role = hero object vtable `+0x2BC` (log suffix: `Com`, `Fre`, `Col(<hero>)`, `Sup(<hero>)`).
+- Role 1: accepts anything reachable this turn (cost ≤ move points); farther, only objects answering the hero `+0x2C`,
+  town `+0x3C`, owner `+0x04`, pick-up `+0x20`, `+0x5C`, `+0x58` or monster `+0x1C` accessors (else `+0x28` → `+0x24`).
+- Roles 2 / 3: within a Chebyshev distance taken from DefaultStats runtime offsets `+0x23C` / `+0x240` (same floor),
+  otherwise mostly owner/ally-related objects.
+- Any other role (incl. the main hero): accepts everything.
+
+### Destination action types (`FUN_00A7A0C0`, by the target object's interface accessors)
+
+Map objects expose an 80-slot interface-accessor vtable (each slot returns an interface pointer or 0):
+
+| Accessor | Action name |
+|---|---|
+| `+0x2C` hero | `fight` (enemy) / `meet` / `meet ally` |
+| `+0x38` ship | `fight hero aboard` / `meet in ship` / `meet ally in ship` / `enter` |
+| `+0x1C` army (monster) | **`fight`** + stack name |
+| `+0x20` pickable (artifact) | **`pick up`** |
+| `+0x04` owner (flagged) | `capture` / `visit` / `visit ally` |
+| none | `visit` |
+| no object | `move to point`, `build ship in town`, `cast town portal and move`, `move and summon boat`, `move and dig`, `move and cast teleport` |
+
+Other accessors seen: `+0x08` guards ("Creatures: …"), `+0x40` dwelling (creatures to purchase), `+0x48` shipyard
+(dock), `+0x3C` town, `+0x6C` AI estimator. Concrete classes: `CAdvMapMonster` (accessor vtable `0x00E18F7C`,
+answers `+0x08`, `+0x10`, `+0x1C`, `+0x28`, `+0x68`, `+0x6C`, `+0x70/+0x74`), `CAdvMapArtifact` (`0x00E187D4`,
+answers `+0x20`), `CAdvMapTreasure` (`0x00E715EC`, resource piles / campfires, only common accessors → `visit`).
+
+**Why the first log has no `fight` / `pick up` destination:** monsters and artifacts do answer `+0x1C` / `+0x20`, and
+`+0x4C` is 0 for them, so they reach the evaluator; the remaining explanation is that their value is ≤ 0 and the
+builder drops them at `0x00A7B46F`. To confirm it, `src/patches/AiLogs.cpp` hooks the second acceptance test
+(`call FUN_00A78340` @ `0x00A7B480`, reached only when the value is not positive): when it also rejects the entry, the
+game's destination logger `FUN_00A7A0C0` is called with the builder's own data (builder frame `B = esp` at the call:
+entry `[B+0x4C]`, value `[B+0x54]`, hero main interface `[B+0x48]`, hero `[B+0xA0]`, 5th argument `[B+0xA8]`) →
+rows tagged `destination (dropped, value <= 0)`. The per-class estimator (accessor `+0x6C`) of `CAdvMapMonster` was not identified yet
+(no RTTI vtable at sub-object `+0x128`).
+
 ## Other AI code located by log strings
 
 | Function | Log string / role |
@@ -121,7 +192,7 @@ Written in the game root (`G:\__H5__\H5Xdev\ai_#N.log`, N = player number). Tab-
 | `Action` | What happens (`visit`, `capture`, `meet`, `fight win …`, step name and timing, …) |
 | `Object` | Target object or detail (object name, creature stack, skill/perk, building `TB_*`, `Winner army … \| Loser army … \| Winner hero …` for fights) |
 | `ObjInfo` | Extra info on the target, e.g. `(owned by player 0) \| (dock deserted) \|` |
-| `Value` | AI value of the destination/choice (float). Destination values of all kinds are compared directly |
+| `Value` | AI value of the destination/choice, formatted by `FUN_00A7C230`: `[prefix]amount` with `%.2f`. Prefix by value level: none = 0 (normal), `WIN ` = 3 (forced/best), `BAD ` = -1, `LOSE ` = -2, `UNKNOWN ` = other. **Empty = exactly 0** (level 0 and amount 0, row writer `FUN_00B603F0`). Values are compared level first, then amount |
 | `Money` | Cost or gain of the action (`4 ore, 500 gold`, `5 wood`) |
 | `Gold` … `Gem` | Treasury after the row: `<amount> + <daily income> (<AI value of one unit>)`, e.g. `52 + 2 (1461)`; unit values are recomputed from demand/supply after day 1 |
 | `Heroes`, `Towns` | Number of heroes and towns owned |
@@ -138,6 +209,7 @@ Written in the game root (`G:\__H5__\H5Xdev\ai_#N.log`, N = player number). Tab-
 | `destination (new best)` | Candidate destination that beats the current best (`Value` = its score) |
 | `destination (discarded, A <= B)` | Candidate scored `A`, below the best `B` |
 | `destination (discarded bonus, n >= n)` / `(discarded not bonus, because not positive (v))` / `(discarded neutral for positive previous)` | Other rejection rules (bonus-visit limit, non-positive value, …) |
+| `destination (dropped, value <= 0)` | **Added by `AiLogs.cpp`**: candidate dropped by the builder before selection because its value is not positive (vanilla never logs these) |
 | `do` | Action actually ordered: `visit`, `visits`, `capture`, `captures flagged`, `meet`, `builds`, `builds upgrade`, `purchases`, `hires hero`, `level up` (+ attribute), `begin day`, `end turn: <steps> steps, <s> seconds` |
 | `done` | Result: `fight win (<our power> vs <their power>), <x>% lost [(survive cheat)]`, `got artifact`, `gets money`, `level up` (selected skill/perk), `heroes met`, `pursues fleeing monster` |
 
@@ -168,6 +240,25 @@ Written in the game root (`G:\__H5__\H5Xdev\ai_#N.log`, N = player number). Tab-
 - 141 searches end with `no destinations found` or `search not finished`, against 107 `found <n> destinations`:
   searches often return nothing.
 - Turns: 15–34 steps, 8–16 s per day.
+
+### Second log with dropped candidates (H5X - Stadium, normal, AI player 2, days 7–17, 4020 rows)
+
+- 1829 `destination (dropped, value <= 0)` rows: `visit` 1438, `meet` 311, `capture` 80. **Still no `fight` and no
+  `pick up`, even among dropped candidates**: monsters and map artifacts never reach the value test, so they are
+  removed earlier — either they are not in the wave-spread reachable list (`[0x00FE8618+0xDC]`) or an earlier builder
+  filter rejects them (cost limits, accessor `+0x00`, `FUN_00A78400` — but it accepts everything for the main hero —,
+  garrison / `+0x54` checks, or `FUN_00A78B60` returning false at `0x00A7B43D`). Next debug step: log every object
+  seen by the builder right after `FUN_009D1570` (`0x00A7B229`), with its accessors (`+0x1C` monster, `+0x20`
+  pick-up), to see which filter removes them.
+- 98% of dropped values are exactly 0: already visited sites (Dolmen of Knowledge 838 rows over 15 cells), own buildings
+  (`owned by player 2`, 407), meetings between own heroes with nothing to exchange.
+- Neutral captures dropped (`owned by player 0`): Dwarven Warren for the Commander (value 0, 59 rows, never captured —
+  a Fortress dwelling for a Necropolis AI) and Abandoned Mine for a Freelancer (`BAD 0.00` = level -1, guards too
+  strong). Other neutral mines (Gem Mine, Sulfur Deposit, Alchemist Lab, Crystal Cavern, Abandoned Mine) were captured
+  by the Commander.
+- Negative values: a Collector meeting its Commander (−44k to −159k), Freelancers meeting each other (−12 / −16).
+- All 18 fights again happened on the way to other targets; 64 `got artifact` rows although no `pick up` destination
+  exists (obtained on the way or as rewards — origin not traced).
 
 ## Data parameters — `RPGStats/AI/Adventure` in `GameMechanics/RPGStats/DefaultStats.xdb`
 
