@@ -40,7 +40,7 @@ Binary / address conventions (always applies):
 | `src/types/Functions.*` | Typed pointers to game functions (`count_equipped_artifact`, `has_skill`, `engine_alloc`, …) |
 | `src/types/types.h` | One typedef per calling convention/signature + vtable slot aliases (`GetInt`, `GetPtr`, `SetATBValue`, …) |
 | `src/types/{Artifacts,Skills,Abilities}.h` | Game ID enums (`ARTIFACT_ID`, `SKILL_ID`, `CreatureAbility`) |
-| `src/structs/*.h` | RE'd vtables/structs: `CombatUnit.h` (shared hero/creature combat vtable), `Hero.h` (AdvMap hero), `Creature.h`, `Spell.h` |
+| `src/structs/*.h` | RE'd vtables/structs: `CombatUnit.h` (shared hero/creature combat vtable), `Hero.h` (AdvMap hero), `Creature.h` (army stack `ICreature`, combat stack `ICombatStack` = NWorld::ICombatCreature at +0xA0), `Spell.h` |
 | `src/patches/*.cpp` | ~125 feature modules, one per file |
 | `addresses.txt` | Legacy cheat-sheet of patch sites (artifact/skill/spec checks) and stat functions |
 | `.cursor/rules/*.mdc` | RE knowledge base (see below) |
@@ -132,7 +132,7 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 - All values are hardcoded. The `pugi::xml_document& doc` passed to every `*_init` is empty; `get*ValueFromXdb` / `getXmlTree` exist but are unused.
 - Defined but **not called** from `init_patches()`: `ConjureAtb_init` (commented out), `ArtfsetRepoint_init` (commented out), `CreatureCount_init`.
 - Not in `H5_DLL.vcxproj` (not compiled): `CreatureCount.cpp`.
-- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LevelCurve_init` (hero XP table and max level; same values as the static `h5m_level-curve.yml` edits already in H5X.exe), `ArtfsetHaven_init` (Haven set 6-piece effects). `ArtfsetExpand_init` is marked OK but was extended afterwards (set-count vector sized 40, bounds-checked getter).
+- Init entries without the `// OK` marker (untested/in progress): `WandOfSpellTweak_init`, `Earthquake_init`, `LevelCurve_init` (hero XP table and max level; same values as the static `h5m_level-curve.yml` edits already in H5X.exe), `ArtfsetHaven_init` (Haven set 6-piece effects), `ArtfsetPreserve_init` (Sylvan set 4/6-piece effects). `ArtfsetExpand_init` is marked OK but was extended afterwards (set-count vector sized 40, bounds-checked getter).
 - MinHook is referenced via NuGet (`packages.config`) but unused.
 
 ## Infrastructure quirks to know

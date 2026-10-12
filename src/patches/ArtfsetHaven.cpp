@@ -7,8 +7,6 @@
 // 4 Haven: scripted
 // 6: creatures always get good morale (good morale roll always succeeds, bad morale roll never does)
 // 6 Haven: creatures get +2 attack and defense per point of positive morale
-// Undead skip both morale rolls before the hooks (has_ability 10), so they are not affected.
-// Set counts above 10 need ArtfsetExpand.
 
 void ArtfsetHavenGoodMoraleFork();
 void ArtfsetHavenBadMoraleFork();

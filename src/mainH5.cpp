@@ -108,8 +108,8 @@ void init_patches(pugi::xml_document& doc) {
 
     ArtfsetExpand_init(doc);               // OK
     ArtfsetHaven_init(doc);                //
+    ArtfsetPreserve_init(doc);             //
     AnkhOfTheSaint_init(doc);              // OK
-    GoldenGoose_init(doc);                 // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
     AllSeeingCrownTweak_init(doc);         // OK

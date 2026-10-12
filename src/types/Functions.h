@@ -36,6 +36,7 @@ extern FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int apply_spell_damage;
 // --- Creatures / combat ---
 
 extern ThiscallIntPtr_Int get_creature_data;
+extern ThiscallInt_IntPtr get_creature_town;
 extern FastcallByte_IntPtr func_GetCreatureFlying;
 extern ThiscallInt_Int_Int get_mitigated_damage;
 extern ThiscallInt_IntPtr get_unit_luck_clamped;

@@ -139,7 +139,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x05C` | **get_state_flag_7c** | hero 0x00BBF550 func_CombatHero_ReturnFalse (xor al,al; ret); creature 0x008A0F20 func_CombatCreature_GetStateFlag7C (returns byte [this-0x7c]) |
 | `0x068` | **build_runtime_data** | hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData |
 | `0x06C` | **get_side_ptr_a** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) |
-| `0x070` | **get_side_ptr_b** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) |
+| `0x070` | **get_combat_stack** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — combat stack interface (NWorld::ICombatCreature, complete +0xA0; ICombatStack in Creature.h), 0 for heroes |
 | `0x074` | **get_hero_aux_subobject** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x078` | **get_hero_aux_subobject_b** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x09C` | **schedule_linked_spell_fx** | hero 0x00BC0EB0 func_CombatHero_ScheduleLinkedSpellFx; creature 0x008AAAA0 func_CombatCreature_ScheduleLinkedSpellFx |
@@ -241,7 +241,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x064` | **get_combat_unit_ptr_mi** | shared `0x008AE230` func_CombatUnit_GetCombatUnitPtr |
 | `0x068` | **build_runtime_data** | hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData |
 | `0x06C` | **get_side_ptr_a** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) |
-| `0x070` | **get_side_ptr_b** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) |
+| `0x070` | **get_combat_stack** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — combat stack interface (NWorld::ICombatCreature, complete +0xA0; ICombatStack in Creature.h), 0 for heroes |
 | `0x074` | **get_hero_aux_subobject** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x078` | **get_hero_aux_subobject_b** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x07C` | **stub_return_zero_a** | shared `0x00C98940` func_CombatUnit_ReturnZero (xor eax,eax; ret) |

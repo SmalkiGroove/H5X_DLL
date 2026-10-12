@@ -335,9 +335,6 @@
     <ClCompile Include="src/patches/ShieldOfCristalIce.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
-    <ClCompile Include="src/patches/GoldenGoose.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
-    </ClCompile>
     <ClCompile Include="src/patches/WeakeningStrike.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
@@ -507,6 +504,9 @@
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\ArtfsetHaven.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\ArtfsetPreserve.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\ColdDeath.cpp">

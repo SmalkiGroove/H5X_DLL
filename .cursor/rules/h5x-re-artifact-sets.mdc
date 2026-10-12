@@ -58,7 +58,7 @@ IDs 1..10 are the vanilla sets (`ARTIFACT_SET_VANILLA_*`): names from the old `A
 | 8 | Ogres | `0x004BB25F`, `0x004BC579`, `0x008CE937` | |
 | 9 | Runic | | `0x004B0E54` |
 | 10 | Demonic | `0x008603AD` | |
-| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp` | |
+| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp`, 12 Sylvan: `ArtfsetPreserve.cpp` | |
 
 `0x004D8D7F` is the generic call inside `0x004D8D60`.
 
@@ -82,6 +82,25 @@ Before this, only the getter's bound was raised (`0x00B5AD7A`). Counts for IDs >
 | 6 | Good morale roll always succeeds and bad morale roll never does (undead are excluded earlier by `has_ability(10)`) | `0x00A6BA30` (good roll `0x00A6BA00`, exit `0x00A6BAF4`) and `0x00A6B920` (bad roll `0x00A6B8F0`, exit `0x00A6B919`) |
 | 6 + Haven class | +2 attack and defense per point of positive morale | `0x008A498C` (`func_GetUnitAttack`, `ebx` = attack after the shooter bonuses) and `0x008A23F8` (`func_GetUnitDefense`, `ebx` and `[esp+0x14]` = defense before the defend stance bonus) |
 
-Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (good morale) and `+0x1D0` (luck); see `h5x-re-combat-unit.mdc`. Supernatural Luck (creature luck wrapper `0x008A3EF0`, own hero skill `0x7C` at `0x008A3F98`) is the vanilla model for "always lucky". `GoldenGoose.cpp` swaps that skill for artifact 161.
+Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (good morale) and `+0x1D0` (luck); see `h5x-re-combat-unit.mdc`. Supernatural Luck (creature luck wrapper `0x008A3EF0`, own hero skill `0x7C` checked at `0x008A3F98`) is the vanilla model for "always lucky"; the Sylvan set now owns that check (see below).
 
-Hook sites to avoid: `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`.
+## Sylvan set (12) — `ArtfsetPreserve.cpp`
+
+"Sylvan hero" = `HERO_CLASS_PRESERVE_MIGHT` (9) / `HERO_CLASS_PRESERVE_MAGIC` (10).
+
+| Pieces | Effect | Hook |
+|---|---|---|
+| 4 | Hero's effective spellpower ×2 for nature spells (`get_spell_school` = 3) | `0x00BC05A2` (5), end of the CombatHero spellpower-for-spell function: `ebx` = final spellpower before the `>= 1` clamp, `esi` = hero CombatUnit subobject, `edi` = spell ref (0 without spell) |
+| 4 + Sylvan class | Sylvan creatures (`get_creature_town` = 4) deal +0.2 damage multiplier to the hero's favored enemies | `PATCH_CALL 0x00A5AE0C` → wrapper calling `FUN_00A59340` then adding the bonus |
+| 6 | Creatures always roll good luck | `0x008A3F98` (24) in the creature luck roll `0x008A3EF0`: replaces the own hero skill `0x7C` (Supernatural Luck) check; non-zero → `edi = 1` at `0x008A3FB2` (forced good luck), enemy skill `0xA7` still cancels it. Supersedes the removed `GoldenGoose.cpp` (artifact 161 had this effect) |
+| 6 + Sylvan class | Spell damage taken × clamp(1 − luck × DefaultStats `+0x704`, 0, 1) for luck > 0 | `0x0097B055` (17) replaces the skill `0xB3` check; `PATCH_WRTE 0x0097B072` makes it per luck point |
+
+### Sites used by the Sylvan set
+
+- **Spellpower for a spell** (CombatHero, `__thiscall`, `ret 8`): ends at `0x00BC0582`–`0x00BC05B2` (buff `0x14D`, clamp `>= 1`). School dispatch at `0x00BC045E`: `get_spell_school` 1 = dark (`0x00BC04A8`), 2 = light (`0x00BC0473`, `StaffOfTheSaint.cpp`), 3 = nature (no vanilla branch). Also hooked: `ModEffectiveSpellpower.cpp` `0x00BC0582`, `Pariah.cpp` / `Twilight.cpp` bytes.
+- **`FUN_00A59340`** favored-enemy damage multiplier, custom convention: `ecx` = attacker, `eax` = target (CombatUnit subobjects), returns float in `st0`. Vanilla: own hero spec `0x1C` (Forest Guardian) + attacker faction 4 + target in the hero's favored enemies → `1 + clamp(level × DefaultStats[+0x85C] + [+0x858], 0, 10)`, else 1.0. Only caller: `func_ComputeDamageMitigation` (`0x00A5A900`) at `0x00A5AE0C` (result multiplied into the damage).
+- **Favored enemies**: `IHero` vtable `+0x25C` (`0x00B4CE20`, returns `[this+0x188]`; `IHero::favored_enemies()`), then its vtable `+0x0C` (creature id) → bool.
+- **Creature of a combat unit**: `ICombatCreature::creature()` (`src/structs/Creature.h`). CombatUnit vtable `+0x70` `get_combat_stack` returns the combat stack interface `ICombatStack` (RTTI `NWorld::ICombatCreature`, vtable `0x00E4FE9C`, complete object `+0xA0`; null for heroes), whose slot `+0` returns the `ICreature*` (`type_id` at `+0x1C`, `count` at `+0x20`). All 35 slots are documented in `CombatStack_vtable`. Faction: `0x004BA910` (`get_creature_town`, creature data `+0x98`).
+- **Spell damage mitigation** `func_ComputeSpellDamageMitigation` (`0x0097AF50`): `ebx` = defending side's `IHero`, `edi` = defending unit. The old Luck of the Barbarian block `0x0097B055`–`0x0097B0B2` used `luck > 0 ? 1 : 0` (`setg` at `0x0097B076`); `SkillEffectDisable.cpp` used to disable it with `EB` at `0x0097B066` (removed). `ModSpellProof.cpp` / `ModElementalResistance.cpp` hook later in the same function.
+
+Hook sites to avoid: `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6).

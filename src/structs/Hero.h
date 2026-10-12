@@ -159,7 +159,7 @@ struct Hero_vtable {
 	GetAdvMapShared get_advmap_shared; // 0x250 (592) - 0x00B531E0 thunk → lazy-load SAdvMapHeroShared @ [this+0xD0]
 	int* call_596;
 	GetInt get_hero_class; // 0x258 (600) - 0x00B4C0F0, returns [this+0x88] (HeroClass, types/HeroClasses.h)
-	int* call_604;
+	GetPtr get_favored_enemies; // 0x25C (604) - 0x00B4CE20, returns [this+0x188]: favored enemy set, its vtable +0x0C (creature id) -> bool
 	int* call_608;
 	int* call_612;
 	GetNameWString get_name_wstring; // 0x268 (616) - 0x00B4D4A0, copies wchar range [this+0x6C..0x70] into out-vector
@@ -245,6 +245,9 @@ struct IHero {
 	}
 	int hero_class() {
 		return instance->get_hero_class((int*)this);
+	}
+	int* favored_enemies() {
+		return instance->get_favored_enemies((int*)this);
 	}
 	int hero_spec() {
 		return instance->get_hero_spec((int*)this);

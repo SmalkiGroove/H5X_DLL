@@ -60,7 +60,7 @@ struct CombatUnit_vtable {
 	int* get_combat_unit_ptr_mi; // 0x064 (100) - 0x008AE230 [shared] func_CombatUnit_GetCombatUnitPtr
 	int* build_runtime_data; // 0x068 (104) - hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData
 	int* get_side_ptr_a; // 0x06C (108) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function)
-	int* get_side_ptr_b; // 0x070 (112) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function)
+	GetPtr get_combat_stack; // 0x070 (112) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — combat stack interface (NWorld::ICombatCreature, complete +0xA0; ICombatStack in Creature.h), 0 for heroes
 	int* get_hero_aux_subobject; // 0x074 (116) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret)
 	int* get_hero_aux_subobject_b; // 0x078 (120) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret)
 	int* stub_return_zero_a; // 0x07C (124) - 0x00C98940 [shared] func_CombatUnit_ReturnZero (xor eax,eax; ret)

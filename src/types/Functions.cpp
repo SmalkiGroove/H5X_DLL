@@ -24,6 +24,7 @@ ThiscallInt_IntPtr get_unit_spellproof = (ThiscallInt_IntPtr)0x0097D2A0;
 FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int apply_spell_damage = (FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)0x004E6B60;
 
 ThiscallIntPtr_Int get_creature_data = (ThiscallIntPtr_Int)0x0089FBF0;
+ThiscallInt_IntPtr get_creature_town = (ThiscallInt_IntPtr)0x004BA910;  // ICreature* -> faction (creature data +0x98)
 FastcallByte_IntPtr func_GetCreatureFlying = (FastcallByte_IntPtr)0x004BA950;
 ThiscallInt_Int_Int get_mitigated_damage = (ThiscallInt_Int_Int)0x0097D740;
 ThiscallInt_IntPtr get_unit_luck_clamped = (ThiscallInt_IntPtr)0x004BB3C0;

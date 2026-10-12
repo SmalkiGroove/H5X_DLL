@@ -156,6 +156,7 @@ Hero spec check :
 008A3789 elven fury (spiteful)
 00AF34EE talented warrior
 0097DB23 wasp swarm
+00A59380 forest guardian
 00989CF6 dark emissary
 0098A1D8 dark emissary (morale)
 009BC567 dark emissary (ini)

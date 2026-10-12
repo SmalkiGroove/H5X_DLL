@@ -120,6 +120,84 @@ struct ICreature {
 	}
 };
 
+// Combat stack interface (RTTI NWorld::ICombatCreature, vtable 0x00E4FE9C, 35 slots), subobject at +0xA0 of the
+// CCombatCreature complete object. Not the repo's ICombatCreature below, which is the CombatUnit (ICombatBase)
+// subobject at +0x148. Reached with CombatUnit vtable +0x70 get_combat_stack (0 for heroes; the hero's counterpart
+// at +0xA0 is NWorld::ICombatHero, vtable 0x00E84CC4, whose slot 0 returns the IHero).
+// From this subobject: vbptr at this-0x9C (CombatUnit = this-0x9C + [[this-0x9C]+8]), complete object at this-0xA0.
+// Fields (offsets from this subobject; complete object = +0xA0):
+//   +0x08 ICreature* (army stack: type_id, count)       +0x0C base count (see get_base_count)
+//   +0x10 stack state history (vector of 0x10-byte entries at +0x1C/+0x20; last entry: +0x0 time, +0x4 current
+//         count, +0x8 used by slot 0x44); empty history reads zeros at 0x00FEFAC8
+//   +0x2C dead flag (cleared by add_creatures)          +0x2D defending (func_GetUnitDefense reads complete +0xCD)
+//   +0x44 / +0x45 flags (slots 0x18 / 0x14)              +0x48 magic element
+//   +0x4C status flags (0x2000 = Horror of the Death)    +0x58 float (slots 0x44 / 0x4C / 0x54)
+//   +0x80 Treachery triggered                            +0x84 rage points (thresholds: slot 0x80)
+//   +0x88 alternate stats object (slot 0x1C returns 8, slot 0x50 uses FUN_004BCD60)
+// "current count" = last history entry +0x4.
+enum {
+	CombatStack_vtable_addr = 0x00E4FE9C,
+	CombatStack_subobject_offset = 0xA0
+};
+
+struct CombatStack_vtable {
+	GetPtr get_creature; // 0x00 (0) - 0x00724930, returns [this+0x8] (ICreature*)
+	int* get_pair_30; // 0x04 (4) - 0x008AE070, thiscall(int* out), ret 4: out[0] = [this+0x30], out[1] = [this+0x34]
+	GetInt get_base_count; // 0x08 (8) - 0x0081BF70, returns [this+0xC]: stack size used for max values; lowered by remove_creatures, raised by add_creatures
+	GetInt get_base_total_health; // 0x0C (12) - 0x008A1DA0 FUN_008a1da0, func_GetCreatureHealth(owner hero, creature) * base count
+	GetInt get_current_value_64; // 0x10 (16) - 0x008A41F0 FUN_008a41f0, current count * creature data +0x80 (or +0x64 when 0), FUN_004BAAD0
+	int* get_flag_45; // 0x14 (20) - 0x008AE0B0, returns byte [this+0x45], set by add_creatures when the stack was dead
+	int* get_flag_44; // 0x18 (24) - 0x008AE0C0, returns byte [this+0x44]; when set, func_GetUnitAttack and func_GetUnitDefense double the stat
+	GetInt get_tier; // 0x1C (28) - 0x008A2110, 8 when [this+0x88] is set, else creature data +0x8C (FUN_004BA900; assumed tier)
+	GetInt get_base_power; // 0x20 (32) - 0x008A1E30 FUN_008a1e30, func_GetCreaturePowerValue (creature data +0x84, >= 1) * base count
+	GetInt get_current_power; // 0x24 (36) - 0x008A54F0, power value * current count (army strength of the stack)
+	int* fill_list_28; // 0x28 (40) - 0x008A5650 FUN_008a5650, thiscall(vector* out): clears out, refills it from the creature (FUN_00B61EB0, or FUN_00B61C20 with [this+0x88])
+	GetInt get_value_20; // 0x2C (44) - 0x00CBCA20, returns [this+0x20]
+	CheckValue set_value_20; // 0x30 (48) - 0x008AE0D0, [this+0x20] = arg, enqueues a unit refresh
+	GetInt get_value_24; // 0x34 (52) - 0x00CE6750, returns [this+0x24]
+	CheckValue set_value_24; // 0x38 (56) - 0x008AE0F0, [this+0x24] = arg, enqueues a unit refresh
+	int* unknown_3c; // 0x3C (60) - 0x008A7EF0 FUN_008a7ef0, thiscall(uint time, int x): calls CombatUnit +0x1F8(time, x, 1), then records a history entry
+	int* unknown_40; // 0x40 (64) - 0x008A8050 FUN_008a8050, thiscall(uint time): records a history entry (top creature hp * base count)
+	int* unknown_44; // 0x44 (68) - 0x008A3DB0, thiscall(arg): CombatUnit +0x1F4(arg, last entry +0x8 * (1 - [this+0x58]))
+	int* add_creatures; // 0x48 (72) - 0x008A7D40 FUN_008a7d40, thiscall(uint time, int count): revives a dead stack, raises base count to current + count (resurrection)
+	int* add_float_58; // 0x4C (76) - 0x008A8390, thiscall(arg, float value): [this+0x58] = clamp([this+0x58] + value, 0, 0.99), then FUN_008A8260
+	GetInt get_creature_health; // 0x50 (80) - 0x008A2130 FUN_008a2130, hp of one creature: func_GetCreatureHealth (or FUN_004BCD60 with [this+0x88]) + FUN_008D9390; buff 0x147 replaces it with a DefaultStats +0x39C based value
+	int* get_float_58; // 0x54 (84) - 0x008AE090, returns float [this+0x58] (st0)
+	GetInt get_magic_element; // 0x58 (88) - 0x00CE6790, returns [this+0x48]
+	CheckValue set_magic_element; // 0x5C (92) - 0x008A2A70 FUN_008a2a70, [this+0x48] = arg, logs ": magic element changed to"
+	int* unknown_60; // 0x60 (96) - 0x008A2B10, FUN_004BCB50(creature, &[this+0x5C])
+	int* remove_creatures; // 0x64 (100) - 0x008A1410 FUN_008a1410, thiscall(int count, uint time): kills count creatures (CombatUnit +0x1F4 with hp * count), base count -= count; stack death at 0
+	int* check_treachery; // 0x68 (104) - 0x008A0B60 FUN_008a0b60, ABILITY_TREACHERY (107) once per combat ([this+0x80]): fires when the count ratio drops under a DefaultStats threshold
+	int* is_treachery_triggered; // 0x6C (108) - 0x007ABDD0, returns byte [this+0x80]
+	int* get_flag_m4; // 0x70 (112) - 0x008AE0A0, returns byte [this-0x4] (complete +0x9C)
+	int* refresh_horror_flag; // 0x74 (116) - 0x008A5570 FUN_008a5570, non-undead: sets flag 0x2000 in [this+0x4C] when an enemy has ABILITY_HORROR_OF_THE_DEATH (137)
+	GetInt get_value_54; // 0x78 (120) - 0x00C61AC0, returns [this+0x54]
+	CheckValue add_rage; // 0x7C (124) - 0x008A2C20 FUN_008a2c20, rage gain for rage users (FUN_008A16B0: creature town 10): scaled by buffs 0x11/0x12/0x14/0x148, hero skill 0xB8, hero buff 0xCC
+	CheckValue get_rage_threshold; // 0x80 (128) - 0x008A2B20, arg = rage level 0..3: DefaultStats +0x400 table, scaled down when the hero's skill 0xAC mastery > 3
+	int* update_rage; // 0x84 (132) - 0x008A84E0 FUN_008a84e0, resets [this+0x84] when CombatUnit +0x5C, else recomputes the rage level and its effects
+	int* apply_rage_level; // 0x88 (136) - 0x008A1760, rage level (FUN_008A1640: [this+0x84] against the thresholds) -> level effects
+};
+
+struct ICombatStack {
+	CombatStack_vtable* instance;
+
+	ICreature* creature() {
+		return (ICreature*)instance->get_creature((int*)this);
+	}
+	int base_count() {
+		return instance->get_base_count((int*)this);
+	}
+	int creature_health() {
+		return instance->get_creature_health((int*)this);
+	}
+	int current_power() {
+		return instance->get_current_power((int*)this);
+	}
+	int magic_element() {
+		return instance->get_magic_element((int*)this);
+	}
+};
+
 // CombatCreature (vtable 0x00E4FBA4, NWorld::CCombatCreature, subobject +0x148, vbptr at this-0x144).
 // RE rule: .cursor/rules/h5x-re-combat-creature.mdc (auto-synced).
 //
@@ -188,6 +266,15 @@ struct ICombatCreature : ICombatUnit {
 	}
 	bool has_ability(int ability_id) {
 		return instance->has_ability((int*)this, ability_id) != 0;
+	}
+	// Combat stack interface (CombatUnit vtable +0x70), nullptr when the unit is a hero.
+	ICombatStack* stack() {
+		return (ICombatStack*)instance->get_combat_stack((int*)this);
+	}
+	// Army stack (type_id, count) of the unit, nullptr when the unit is a hero.
+	ICreature* creature() {
+		ICombatStack* combat_stack = stack();
+		return combat_stack ? combat_stack->creature() : nullptr;
 	}
 	// Friendly side ICombatHero: 2x get_unit_ref on MI subobject (no notify_owner).
 	ICombatHero* owner() {
