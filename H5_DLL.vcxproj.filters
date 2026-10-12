@@ -506,7 +506,7 @@
     <ClCompile Include="src\patches\ElementsVirtuoso.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
-    <ClCompile Include="src\patches\Artfset1Haven.cpp">
+    <ClCompile Include="src\patches\ArtfsetHaven.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\ColdDeath.cpp">

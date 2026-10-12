@@ -146,9 +146,9 @@ struct CombatUnit_vtable {
 	GetStatFloat get_initiative; // 0x1BC (444) - hero 0x00BC1EB0 func_GetHeroInitiative; creature 0x008A4330 func_CombatCreature_GetInitiative
 	int* get_shooter_flag; // 0x1C0 (448) - hero 0x00BC2A10 func_CombatHero_ReturnOne; creature 0x008A0F90 func_CombatCreature_GetShooterFlag
 	int* get_ranged_penalty; // 0x1C4 (452) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008A2610 func_CombatCreature_GetRangedPenalty
-	int* stub_return_false; // 0x1C8 (456) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x008A3E90 func_CombatCreature_StubReturnFalse
-	int* can_cast_as_creature; // 0x1CC (460) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x00A6BA00 func_CombatCreature_CanCast
-	int* on_buff_refresh; // 0x1D0 (464) - hero 0x00A6B820 func_CombatHero_OnBuffRefresh; creature 0x008A3EF0 func_CombatCreature_OnBuffRefresh
+	int* roll_bad_morale; // 0x1C8 (456) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x008A3E90 func_CombatCreature_StubReturnFalse — bad morale roll, returns 1 = turn lost: creature table flag check, then tail-calls 0x00A6B8F0 func_RollUnitMorale (undead never, rolls only at morale < 0)
+	int* roll_good_morale; // 0x1CC (460) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x00A6BA00 func_CombatCreature_CanCast — good morale roll, returns 1 = success (undead never, rolls only at morale > 0, chance morale*10%)
+	int* roll_luck; // 0x1D0 (464) - hero 0x00A6B820 func_CombatHero_OnBuffRefresh; creature 0x008A3EF0 func_CombatCreature_OnBuffRefresh — luck roll, returns the damage multiplier (float, 1.0 = no luck); creature version: own hero skill 0x7C (Supernatural Luck) forces good luck, enemy hero skill 0xA7 cancels good luck, else calls the hero impl
 	int* get_stack_constant; // 0x1D4 (468) - hero 0x008B6BD0 (no Ghidra function: mov eax,0x64; ret); creature 0x008A4270 func_CombatCreature_GetStackCount — returns [top entry - 8] of the list at [this-0x98]
 	int* unknown_1d8; // 0x1D8 (472) - hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — returns [top entry - 0xC] of the list at [this-0x98] (meaning unverified)
 	int* get_hero_stat_stub_dc; // 0x1DC (476) - hero 0x00BBF580 func_CombatHero_GetStatStubDC; creature 0x008A4190 func_CombatCreature_GetStatStubDC

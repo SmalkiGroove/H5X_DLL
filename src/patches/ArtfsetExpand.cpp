@@ -1,9 +1,40 @@
 #include "pch.h"
+#include "types/Artifacts.h"
 
-// Increase number of artifact sets to 40
+// Increase number of artifact sets to ARTIFACT_SET_MAX (40)
+// The hero keeps one equipped-piece count per set in a vector (IHero [this+0x264], CHero +0x280), created with
+// 10 entries by the two CHero constructors and rebuilt with 10 entries by the equip handler FUN_00B51590,
+// which also skips set IDs > 10. The getter (IHero vtable +0x328) is replaced by a bounds-checked version so a
+// vector still holding 10 entries (e.g. restored from an older save) reads 0 instead of past its end.
+
+void ArtifactSetCountFork();
+
+int ArtifactSetCount_fork = 0x00B5AD70;  // IHero vtable +0x328
 
 void ArtfsetExpand_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_BYTE, 0x00B5AD7A, 1, nullptr, 40, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_BYTE, 0x00B58C99, 1, nullptr, ARTIFACT_SET_MAX, 0, 0, 0 });  // CHero ctor: push 0Ah (vector size)
+	assembly_patches.push_back({ PATCH_BYTE, 0x00B5910D, 1, nullptr, ARTIFACT_SET_MAX, 0, 0, 0 });  // CHero ctor: push 0Ah (vector size)
+	assembly_patches.push_back({ PATCH_BYTE, 0x00B515ED, 1, nullptr, ARTIFACT_SET_MAX, 0, 0, 0 });  // equip handler: push 0Ah (vector size)
+	assembly_patches.push_back({ PATCH_BYTE, 0x00B5164B, 1, nullptr, ARTIFACT_SET_MAX, 0, 0, 0 });  // equip handler: cmp eax, 0Ah (max set ID)
+	assembly_patches.push_back({ PATCH_HOOK, ArtifactSetCount_fork, 6, ArtifactSetCountFork, 0, 0, 0 });
+}
+
+// Equipped pieces of a set, 0 for an ID outside the hero's count vector.
+static int __fastcall artifact_set_count(int* hero, int set_id) {
+	int* first = *(int**)(hero + 0x264 / 4);
+	int* last = *(int**)(hero + 0x268 / 4);
+	if (set_id < 1 || !first || set_id > last - first) return 0;
+	return first[set_id - 1];
+}
+
+// __thiscall int (int set_id), replaces the whole game function
+__declspec(naked) void ArtifactSetCountFork() {
+	__asm
+	{
+		mov edx, dword ptr [esp + 0x4]
+		call artifact_set_count
+		ret 0x4
+	}
 }
 
 // Change id of vanilla sets

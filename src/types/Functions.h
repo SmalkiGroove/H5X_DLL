@@ -59,4 +59,12 @@ extern FastcallVoid_IntPtr_Char_3Int notify_spec_buff;
 
 extern FastcallVoid_Int enqueue_unit_refresh;
 
+// --- DLL helpers (Functions.cpp) ---
+
+struct IHero;
+struct ICombatUnit;
+
+// Adventure map hero of the side owning a combat unit (CombatUnit subobject), nullptr without hero.
+IHero* owner_hero(ICombatUnit* unit);
+
 #endif

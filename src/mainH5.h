@@ -150,6 +150,7 @@ void ShockingBolts_init(pugi::xml_document& doc);
 void BarbarianSkillsLinks_init(pugi::xml_document& doc);
 
 void ArtfsetExpand_init(pugi::xml_document& doc);
+void ArtfsetHaven_init(pugi::xml_document& doc);
 void AnkhOfTheSaint_init(pugi::xml_document& doc);
 void GoldenGoose_init(pugi::xml_document& doc);
 void DragonArtifactTweaks_init(pugi::xml_document& doc);

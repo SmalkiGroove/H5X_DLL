@@ -40,3 +40,15 @@ FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int
 FastcallVoid_IntPtr_Char_3Int notify_artifact_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB9C0;
 
 FastcallVoid_Int enqueue_unit_refresh = (FastcallVoid_Int)0x0050C020;
+
+// --- DLL helpers ---
+
+// Adventure map hero of the side owning the unit (nullptr without hero).
+// unit (vtable +0x0C) -> side, side (vtable +0x0C) -> combat hero, combat hero (vtable +0x00) -> IHero.
+IHero* owner_hero(ICombatUnit* unit) {
+	int* side = unit->unit_ref();
+	if (!side) return nullptr;
+	int* combat_hero = ((GetPtr)(*(int***)side)[0x0C / 4])(side);
+	if (!combat_hero) return nullptr;
+	return (IHero*)((GetPtr)(*(int***)combat_hero)[0])(combat_hero);
+}

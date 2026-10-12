@@ -158,7 +158,7 @@ struct Hero_vtable {
 	int* call_588;
 	GetAdvMapShared get_advmap_shared; // 0x250 (592) - 0x00B531E0 thunk → lazy-load SAdvMapHeroShared @ [this+0xD0]
 	int* call_596;
-	GetInt get_hero_class; // 0x258 (600)
+	GetInt get_hero_class; // 0x258 (600) - 0x00B4C0F0, returns [this+0x88] (HeroClass, types/HeroClasses.h)
 	int* call_604;
 	int* call_608;
 	int* call_612;
@@ -184,6 +184,33 @@ struct Hero_vtable {
 	int* call_692;
 	int* call_696;
 	int* call_700;
+	int* call_704;
+	int* call_708;
+	int* call_712;
+	int* call_716;
+	int* call_720;
+	int* call_724;
+	int* call_728;
+	int* call_732;
+	int* call_736;
+	int* call_740;
+	int* call_744;
+	int* call_748;
+	int* call_752;
+	int* call_756;
+	int* call_760;
+	int* call_764;
+	int* call_768;
+	int* call_772;
+	int* call_776;
+	int* call_780;
+	int* call_784;
+	int* call_788;
+	int* call_792;
+	int* call_796;
+	int* call_800;
+	int* call_804;
+	CheckValue get_artifact_set_count; // 0x328 (808) - 0x00B5AD70, arg = set ID, equipped pieces of the set (vector at [this+0x264])
 };
 
 struct IHero {
@@ -227,6 +254,9 @@ struct IHero {
 	}
 	int skill_mastery(int skill) {
 		return instance->get_skill_mastery((int*)this, skill);
+	}
+	int artifact_set_count(int set_id) {
+		return instance->get_artifact_set_count((int*)this, set_id);
 	}
 	int* name_wstring(int* out) {
 		return instance->get_name_wstring((int*)this, out);

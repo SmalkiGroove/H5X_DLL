@@ -190,7 +190,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp" />
-    <ClCompile Include="src\patches\Artfset1Haven.cpp" />
+    <ClCompile Include="src\patches\ArtfsetHaven.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
     <ClCompile Include="src\patches\BarbarianCape.cpp" />
     <ClCompile Include="src\patches\BattleDive.cpp" />

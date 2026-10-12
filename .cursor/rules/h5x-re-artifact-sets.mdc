@@ -1,0 +1,87 @@
+---
+description: Artifact sets — per-hero set piece counts, set ID list, exe call sites, 10 → 40 set expansion, hero class checks
+globs: src/patches/Artfset*.cpp, src/types/Artifacts.h, src/types/HeroClasses.h
+alwaysApply: false
+---
+
+# Artifact sets
+
+Verified on H5X.exe with Ghidra and dumpbin. IDs: `ARTIFACT_SET_ID` in `src/types/Artifacts.h`. Hero classes: `HeroClass` in `src/types/HeroClasses.h`.
+
+Mod-side reference: `G:\__H5__\heroes-expansion\game_data\lua\scripts\game\artifacts.lua` (game scripts of the H5X mod):
+- `ARTIFACT_SET_*` = set IDs 11..34 (`ARTIFACT_SET_COUNT` = 34). These are the IDs passed to `+0x328`; `Artifacts.h` copies them.
+- `ARTFSET_*` = set **effect** IDs (one per piece threshold, e.g. `ARTFSET_HAVEN_6PC` = 3, `ARTFSET_HAVEN_6PCX` = 4 for the faction-hero variant), with a one-line description of each effect. They are not set IDs: never pass them to `+0x328`.
+- Per-artifact comments (`ARTIFACT_*`) describe each artifact's effect and which ones are scripted.
+Check this file for what a set effect is supposed to do before coding it, and which effects are already scripted.
+
+## Set piece count (`IHero` vtable `+0x328`)
+
+- `IHero` = the adventure map hero interface (vtable `0x00E7E484`, `NWorld::CHero` subobject at `+0x1C`, `src/structs/Hero.h`). C++ access: `IHero::artifact_set_count(set_id)`.
+- Impl `0x00B5AD70`, `__thiscall int (int set_id)`, `ret 4`. It returns the number of **equipped** pieces of the set: `[this+0x264][set_id - 1]`.
+- Vanilla range check: `set_id` 1..10 (`cmp eax,0Ah` at `0x00B5AD78`); otherwise it returns 0. `ArtfsetExpand.cpp` replaces the whole function (see below).
+- The counts live in a `std::vector<int>` at `IHero+0x264` (`CHero+0x280`): first at `+0x264`, last at `+0x268`, end at `+0x26C`.
+
+### Who fills the counts
+
+| Address | Code | Role |
+|---|---|---|
+| `0x00B58C98` / `0x00B5910C` | `push 0Ah` → `call 0x0045C370` | The 2 `CHero` constructors create the vector with 10 zeros |
+| `0x00B51590` | `FUN_00B51590` | Equip-change handler. It builds a new 10-entry vector (`push 0Ah` at `0x00B515EC`), counts the equipped artifacts per set while skipping IDs > 10 (`cmp eax,0Ah` at `0x00B51649`), then compares the old and new counts of sets 1..10 at hard-coded offsets (`[vec+0]` … `[vec+0x24]`) to apply or remove the adventure-map set bonuses. Finally it copies the new vector into `CHero+0x280` |
+
+Set IDs above 10 never reach the vanilla bonus comparisons. Their effects have to be coded in the DLL (or in scripts) and read through `+0x328`.
+
+### Reaching it from combat
+
+- **From a combat hero** (complete object, vbptr at `+4`): `[hero]` vtable slot `0` returns the `IHero`. Then call `+0x328` (count) and `+0x258` (class). Example: `func_HeroAttackATBReset` `0x008CE8E0`.
+- **From a combat unit** (`CombatUnit` subobject): unit vtable `+0x0C` returns its own side, and `+0x10` returns the enemy side. Side vtable `+0x0C` returns that side's combat hero (null without a hero). DLL helper: `owner_hero(ICombatUnit*)` in `src/types/Functions.cpp` returns the owner's `IHero*` (or nullptr).
+- **Game helper `0x004D8D60`**, `__fastcall int (side ecx, int set_id edx)`: side → hero → `IHero` → `+0x328`, or 0 without a hero. Its 9 callers use `mov edx,<set>; mov ecx,eax; call 0x004D8D60` (immediate at `call − 6`).
+
+## Hero class (`IHero` vtable `+0x258`)
+
+- Impl `0x00B4C0F0` returns `[this+0x88]` (`HeroClass`). C++ access: `IHero::hero_class()`.
+- Faction checks compare against both classes of the faction. For example, Haven = `HERO_CLASS_HAVEN_MIGHT` (1) / `HERO_CLASS_HAVEN_MAGIC` (2).
+- `func_HeroAttackATBReset` (`0x008CE8E0`) is the vanilla pattern for a class + set-count bonus: class 2 with set 7 ≥ 2, or class 8 with set 8 ≥ 2. The hero's ATB after attacking is then set from DefaultStats `+0x11A8` / `+0x11B4`.
+
+## Set IDs and exe call sites
+
+IDs 1..10 are the vanilla sets (`ARTIFACT_SET_VANILLA_*`): names from the old `ArtfsetRepoint` notes in `ArtfsetExpand.cpp`, each ID confirmed from the immediate pushed at each call site. IDs 11..34 are the H5X sets from `artifacts.lua` (`ARTIFACT_SET_HAVEN` … `ARTIFACT_SET_MOON`); the exe never references them.
+
+| ID | Set | `+0x328` call sites (`push <id>` 1 byte before `call`, imm at push+1) | `0x004D8D60` call sites (imm32 `mov edx`) |
+|---|---|---|---|
+| 1 | Dragonish | `0x004BB243`, `0x004BB376`, `0x004BC55D`, `0x00B5053B` | |
+| 2 | Dwarven | `0x0097B396`, `0x00B4CD19`, `0x00BC1384` | |
+| 3 | Lions | `0x008CF814`, `0x00BBFC09` | |
+| 4 | Sar-Issus | `0x004BAB48`, `0x00BBF8EB` | `0x008A3B01` |
+| 5 | Necromancers | `0x00C25EBB`, `0x00C262C8` | `0x008A2063`, `0x004E43C6`, `0x00989D0E`, `0x0098A1F2`, `0x009BC586`, `0x008A8160` |
+| 6 | Educational | `0x00B4BBF3` | |
+| 7 | Hunters | `0x008CE90C` | `0x00A65C38` |
+| 8 | Ogres | `0x004BB25F`, `0x004BC579`, `0x008CE937` | |
+| 9 | Runic | | `0x004B0E54` |
+| 10 | Demonic | `0x008603AD` | |
+| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp` | |
+
+`0x004D8D7F` is the generic call inside `0x004D8D60`.
+
+The commented-out `ArtfsetRepoint_init` patches the immediate byte of each `push`. Its entry `0x008CE933` (Ogres 2*) points at the opcode instead: the immediate is at `0x008CE934`.
+
+## Expansion to 40 sets (`ArtfsetExpand.cpp`)
+
+| Patch | Effect |
+|---|---|
+| `PATCH_BYTE 0x00B58C99`, `0x00B5910D` = 40 | Constructors create 40 counts |
+| `PATCH_BYTE 0x00B515ED` = 40 | The equip handler builds 40 counts |
+| `PATCH_BYTE 0x00B5164B` = 40 | The equip handler counts set IDs up to 40 |
+| `PATCH_HOOK 0x00B5AD70` (6) → `ArtifactSetCountFork` | Bounds-checked getter: returns 0 when `set_id` is outside the vector, so a 10-entry vector (from an older save, until the next equip change) is never read past its end |
+
+Before this, only the getter's bound was raised (`0x00B5AD7A`). Counts for IDs > 10 were never written, and the getter read past the 10-entry vector.
+
+## Haven set (11) — `ArtfsetHaven.cpp`
+
+| Pieces | Effect | Hook |
+|---|---|---|
+| 6 | Good morale roll always succeeds and bad morale roll never does (undead are excluded earlier by `has_ability(10)`) | `0x00A6BA30` (good roll `0x00A6BA00`, exit `0x00A6BAF4`) and `0x00A6B920` (bad roll `0x00A6B8F0`, exit `0x00A6B919`) |
+| 6 + Haven class | +2 attack and defense per point of positive morale | `0x008A498C` (`func_GetUnitAttack`, `ebx` = attack after the shooter bonuses) and `0x008A23F8` (`func_GetUnitDefense`, `ebx` and `[esp+0x14]` = defense before the defend stance bonus) |
+
+Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (good morale) and `+0x1D0` (luck); see `h5x-re-combat-unit.mdc`. Supernatural Luck (creature luck wrapper `0x008A3EF0`, own hero skill `0x7C` at `0x008A3F98`) is the vanilla model for "always lucky". `GoldenGoose.cpp` swaps that skill for artifact 161.
+
+Hook sites to avoid: `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`.
