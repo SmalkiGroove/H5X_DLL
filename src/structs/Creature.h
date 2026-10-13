@@ -11,7 +11,8 @@
 // are static DB/hero-context functions — not vtable slots on this interface.
 //
 // SCreature DB (func_GetCreatureData) — patch-relevant offsets:
-//   +0x58 Speed, +0x5C Initiative, +0x60 Flying (bool, .xdb field "Flying")
+//   +0x4C Shots, +0x58 Speed, +0x5C Initiative, +0x60 Flying (bool, .xdb field "Flying"), +0x84 Power,
+//   +0x8C Tier, +0x98 Town, +0xA8 WeeklyGrowth (>= 1), +0xDC CombatSize (1 or 2), +0xE0 PatternAttack
 // Flying in combat: vtable is_flying @ CombatUnit +0x190 → func_GetCreatureFlying @ 0x004BA950.
 //
 // Object size 0x24. Timed-stats blob at +0x2C lives on a base/MI subobject (vtordisp -0x14).
@@ -148,7 +149,7 @@ struct CombatStack_vtable {
 	GetInt get_current_value_64; // 0x10 (16) - 0x008A41F0 FUN_008a41f0, current count * creature data +0x80 (or +0x64 when 0), FUN_004BAAD0
 	int* get_flag_45; // 0x14 (20) - 0x008AE0B0, returns byte [this+0x45], set by add_creatures when the stack was dead
 	int* get_flag_44; // 0x18 (24) - 0x008AE0C0, returns byte [this+0x44]; when set, func_GetUnitAttack and func_GetUnitDefense double the stat
-	GetInt get_tier; // 0x1C (28) - 0x008A2110, 8 when [this+0x88] is set, else creature data +0x8C (FUN_004BA900; assumed tier)
+	GetInt get_tier; // 0x1C (28) - 0x008A2110, 8 when [this+0x88] is set, else creature data +0x8C (FUN_004BA900, tier)
 	GetInt get_base_power; // 0x20 (32) - 0x008A1E30 FUN_008a1e30, func_GetCreaturePowerValue (creature data +0x84, >= 1) * base count
 	GetInt get_current_power; // 0x24 (36) - 0x008A54F0, power value * current count (army strength of the stack)
 	int* fill_list_28; // 0x28 (40) - 0x008A5650 FUN_008a5650, thiscall(vector* out): clears out, refills it from the creature (FUN_00B61EB0, or FUN_00B61C20 with [this+0x88])
@@ -275,6 +276,13 @@ struct ICombatCreature : ICombatUnit {
 	ICreature* creature() {
 		ICombatStack* combat_stack = stack();
 		return combat_stack ? combat_stack->creature() : nullptr;
+	}
+	// Current count / weekly growth (creature data +0xA8, >= 1): stack size in "weeks of growth"; 0 for a hero.
+	float growth_ratio() {
+		ICreature* army_stack = creature();
+		if (!army_stack) return 0.0f;
+		int growth = get_creature_data(army_stack->type_id)[0xA8 / 4];  // WeeklyGrowth
+		return (float)instance->get_current_count((int*)this) / (growth > 0 ? growth : 1);
 	}
 	// Friendly side ICombatHero: 2x get_unit_ref on MI subobject (no notify_owner).
 	ICombatHero* owner() {

@@ -10,7 +10,7 @@ void init_patches(pugi::xml_document& doc) {
     Scripts_init(doc);                     // OK
     Pest_init(doc);                        // OK
     HeroMaxSkills_init(doc);               // OK
-    LevelCurve_init(doc);                  //
+    LevelCurve_init(doc);                  // OK
     HeroScreenUI_init(doc);                // OK
     BattlefieldSize_init(doc);             // OK
     
@@ -107,8 +107,9 @@ void init_patches(pugi::xml_document& doc) {
     BarbarianSkillsLinks_init(doc);        // OK
 
     ArtfsetExpand_init(doc);               // OK
-    ArtfsetHaven_init(doc);                //
-    ArtfsetPreserve_init(doc);             //
+    ArtfsetHaven_init(doc);                // OK
+    ArtfsetPreserve_init(doc);             // OK
+    ArtfsetInferno_init(doc);              // OK
     AnkhOfTheSaint_init(doc);              // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //

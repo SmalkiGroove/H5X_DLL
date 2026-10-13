@@ -32,7 +32,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x030` | **collect_linked_buff_ids** | `0x00A6EEE0` | func_CombatUnit_CollectLinkedBuffIds |
 | `0x038` | **play_anim_simple** | `0x00A69E20` | func_CombatUnit_PlayAnimSimple |
 | `0x03C` | **get_anim_position** | `0x00A69E60` | func_CombatUnit_GetAnimPosition |
-| `0x040` | **get_position_2d** | `0x00A6A040` | func_CombatUnit_GetPosition2D |
+| `0x040` | **get_position_2d** | `0x00A6A040` | func_CombatUnit_GetPosition2D — thiscall(int* out), ret 4: out = {x, y} tile ([this-0x50], [this-0x4C]); a size n unit covers x-n+1..x, y-n+1..y |
 | `0x04C` | **get_type_id** | `0x00B096E0` | func_CombatUnit_GetTypeId (returns dword [this-0x1c]) |
 | `0x060` | **get_combat_unit_ptr** | `0x008AE230` | func_CombatUnit_GetCombatUnitPtr |
 | `0x064` | **get_combat_unit_ptr_mi** | `0x008AE230` | func_CombatUnit_GetCombatUnitPtr |
@@ -52,7 +52,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x0B4` | **get_anim_duration** | `0x00A70450` | func_CombatUnit_GetAnimDuration |
 | `0x0BC` | **begin_tile_query** | `0x00A6D810` | func_CombatUnit_BeginTileQuery |
 | `0x0C0` | **has_tile_pair** | `0x00A6D980` | func_CombatUnit_HasTilePair |
-| `0x0C4` | **mark_current_tile** | `0x00A6D870` | func_CombatUnit_MarkCurrentTile |
+| `0x0C4` | **get_occupied_tiles** | `0x00A6D870` | func_CombatUnit_MarkCurrentTile — thiscall(vector* out, int unused), ret 8: appends the size x size tiles ({int x, int y}) the unit stands on (position [this-0x50]/[this-0x4C], size = vtable +0x44) via FUN_00A744F0, growing out with the engine allocator |
 | `0x0C8` | **mark_tiles_from_position** | `0x00A6D8B0` | func_CombatUnit_MarkTilesFromPosition |
 | `0x0CC` | **try_move_to_tile** | `0x00A6DA30` | func_CombatUnit_TryMoveToTile |
 | `0x0DC` | **set_needs_refresh** | `0x00A6A910` | func_CombatUnit_SetNeedsRefresh |
@@ -131,7 +131,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x01C` | **get_owner_army_slot** | hero 0x00BC2A10 func_CombatHero_ReturnOne; creature 0x008A42C0 func_CombatCreature_GetOwnerArmySlot |
 | `0x024` | **ensure_portrait_loaded** | hero 0x00BBFE20 func_CombatHero_EnsurePortraitLoaded — calls IHero+0x284; creature 0x008A1160 func_CombatCreature_EnsurePortraitLoaded |
 | `0x034` | **get_name_wstring** | hero 0x00BBFE30 func_CombatHero_GetNameWString — calls IHero+0x268; creature 0x008A3240 func_CombatCreature_GetNameWString |
-| `0x044` | **get_owner_side_kind** | hero 0x00BBF3F0 func_CombatHero_GetOwnerSideKind (mov eax,0x2; ret); creature 0x008A1980 func_CombatCreature_GetCreatureDbEntry |
+| `0x044` | **get_size** | hero 0x00BBF3F0 func_CombatHero_GetOwnerSideKind (mov eax,0x2; ret); creature 0x008A1980 func_CombatCreature_GetCreatureDbEntry — size in tiles (1 or 2): creature data +0xDC (FUN_004BACC0), 2 for heroes |
 | `0x048` | **get_speed_modifier** | hero 0x00BBF5B0 func_CombatHero_ReturnZero (xor eax,eax; ret); creature 0x008A1E50 func_CombatCreature_ComputeSpeedModifiers |
 | `0x050` | **get_creature_grade_byte** | hero 0x00458480 func_ReturnOne; creature 0x008A3320 func_CombatCreature_GetGradeByte |
 | `0x054` | **is_owner_matching** | hero 0x00BBF560 func_CombatHero_ReturnZeroB (xor al,al; ret 4); creature 0x008A4250 func_CombatCreature_IsOwnerMatching |
@@ -143,7 +143,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x074` | **get_hero_aux_subobject** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x078` | **get_hero_aux_subobject_b** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x09C` | **schedule_linked_spell_fx** | hero 0x00BC0EB0 func_CombatHero_ScheduleLinkedSpellFx; creature 0x008AAAA0 func_CombatCreature_ScheduleLinkedSpellFx |
-| `0x0B8` | **stub_noop** | hero 0x00CC2180 func_CombatHero_Noop; creature 0x008AA990 func_CombatCreature_Noop |
+| `0x0B8` | **get_attack_pattern** | hero 0x00CC2180 func_CombatHero_Noop; creature 0x008AA990 func_CombatCreature_Noop — thiscall(3 args), ret 0xC: NDb::SPatternAttack* of the attack, or 0. Creature: 0 for shooters (unless flag) / melee-only units; Champion Charge (ability 0x66) beyond DefaultStats +0x214 -> DefaultStats +0x218 pattern; ability 0x9A -> DefaultStats +0x338 (AcidicHydraPattern); else creature data +0xE0 (PatternAttack) |
 | `0x0D0` | **on_timeline_refresh** | hero 0x00BC0910 func_CombatHero_OnTimelineRefresh; creature 0x008A6210 func_CombatCreature_OnTimelineRefresh |
 | `0x0D4` | **notify_timeline_sub** | hero 0x00A6B180 func_CombatHero_NotifyTimelineSub; creature 0x008A6330 func_CombatCreature_NotifyTimelineSub |
 | `0x0D8` | **get_side_visual_id** | hero 0x00BBF3C0 func_CombatHero_GetSideVisualId; creature 0x008A3340 func_CombatCreature_GetVisualByte |
@@ -174,7 +174,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x1CC` | **roll_good_morale** | hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x00A6BA00 func_CombatCreature_CanCast — good morale roll, returns 1 = success (undead never, rolls only at morale > 0, chance morale*10%) |
 | `0x1D0` | **roll_luck** | hero 0x00A6B820 func_CombatHero_OnBuffRefresh; creature 0x008A3EF0 func_CombatCreature_OnBuffRefresh — luck roll, returns the damage multiplier (float, 1.0 = no luck); creature version: own hero skill 0x7C (Supernatural Luck) forces good luck, enemy hero skill 0xA7 cancels good luck, else calls the hero impl |
 | `0x1D4` | **get_stack_constant** | hero 0x008B6BD0 (no Ghidra function: mov eax,0x64; ret); creature 0x008A4270 func_CombatCreature_GetStackCount — returns [top entry - 8] of the list at [this-0x98] |
-| `0x1D8` | **unknown_1d8** | hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — returns [top entry - 0xC] of the list at [this-0x98] (meaning unverified) |
+| `0x1D8` | **get_current_count** | hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — current creature count: last stack history entry +0x4 (ICombatStack +0x10, complete +0xB0); 1 for heroes |
 | `0x1DC` | **get_hero_stat_stub_dc** | hero 0x00BBF580 func_CombatHero_GetStatStubDC; creature 0x008A4190 func_CombatCreature_GetStatStubDC |
 | `0x1E0` | **get_hero_stat_stub_e0** | hero 0x00BBF570 func_CombatHero_GetStatStubE0 (xor al,al; ret); creature 0x008A1020 func_CombatCreature_GetStatStubE0 |
 | `0x1E4` | **stub_return_false_e4** | hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x008A10E0 func_CombatCreature_StubReturnFalseE4 |
@@ -229,8 +229,8 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x034` | **get_name_wstring** | hero 0x00BBFE30 func_CombatHero_GetNameWString — calls IHero+0x268; creature 0x008A3240 func_CombatCreature_GetNameWString |
 | `0x038` | **play_anim_simple** | shared `0x00A69E20` func_CombatUnit_PlayAnimSimple |
 | `0x03C` | **get_anim_position** | shared `0x00A69E60` func_CombatUnit_GetAnimPosition |
-| `0x040` | **get_position_2d** | shared `0x00A6A040` func_CombatUnit_GetPosition2D |
-| `0x044` | **get_owner_side_kind** | hero 0x00BBF3F0 func_CombatHero_GetOwnerSideKind (mov eax,0x2; ret); creature 0x008A1980 func_CombatCreature_GetCreatureDbEntry |
+| `0x040` | **get_position_2d** | shared `0x00A6A040` func_CombatUnit_GetPosition2D — thiscall(int* out), ret 4: out = {x, y} tile ([this-0x50], [this-0x4C]); a size n unit covers x-n+1..x, y-n+1..y |
+| `0x044` | **get_size** | hero 0x00BBF3F0 func_CombatHero_GetOwnerSideKind (mov eax,0x2; ret); creature 0x008A1980 func_CombatCreature_GetCreatureDbEntry — size in tiles (1 or 2): creature data +0xDC (FUN_004BACC0), 2 for heroes |
 | `0x048` | **get_speed_modifier** | hero 0x00BBF5B0 func_CombatHero_ReturnZero (xor eax,eax; ret); creature 0x008A1E50 func_CombatCreature_ComputeSpeedModifiers |
 | `0x04C` | **get_type_id** | shared `0x00B096E0` func_CombatUnit_GetTypeId (returns dword [this-0x1c]) |
 | `0x050` | **get_creature_grade_byte** | hero 0x00458480 func_ReturnOne; creature 0x008A3320 func_CombatCreature_GetGradeByte |
@@ -259,10 +259,10 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x0AC` | **on_siege_anim_hook** | shared `0x00A70420` func_CombatUnit_OnSiegeAnimHook |
 | `0x0B0` | **get_visual_id** | shared `0x008AEB30` func_CombatUnit_GetVisualId (returns dword [this-0x6c]) |
 | `0x0B4` | **get_anim_duration** | shared `0x00A70450` func_CombatUnit_GetAnimDuration |
-| `0x0B8` | **stub_noop** | hero 0x00CC2180 func_CombatHero_Noop; creature 0x008AA990 func_CombatCreature_Noop |
+| `0x0B8` | **get_attack_pattern** | hero 0x00CC2180 func_CombatHero_Noop; creature 0x008AA990 func_CombatCreature_Noop — thiscall(3 args), ret 0xC: NDb::SPatternAttack* of the attack, or 0. Creature: 0 for shooters (unless flag) / melee-only units; Champion Charge (ability 0x66) beyond DefaultStats +0x214 -> DefaultStats +0x218 pattern; ability 0x9A -> DefaultStats +0x338 (AcidicHydraPattern); else creature data +0xE0 (PatternAttack) |
 | `0x0BC` | **begin_tile_query** | shared `0x00A6D810` func_CombatUnit_BeginTileQuery |
 | `0x0C0` | **has_tile_pair** | shared `0x00A6D980` func_CombatUnit_HasTilePair |
-| `0x0C4` | **mark_current_tile** | shared `0x00A6D870` func_CombatUnit_MarkCurrentTile |
+| `0x0C4` | **get_occupied_tiles** | shared `0x00A6D870` func_CombatUnit_MarkCurrentTile — thiscall(vector* out, int unused), ret 8: appends the size x size tiles ({int x, int y}) the unit stands on (position [this-0x50]/[this-0x4C], size = vtable +0x44) via FUN_00A744F0, growing out with the engine allocator |
 | `0x0C8` | **mark_tiles_from_position** | shared `0x00A6D8B0` func_CombatUnit_MarkTilesFromPosition |
 | `0x0CC` | **try_move_to_tile** | shared `0x00A6DA30` func_CombatUnit_TryMoveToTile |
 | `0x0D0` | **on_timeline_refresh** | hero 0x00BC0910 func_CombatHero_OnTimelineRefresh; creature 0x008A6210 func_CombatCreature_OnTimelineRefresh |
@@ -331,7 +331,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x1CC` | **roll_good_morale** | hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x00A6BA00 func_CombatCreature_CanCast — good morale roll, returns 1 = success (undead never, rolls only at morale > 0, chance morale*10%) |
 | `0x1D0` | **roll_luck** | hero 0x00A6B820 func_CombatHero_OnBuffRefresh; creature 0x008A3EF0 func_CombatCreature_OnBuffRefresh — luck roll, returns the damage multiplier (float, 1.0 = no luck); creature version: own hero skill 0x7C (Supernatural Luck) forces good luck, enemy hero skill 0xA7 cancels good luck, else calls the hero impl |
 | `0x1D4` | **get_stack_constant** | hero 0x008B6BD0 (no Ghidra function: mov eax,0x64; ret); creature 0x008A4270 func_CombatCreature_GetStackCount — returns [top entry - 8] of the list at [this-0x98] |
-| `0x1D8` | **unknown_1d8** | hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — returns [top entry - 0xC] of the list at [this-0x98] (meaning unverified) |
+| `0x1D8` | **get_current_count** | hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — current creature count: last stack history entry +0x4 (ICombatStack +0x10, complete +0xB0); 1 for heroes |
 | `0x1DC` | **get_hero_stat_stub_dc** | hero 0x00BBF580 func_CombatHero_GetStatStubDC; creature 0x008A4190 func_CombatCreature_GetStatStubDC |
 | `0x1E0` | **get_hero_stat_stub_e0** | hero 0x00BBF570 func_CombatHero_GetStatStubE0 (xor al,al; ret); creature 0x008A1020 func_CombatCreature_GetStatStubE0 |
 | `0x1E4` | **stub_return_false_e4** | hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x008A10E0 func_CombatCreature_StubReturnFalseE4 |

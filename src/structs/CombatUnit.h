@@ -48,8 +48,8 @@ struct CombatUnit_vtable {
 	int* get_name_wstring; // 0x034 (52) - hero 0x00BBFE30 func_CombatHero_GetNameWString — calls IHero+0x268; creature 0x008A3240 func_CombatCreature_GetNameWString
 	int* play_anim_simple; // 0x038 (56) - 0x00A69E20 [shared] func_CombatUnit_PlayAnimSimple
 	int* get_anim_position; // 0x03C (60) - 0x00A69E60 [shared] func_CombatUnit_GetAnimPosition
-	int* get_position_2d; // 0x040 (64) - 0x00A6A040 [shared] func_CombatUnit_GetPosition2D
-	int* get_owner_side_kind; // 0x044 (68) - hero 0x00BBF3F0 func_CombatHero_GetOwnerSideKind (mov eax,0x2; ret); creature 0x008A1980 func_CombatCreature_GetCreatureDbEntry
+	int* get_position_2d; // 0x040 (64) - 0x00A6A040 [shared] func_CombatUnit_GetPosition2D — thiscall(int* out), ret 4: out = {x, y} tile ([this-0x50], [this-0x4C]); a size n unit covers x-n+1..x, y-n+1..y
+	GetInt get_size; // 0x044 (68) - hero 0x00BBF3F0 func_CombatHero_GetOwnerSideKind (mov eax,0x2; ret); creature 0x008A1980 func_CombatCreature_GetCreatureDbEntry — size in tiles (1 or 2): creature data +0xDC (FUN_004BACC0), 2 for heroes
 	int* get_speed_modifier; // 0x048 (72) - hero 0x00BBF5B0 func_CombatHero_ReturnZero (xor eax,eax; ret); creature 0x008A1E50 func_CombatCreature_ComputeSpeedModifiers
 	int* get_type_id; // 0x04C (76) - 0x00B096E0 [shared] func_CombatUnit_GetTypeId (returns dword [this-0x1c])
 	int* get_creature_grade_byte; // 0x050 (80) - hero 0x00458480 func_ReturnOne; creature 0x008A3320 func_CombatCreature_GetGradeByte
@@ -78,10 +78,10 @@ struct CombatUnit_vtable {
 	int* on_siege_anim_hook; // 0x0AC (172) - 0x00A70420 [shared] func_CombatUnit_OnSiegeAnimHook
 	int* get_visual_id; // 0x0B0 (176) - 0x008AEB30 [shared] func_CombatUnit_GetVisualId (returns dword [this-0x6c])
 	int* get_anim_duration; // 0x0B4 (180) - 0x00A70450 [shared] func_CombatUnit_GetAnimDuration
-	int* stub_noop; // 0x0B8 (184) - hero 0x00CC2180 func_CombatHero_Noop; creature 0x008AA990 func_CombatCreature_Noop
+	int* get_attack_pattern; // 0x0B8 (184) - hero 0x00CC2180 func_CombatHero_Noop; creature 0x008AA990 func_CombatCreature_Noop — thiscall(3 args), ret 0xC: NDb::SPatternAttack* of the attack, or 0. Creature: 0 for shooters (unless flag) / melee-only units; Champion Charge (ability 0x66) beyond DefaultStats +0x214 -> DefaultStats +0x218 pattern; ability 0x9A -> DefaultStats +0x338 (AcidicHydraPattern); else creature data +0xE0 (PatternAttack)
 	int* begin_tile_query; // 0x0BC (188) - 0x00A6D810 [shared] func_CombatUnit_BeginTileQuery
 	int* has_tile_pair; // 0x0C0 (192) - 0x00A6D980 [shared] func_CombatUnit_HasTilePair
-	int* mark_current_tile; // 0x0C4 (196) - 0x00A6D870 [shared] func_CombatUnit_MarkCurrentTile
+	int* get_occupied_tiles; // 0x0C4 (196) - 0x00A6D870 [shared] func_CombatUnit_MarkCurrentTile — thiscall(vector* out, int unused), ret 8: appends the size x size tiles ({int x, int y}) the unit stands on (position [this-0x50]/[this-0x4C], size = vtable +0x44) via FUN_00A744F0, growing out with the engine allocator
 	int* mark_tiles_from_position; // 0x0C8 (200) - 0x00A6D8B0 [shared] func_CombatUnit_MarkTilesFromPosition
 	int* try_move_to_tile; // 0x0CC (204) - 0x00A6DA30 [shared] func_CombatUnit_TryMoveToTile
 	int* on_timeline_refresh; // 0x0D0 (208) - hero 0x00BC0910 func_CombatHero_OnTimelineRefresh; creature 0x008A6210 func_CombatCreature_OnTimelineRefresh
@@ -150,7 +150,7 @@ struct CombatUnit_vtable {
 	int* roll_good_morale; // 0x1CC (460) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x00A6BA00 func_CombatCreature_CanCast — good morale roll, returns 1 = success (undead never, rolls only at morale > 0, chance morale*10%)
 	int* roll_luck; // 0x1D0 (464) - hero 0x00A6B820 func_CombatHero_OnBuffRefresh; creature 0x008A3EF0 func_CombatCreature_OnBuffRefresh — luck roll, returns the damage multiplier (float, 1.0 = no luck); creature version: own hero skill 0x7C (Supernatural Luck) forces good luck, enemy hero skill 0xA7 cancels good luck, else calls the hero impl
 	int* get_stack_constant; // 0x1D4 (468) - hero 0x008B6BD0 (no Ghidra function: mov eax,0x64; ret); creature 0x008A4270 func_CombatCreature_GetStackCount — returns [top entry - 8] of the list at [this-0x98]
-	int* unknown_1d8; // 0x1D8 (472) - hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — returns [top entry - 0xC] of the list at [this-0x98] (meaning unverified)
+	GetInt get_current_count; // 0x1D8 (472) - hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — current creature count: last stack history entry +0x4 (ICombatStack +0x10, complete +0xB0); 1 for heroes
 	int* get_hero_stat_stub_dc; // 0x1DC (476) - hero 0x00BBF580 func_CombatHero_GetStatStubDC; creature 0x008A4190 func_CombatCreature_GetStatStubDC
 	int* get_hero_stat_stub_e0; // 0x1E0 (480) - hero 0x00BBF570 func_CombatHero_GetStatStubE0 (xor al,al; ret); creature 0x008A1020 func_CombatCreature_GetStatStubE0
 	int* stub_return_false_e4; // 0x1E4 (484) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x008A10E0 func_CombatCreature_StubReturnFalseE4

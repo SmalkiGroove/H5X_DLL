@@ -509,6 +509,9 @@
     <ClCompile Include="src\patches\ArtfsetPreserve.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\ArtfsetInferno.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\ColdDeath.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
