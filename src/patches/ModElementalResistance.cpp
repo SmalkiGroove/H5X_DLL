@@ -12,12 +12,12 @@
 void ElemProofFork();
 void FireProofAbilityFork();
 
-int ElemProof_fork = 0x0097B0C5;
-int ElemProof_return = 0x0097B0CB;
-int ElemProof_end = 0x0097B23F;
+int ElemProof_fork = 0x0097B0C5;           // func_ComputeSpellDamageMitigation, element switch: ja 0x0097B23F (eax = element - 1)
+int ElemProof_return = 0x0097B0CB;         // jmp [eax*4+0x0097B400]
+int ElemProof_end = 0x0097B23F;            // after the switch
 
-int FireProofAbility_fork = 0x0097B172;
-int FireProofAbility_return = 0x0097B23B;
+int FireProofAbility_fork = 0x0097B172;    // fire case, target fire-proof ability (0xAD): jmp 0x0097B231
+int FireProofAbility_return = 0x0097B23B;  // fstp [esp+48h]
 
 float elemproof = 0.67f;
 
@@ -31,70 +31,62 @@ void ElemProof_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, FireProofAbility_fork, 5, FireProofAbilityFork, 0, 0, 0 });
 }
 
+// resisted = the damage fraction the function accumulates ([esp+0x48]); each factor below 1 lowers the damage.
+
+// Applied before the element cases, for element spells only.
+// defender = hero of the target's side (may be 0), target = target unit (may be 0).
+static void __fastcall elemental_resistance_bonuses(IHero* defender, ICombatUnit* target, int spell, int* notify_context, float* resisted) {
+    if (!defender) return;
+
+    // Elrath's Divine Shield: +40% resistance to every element
+    if (defender->has_artifact(ARTIFACT_ELRATHS_DIVINE_SHIELD)) {
+        notify_artifact_buff(notify_context, 0, ARTIFACT_ELRATHS_DIVINE_SHIELD, 0, 0);
+        *resisted *= 0.6f;
+    }
+
+    // Magic Filter: +80% resistance to one element per unit, derived from the unit pointer
+    if (target && defender->skill_mastery(PERK_MAGIC_FILTER) != 0) {
+        int filtered_element = (((unsigned)target >> 8) & 0x3) + 1;
+        if (filtered_element == get_spell_element((int*)spell))
+            *resisted *= 0.2f;
+    }
+}
+
+// Fire-proof ability: keeps the vanilla x0.5 (the shared multiplier at 0x0097B235 is patched to 0.67 above).
+static void __fastcall fire_proof_ability(float* resisted) {
+    *resisted *= 0.5f;
+}
+
+// ebx = defender IHero (may be 0), edi = target unit (may be 0), ebp = spell, esi = notify context,
+// [esp+0x48] = resisted fraction. Flags from cmp eax,3 (element - 1).
 __declspec(naked) void ElemProofFork() {
     __asm
     {
         ja JUMPTABLE_DEFAULT_CASE
-        test ebx, ebx
-        je JUMPTABLE_DEFAULT_CASE
 
-        mov eax, [ebx]
-        mov ecx, ebx
-        call dword ptr [eax + 0x74]
-        push 0x7C
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je ELEM_RESIST_MAGIC_FILTER
-        push 0x0
-        push 0x0
-        push 0x7C
-        xor dl, dl
-        mov ecx, esi
-        call[notify_artifact_buff]
-        fld dword ptr [esp + 0x48]
-        fmul dword ptr [constf_0_6]
-        fstp dword ptr [esp + 0x48]
-
-        ELEM_RESIST_MAGIC_FILTER:
-        test edi, edi
-		je JUMPTABLE_ENTRYPOINT
-        mov eax, [ebx]
-        mov ecx, ebx
-        push 0xE3
-        call dword ptr [eax + 0x174]
-        test eax, eax
-        je JUMPTABLE_ENTRYPOINT
-        mov ecx, ebp
-        call[get_spell_element]
-        // filtered element (1..4) derived from the caster unit pointer, computed after the call (edx is not preserved)
+        lea eax, dword ptr [esp + 0x48]
+        push eax                        // resisted
+        push esi                        // notify_context
+        push ebp                        // spell
         mov edx, edi
-        shr edx, 8
-        and edx, 0x3
-        inc edx
-        cmp edx, eax
-        jne JUMPTABLE_ENTRYPOINT
-        fld dword ptr [esp + 0x48]
-        fmul dword ptr [constf_0_2]
-        fstp dword ptr [esp + 0x48]
+        mov ecx, ebx
+        call elemental_resistance_bonuses
 
-        JUMPTABLE_ENTRYPOINT:
-        mov ecx, ebp
-        call[get_spell_element]
-        add eax, 0x0FFFFFFFF
-        jmp[ElemProof_return]
+        mov ecx, ebp                    // the jump table needs element - 1 in eax again
+        call [get_spell_element]
+        add eax, -1
+        jmp [ElemProof_return]
 
-        JUMPTABLE_DEFAULT_CASE:
-        jmp[ElemProof_end]
+    JUMPTABLE_DEFAULT_CASE:
+        jmp [ElemProof_end]
     }
 }
-
 
 __declspec(naked) void FireProofAbilityFork() {
     __asm
     {
-        fld dword ptr [esp + 0x48]
-        fmul dword ptr [constf_0_5]
-        jmp[FireProofAbility_return]
+        lea ecx, dword ptr [esp + 0x48]
+        call fire_proof_ability
+        jmp [FireProofAbility_return]
     }
 }

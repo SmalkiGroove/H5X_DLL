@@ -7,54 +7,38 @@
 
 void CreatureAttackFork();
 
-int CreatureAttack_fork = 0x008A4B5C;
+int CreatureAttack_fork = 0x008A4B5C;    // end of func_GetUnitAttack (CombatUnit +0x198, impl 0x008A4800): xor eax,eax / test ebx,ebx / setle al
 int CreatureAttack_return = 0x008A4B63;
 
 void CreatureAttack_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, CreatureAttack_fork, 7, CreatureAttackFork, 0, 0, 0 });
 }
 
-// Percent first, then flat (user preference).
-static int __fastcall apply_enemy_attack_artifacts(int* inventory, int attack) {
-    if (!inventory || attack <= 0) return attack;
-    if (count_equipped_artifact(inventory, ARTIFACT_OGRE_SHIELD) != 0)
+// Attack of a creature lowered by the enemy hero's artifacts. Percent first, then flat.
+static int __fastcall enemy_attack_artifacts(ICombatCreature* unit, int attack) {
+    if (attack <= 0) return attack;
+    ICombatHero* enemy = unit->opponent();
+    IHero* hero = enemy ? enemy->hero() : nullptr;
+    if (!hero) return attack;
+    if (hero->has_artifact(ARTIFACT_OGRE_SHIELD))
         attack = (int)(attack * 0.75f);
-    if (count_equipped_artifact(inventory, ARTIFACT_SHACKLES_OF_THE_LAST_MAN) != 0)
+    if (hero->has_artifact(ARTIFACT_SHACKLES_OF_THE_LAST_MAN))
         attack -= 2;
     return attack;
 }
 
-// Hook at 0x008A4B5C, end of func_GetUnitAttack (vtable +0x198, impl 0x008A4800).
-// Overwritten game code: xor eax,eax / test ebx,ebx / setle al.
-// At entry: esi = ICombatCreature*, ebx = final attack before clamp.
+// esi = creature CombatUnit subobject, ebx = final attack before the >= 0 clamp
 __declspec(naked) void CreatureAttackFork() {
     __asm
     {
-        mov ecx, dword ptr [esi - 0x144]
-        mov edx, dword ptr [ecx + 0x8]
-        mov eax, dword ptr [edx + esi - 0x144]
-        lea ecx, dword ptr [edx + esi - 0x144]
-        call dword ptr [eax + 0x10]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0xc]
-        test eax, eax
-        je CREATURE_ATTACK_CLAMP
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
+        mov ecx, esi
         mov edx, ebx
-        call apply_enemy_attack_artifacts
+        call enemy_attack_artifacts
         mov ebx, eax
 
-    CREATURE_ATTACK_CLAMP:
         xor eax, eax
         test ebx, ebx
         setle al
-        jmp[CreatureAttack_return]
+        jmp [CreatureAttack_return]
     }
 }

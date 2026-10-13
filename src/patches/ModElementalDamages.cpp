@@ -17,14 +17,16 @@
 void ElemDamageFork();
 void ElemDamageForkAlt();
 
-int ElemDamage_fork = 0x00977086;
+int ElemDamage_fork = 0x00977086;     // after the vanilla element artifacts (hero caster): cmp [esp+10h],0 / jle 0x0097712F
 int ElemDamage_return = 0x00977091;
 int ElemDamage_end = 0x0097712F;
 
 void ElemDamage_init(pugi::xml_document& doc) {
+    // caster without hero / adventure hero: skip the bonuses, only replay the final check
     assembly_patches.push_back({ HOOK_JE, 0x00976EFE, 6, ElemDamageForkAlt, 0, 0, 0 });
     assembly_patches.push_back({ HOOK_JE, 0x00976F1F, 6, ElemDamageForkAlt, 0, 0, 0 });
     assembly_patches.push_back({ HOOK_JE, 0x00976F3B, 6, ElemDamageForkAlt, 0, 0, 0 });
+    // vanilla element artifacts: fmul [0x00E3A3AC] (x1.5) -> fmul [0x00E12F1C]
     assembly_patches.push_back({ PATCH_WRTE, 0x00976F75, 6, nullptr, 0, 0, 0, "D80D1C2FE100" }); // Titan's Trident
     assembly_patches.push_back({ PATCH_WRTE, 0x00976FC4, 6, nullptr, 0, 0, 0, "D80D1C2FE100" }); // Evercold Icicle
     assembly_patches.push_back({ PATCH_WRTE, 0x00977013, 6, nullptr, 0, 0, 0, "D80D1C2FE100" }); // Solar Ring
@@ -32,202 +34,72 @@ void ElemDamage_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, ElemDamage_fork, 11, ElemDamageFork, 0, 0, 0 });
 }
 
-__declspec(naked) void ElemDamageFork() {
-    __asm
-    {
-        mov ecx, dword ptr [ebp + 0x4]
-        call[get_spell_element]
-        cmp eax, 0x1
-        je ELEMDAMAGE_LIGHTNING
-        cmp eax, 0x2
-		je ELEMDAMAGE_FIRE
-		cmp eax, 0x3
-		je ELEMDAMAGE_ICE
-		cmp eax, 0x4
-		je ELEMDAMAGE_EARTH
+// The game scales the damage with x87 math (extended precision, truncated): done in double here with the same
+// single precision factors so that the truncated results match.
+static void scale_damage(int* damage, double factor) {
+    *damage = (int)(*damage * factor);
+}
 
-        jmp ELEMDAMAGE_RETURN
+static int element_orb(int element) {
+    switch (element) {
+    case 1: return ARTIFACT_ORB_OF_AIR;    // lightning
+    case 2: return ARTIFACT_ORB_OF_FIRE;
+    case 3: return ARTIFACT_ORB_OF_WATER;  // ice
+    case 4: return ARTIFACT_ORB_OF_EARTH;
+    }
+    return 0;
+}
 
-        ELEMDAMAGE_LIGHTNING:
-        push 0xC0
-        mov ecx, edi
-        call[count_equipped_artifact]
-        test eax, eax
-        je ELEMDAMAGE_ANY1
-        fild dword ptr [esp + 0x10]
-        push 0x0
-        fnstcw word ptr [esp + 0x18]
-        push 0x0
-        movzx eax, word ptr [esp + 0x1C]
-        fmul dword ptr ds : 0x00E44660
-        or ah, 0xC
-        push 0xC0
-        mov dl, 0x1
-        mov ecx, ebx
-        mov dword ptr [esp + 0x1C], eax
-        fldcw word ptr [esp + 0x1C]
-        fistp dword ptr [esp + 0x1C]
-        fldcw word ptr [esp + 0x20]
-        call[notify_artifact_buff]
-        jmp ELEMDAMAGE_ANY1
+// caster = hero CombatUnit subobject, inventory = its adventure hero inventory, damage = the game's damage value.
+// Each bonus is applied in turn and added to the spell tooltip (notify_*_buff), like the vanilla ones.
+static void __fastcall elemental_damage_bonuses(ICombatHero* caster, int* inventory, int spell, int* notify_context, int* damage) {
+    int element = get_spell_element((int*)spell);
+    int orb = element_orb(element);
+    if (!orb) return;  // not an element spell
 
-        ELEMDAMAGE_EARTH:
-        push 0xC1
-        mov ecx, edi
-        call[count_equipped_artifact]
-        test eax, eax
-        je ELEMDAMAGE_ANY1
-        fild dword ptr [esp + 0x10]
-        push 0x0
-        fnstcw word ptr [esp + 0x18]
-        push 0x0
-        movzx eax, word ptr [esp + 0x1C]
-        fmul dword ptr ds : 0x00E44660
-        or ah, 0xC
-        push 0xC1
-        mov dl, 0x1
-        mov ecx, ebx
-        mov dword ptr [esp + 0x1C], eax
-        fldcw word ptr [esp + 0x1C]
-        fistp dword ptr [esp + 0x1C]
-        fldcw word ptr [esp + 0x20]
-        call[notify_artifact_buff]
-        jmp ELEMDAMAGE_ANY1
-
-        ELEMDAMAGE_FIRE:
-        push 0xC2
-        mov ecx, edi
-        call[count_equipped_artifact]
-        test eax, eax
-        je ELEMDAMAGE_ANY1
-        fild dword ptr [esp + 0x10]
-        push 0x0
-        fnstcw word ptr [esp + 0x18]
-        push 0x0
-        movzx eax, word ptr [esp + 0x1C]
-        fmul dword ptr ds : 0x00E44660
-        or ah, 0xC
-        push 0xC2
-        mov dl, 0x1
-        mov ecx, ebx
-        mov dword ptr [esp + 0x1C], eax
-        fldcw word ptr [esp + 0x1C]
-        fistp dword ptr [esp + 0x1C]
-        fldcw word ptr [esp + 0x20]
-        call[notify_artifact_buff]
-        jmp ELEMDAMAGE_ANY1
-
-        ELEMDAMAGE_ICE:
-        push 0xC3
-        mov ecx, edi
-        call[count_equipped_artifact]
-        test eax, eax
-        je ELEMDAMAGE_ANY1
-        fild dword ptr [esp + 0x10]
-        push 0x0
-        fnstcw word ptr [esp + 0x18]
-        push 0x0
-        movzx eax, word ptr [esp + 0x1C]
-        fmul dword ptr ds : 0x00E44660
-        or ah, 0xC
-        push 0xC3
-        mov dl, 0x1
-        mov ecx, ebx
-        mov dword ptr [esp + 0x1C], eax
-        fldcw word ptr [esp + 0x1C]
-        fistp dword ptr [esp + 0x1C]
-        fldcw word ptr [esp + 0x20]
-        call[notify_artifact_buff]
-        jmp ELEMDAMAGE_ANY1
-    
-        ELEMDAMAGE_ANY1:
-        push 0x66
-        mov ecx, edi
-        call[count_equipped_artifact]
-        test eax, eax
-        je ELEMDAMAGE_ANY2
-        fild dword ptr [esp + 0x10]
-        push 0x0
-        fnstcw word ptr [esp + 0x18]
-        push 0x0
-        movzx eax, word ptr [esp + 0x1C]
-        fmul dword ptr [constf_1_1]
-        or ah, 0xC
-        push 0x66
-        mov dl, 0x1
-        mov ecx, ebx
-        mov dword ptr [esp + 0x1C], eax
-        fldcw word ptr [esp + 0x1C]
-        fistp dword ptr [esp + 0x1C]
-        fldcw word ptr [esp + 0x20]
-        call[notify_artifact_buff]
-
-        ELEMDAMAGE_ANY2:
-        push 0x95
-        mov eax, dword ptr [esi]
-        mov ecx, esi
-        call dword ptr [eax + 0x290]
-        test al, al
-        jz ELEMDAMAGE_ANY3
-        fild dword ptr [esp + 0x10]
-        push 0x0
-        fnstcw word ptr [esp + 0x18]
-        push 0x0
-        movzx eax, word ptr [esp + 0x1C]
-        fmul dword ptr [constf_1_3]
-        or ah, 0xC
-        push 0x95
-        mov dl, 0x1
-        mov ecx, ebx
-        mov dword ptr [esp + 0x1C], eax
-        fldcw word ptr [esp + 0x1C]
-        fistp dword ptr [esp + 0x1C]
-        fldcw word ptr [esp + 0x20]
-        call[notify_skill_buff]
-
-        ELEMDAMAGE_ANY3:
-        mov ecx, esi
-        call[elementVirtuoso_check]
-        test eax, eax
-        je ELEMDAMAGE_RETURN
-        push eax
-        fild dword ptr ss: [esp]
-        fmul dword ptr [constf_0_1]
-        fadd dword ptr [constf_1]
-        pop eax
-        fild dword ptr [esp + 0x10]
-        push 0x0
-        fnstcw word ptr [esp + 0x18]
-        push 0x0
-        movzx eax, word ptr [esp + 0x1C]
-        fmulp st(1), st(0)
-        or ah, 0xC
-        push 0xEB
-        mov dl, 0x1
-        mov ecx, ebx
-        mov dword ptr [esp + 0x1C], eax
-        fldcw word ptr [esp + 0x1C]
-        fistp dword ptr [esp + 0x1C]
-        fldcw word ptr [esp + 0x20]
-        call[notify_skill_buff]
-
-        ELEMDAMAGE_RETURN:
-        cmp dword ptr [esp + 0x10], 0x0
-        jle ELEMDAMAGE_END
-        jmp[ElemDamage_return]
-
-        ELEMDAMAGE_END:
-        jmp[ElemDamage_end]
+    if (count_equipped_artifact(inventory, orb)) {
+        scale_damage(damage, 4.0f / 3.0f);
+        notify_artifact_buff(notify_context, 1, orb, 0, 0);
+    }
+    if (count_equipped_artifact(inventory, ARTIFACT_ALTAR_OF_ELEMENTS_SHARD)) {
+        scale_damage(damage, 1.1f);
+        notify_artifact_buff(notify_context, 1, ARTIFACT_ALTAR_OF_ELEMENTS_SHARD, 0, 0);
+    }
+    if (caster->has_perk(PERK_OBLITERATION)) {
+        scale_damage(damage, 1.3f);
+        notify_skill_buff(notify_context, 1, PERK_OBLITERATION, 0, 0);
+    }
+    int elements = elementVirtuoso_check(caster);
+    if (elements) {
+        scale_damage(damage, 1.0 + elements * (double)0.1f);
+        notify_skill_buff(notify_context, 1, PERK_ELEMENTS_VIRTUOSO, 0, 0);
     }
 }
 
+// esi = caster (hero CombatUnit subobject), edi = adventure hero inventory, [ebp+4] = spell,
+// ebx = notify context, damage int at [esp+0x10]
+__declspec(naked) void ElemDamageFork() {
+    __asm
+    {
+        lea eax, dword ptr [esp + 0x10]
+        push eax                        // damage
+        push ebx                        // notify_context
+        push dword ptr [ebp + 0x4]      // spell
+        mov edx, edi
+        mov ecx, esi
+        call elemental_damage_bonuses
+        jmp ElemDamageForkAlt
+    }
+}
+
+// Replayed game code at 0x00977086: no damage left -> skip the rest
 __declspec(naked) void ElemDamageForkAlt() {
     __asm
     {
-        cmp dword ptr[esp + 0x10], 0x0
+        cmp dword ptr [esp + 0x10], 0x0
         jle ELEMDAMAGE_END
-        jmp[ElemDamage_return]
+        jmp [ElemDamage_return]
     ELEMDAMAGE_END:
-        jmp[ElemDamage_end]
+        jmp [ElemDamage_end]
     }
 }

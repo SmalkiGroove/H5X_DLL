@@ -7,54 +7,40 @@
 
 void CreatureDefenseFork();
 
-int CreatureDefense_fork = 0x008A25ED;
-int CreatureDefense_return = 0x008A25F4;
+int CreatureDefense_fork = 0x008A25ED;    // end of func_GetUnitDefense (impl 0x008A22F0, from CombatUnit +0x19C): xor eax,eax / test ebx,ebx / setle al
+int CreatureDefense_return = 0x008A25F4;  // MasterOfFireFix.cpp hooks there
 
 void CreatureDefense_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, CreatureDefense_fork, 7, CreatureDefenseFork, 0, 0, 0 });
 }
 
-// Percent first, then flat (same order as ModAttack).
-static int __fastcall apply_enemy_defense_artifacts(int* inventory, int defense) {
-    if (!inventory || defense <= 0) return defense;
-    if (count_equipped_artifact(inventory, ARTIFACT_OGRE_CLUB) != 0)
+// Defense of a creature lowered by the enemy hero's artifacts. Percent first, then flat (same order as ModAttack).
+static int __fastcall enemy_defense_artifacts(ICombatCreature* unit, int defense) {
+    if (defense <= 0) return defense;
+    ICombatHero* enemy = unit->opponent();
+    IHero* hero = enemy ? enemy->hero() : nullptr;
+    if (!hero) return defense;
+    if (hero->has_artifact(ARTIFACT_OGRE_CLUB))
         defense = (int)(defense * 0.75f);
-    if (count_equipped_artifact(inventory, ARTIFACT_SHACKLES_OF_THE_LAST_MAN) != 0)
+    if (hero->has_artifact(ARTIFACT_SHACKLES_OF_THE_LAST_MAN))
         defense -= 2;
     return defense;
 }
 
-// Hook at 0x008A25ED, end of func_GetUnitDefense core (impl 0x008A22F0, called from vtable +0x19C @ 0x008A32B0).
-// Overwritten game code: xor eax,eax / test ebx,ebx / setle al.
-// At entry: esi = combat-unit outer (vbtable at [esi+4]), ebx = final defense before clamp.
+// esi = creature complete object (vbptr at esi+4), ebx = final defense before the >= 0 clamp
 __declspec(naked) void CreatureDefenseFork() {
     __asm
     {
-        mov ecx, dword ptr [esi + 0x4]
-        mov edx, dword ptr [ecx + 0x8]
-        mov eax, dword ptr [edx + esi + 0x4]
-        lea ecx, dword ptr [edx + esi + 0x4]
-        call dword ptr [eax + 0x10]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0xc]
-        test eax, eax
-        je CREATURE_DEFENSE_CLAMP
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
+        mov eax, dword ptr [esi + 0x4]
+        mov ecx, dword ptr [eax + 0x8]
+        lea ecx, dword ptr [ecx + esi + 0x4]    // CombatUnit subobject
         mov edx, ebx
-        call apply_enemy_defense_artifacts
+        call enemy_defense_artifacts
         mov ebx, eax
 
-    CREATURE_DEFENSE_CLAMP:
         xor eax, eax
         test ebx, ebx
         setle al
-        jmp[CreatureDefense_return]
+        jmp [CreatureDefense_return]
     }
 }
