@@ -116,7 +116,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x2A8` | **has_spell_link** | `0x00A6D440` | func_CombatUnit_HasSpellLink |
 | `0x2AC` | **unknown_2ac** | `0x00A72F80` | FUN_00a72f80 |
 | `0x2B0` | **unknown_2b0** | `0x00A730B0` | FUN_00a730b0 |
-| `0x2B8` | **unknown_2b8** | `0x00BFF420` | FUN_00bff420 (returns dword [this-0x40]) |
+| `0x2B8` | **get_spell_charges** | `0x00BFF420` | FUN_00bff420 (returns dword [this-0x40]) — spell charge list: 0x10-byte entries {spell ID, charges, extra charges, used} at +0x1C/+0x20; FUN_00989270 consumes one (thiscall(spell)), FUN_00989210 adds, FUN_00989190 = blocked |
 | `0x2BC` | **unknown_2bc** | `0x008AE9F0` | FUN_008ae9f0 (returns dword [this-0x30]) |
 | `0x2C0` | **unknown_2c0** | `0x008AEA10` | FUN_008aea10 |
 | `0x2CC` | **unknown_2cc** | `0x008AEA50` | FUN_008aea50 |
@@ -387,7 +387,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x2AC` | **unknown_2ac** | shared `0x00A72F80` FUN_00a72f80 |
 | `0x2B0` | **unknown_2b0** | shared `0x00A730B0` FUN_00a730b0 |
 | `0x2B4` | **unknown_2b4** | hero 0x00BC1950 FUN_00bc1950; creature 0x008A22E0 FUN_008a22e0 |
-| `0x2B8` | **unknown_2b8** | shared `0x00BFF420` FUN_00bff420 (returns dword [this-0x40]) |
+| `0x2B8` | **get_spell_charges** | shared `0x00BFF420` FUN_00bff420 (returns dword [this-0x40]) — spell charge list: 0x10-byte entries {spell ID, charges, extra charges, used} at +0x1C/+0x20; FUN_00989270 consumes one (thiscall(spell)), FUN_00989210 adds, FUN_00989190 = blocked |
 | `0x2BC` | **unknown_2bc** | shared `0x008AE9F0` FUN_008ae9f0 (returns dword [this-0x30]) |
 | `0x2C0` | **unknown_2c0** | shared `0x008AEA10` FUN_008aea10 |
 | `0x2C4` | **unknown_2c4** | hero 0x00BBFCE0 FUN_00bbfce0; creature 0x00782CF0 func_CombatHero_RetVoid (ret) |

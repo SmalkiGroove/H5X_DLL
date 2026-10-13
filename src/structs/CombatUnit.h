@@ -206,7 +206,7 @@ struct CombatUnit_vtable {
 	int* unknown_2ac; // 0x2AC (684) - 0x00A72F80 [shared] FUN_00a72f80
 	int* unknown_2b0; // 0x2B0 (688) - 0x00A730B0 [shared] FUN_00a730b0
 	int* unknown_2b4; // 0x2B4 (692) - hero 0x00BC1950 FUN_00bc1950; creature 0x008A22E0 FUN_008a22e0
-	int* unknown_2b8; // 0x2B8 (696) - 0x00BFF420 [shared] FUN_00bff420 (returns dword [this-0x40])
+	GetPtr get_spell_charges; // 0x2B8 (696) - 0x00BFF420 [shared] FUN_00bff420 (returns dword [this-0x40]) — spell charge list: 0x10-byte entries {spell ID, charges, extra charges, used} at +0x1C/+0x20; FUN_00989270 consumes one (thiscall(spell)), FUN_00989210 adds, FUN_00989190 = blocked
 	int* unknown_2bc; // 0x2BC (700) - 0x008AE9F0 [shared] FUN_008ae9f0 (returns dword [this-0x30])
 	int* unknown_2c0; // 0x2C0 (704) - 0x008AEA10 [shared] FUN_008aea10
 	int* unknown_2c4; // 0x2C4 (708) - hero 0x00BBFCE0 FUN_00bbfce0; creature 0x00782CF0 func_CombatHero_RetVoid (ret)

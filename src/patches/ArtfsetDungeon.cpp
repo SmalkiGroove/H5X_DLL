@@ -55,8 +55,7 @@ float artfset_dungeon_initiative(IHero* hero) {
 static bool is_dark_elf(ICombatUnit* unit) {
 	ICreature* creature = ((ICombatCreature*)unit)->creature();
 	if (!creature) return false;
-	int base = get_creature_data(creature->type_id)[0x100 / 4];  // base creature of an upgrade, 0 for a base creature
-	if (base == 0) base = creature->type_id;
+	int base = creature->base_type_id();
 	for (int id : dungeon_dark_elves)
 		if (base == id) return true;
 	return false;

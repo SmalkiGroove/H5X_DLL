@@ -1,9 +1,11 @@
 #include "pch.h"
+#include "Artfset.h"
 
 // EDIT MAGIC PROOF FROM ARTIFACTS
 // (13) Breastplate of the Forgotten Hero : 15% proof
 // (174) Ancient Protection Charm : 10% proof
 // (117) Genji's Vest : 20% proof
+// Dwarven set (17), 6 pieces : 50% proof (ArtfsetDwarven.cpp)
 
 void SpellProofFork();
 
@@ -14,6 +16,13 @@ void SpellProof_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, SpellProof_fork, 7, SpellProofFork, 0, 0, 0 });
 }
 
+// Artifact sets of the defending hero, for spells with a target unit.
+static void __fastcall artfset_spell_proof(IHero* defender, ICombatUnit* target, float* resisted) {
+    if (target && artfset_dwarven_spell_proof(defender))
+        *resisted *= 0.5f;
+}
+
+// ebx = defending IHero (not null), edi = target unit (may be 0), ebp = spell, [esp+0x48] = damage factor
 __declspec(naked) void SpellProofFork() {
     __asm
     {
@@ -74,6 +83,12 @@ __declspec(naked) void SpellProofFork() {
         fstp dword ptr ss: [esp + 0x48]
 
     MAGICPROOF_END:
+        lea eax, dword ptr [esp + 0x48]
+        push eax                        // resisted
+        mov edx, edi
+        mov ecx, ebx
+        call artfset_spell_proof
+
         mov ecx, ebp
         call[get_spell_school]
         jmp[SpellProof_return]

@@ -58,7 +58,7 @@ IDs 1..10 are the vanilla sets (`ARTIFACT_SET_VANILLA_*`): names from the old `A
 | 8 | Ogres | `0x004BB25F`, `0x004BC579`, `0x008CE937` | |
 | 9 | Runic | | `0x004B0E54` |
 | 10 | Demonic | `0x008603AD` | |
-| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp`, 12 Sylvan: `ArtfsetPreserve.cpp`, 13 Inferno: `ArtfsetInferno.cpp`, 14 Necropolis: `ArtfsetNecro.cpp`, 15 Academy: `ArtfsetAcademy.cpp`, 16 Dungeon: `ArtfsetDungeon.cpp` | |
+| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp`, 12 Sylvan: `ArtfsetPreserve.cpp`, 13 Inferno: `ArtfsetInferno.cpp`, 14 Necropolis: `ArtfsetNecro.cpp`, 15 Academy: `ArtfsetAcademy.cpp`, 16 Dungeon: `ArtfsetDungeon.cpp`, 17 Dwarven: `ArtfsetDwarven.cpp` | |
 
 `0x004D8D7F` is the generic call inside `0x004D8D60`.
 
@@ -166,4 +166,21 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 - **Holy / Unholy Word immunity** `0x00977600` (`__fastcall`(unit, spell ID), al = 1 immune), used by `func_ComputeSpellHitChance` and `func_ComputeSpellAdditionalDmg`. `UnholyWordImmunitiesFix.cpp` at `0x00977643`.
 - **Creature initiative** `func_GetCreatureInitiative` (`0x004BC190`): flat bonus added at `ModInitiative.cpp` `0x004BC2BF`.
 
-Hook sites to avoid: `0x00B4D0B0` is `ArtfsetDungeon.cpp`. `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.
+## Dwarven set (17) — `ArtfsetDwarven.cpp`
+
+"Fortress hero" = `HERO_CLASS_FORTRESS_MIGHT` (5) / `HERO_CLASS_FORTRESS_MAGIC` (17).
+
+| Pieces | Effect | Where |
+|---|---|---|
+| 4 | Offensive / Defensive Formation bonus, counted once more (×2 with the perk) | `artfset_dwarven_formation`, `OffensiveDefensiveFormation.cpp` |
+| 4 + Fortress class | Base creatures 92 / 94 / 96 / 98 / 100 / 102 and upgrades get Presence of Commander (116) and Aura of Bravery (155) | `artfset_dwarven_ability`, shared ability hook |
+| 6 | Hero's creatures take 50% less spell damage (when the spell has a target) | `artfset_dwarven_spell_proof`, `ModSpellProof.cpp` (`0x0097AFC0`) |
+| 6 + Fortress class | Runes (school `SPELL_SCHOOL_RUNIC`) are not consumed when cast; resources are still paid | own hooks `0x00A6A6D0`, `0x00A6A9B2` |
+
+### Sites used by the Dwarven set
+
+- **Formations**: `func_GetUnitAttack` perk 0xA0 check `0x008A4A0A` (hero outer in `edi`), bonus `log10(adjacent count / own count) * k` capped by DefaultStats `+0x6B0+0x1C`, floored at 0 (`0x008A4A6F`), added at `0x008A4A7B`. `func_GetUnitDefense` perk 0xA1 check `0x008A24FF`–`0x008A251D` (hero outer in `ebp`), cap `+0x20`, floor `0x008A2576`, add `0x008A2582`. Jump targets `0x008A2584` / `0x008A4A7D` (skip) are right after the add: hook the floor, not the add. Adjacent count `0x008A2950` (Fortress-only checks at `0x008A296E` / `0x008A29E6`).
+- **Spell charges**: CombatUnit `+0x2B8` returns the unit's charge list (`[this-0x40]`, 0x10-byte entries {spell ID, charges, extra charges, used} at `+0x1C`/`+0x20`). `FUN_00989270` (thiscall(spell ID)) consumes one, `FUN_00989210` adds (Greater Rune at combat start, `0x0041A250`, which also gives Fortress creatures the hero's runes via `+0x228`), `FUN_00989190` = blocked (charges < 1, or rune flag `+0x28 & 1`). Consumers: `FUN_00a6a6d0` (after a cast, from both on_spell_cast) and `FUN_00a6a970`.
+- **Spell school / element getters** (`0x00A34350` / `0x00A342C0`) take the spell **ID** in `ecx` (`shl ecx,4` table index).
+
+Hook sites to avoid: `0x00A6A6D0`, `0x00A6A9B2` are `ArtfsetDwarven.cpp`. `0x008A4A0A`, `0x008A4A6F`, `0x008A24FF`, `0x008A2576` are `OffensiveDefensiveFormation.cpp`. `0x00B4D0B0` is `ArtfsetDungeon.cpp`. `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.

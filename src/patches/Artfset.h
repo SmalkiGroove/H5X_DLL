@@ -7,6 +7,7 @@
 int artfset_inferno_ability(ICombatUnit* unit, int ability);
 int artfset_necro_ability(ICombatUnit* unit, int ability);
 int artfset_dungeon_ability(ICombatUnit* unit, int ability);
+int artfset_dwarven_ability(ICombatUnit* unit, int ability);
 
 // Stat bonuses of artifact sets, called by the stat hooks of other patches.
 
@@ -22,3 +23,7 @@ bool artfset_dungeon_spellpower_doubled(IHero* hero, int* spell);
 bool artfset_dungeon_unholy_word_immune(ICombatUnit* unit);
 // Dungeon (16), 6 pieces: flat initiative of the hero's creatures (ModInitiative.cpp).
 float artfset_dungeon_initiative(IHero* hero);
+// Dwarven (17), 4 pieces: 1 extra source of Offensive / Defensive Formation bonus (OffensiveDefensiveFormation.cpp).
+int artfset_dwarven_formation(IHero* hero);
+// Dwarven (17), 6 pieces: the hero's creatures take 50% less spell damage (ModSpellProof.cpp).
+bool artfset_dwarven_spell_proof(IHero* hero);

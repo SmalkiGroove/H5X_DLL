@@ -119,6 +119,11 @@ struct ICreature {
 	void cost_resources(int* out_tuple) {
 		instance->get_cost_resources((int*)this, out_tuple);
 	}
+	// Base creature of the upgrade line (creature data +0x100, 0 for a base creature): own id for a base creature.
+	int base_type_id() {
+		int base = get_creature_data(type_id)[0x100 / 4];
+		return base ? base : type_id;
+	}
 };
 
 // Combat stack interface (RTTI NWorld::ICombatCreature, vtable 0x00E4FE9C, 35 slots), subobject at +0xA0 of the

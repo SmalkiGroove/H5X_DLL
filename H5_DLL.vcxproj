@@ -194,6 +194,7 @@
     <ClCompile Include="src\patches\ArtfsetPreserve.cpp" />
     <ClCompile Include="src\patches\ArtfsetInferno.cpp" />
     <ClCompile Include="src\patches\ArtfsetDungeon.cpp" />
+    <ClCompile Include="src\patches\ArtfsetDwarven.cpp" />
     <ClCompile Include="src\patches\ArtfsetNecro.cpp" />
     <ClCompile Include="src\patches\ArtfsetAcademy.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
