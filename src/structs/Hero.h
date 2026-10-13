@@ -261,6 +261,10 @@ struct IHero {
 	int artifact_set_count(int set_id) {
 		return instance->get_artifact_set_count((int*)this, set_id);
 	}
+	bool has_artifact(int artifact_id) {
+		int* equipped = inventory();
+		return equipped && count_equipped_artifact(equipped, artifact_id) != 0;
+	}
 	int* name_wstring(int* out) {
 		return instance->get_name_wstring((int*)this, out);
 	}
@@ -297,15 +301,16 @@ struct ICombatHero : ICombatUnit {
 	int has_skill(int skill) {
 		return instance->has_skill((int*)this, skill);
 	}
+	// has_skill as a bool: the game only sets AL (EAX upper bits hold the mastery)
+	bool has_perk(int perk) {
+		return (char)instance->has_skill((int*)this, perk) != 0;
+	}
 	bool has_spec(int spec) {
 		return instance->has_hero_spec((int*)this, spec) != 0;
 	}
 	bool has_artifact(int artifact_id) {
 		IHero* advHero = hero();
-		if (!advHero || !advHero->instance) return false;
-		int* inventory = advHero->inventory();
-		if (!inventory) return false;
-		return count_equipped_artifact(inventory, artifact_id) != 0;
+		return advHero && advHero->instance && advHero->has_artifact(artifact_id);
 	}
 };
 
