@@ -5,7 +5,8 @@
 #include "Artfset.h"
 
 // SYLVAN ARTIFACT SET (12)
-// 4: hero's effective spellpower is doubled for nature spells (applied by ModEffectiveSpellpower.cpp)
+// 4: hero's effective spellpower is doubled for nature spells (applied by ModEffectiveSpellpower.cpp), and the hero
+//    learns the nature spells of tiers 1 to 3 (ArtfsetExpand.cpp)
 // 4 Sylvan: Sylvan creatures deal +20% damage to the hero's favored enemies (added to Forest Guardian's bonus)
 // 6: creatures always roll good luck (replaces the vanilla Supernatural Luck skill check, the enemy's skill 0xA7
 //    still cancels it)
@@ -17,6 +18,10 @@ void ArtfsetSylvanLuckFork();
 void ArtfsetSylvanSpellproofFork();
 
 static const float sylvan4_favored_bonus = 0.2f;
+// Nature spells of tiers 1 to 3 (game_data/lua/scripts/game/spells.lua, SPELLS_BY_SCHOOL / SPELLS_BY_TIER)
+static const int sylvan4_spells[] = {
+	SPELL_WASP_SWARM, SPELL_LAND_MINE, SPELL_ARCANE_CRYSTAL, SPELL_FORGETFULNESS, SPELL_REGENERATION, SPELL_SUMMON_ELEMENTALS,
+};
 
 int ArtfsetSylvanFavored_fork = 0x00A5AE0C;       // func_ComputeDamageMitigation: call FUN_00A59340
 int ArtfsetSylvanFavored_func = 0x00A59340;       // favored enemy damage multiplier (Forest Guardian), ecx = attacker, eax = target
@@ -48,6 +53,12 @@ static bool is_favored_enemy(IHero* hero, ICreature* creature) {
 	int* favored = hero->favored_enemies();
 	if (!favored) return false;
 	return ((ContainsFn)(*(int***)favored)[0x0C / 4])(favored, creature->type_id) != 0;
+}
+
+void artfset_sylvan_teach_spells(IHero* hero) {
+	if (sylvan_pieces(hero) < 4) return;
+	for (int spell : sylvan4_spells)
+		hero->learn_spell(spell);
 }
 
 bool artfset_sylvan_spellpower_doubled(IHero* hero, int* spell) {

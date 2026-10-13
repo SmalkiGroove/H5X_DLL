@@ -66,8 +66,8 @@ struct Hero_vtable {
 	int* call_220;
 	int* call_224;
 	int* call_228;
-	int* call_232;
-	int* call_236;
+	int* learn_spell; // 0xE8 (232) - 0x00B54720, thiscall(spell ID, flag), returns bool (al): FUN_00b545a0(CHero = this - 0x1C, spell, no source, flag), the permanent learn path (Mage Guild)
+	int* add_sourced_spell; // 0xEC (236) - 0x00B54740, thiscall(spell ID, source perk): FUN_00b545a0(CHero, spell, perk, 0) (mass / empowered versions granted by a perk)
 	int* call_240;
 	int* call_244;
 	int* call_248;
@@ -257,6 +257,11 @@ struct IHero {
 	}
 	int skill_mastery(int skill) {
 		return instance->get_skill_mastery((int*)this, skill);
+	}
+	// Learns a spell permanently, like the Mage Guild (no effect if the hero already knows it or can't learn its type).
+	bool learn_spell(int spell) {
+		typedef char(__thiscall* LearnSpellFn)(int*, int, int);
+		return ((LearnSpellFn)instance->learn_spell)((int*)this, spell, 0) != 0;
 	}
 	int artifact_set_count(int set_id) {
 		return instance->get_artifact_set_count((int*)this, set_id);

@@ -23,6 +23,10 @@ bool artfset_dungeon_spellpower_doubled(IHero* hero, int* spell);
 bool artfset_dungeon_unholy_word_immune(ICombatUnit* unit);
 // Dungeon (16), 6 pieces: flat initiative of the hero's creatures (ModInitiative.cpp).
 float artfset_dungeon_initiative(IHero* hero);
+// Sylvan (12) / Dungeon (16), 4 pieces: the hero learns the nature / dark spells of tiers 1 to 3 for good. Called after
+// every equip change by ArtfsetExpand.cpp.
+void artfset_sylvan_teach_spells(IHero* hero);
+void artfset_dungeon_teach_spells(IHero* hero);
 // Dwarven (17), 4 pieces: 1 extra source of Offensive / Defensive Formation bonus (OffensiveDefensiveFormation.cpp).
 int artfset_dwarven_formation(IHero* hero);
 // Dwarven (17), 6 pieces: the hero's creatures take 50% less spell damage (ModSpellProof.cpp).

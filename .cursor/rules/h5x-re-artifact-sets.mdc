@@ -75,6 +75,10 @@ The commented-out `ArtfsetRepoint_init` patches the immediate byte of each `push
 
 Before this, only the getter's bound was raised (`0x00B5AD7A`). Counts for IDs > 10 were never written, and the getter read past the 10-entry vector.
 
+### Equip hook (`ArtfsetExpand.cpp`)
+
+`func_CheckArtifactPassiveEffects` (`0x00B5A410`, `this` = CHero = IHero − 0x1C, args (?, artifact DB record, equipped flag)) runs after every equip / unequip — the equip handler `FUN_00b543d0` and `0x00B574FA` / `0x00B5754E` call `FUN_00B51590` (set counts) first. It applies the artifact's stats (`FUN_00b53a50`), its spells (`FUN_00b541f0` equip: `FUN_00CA6930` collects the artifact's spells, each pushed to the spellbook `[CHero+0x1E0]` with the artifact as handle; `FUN_00b53730` unequip removes them unless another artifact gives them — Band of the Conjurer works this way), then the spellbook refresh `FUN_00b53b10` at `0x00B5A4AA`, which `ArtfsetExpand.cpp` replaces (`PATCH_CALL`) to run the set equip effects first. Permanent learning: `IHero +0xE8` (`learn_spell`, `0x00B54720` → `FUN_00b545a0(spell, 0, flag)`).
+
 ## Haven set (11) — `ArtfsetHaven.cpp`
 
 | Pieces | Effect | Hook |
@@ -91,6 +95,7 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 | Pieces | Effect | Hook |
 |---|---|---|
 | 4 | Hero's effective spellpower ×2 for nature spells (`get_spell_school` = `SPELL_SCHOOL_NATURAL`, 3) | `artfset_sylvan_spellpower_doubled`, applied by `ModEffectiveSpellpower.cpp` at `0x00BC05A2` (5), end of the CombatHero spellpower-for-spell function: `ebx` = final spellpower before the `>= 1` clamp, `esi` = hero CombatUnit subobject, `edi` = spell ref (0 without spell) |
+| 4 | Hero learns the nature spells of tiers 1–3 for good (Wasp Swarm, Land Mine, Arcane Crystal, Forgetfulness, Regeneration, Summon Elementals; `spells.lua` lists) | `artfset_sylvan_teach_spells`, equip hook in `ArtfsetExpand.cpp` (`0x00B5A4AA`) |
 | 4 + Sylvan class | Sylvan creatures (`get_creature_town` = 4) deal +0.2 damage multiplier to the hero's favored enemies | `PATCH_CALL 0x00A5AE0C` → wrapper calling `FUN_00A59340` then adding the bonus |
 | 6 | Creatures always roll good luck | `0x008A3F98` (24) in the creature luck roll `0x008A3EF0`: replaces the own hero skill `0x7C` (Supernatural Luck) check; non-zero → `edi = 1` at `0x008A3FB2` (forced good luck), enemy skill `0xA7` still cancels it. Supersedes the removed `GoldenGoose.cpp` (artifact 161 had this effect) |
 | 6 + Sylvan class | Spell damage taken × clamp(1 − luck × DefaultStats `+0x704`, 0, 1) for luck > 0 | `0x0097B055` (17) replaces the skill `0xB3` check; `PATCH_WRTE 0x0097B072` makes it per luck point |
@@ -155,14 +160,15 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 | Pieces | Effect | Where |
 |---|---|---|
 | 4 | Hero's effective spellpower ×2 for dark magic spells (`get_spell_school` = `SPELL_SCHOOL_DARK`, 1) | `artfset_dungeon_spellpower_doubled`, applied by `ModEffectiveSpellpower.cpp` (`0x00BC05A2`) |
-| 4 + Dungeon class | The hero has the perk `SPEC_DARKNESS_AFFINITY` (47): Mass Slow / Mass Confusion | own hook at `0x00B4D0B0` (IHero skill mastery returns 1 for perk 47) |
+| 4 | Hero learns the dark spells of tiers 1–3 for good (Curse, Slow, Disrupting Ray, Plague, Weakness, Sorrow) | `artfset_dungeon_teach_spells`, equip hook in `ArtfsetExpand.cpp` (`0x00B5A4AA`) |
+| 4 + Dungeon class | The hero has the perk `SPEC_DARKNESS_AFFINITY` (47): Mass Slow / Mass Confusion | own hook at `0x00B4D150` (IHero skill mastery returns 1 for perk 47) |
 | 6 | Hero's creatures immune to Curse of the Netherworld; +2 creature initiative | `artfset_dungeon_unholy_word_immune` (`UnholyWordImmunitiesFix.cpp`), `artfset_dungeon_initiative` (`ModInitiative.cpp`) |
 | 6 + Dungeon class | Base creatures 71 / 73 / 77 / 81 and upgrades (creature data `+0x100` = base creature, 0 for a base) immune to mind control (ability 19) | `artfset_dungeon_ability`, shared ability hook (after Sandro's Cloak) |
 
 ### Sites used by the Dungeon set
 
 - **Mass spells**: `func_GetMassSpellMapping` (`0x00A33E20`, mass → single spell), `0x00A33CF0` (spell → required perk: 0x2E Curse/Weakness, 0x2F Slow/Confusion, 0x30 Disrupting Ray/Plague, 0x31 Bless/Dispel, 0x32 Stoneskin/Deflect Arrows, 0x33 Haste/Bloodlust, single and mass IDs). The hero needs the perk (IHero `+0x174` skill mastery > 0): can-cast check at `0x00B4B98A`, mass spell added to the spellbook by `FUN_00b4bb40` (IHero `+0xEC`) when the single spell is there. Spellbook refresh `FUN_00b53b10` (adds / removes mass spells) runs from `func_CheckArtifactPassiveEffects`, `func_GainNewPerk`, `func_RemoveHeroSkill`, `func_SpecialAbilities`.
-- **IHero skill mastery** `0x00B4D0B0` (`__thiscall`(skill), `ret 4`, `Functions.h` `skill_mastery`): searches the skill list `[this+0xAC..0xB0]`. Hooked at entry by `ArtfsetDungeon.cpp` for perk 47 only.
+- **IHero skill mastery** `func_GetHeroSkillMastery` (`0x00B4D150`, IHero vtable `+0x174`, `ecx` = IHero, `ret 4`): calls `func_GetHeroSkillMasteryKnown` (`0x00B4D0B0`, `Functions.h` `skill_mastery`) with `ecx` = **IHero − 0x1C** (the CHero object, whose first vtable is not IHero's), then adds +1 for the class skill with artifact 0xF, clamped to 0..4. `0x00B4D0B0` searches the skill list `[this+0xAC..0xB0]` and is also called directly by the level-up skill choices. Hooked at entry of `0x00B4D150` by `ArtfsetDungeon.cpp` for perk 47 only (a hook in `0x00B4D0B0` must not treat `ecx` as an IHero: the first version did and crashed on new game).
 - **Holy / Unholy Word immunity** `0x00977600` (`__fastcall`(unit, spell ID), al = 1 immune), used by `func_ComputeSpellHitChance` and `func_ComputeSpellAdditionalDmg`. `UnholyWordImmunitiesFix.cpp` at `0x00977643`.
 - **Creature initiative** `func_GetCreatureInitiative` (`0x004BC190`): flat bonus added at `ModInitiative.cpp` `0x004BC2BF`.
 
@@ -183,4 +189,4 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 - **Spell charges**: CombatUnit `+0x2B8` returns the unit's charge list (`[this-0x40]`, 0x10-byte entries {spell ID, charges, extra charges, used} at `+0x1C`/`+0x20`). `FUN_00989270` (thiscall(spell ID)) consumes one, `FUN_00989210` adds (Greater Rune at combat start, `0x0041A250`, which also gives Fortress creatures the hero's runes via `+0x228`), `FUN_00989190` = blocked (charges < 1, or rune flag `+0x28 & 1`). Consumers: `FUN_00a6a6d0` (after a cast, from both on_spell_cast) and `FUN_00a6a970`.
 - **Spell school / element getters** (`0x00A34350` / `0x00A342C0`) take the spell **ID** in `ecx` (`shl ecx,4` table index).
 
-Hook sites to avoid: `0x00A6A6D0`, `0x00A6A9B2` are `ArtfsetDwarven.cpp`. `0x008A4A0A`, `0x008A4A6F`, `0x008A24FF`, `0x008A2576` are `OffensiveDefensiveFormation.cpp`. `0x00B4D0B0` is `ArtfsetDungeon.cpp`. `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.
+Hook sites to avoid: `0x00A6A6D0`, `0x00A6A9B2` are `ArtfsetDwarven.cpp`. `0x008A4A0A`, `0x008A4A6F`, `0x008A24FF`, `0x008A2576` are `OffensiveDefensiveFormation.cpp`. `0x00B4D150` is `ArtfsetDungeon.cpp`. `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.

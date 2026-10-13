@@ -6,7 +6,8 @@
 #include "Artfset.h"
 
 // DUNGEON ARTIFACT SET (16)
-// 4: hero's effective spellpower is doubled for dark magic spells (applied by ModEffectiveSpellpower.cpp)
+// 4: hero's effective spellpower is doubled for dark magic spells (applied by ModEffectiveSpellpower.cpp), and the hero
+//    learns the dark spells of tiers 1 to 3 (ArtfsetExpand.cpp)
 // 4 Dungeon: the hero has the perk SPEC_DARKNESS_AFFINITY (47): Slow and Confusion become SPELL_MASS_SLOW and
 //   SPELL_MASS_FORGETFULNESS in the spellbook. Hook below: the hero's skill mastery reports the perk as learnt.
 // 6: hero's creatures are immune to Curse of the Netherworld (UnholyWordImmunitiesFix.cpp) and get +2 initiative
@@ -16,14 +17,20 @@
 
 void DungeonDarknessAffinityFork();
 
-int DungeonDarknessAffinity_fork = 0x00B4D0B0;    // IHero skill mastery (vtable +0x174, ret 4): cmp dword ptr [esp+4],0 / push ebp
-int DungeonDarknessAffinity_return = 0x00B4D0B6;  // mov ebp,ecx / jg (flags of the cmp)
+// func_GetHeroSkillMastery (IHero vtable +0x174, 0x00B4D150, ecx = IHero, ret 4). Not func_GetHeroSkillMasteryKnown
+// (0x00B4D0B0): its `this` is the CHero object at IHero - 0x1C (the level-up skill choices call it directly).
+int DungeonDarknessAffinity_fork = 0x00B4D150;    // push ebx / mov ebx,[esp+8]
+int DungeonDarknessAffinity_return = 0x00B4D155;  // test ebx,ebx
 
 static const float dungeon_initiative = 2.0f;
+// Dark spells of tiers 1 to 3 (game_data/lua/scripts/game/spells.lua, SPELLS_BY_SCHOOL / SPELLS_BY_TIER)
+static const int dungeon4_spells[] = {
+	SPELL_CURSE, SPELL_SLOW, SPELL_DISRUPTING_RAY, SPELL_PLAGUE, SPELL_WEAKNESS, SPELL_SORROW,
+};
 static const int dungeon_dark_elves[] = { 71, 73, 77, 81 };  // base creatures
 
 void ArtfsetDungeon_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, DungeonDarknessAffinity_fork, 6, DungeonDarknessAffinityFork, 0, 0, 0 });
+	assembly_patches.push_back({ PATCH_HOOK, DungeonDarknessAffinity_fork, 5, DungeonDarknessAffinityFork, 0, 0, 0 });
 }
 
 static int dungeon_pieces(IHero* hero) {
@@ -33,6 +40,12 @@ static int dungeon_pieces(IHero* hero) {
 static bool is_dungeon_class(IHero* hero) {
 	int hero_class = hero->hero_class();
 	return hero_class == HERO_CLASS_DUNGEON_MIGHT || hero_class == HERO_CLASS_DUNGEON_MAGIC;
+}
+
+void artfset_dungeon_teach_spells(IHero* hero) {
+	if (dungeon_pieces(hero) < 4) return;
+	for (int spell : dungeon4_spells)
+		hero->learn_spell(spell);
 }
 
 bool artfset_dungeon_spellpower_doubled(IHero* hero, int* spell) {
@@ -85,8 +98,8 @@ __declspec(naked) void DungeonDarknessAffinityFork() {
 		ret 4
 
 	DARKNESS_AFFINITY_VANILLA:
-		cmp dword ptr [esp + 0x4], 0
-		push ebp
+		push ebx
+		mov ebx, dword ptr [esp + 0x8]
 		jmp [DungeonDarknessAffinity_return]
 	}
 }
