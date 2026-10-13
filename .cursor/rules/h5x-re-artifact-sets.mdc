@@ -58,7 +58,7 @@ IDs 1..10 are the vanilla sets (`ARTIFACT_SET_VANILLA_*`): names from the old `A
 | 8 | Ogres | `0x004BB25F`, `0x004BC579`, `0x008CE937` | |
 | 9 | Runic | | `0x004B0E54` |
 | 10 | Demonic | `0x008603AD` | |
-| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp`, 12 Sylvan: `ArtfsetPreserve.cpp`, 13 Inferno: `ArtfsetInferno.cpp`, 14 Necropolis: `ArtfsetNecro.cpp`, 15 Academy: `ArtfsetAcademy.cpp`, 16 Dungeon: `ArtfsetDungeon.cpp`, 17 Dwarven: `ArtfsetDwarven.cpp` | |
+| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp`, 12 Sylvan: `ArtfsetPreserve.cpp`, 13 Inferno: `ArtfsetInferno.cpp`, 14 Necropolis: `ArtfsetNecro.cpp`, 15 Academy: `ArtfsetAcademy.cpp`, 16 Dungeon: `ArtfsetDungeon.cpp`, 17 Dwarven: `ArtfsetDwarven.cpp`, 18 Orcs: `ArtfsetOrcs.cpp` | |
 
 `0x004D8D7F` is the generic call inside `0x004D8D60`.
 
@@ -189,4 +189,17 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 - **Spell charges**: CombatUnit `+0x2B8` returns the unit's charge list (`[this-0x40]`, 0x10-byte entries {spell ID, charges, extra charges, used} at `+0x1C`/`+0x20`). `FUN_00989270` (thiscall(spell ID)) consumes one, `FUN_00989210` adds (Greater Rune at combat start, `0x0041A250`, which also gives Fortress creatures the hero's runes via `+0x228`), `FUN_00989190` = blocked (charges < 1, or rune flag `+0x28 & 1`). Consumers: `FUN_00a6a6d0` (after a cast, from both on_spell_cast) and `FUN_00a6a970`.
 - **Spell school / element getters** (`0x00A34350` / `0x00A342C0`) take the spell **ID** in `ecx` (`shl ecx,4` table index).
 
-Hook sites to avoid: `0x00A6A6D0`, `0x00A6A9B2` are `ArtfsetDwarven.cpp`. `0x008A4A0A`, `0x008A4A6F`, `0x008A24FF`, `0x008A2576` are `OffensiveDefensiveFormation.cpp`. `0x00B4D150` is `ArtfsetDungeon.cpp`. `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.
+## Orcs set (18) — `ArtfsetOrcs.cpp`
+
+"Stronghold hero" = `HERO_CLASS_STRONGHOLD_MAGIC` (7) / `HERO_CLASS_STRONGHOLD_MIGHT` (8). No patch of its own.
+
+| Pieces | Effect | Where |
+|---|---|---|
+| 4 | Hero's creatures have `ABILITY_LIZARD_BITE` (58, Beat-up in H5X) | `artfset_orcs_ability`, shared ability hook |
+| 4 + Stronghold class | +100 rage points at combat start (rage users only) | `artfset_orcs_starting_rage`, `ModStartingRage.cpp` |
+| 6 | +2 speed, +2 morale (hero morale) | `artfset_orcs_speed` (`ModSpeed.cpp`, `0x004BC139`), `artfset_orcs_morale` (`ModMorale.cpp`, `0x00B4CAFB`) |
+| 6 + Stronghold class | Starting rage 250 instead of 100 | `artfset_orcs_starting_rage` |
+
+- **Combat start rage**: creature combat start `0x008AB2A1`–`0x008AB3FC` (`esi` = CCombatCreature complete object, `ebp` = its combat hero interface, slot 0 = IHero), vanilla skill 0x19 / 0xB0 / 0xAE bonuses. Rage gain = `ICombatStack` (`esi+0xA0`) slot `0x7C` (`add_rage`, thiscall(amount, time 0x2710, flag 1)), which ignores non rage users (creature town 10). `ModStartingRage.cpp` hooks `0x008AB32D` (Collar of Primal Rage + Orcs set).
+
+Hook sites to avoid: `0x008AB32D` is `ModStartingRage.cpp`. `0x00A6A6D0`, `0x00A6A9B2` are `ArtfsetDwarven.cpp`. `0x008A4A0A`, `0x008A4A6F`, `0x008A24FF`, `0x008A2576` are `OffensiveDefensiveFormation.cpp`. `0x00B4D150` is `ArtfsetDungeon.cpp`. `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.

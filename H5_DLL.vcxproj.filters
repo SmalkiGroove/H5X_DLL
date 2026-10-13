@@ -452,8 +452,8 @@
     <ClCompile Include="src\patches\HeroAttackDamage.cpp">
       <Filter>Source Files\patches\Heroes</Filter>
     </ClCompile>
-    <ClCompile Include="src\patches\CollarOfPrimalRage.cpp">
-      <Filter>Source Files\patches\Artefacts</Filter>
+    <ClCompile Include="src\patches\ModStartingRage.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\StaffOfTheSaint.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
@@ -522,6 +522,9 @@
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\ArtfsetDwarven.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\ArtfsetOrcs.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\ArtfsetNecro.cpp">

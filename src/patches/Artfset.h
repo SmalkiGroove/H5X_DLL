@@ -8,6 +8,7 @@ int artfset_inferno_ability(ICombatUnit* unit, int ability);
 int artfset_necro_ability(ICombatUnit* unit, int ability);
 int artfset_dungeon_ability(ICombatUnit* unit, int ability);
 int artfset_dwarven_ability(ICombatUnit* unit, int ability);
+int artfset_orcs_ability(ICombatUnit* unit, int ability);
 
 // Stat bonuses of artifact sets, called by the stat hooks of other patches.
 
@@ -31,3 +32,8 @@ void artfset_dungeon_teach_spells(IHero* hero);
 int artfset_dwarven_formation(IHero* hero);
 // Dwarven (17), 6 pieces: the hero's creatures take 50% less spell damage (ModSpellProof.cpp).
 bool artfset_dwarven_spell_proof(IHero* hero);
+// Orcs (18), 6 pieces: speed (ModSpeed.cpp) and morale (ModMorale.cpp) of the hero's creatures.
+int artfset_orcs_speed(IHero* hero);
+int artfset_orcs_morale(IHero* hero);
+// Orcs (18), 4 / 6 pieces + Stronghold class: rage points of the hero's creatures at combat start (ModStartingRage.cpp).
+int artfset_orcs_starting_rage(IHero* hero);

@@ -207,6 +207,12 @@ struct ICombatStack {
 		typedef void(__thiscall* AddHealthReductionFn)(int*, int, float);
 		((AddHealthReductionFn)instance->add_health_reduction)((int*)this, time, fraction);
 	}
+	// Rage gain (slot 0x7C): only rage users (Stronghold creatures) get it, scaled by their buffs and the hero's skills.
+	// time = combat time of the gain (0x2710 at combat start), flag = 1 at combat start.
+	void add_rage(int amount, int time, int flag) {
+		typedef void(__thiscall* AddRageFn)(int*, int, int, int);
+		((AddRageFn)instance->add_rage)((int*)this, amount, time, flag);
+	}
 };
 
 // CombatCreature (vtable 0x00E4FBA4, NWorld::CCombatCreature, subobject +0x148, vbptr at this-0x144).

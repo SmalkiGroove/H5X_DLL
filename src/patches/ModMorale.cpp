@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "types/HeroSpecs.h"
+#include "Artfset.h"
 
 // ADD MORALE BUFFS FROM ADDITIONAL SOURCES
 // skill Motivation +1 Morale
 // skill Last Stand +1 Morale
 // skill Despotism -1 Morale
+// Orcs set (18), 6 pieces : +2 Morale (ArtfsetOrcs.cpp)
 
 // ADD MORALE DEBUFFS FROM ADDITIONAL SOURCES
 // (175) Spirit of Oppression : -1 Morale
@@ -27,12 +29,13 @@ void Morale_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, MoraleDebuff_fork, 5, MoraleDebuffFork, 0, 0, 0 });
 }
 
-// Morale from the hero's own skills, added to the hero's base morale.
+// Morale from the hero's own skills and artifact sets, added to the hero's base morale.
 static int __fastcall hero_morale_bonus(IHero* hero) {
     int bonus = 0;
     if (hero->skill_mastery(PERK_MOTIVATION) > 0)  bonus += 1;
     if (hero->skill_mastery(PERK_LAST_STAND) > 0)  bonus += 1;
     if (hero->skill_mastery(SKILL_DESPOTISM) > 0)  bonus -= 1;
+    bonus += artfset_orcs_morale(hero);
     return bonus;
 }
 

@@ -120,7 +120,7 @@ void init_patches(pugi::xml_document& doc) {
 	BloodyClawNecklace_init(doc);          // OK
     SpearOfTheFrostLord_init(doc);         // OK
     PhoenixFeatherCape_init(doc);          // OK
-	CollarOfPrimalRage_init(doc);          // OK
+	StartingRage_init(doc);                // OK
 	StaffOfTheSaint_init(doc);             // OK
 	BarbarianCape_init(doc);               // OK
     RangersArmor_init(doc);                // OK

@@ -195,6 +195,7 @@
     <ClCompile Include="src\patches\ArtfsetInferno.cpp" />
     <ClCompile Include="src\patches\ArtfsetDungeon.cpp" />
     <ClCompile Include="src\patches\ArtfsetDwarven.cpp" />
+    <ClCompile Include="src\patches\ArtfsetOrcs.cpp" />
     <ClCompile Include="src\patches\ArtfsetNecro.cpp" />
     <ClCompile Include="src\patches\ArtfsetAcademy.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
@@ -204,7 +205,7 @@
     <ClCompile Include="src\patches\BloodyClawNecklace.cpp" />
     <ClCompile Include="src\patches\ChainHitCount.cpp" />
     <ClCompile Include="src\patches\ColdDeath.cpp" />
-    <ClCompile Include="src\patches\CollarOfPrimalRage.cpp" />
+    <ClCompile Include="src\patches\ModStartingRage.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\Dragonsbane.cpp" />
     <ClCompile Include="src\patches\SecretsOfDestruct.cpp" />

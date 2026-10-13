@@ -163,7 +163,7 @@ void PendantOfMastery_init(pugi::xml_document& doc);
 void BloodyClawNecklace_init(pugi::xml_document& doc);
 void SpearOfTheFrostLord_init(pugi::xml_document& doc);
 void PhoenixFeatherCape_init(pugi::xml_document& doc);
-void CollarOfPrimalRage_init(pugi::xml_document& doc);
+void StartingRage_init(pugi::xml_document& doc);
 void StaffOfTheSaint_init(pugi::xml_document& doc);
 void BarbarianCape_init(pugi::xml_document& doc);
 void RangersArmor_init(pugi::xml_document& doc);
