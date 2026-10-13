@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "ElementsVirtuoso.h"
+#include "Artfset.h"
 
 // ADD INITIATIVE FROM ADDITIONAL ARTIFACTS
 // (131) Plunderer Shoes : +1 creatures init
 // (57)  Boots of Swiftness : +2 creatures init
 // (157) Harpy Boots : +1 creatures init
+// Dungeon set (16), 6 pieces : +2 creatures init (ArtfsetDungeon.cpp)
 // (22)  Celestial Justicar Sword : +15% creature init
 // (6)   Staff of Netherworld : -15% enemy creatures init
 // (143) Skull Mask : -8% enemy creatures init
@@ -34,8 +36,9 @@ void Initiative_init(pugi::xml_document& doc) {
 }
 
 // Flat creature initiative bonus, added to the base value before percent scaling.
-static float __fastcall creature_init_flat_bonus(int* inventory) {
-    float bonus = 0.0f;
+static float __fastcall creature_init_flat_bonus(IHero* hero) {
+    int* inventory = hero->inventory();
+    float bonus = artfset_dungeon_initiative(hero);
     if (count_equipped_artifact(inventory, ARTIFACT_PLUNDERER_SHOES))   bonus += 1.0f;
     if (count_equipped_artifact(inventory, ARTIFACT_BOOTS_OF_SWIFTNESS)) bonus += 2.0f;
     if (count_equipped_artifact(inventory, ARTIFACT_HARPY_BOOTS))       bonus += 1.0f;
@@ -89,15 +92,16 @@ static float __fastcall hero_init_bonus(ICombatHero* combatHero) {
 
 // Hook at 0x004BC2BF, in the creature initiative calculation.
 // Overwritten game code: inventory fetch + vanilla Celestial Justicar Sword check.
-// At entry: edx = hero vtable, ecx = hero. At return the game expects
+// At entry: edx = hero vtable, ecx = hero (IHero). At return the game expects
 // edi = inventory, esi = percent bonus, flat initiative float at [esp+0x20].
 __declspec(naked) void CreatureInitiativeFork() {
     __asm
     {
+        push ecx                            // hero
         call dword ptr [edx + 0x74]         // eax = hero inventory (replicates overwritten code)
         mov edi, eax                        // game code after the hook expects it in edi
 
-        mov ecx, edi
+        pop ecx
         call creature_init_flat_bonus       // st0 = flat bonus
         fadd dword ptr ss : [esp + 0x20]
         fstp dword ptr ss : [esp + 0x20]

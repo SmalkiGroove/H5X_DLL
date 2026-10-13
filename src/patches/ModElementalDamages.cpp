@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ElementsVirtuoso.h"
+#include "types/Spells.h"
 
 // ADD ADDITIONAL ELEMENTAL DAMAGE ARTIFACTS
 // (5) Titan's Trident : from +50% to +20% to lightning spells
@@ -42,10 +43,10 @@ static void scale_damage(int* damage, double factor) {
 
 static int element_orb(int element) {
     switch (element) {
-    case 1: return ARTIFACT_ORB_OF_AIR;    // lightning
-    case 2: return ARTIFACT_ORB_OF_FIRE;
-    case 3: return ARTIFACT_ORB_OF_WATER;  // ice
-    case 4: return ARTIFACT_ORB_OF_EARTH;
+    case ELEMENT_AIR:   return ARTIFACT_ORB_OF_AIR;
+    case ELEMENT_FIRE:  return ARTIFACT_ORB_OF_FIRE;
+    case ELEMENT_WATER: return ARTIFACT_ORB_OF_WATER;
+    case ELEMENT_EARTH: return ARTIFACT_ORB_OF_EARTH;
     }
     return 0;
 }

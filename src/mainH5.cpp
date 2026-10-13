@@ -109,6 +109,7 @@ void init_patches(pugi::xml_document& doc) {
     ArtfsetHaven_init(doc);                // OK
     ArtfsetPreserve_init(doc);             // OK
     ArtfsetInferno_init(doc);              // OK
+    ArtfsetDungeon_init(doc);              //
     AnkhOfTheSaint_init(doc);              // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //

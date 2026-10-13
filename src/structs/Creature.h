@@ -12,7 +12,7 @@
 //
 // SCreature DB (func_GetCreatureData) — patch-relevant offsets:
 //   +0x4C Shots, +0x58 Speed, +0x5C Initiative, +0x60 Flying (bool, .xdb field "Flying"), +0x84 Power,
-//   +0x8C Tier, +0x98 Town, +0xA8 WeeklyGrowth (>= 1), +0xDC CombatSize (1 or 2), +0xE0 PatternAttack
+//   +0x8C Tier, +0x98 Town, +0xA8 WeeklyGrowth (>= 1), +0xDC CombatSize (1 or 2), +0xE0 PatternAttack, +0x100 BaseCreatureID
 // Flying in combat: vtable is_flying @ CombatUnit +0x190 → func_GetCreatureFlying @ 0x004BA950.
 //
 // Object size 0x24. Timed-stats blob at +0x2C lives on a base/MI subobject (vtordisp -0x14).

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/Spells.h"
 
 // EARTH SPELLS IGNORE HALF OF ENEMY'S SPELL PROOF
 
@@ -17,7 +18,7 @@ __declspec(naked) void EarthPierceFork() {
 	{
         mov ecx, ebp
         call[get_spell_element]
-		cmp eax, 0x4
+		cmp eax, ELEMENT_EARTH
 		jne EARTH_PIERCE_RETURN
         fld dword ptr ss: [esp + 0x10]
         fmul dword ptr [constf_0_5]

@@ -193,6 +193,7 @@
     <ClCompile Include="src\patches\ArtfsetHaven.cpp" />
     <ClCompile Include="src\patches\ArtfsetPreserve.cpp" />
     <ClCompile Include="src\patches\ArtfsetInferno.cpp" />
+    <ClCompile Include="src\patches\ArtfsetDungeon.cpp" />
     <ClCompile Include="src\patches\ArtfsetNecro.cpp" />
     <ClCompile Include="src\patches\ArtfsetAcademy.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
@@ -351,6 +352,7 @@
     <ClInclude Include="src\structs\Spell.h" />
     <ClInclude Include="src\types\Abilities.h" />
     <ClInclude Include="src\types\HeroSpecs.h" />
+    <ClInclude Include="src\types\Spells.h" />
     <ClInclude Include="src\types\Skill.h" />
     <ClInclude Include="src\types\Skills.h" />
   </ItemGroup>

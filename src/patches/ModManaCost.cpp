@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/Spells.h"
 
 // ADD MANA COST MODIFIERS FROM ADDITIONAL ARTIFACTS
 // (47) Ring of the Magister : -4 mana
@@ -63,13 +64,13 @@ __declspec(naked) void ManaCostFork() {
         MANA_BY_ELEMENT:
         mov ecx, edi
         call[get_spell_element]
-        cmp eax, 0x1
+        cmp eax, ELEMENT_AIR
         je MANA_LIGHTNING_1
-        cmp eax, 0x2
+        cmp eax, ELEMENT_FIRE
         je MANA_FIRE_1
-        cmp eax, 0x3
+        cmp eax, ELEMENT_WATER
         je MANA_ICE_1
-        cmp eax, 0x4
+        cmp eax, ELEMENT_EARTH
         je MANA_EARTH_1
 
         jmp MANA_BY_SCHOOL

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/Spells.h"
 
 // RESTORE ATB AFTER CASTING SPELL
 // (126) Codex of the Saint : 15%
@@ -20,7 +21,7 @@ static float __fastcall atb_reset_bonus(ICombatHero* combat_hero, int spell) {
     float bonus = 0.0f;
     if (hero->has_artifact(ARTIFACT_CODEX_OF_THE_SAINT))
         bonus += 0.15f;
-    if (get_spell_element((int*)spell) != 0 && hero->skill_mastery(PERK_ELEMENTAL_FOCUS) != 0)
+    if (get_spell_element((int*)spell) != ELEMENT_NONE && hero->skill_mastery(PERK_ELEMENTAL_FOCUS) != 0)
         bonus += 0.1f;
     return bonus;
 }

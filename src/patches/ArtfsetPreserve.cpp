@@ -1,24 +1,22 @@
 #include "pch.h"
 #include "types/Artifacts.h"
 #include "types/HeroClasses.h"
+#include "Artfset.h"
 
 // SYLVAN ARTIFACT SET (12)
-// 4: hero's effective spellpower is doubled for nature spells
+// 4: hero's effective spellpower is doubled for nature spells (applied by ModEffectiveSpellpower.cpp)
 // 4 Sylvan: Sylvan creatures deal +20% damage to the hero's favored enemies (added to Forest Guardian's bonus)
 // 6: creatures always roll good luck (replaces the vanilla Supernatural Luck skill check, the enemy's skill 0xA7
 //    still cancels it)
 // 6 Sylvan: creatures take 5% less spell damage per positive luck point (DefaultStats +0x704 per point),
 //           re-enables the vanilla Luck of the Barbarian block (skill 0xB3) with the set check instead
 
-void ArtfsetSylvanSpellpowerFork();
 void ArtfsetSylvanFavoredFork();
 void ArtfsetSylvanLuckFork();
 void ArtfsetSylvanSpellproofFork();
 
 static const float sylvan4_favored_bonus = 0.2f;
 
-int ArtfsetSylvanSpellpower_fork = 0x00BC05A2;    // hero spellpower for a spell, end: cmp ebx,1 / mov eax,ebx
-int ArtfsetSylvanSpellpower_return = 0x00BC05A7;
 int ArtfsetSylvanFavored_fork = 0x00A5AE0C;       // func_ComputeDamageMitigation: call FUN_00A59340
 int ArtfsetSylvanFavored_func = 0x00A59340;       // favored enemy damage multiplier (Forest Guardian), ecx = attacker, eax = target
 int ArtfsetSylvanLuck_fork = 0x008A3F98;          // creature luck roll: own hero has skill 0x7C (Supernatural Luck)
@@ -28,7 +26,6 @@ int ArtfsetSylvanSpellproof_return = 0x0097B068;
 int ArtfsetSylvanSpellproof_skip = 0x0097B0B8;
 
 void ArtfsetPreserve_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, ArtfsetSylvanSpellpower_fork, 5, ArtfsetSylvanSpellpowerFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_CALL, ArtfsetSylvanFavored_fork, 5, ArtfsetSylvanFavoredFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, ArtfsetSylvanLuck_fork, 24, ArtfsetSylvanLuckFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, ArtfsetSylvanSpellproof_fork, 17, ArtfsetSylvanSpellproofFork, 0, 0, 0 });
@@ -52,10 +49,8 @@ static bool is_favored_enemy(IHero* hero, ICreature* creature) {
 	return ((ContainsFn)(*(int***)favored)[0x0C / 4])(favored, creature->type_id) != 0;
 }
 
-static int __fastcall sylvan4_spellpower(ICombatUnit* hero_unit, int* spell, int spellpower) {
-	if (!spell || get_spell_school(spell) != 3) return spellpower;
-	if (sylvan_pieces(owner_hero(hero_unit)) < 4) return spellpower;
-	return spellpower * 2;
+bool artfset_sylvan_spellpower_doubled(IHero* hero, int* spell) {
+	return get_spell_school(spell) == 3 && sylvan_pieces(hero) >= 4;  // 3 = nature magic
 }
 
 static float __fastcall sylvan4_favored_multiplier(ICombatUnit* attacker, ICombatUnit* target, float multiplier) {
@@ -76,21 +71,6 @@ static int __fastcall sylvan6_always_lucky(ICombatUnit* unit) {
 
 static int __fastcall sylvan6_luck_spellproof(IHero* hero) {
 	return sylvan_pieces(hero) >= 6 && is_sylvan_class(hero);
-}
-
-// esi = hero CombatUnit subobject, edi = spell ref (0 without spell), ebx = spellpower
-__declspec(naked) void ArtfsetSylvanSpellpowerFork() {
-	__asm
-	{
-		push ebx
-		mov edx, edi
-		mov ecx, esi
-		call sylvan4_spellpower
-		mov ebx, eax
-		cmp ebx, 0x1
-		mov eax, ebx
-		jmp [ArtfsetSylvanSpellpower_return]
-	}
 }
 
 // Replaces the call: ecx = attacker, eax = target, returns the multiplier in st0

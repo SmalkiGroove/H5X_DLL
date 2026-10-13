@@ -3,6 +3,7 @@
 #define SPELL_H
 
 #include "types/Functions.h"
+#include "types/Spells.h"
 
 // NDb::SSpell — spell DB record (union struct).
 //   RTTI .?AUSSpell@NDb@@ @ 0x00F43B10
@@ -21,15 +22,7 @@ enum SPELL_SCHOOL {
 	SPELL_SCHOOL_UNKNOWN = 8,
 };
 
-// --- Element @ SSpell+0xD4 when +0xD8 != 0 (func_GetSpellElement) ---
-
-enum SPELL_ELEMENT {
-	SPELL_ELEMENT_NONE = 0,
-	SPELL_ELEMENT_FIRE = 1,
-	SPELL_ELEMENT_LIGHTNING = 2,
-	SPELL_ELEMENT_ICE = 3,
-	SPELL_ELEMENT_EARTH = 4,
-};
+// --- Element @ SSpell+0xD4 when +0xD8 != 0 (func_GetSpellElement): SPELL_ELEMENT_ID, types/Spells.h ---
 
 // --- Targeting class @ SSpell+0xD0 ---
 
@@ -197,7 +190,7 @@ struct ISpellDb {
 		return raw ? raw->mana_cost : 0;
 	}
 	int element() const {
-		if (!raw || !raw->has_element) return SPELL_ELEMENT_NONE;
+		if (!raw || !raw->has_element) return ELEMENT_NONE;
 		return raw->element;
 	}
 	int target_class() const {

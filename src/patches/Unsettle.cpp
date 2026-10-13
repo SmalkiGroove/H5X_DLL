@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "structs/Spell.h"
+#include "types/Spells.h"
 
 // PERK_UNSETTLE: earth damage spells of the hero remove 1 max HP from each creature of the damaged stack
 // (stack HP reduction += 1 / creature max HP, applied before the damage).
@@ -18,7 +18,7 @@ static void __fastcall unsettle(ICombatUnit* caster, ICombatUnit* target, int sp
 	if (!caster || !target || !spell) return;
 	if (caster->unit_kind() != 2 || target->unit_kind() != 1) return;  // hero caster, creature target
 	if (!((ICombatHero*)caster)->has_perk(PERK_UNSETTLE)) return;
-	if (get_spell_element((int*)spell) != SPELL_ELEMENT_EARTH) return;
+	if (get_spell_element((int*)spell) != ELEMENT_EARTH) return;
 
 	ICombatStack* stack = ((ICombatCreature*)target)->stack();
 	if (!stack) return;

@@ -152,6 +152,7 @@ void ArtfsetExpand_init(pugi::xml_document& doc);
 void ArtfsetHaven_init(pugi::xml_document& doc);
 void ArtfsetPreserve_init(pugi::xml_document& doc);
 void ArtfsetInferno_init(pugi::xml_document& doc);
+void ArtfsetDungeon_init(pugi::xml_document& doc);
 void AnkhOfTheSaint_init(pugi::xml_document& doc);
 void DragonArtifactTweaks_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);

@@ -6,6 +6,7 @@
 
 int artfset_inferno_ability(ICombatUnit* unit, int ability);
 int artfset_necro_ability(ICombatUnit* unit, int ability);
+int artfset_dungeon_ability(ICombatUnit* unit, int ability);
 
 // Stat bonuses of artifact sets, called by the stat hooks of other patches.
 
@@ -13,3 +14,11 @@ int artfset_necro_ability(ICombatUnit* unit, int ability);
 bool artfset_academy_casters(IHero* hero);
 // Academy (15), 4 pieces + Academy class: flat health added to each of the hero's mages (ModHealth.cpp).
 int artfset_academy_health(IHero* hero, ICreature* creature);
+// Sylvan (12) / Dungeon (16), 4 pieces: the hero's spellpower is doubled for nature / dark magic spells
+// (ModEffectiveSpellpower.cpp). spell = spell ref (not null).
+bool artfset_sylvan_spellpower_doubled(IHero* hero, int* spell);
+bool artfset_dungeon_spellpower_doubled(IHero* hero, int* spell);
+// Dungeon (16), 6 pieces: the unit's hero makes it immune to Curse of the Netherworld (UnholyWordImmunitiesFix.cpp).
+bool artfset_dungeon_unholy_word_immune(ICombatUnit* unit);
+// Dungeon (16), 6 pieces: flat initiative of the hero's creatures (ModInitiative.cpp).
+float artfset_dungeon_initiative(IHero* hero);

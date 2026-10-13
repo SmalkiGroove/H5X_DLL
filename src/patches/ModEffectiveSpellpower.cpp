@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "types/Spells.h"
+#include "Artfset.h"
 
 // ADD BONUS SPELLPOWER FROM ADDITIONAL SOURCES
 // Skill Blaze Power (231) : +3 for fire spells
@@ -6,22 +8,30 @@
 // Skill Thunder Power (233) : +3 for lightning spells
 // Skill Earth Power (234) : +3 for earth spells
 
+// MULTIPLY THE FINAL SPELLPOWER (after every flat bonus and buff, before the >= 1 clamp)
+// Sylvan set (12), 4 pieces : x2 for nature spells (ArtfsetPreserve.cpp)
+// Dungeon set (16), 4 pieces : x2 for dark spells (ArtfsetDungeon.cpp)
+
 void EffectiveSpellpowerFork();
+void SpellpowerMultiplierFork();
 
 int EffectiveSpellpower_fork = 0x00BC0582;    // end of the hero spellpower for a spell, before buff 0x14D: mov ecx,[esi+4] / mov edx,[ecx+8]
 int EffectiveSpellpower_return = 0x00BC0588;
+int SpellpowerMultiplier_fork = 0x00BC05A2;    // end of the hero spellpower for a spell, after buff 0x14D: cmp ebx,1 / mov eax,ebx
+int SpellpowerMultiplier_return = 0x00BC05A7;  // jg (flags of the cmp)
 
 void EffectiveSpellpower_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, EffectiveSpellpower_fork, 6, EffectiveSpellpowerFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, SpellpowerMultiplier_fork, 5, SpellpowerMultiplierFork, 0, 0, 0 });
 }
 
-// Element power perk matching the spell's element (get_spell_element: 1 lightning, 2 fire, 3 ice, 4 earth).
+// Element power perk matching the spell's element.
 static int element_power_perk(int spell) {
     switch (get_spell_element((int*)spell)) {
-    case 1: return PERK_THUNDER_POWER;
-    case 2: return PERK_BLAZE_POWER;
-    case 3: return PERK_FROST_POWER;
-    case 4: return PERK_EARTH_POWER;
+    case ELEMENT_AIR:   return PERK_THUNDER_POWER;
+    case ELEMENT_FIRE:  return PERK_BLAZE_POWER;
+    case ELEMENT_WATER: return PERK_FROST_POWER;
+    case ELEMENT_EARTH: return PERK_EARTH_POWER;
     }
     return 0;
 }
@@ -35,6 +45,15 @@ static int __fastcall element_power_bonus(ICombatHero* hero, int spell, int spel
     *spellpower_slot = spellpower + 3;
     notify_skill_buff(notify_context, 1, perk, 0, 0);
     return 3;
+}
+
+// Final spellpower for the spell. hero_unit = hero CombatUnit subobject, spell = spell ref (0 without spell context).
+static int __fastcall multiplied_spellpower(ICombatUnit* hero_unit, int* spell, int spellpower) {
+    if (!spell) return spellpower;
+    IHero* hero = owner_hero(hero_unit);
+    if (artfset_sylvan_spellpower_doubled(hero, spell) || artfset_dungeon_spellpower_doubled(hero, spell))
+        return spellpower * 2;
+    return spellpower;
 }
 
 // esi = hero complete object (vbptr at esi+4), edi = spell (0 without spell context), ebx = spellpower,
@@ -56,5 +75,22 @@ __declspec(naked) void EffectiveSpellpowerFork() {
         mov ecx, dword ptr [esi + 0x4]
         mov edx, dword ptr [ecx + 0x8]
         jmp [EffectiveSpellpower_return]
+    }
+}
+
+// esi = hero CombatUnit subobject (lea esi,[edx+esi+4] at 0x00BC058C), edi = spell ref (0 without spell),
+// ebx = spellpower. Replays cmp ebx,1 / mov eax,ebx for the clamp after the return.
+__declspec(naked) void SpellpowerMultiplierFork() {
+    __asm
+    {
+        push ebx                                // spellpower
+        mov edx, edi
+        mov ecx, esi
+        call multiplied_spellpower
+        mov ebx, eax
+
+        cmp ebx, 0x1
+        mov eax, ebx
+        jmp [SpellpowerMultiplier_return]
     }
 }

@@ -2,6 +2,7 @@
 #include "types/Abilities.h"
 #include "types/Artifacts.h"
 #include "types/HeroClasses.h"
+#include "types/Spells.h"
 #include "Artfset.h"
 
 // INFERNO ARTIFACT SET (13)
@@ -60,7 +61,7 @@ int artfset_inferno_ability(ICombatUnit* unit, int ability) {
 // spell = spell ID (get_spell_id), caster / target = CombatUnit subobjects (either may be 0)
 static int __fastcall inferno4_ignores_fire_resistance(int spell, ICombatUnit* caster, ICombatUnit* target) {
 	if (!caster || !target) return 0;
-	if (get_spell_element((int*)spell) != 2) return 0;  // fire
+	if (get_spell_element((int*)spell) != ELEMENT_FIRE) return 0;
 	IHero* hero = owner_hero(caster);
 	if (inferno_pieces(hero) < 4 || !is_inferno_class(hero)) return 0;
 	return owner_hero(target) != hero;  // enemy units only (neutrals have no hero)

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/Spells.h"
 
 // SPEC_LIGHTNING_TOUCH: the hero's creatures deal 10% bonus damage as lightning on melee attacks (resisted like Lightning Bolt).
 // The bonus is added to the attack damage like the fire / cold bonuses, and shown with the Stormstrike bolt
@@ -18,8 +19,8 @@ int LightningTouchPreviewMax_return = 0x00A63559;
 int LightningTouchAttack_fork = 0x00A67C7C;        // mov ecx,[ebp] / mov edx,[ecx]
 int LightningTouchAttack_return = 0x00A67C81;
 
-const int lightning_touch_spell = 3;       // Lightning Bolt: element of the bonus for the target's resistance
-const int lightning_touch_visual = 0xF7;   // "STORMSTRIKE" bolt
+const int lightning_touch_spell = SPELL_LIGHTNING_BOLT;      // element of the bonus for the target's resistance
+const int lightning_touch_visual = SPELL_ABILITY_STORMBOLT;  // 0xF7: the visual launcher plays the "STORMSTRIKE" bolt
 const float lightning_touch_ratio = 0.1f;
 
 void LightningTouch_init(pugi::xml_document& doc) {
