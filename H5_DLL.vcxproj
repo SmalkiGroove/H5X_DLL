@@ -193,6 +193,7 @@
     <ClCompile Include="src\patches\ArtfsetHaven.cpp" />
     <ClCompile Include="src\patches\ArtfsetPreserve.cpp" />
     <ClCompile Include="src\patches\ArtfsetInferno.cpp" />
+    <ClCompile Include="src\patches\ArtfsetNecro.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
     <ClCompile Include="src\patches\BarbarianCape.cpp" />
     <ClCompile Include="src\patches\BattleDive.cpp" />
@@ -341,6 +342,7 @@
     <ClCompile Include="src/patches/WandOfSpell.cpp" />
     <ClCompile Include="src/patches/WarMachineTier.cpp" />
     <ClCompile Include="src/patches/WeakeningStrike.cpp" />
+    <ClInclude Include="src\patches\Artfset.h" />
     <ClInclude Include="src\patches\ElementsVirtuoso.h" />
     <ClInclude Include="src\pugixml.hpp" />
     <ClInclude Include="src\structs\CombatUnit.h" />

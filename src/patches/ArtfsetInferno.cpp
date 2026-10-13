@@ -2,6 +2,7 @@
 #include "types/Abilities.h"
 #include "types/Artifacts.h"
 #include "types/HeroClasses.h"
+#include "Artfset.h"
 
 // INFERNO ARTIFACT SET (13)
 // 4: hero's creatures gain Liquid Flame Breath (ability 168). The game only spawns the flames on the tiles of a
@@ -13,7 +14,6 @@
 // 6: enemy units get -5 luck
 // 6 Inferno: hero's creatures gain Fire Shield (ability 62)
 
-void ArtfsetInfernoAbilityFork();
 void ArtfsetInfernoFireResistFork();
 void ArtfsetInfernoEnemyLuckFork();
 void ArtfsetInfernoFlameTilesFork();
@@ -21,9 +21,6 @@ static int __fastcall liquid_flame_count(ICombatUnit* unit);
 
 static const int inferno6_luck_malus = 5;
 
-int ArtfsetInfernoAbility_fork = 0x008A3838;      // func_CombatCreature_HasAbility, native ability lookup: mov ecx,[ebp-20h] / cmp ecx,edi
-int ArtfsetInfernoAbility_return = 0x008A383D;
-int ArtfsetInfernoAbility_enable = 0x008A3688;    // pop edi; pop esi; pop ebp; mov al,1; pop ebx; add esp,1Ch; ret 4
 int ArtfsetInfernoFireResist_fork = 0x0097D2FB;   // func_ComputeSpellDamageMultiplier, after the hit chance: cmp eax,64h / mov [esp+14h],eax
 int ArtfsetInfernoFireResist_return = 0x0097D302;
 int ArtfsetInfernoEnemyLuck_fork = 0x00989E70;    // func_ComputeLuckModifiers, after the enemy hero debuffs: mov eax,[esp+1Ch] / test eax,eax
@@ -34,7 +31,6 @@ int ArtfsetInfernoFlameCountNew_fork = 0x0098B13F;  // liquid flame creation: ca
 int ArtfsetInfernoFlameCountCmp_fork = 0x0098AD5D;  // damage of a would-be flame, compared to an existing one: same code
 
 void ArtfsetInferno_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, ArtfsetInfernoAbility_fork, 5, ArtfsetInfernoAbilityFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, ArtfsetInfernoFireResist_fork, 7, ArtfsetInfernoFireResistFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, ArtfsetInfernoEnemyLuck_fork, 6, ArtfsetInfernoEnemyLuckFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, ArtfsetInfernoFlameTiles_fork, 6, ArtfsetInfernoFlameTilesFork, 0, 0, 0 });
@@ -52,7 +48,8 @@ static bool is_inferno_class(IHero* hero) {
 }
 
 // Called for every ability query that reaches the creature's own ability list.
-static int __fastcall inferno_has_ability(ICombatUnit* unit, int ability) {
+// Abilities 62 / 168, through the shared has_ability hook (ModAbilities.cpp)
+int artfset_inferno_ability(ICombatUnit* unit, int ability) {
 	if (ability != ABILITY_LIQUID_FLAME_BREATH && ability != ABILITY_FIRE_SHIELD) return 0;
 	IHero* hero = owner_hero(unit);
 	int pieces = inferno_pieces(hero);
@@ -120,24 +117,6 @@ static void __fastcall inferno4_flame_tiles(int* attack) {
 static int __fastcall liquid_flame_count(ICombatUnit* unit) {
 	int scaled = (int)(((ICombatCreature*)unit)->growth_ratio() + 0.5f);
 	return scaled < 1 ? 1 : scaled;
-}
-
-// ebp = creature CombatUnit subobject, esi = ability, edi = 0
-__declspec(naked) void ArtfsetInfernoAbilityFork() {
-	__asm
-	{
-		mov ecx, ebp
-		mov edx, esi
-		call inferno_has_ability
-		test eax, eax
-		je INFERNO_ABILITY_NATIVE
-		jmp [ArtfsetInfernoAbility_enable]
-
-	INFERNO_ABILITY_NATIVE:
-		mov ecx, dword ptr [ebp - 0x20]
-		cmp ecx, edi
-		jmp [ArtfsetInfernoAbility_return]
-	}
 }
 
 // func_ComputeSpellDamageMultiplier (__fastcall, ret 18h) returns the % of the spell resisted (0..100).

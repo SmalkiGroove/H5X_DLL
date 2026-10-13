@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Artfset.h"
 
 // ADD ABILITIES FROM OTHER SOURCES
 // Perk STUN_TRAINING => Crushing Blow
@@ -12,9 +13,11 @@
 // (182) Ranger's Cape => Agility
 // (162) ? => Child of Light
 // (163) ? => Flame Wave
+// Artifact sets (Artfset.h) => Inferno: Liquid Flame Breath, Fire Shield; Necropolis: Undead, Regeneration
 
 void CreatureAbilitiesFork();
 void CreatureAbilityFreeMindFork();
+void ArtfsetAbilityFork();
 
 int CreatureAbilities_fork = 0x008A361C;
 int CreatureAbilities_return = 0x008A3622;
@@ -22,10 +25,12 @@ int CreatureAbilities_return = 0x008A3622;
 int CreatureAbilities_native = 0x008A3838;
 int CreatureAbilities_enable = 0x008A3688;
 int CreatureAbilities_disable = 0x008A36B9;
+int ArtfsetAbility_return = 0x008A383D;      // after the 5 bytes replaced at CreatureAbilities_native
 
 void CreatureAbilities_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, CreatureAbilities_fork, 6, CreatureAbilitiesFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, 0x008A36AC, 6, CreatureAbilityFreeMindFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, CreatureAbilities_native, 5, ArtfsetAbilityFork, 0, 0, 0 });
 }
 
 __declspec(naked) void CreatureAbilitiesFork() {
@@ -306,5 +311,29 @@ __declspec(naked) void CreatureAbilityFreeMindFork() {
 
         ABILITY_FREE_MIND_DISABLE:
 		jmp[CreatureAbilities_disable]
+    }
+}
+
+// Abilities granted by artifact sets, checked before the creature's own ability list (Artfset.h).
+static int __fastcall artfset_has_ability(ICombatUnit* unit, int ability) {
+    return artfset_inferno_ability(unit, ability) || artfset_necro_ability(unit, ability);
+}
+
+// Hook at CreatureAbilities_native (native ability lookup: mov ecx,[ebp-20h] / cmp ecx,edi).
+// ebp = creature CombatUnit subobject, esi = ability, edi = 0
+__declspec(naked) void ArtfsetAbilityFork() {
+    __asm
+    {
+        mov ecx, ebp
+        mov edx, esi
+        call artfset_has_ability
+        test eax, eax
+        je ARTFSET_ABILITY_NATIVE
+        jmp[CreatureAbilities_enable]
+
+        ARTFSET_ABILITY_NATIVE:
+        mov ecx, dword ptr [ebp - 0x20]
+        cmp ecx, edi
+        jmp[ArtfsetAbility_return]
     }
 }
