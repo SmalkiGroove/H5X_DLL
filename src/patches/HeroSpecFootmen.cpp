@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Infantry commander attacks decrease target's morale
 
@@ -20,7 +21,7 @@ __declspec(naked) void InfantryCommanderFork() {
 		mov eax, dword ptr [edx + esi + 0x4]
 		lea ecx, dword ptr [edx + esi + 0x4]
 
-		push 0x6
+		push HERO_SPEC_FOOTMEN
 		call dword ptr [eax + 0x294]
 		test al, al
 		je INFANTRY_COMANDER_END

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // ADD MORALE BUFFS FROM ADDITIONAL SOURCES
 // skill Motivation +1 Morale
@@ -16,126 +17,67 @@
 void MoraleBuffFork();
 void MoraleDebuffFork();
 
-int MoraleBuff_fork = 0x00B4CAFB;
+int MoraleBuff_fork = 0x00B4CAFB;      // IHero get_morale_raw (0x00B4CAE0), before the Pariah check: mov edx,[esi] / push 53h / mov ecx,esi
 int MoraleBuff_return = 0x00B4CB01;
-int MoraleDebuff_fork = 0x0098A175;
+int MoraleDebuff_fork = 0x0098A175;    // func_ComputeMoraleModifiers, enemy hero debuffs, last vanilla one: neg eax / lea esi,[esi+eax*2]
 int MoraleDebuff_return = 0x0098A17A;
 
 void Morale_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, MoraleBuff_fork, 6, MoraleBuffFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, MoraleBuff_fork, 6, MoraleBuffFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, MoraleDebuff_fork, 5, MoraleDebuffFork, 0, 0, 0 });
 }
 
+// Morale from the hero's own skills, added to the hero's base morale.
+static int __fastcall hero_morale_bonus(IHero* hero) {
+    int bonus = 0;
+    if (hero->skill_mastery(PERK_MOTIVATION) > 0)  bonus += 1;
+    if (hero->skill_mastery(PERK_LAST_STAND) > 0)  bonus += 1;
+    if (hero->skill_mastery(SKILL_DESPOTISM) > 0)  bonus -= 1;
+    return bonus;
+}
+
+// Morale removed from a unit by the enemy hero (NWorld::ICombatHero interface, not null).
+static int __fastcall enemy_morale_malus(int* enemy_hero_interface) {
+    ICombatHero* enemy = combat_creature_detail::combat_hero_from_outer(enemy_hero_interface);
+    int malus = 0;
+    IHero* hero = enemy->hero();
+    if (hero) {
+        int* inventory = hero->inventory();
+        malus += count_equipped_artifact(inventory, ARTIFACT_SPIRIT_OF_OPPRESSION);
+        malus += 2 * count_equipped_artifact(inventory, ARTIFACT_ROD_OF_TORMENT);
+        malus += count_equipped_artifact(inventory, ARTIFACT_CRIMSON_SCYTHE);
+    }
+    if (enemy->has_perk(PERK_INTIMIDATING_VOICE))   malus += 1;
+    if (enemy->has_perk(ULTI_DEAD_MANS_CURSE))      malus += 3;
+    if (enemy->has_spec(HERO_SPEC_DEMON_HUNTER))    malus += 1;  // Sovereign
+    return malus;
+}
+
+// esi = IHero, edi = morale being summed
 __declspec(naked) void MoraleBuffFork() {
     __asm
     {
-        mov edx, dword ptr [esi]
-        push 0x3D
         mov ecx, esi
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        je MORALE_NEXT_1
-        add edi, 1
+        call hero_morale_bonus
+        add edi, eax
 
-        MORALE_NEXT_1:
-		mov edx, dword ptr [esi]
-        push 0x76
-        mov ecx, esi
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        je MORALE_NEXT_2
-        add edi, 1
-
-        MORALE_NEXT_2:
-        mov edx, dword ptr [esi]
-        push 0xFC
-        mov ecx, esi
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        je MORALE_PARIAH
-        sub edi, 1
-
-        MORALE_PARIAH:
         mov edx, dword ptr [esi]
         push 0x53
-		mov ecx, esi
-		jmp[MoraleBuff_return]
+        mov ecx, esi
+        jmp [MoraleBuff_return]
     }
 }
 
+// edi = enemy hero (NWorld::ICombatHero interface), esi = morale being summed, eax = vanilla count to replay
 __declspec(naked) void MoraleDebuffFork() {
     __asm
     {
         neg eax
         lea esi, dword ptr [esi + eax * 2]
 
-        mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        push 0xAF
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        call[count_equipped_artifact]
-        neg eax
-        lea esi, dword ptr [esi + eax * 1]
-
-        mov eax, dword ptr [edi]
-        mov ecx, edi
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        push 0x7D
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        call[count_equipped_artifact]
-        neg eax
-        lea esi, dword ptr [esi + eax * 2]
-
-        mov eax, dword ptr [edi]
-        mov ecx, edi
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        push 0xB0
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        call[count_equipped_artifact]
-        neg eax
-        lea esi, dword ptr [esi + eax * 1]
-
-        mov eax, [edi + 0x4]
-        mov ecx, [eax + 0x8]
-        mov edx, [ecx + edi + 0x4]
-        lea ecx, [ecx + edi + 0x4]
-        push 0xA2
-        call dword ptr [edx + 0x290]
-        neg eax
-        lea esi, dword ptr [esi + eax * 1]
-
-        mov eax, [edi + 0x4]
-        mov ecx, [eax + 0x8]
-        mov edx, [ecx + edi + 0x4]
-        lea ecx, [ecx + edi + 0x4]
-        push 0x67
-        call dword ptr [edx + 0x290]
-        test al, al
-        jz MORALE_SOVEREIGN
-        sub esi, 0x3
-
-        MORALE_SOVEREIGN:
-        mov eax, [edi + 0x4]
-        mov ecx, [eax + 0x8]
-        mov edx, [ecx + edi + 0x4]
-        lea ecx, [ecx + edi + 0x4]
-        push 0x50
-        call dword ptr [edx + 0x294]
-        test al, al
-        jz MORALE_END
-        sub esi, 0x1
-
-        MORALE_END:
-        jmp[MoraleDebuff_return]
+        call enemy_morale_malus
+        sub esi, eax
+        jmp [MoraleDebuff_return]
     }
 }

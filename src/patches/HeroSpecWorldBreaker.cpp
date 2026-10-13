@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Troops get immunity to earth
 
@@ -31,7 +32,7 @@ __declspec(naked) void WorldBreakerFork() {
 		mov edx, dword ptr ds : [ecx + 0x8]
 		lea ecx, dword ptr ds : [edx + eax + 0x4]
 		mov eax, dword ptr ds : [ecx]
-		push 0x2A
+		push HERO_SPEC_DISRUPTER
 		call dword ptr ds : [eax + 0x294]
 		test al, al
 		je WORLDBREAKER_NEXT

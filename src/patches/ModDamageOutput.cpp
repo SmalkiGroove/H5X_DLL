@@ -16,233 +16,143 @@ void MeleeDamageOutputFork();
 void RangedDamageOutputFork();
 void AllDamageOutputFork();
 
-int MeleeDamageInput_fork = 0x00A58E74;
+int MeleeDamageInput_fork = 0x00A58E74;    // attacker hero bonuses, melee branch: mov edx,[ebp] / mov ecx,ebp
 int MeleeDamageInput_return = 0x00A58E79;
-int RangedDamageInput_fork = 0x00A58EBD;
+int RangedDamageInput_fork = 0x00A58EBD;   // attacker hero bonuses, ranged branch: mov eax,[ebp+4] / mov ecx,[eax+8]
 int RangedDamageInput_return = 0x00A58EC3;
-int MeleeDamageOutput_fork = 0x00A5AC59;
+int MeleeDamageOutput_fork = 0x00A5AC59;   // func_ComputeDamageMitigation, melee branch: mov eax,[edi] / mov ecx,edi / call [eax]
 int MeleeDamageOutput_return = 0x00A5AC5F;
-int RangedDamageOutput_fork = 0x00A5ACF9;
+int RangedDamageOutput_fork = 0x00A5ACF9;  // func_ComputeDamageMitigation, ranged branch: mov edx,[edi+4] / mov eax,[edx+8]
 int RangedDamageOutput_return = 0x00A5ACFF;
-int AllDamageOutput_fork = 0x00A5AD6E;
+int AllDamageOutput_fork = 0x00A5AD6E;     // func_ComputeDamageMitigation, after both branches: mov edx,[ebx] / mov ecx,ebx / call [edx+0Ch]
 int AllDamageOutput_return = 0x00A5AD75;
 
 void DamageOutput_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, MeleeDamageInput_fork, 5, MeleeDamageInputFork, 0, 0, 0, 0 });
-	assembly_patches.push_back({ PATCH_HOOK, RangedDamageInput_fork, 6, RangedDamageInputFork, 0, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, MeleeDamageInput_fork, 5, MeleeDamageInputFork, 0, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, RangedDamageInput_fork, 6, RangedDamageInputFork, 0, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, MeleeDamageOutput_fork, 6, MeleeDamageOutputFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, RangedDamageOutput_fork, 6, RangedDamageOutputFork, 0, 0, 0 });
     assembly_patches.push_back({ PATCH_HOOK, AllDamageOutput_fork, 7, AllDamageOutputFork, 0, 0, 0 });
 }
 
+// The hooks get the hero as the game's NWorld::ICombatHero interface (complete object +0xA0, vbptr at +4),
+// converted here to the repo's ICombatHero (CombatUnit subobject +0x11C). Null stays null.
+static ICombatHero* combat_hero(int* combat_hero_interface) {
+    return combat_creature_detail::combat_hero_from_outer(combat_hero_interface);
+}
+
+// Attacker side: multipliers of the attacker's damage, hero = attacker's hero (not null).
+static float __fastcall melee_input_multiplier(int* hero_interface) {
+    return combat_hero(hero_interface)->has_artifact(ARTIFACT_BUTCHER_GLAIVE) ? 1.15f : 1.0f;
+}
+
+static float __fastcall ranged_input_multiplier(int* hero_interface) {
+    return combat_hero(hero_interface)->has_artifact(ARTIFACT_AVENGER_BOW) ? 1.1f : 1.0f;
+}
+
+// Defender side: multipliers of the damage taken, hero = defender's hero.
+static float __fastcall melee_output_multiplier(int* hero_interface) {
+    return combat_hero(hero_interface)->has_artifact(ARTIFACT_CELESTIAL_JUSTICAR_ARMOR) ? 0.75f : 1.0f;
+}
+
+static float __fastcall ranged_output_multiplier(int* hero_interface) {
+    ICombatHero* hero = combat_hero(hero_interface);
+    float multiplier = 1.0f;
+    if (hero->has_artifact(ARTIFACT_SENTINELS_SHIELD))            multiplier *= 0.9f;
+    if (hero->has_artifact(ARTIFACT_CELESTIAL_JUSTICAR_SHIELD))   multiplier *= 0.5f;
+    if (hero->has_artifact(ARTIFACT_SHIELD_OF_THE_DWARVEN_KINGS)) multiplier *= 0.7f;
+    return multiplier;
+}
+
+// hero = defender's hero (may be 0), defender = defending unit (CombatUnit subobject)
+static float __fastcall all_output_multiplier(int* hero_interface, ICombatUnit* defender) {
+    float multiplier = 1.0f;
+    ICombatHero* hero = combat_hero(hero_interface);
+    if (!hero) return multiplier;
+
+    // Courage: -mastery% per morale point of the defender (negative morale increases the damage)
+    IHero* adventure_hero = hero->hero();
+    int courage = adventure_hero ? adventure_hero->skill_mastery(SKILL_COURAGE) : 0;
+    if (courage != 0)
+        multiplier *= 1.0f - courage * 0.01f * defender->morale();
+
+    // Arcane Protection: -0.5% per point of the hero's total spellpower (no spell context)
+    if (hero->has_perk(PERK_ARCANE_PROTECTION)) {
+        int half_spellpower = hero->spellpower() >> 1;
+        if (half_spellpower != 0)
+            multiplier *= 1.0f - half_spellpower * 0.01f;
+    }
+    return multiplier;
+}
+
+// Attacker damage multiplier at [esp+0x38], ebp = attacker's hero.
 __declspec(naked) void MeleeDamageInputFork() {
     __asm
     {
-        mov eax, dword ptr [ebp]
         mov ecx, ebp
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x84
-        call[count_equipped_artifact]
-        test eax, eax
-        je MELEE_INPUT_END
-        fld dword ptr ss: [esp + 0x38]
-        fmul dword ptr [constf_1_15]
-        fstp dword ptr ss: [esp + 0x38]
-
-        MELEE_INPUT_END :
+        call melee_input_multiplier
+        fmul dword ptr [esp + 0x38]
+        fstp dword ptr [esp + 0x38]
         mov edx, dword ptr [ebp]
         mov ecx, ebp
-        jmp[MeleeDamageInput_return]
+        jmp [MeleeDamageInput_return]
     }
 }
 
 __declspec(naked) void RangedDamageInputFork() {
     __asm
     {
-        mov eax, dword ptr [ebp]
         mov ecx, ebp
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x81
-        call[count_equipped_artifact]
-        test eax, eax
-        je RANGED_INPUT_END
-        fld dword ptr ss: [esp + 0x38]
-        fmul dword ptr [constf_1_1]
-        fstp dword ptr ss: [esp + 0x38]
-
-        RANGED_INPUT_END:
+        call ranged_input_multiplier
+        fmul dword ptr [esp + 0x38]
+        fstp dword ptr [esp + 0x38]
         mov eax, dword ptr [ebp + 0x4]
         mov ecx, dword ptr [eax + 0x8]
-        jmp[RangedDamageInput_return]
+        jmp [RangedDamageInput_return]
     }
 }
 
+// func_ComputeDamageMitigation (0x00A5A900, ret 14h): result = arg1 ([esp+0x18] here) * arg4 ([esp+0x24]),
+// every vanilla reduction scales arg1. edi = defender's hero (0 on the path to AllDamageOutput when there is
+// none), ebp = defending unit, ebx = attacking unit, byte [esp+0x20] = ranged.
 __declspec(naked) void MeleeDamageOutputFork() {
     __asm
     {
+        mov ecx, edi
+        call melee_output_multiplier
+        fmul dword ptr [esp + 0x18]
+        fstp dword ptr [esp + 0x18]
         mov eax, dword ptr [edi]
         mov ecx, edi
         call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0xBE
-        call[count_equipped_artifact]
-        test eax, eax
-        je MELEE_OUTPUT_END
-        fld dword ptr ss : [esp + 0x24]
-        fmul dword ptr [constf_0_75]
-        fstp dword ptr ss : [esp + 0x24]
-
-    MELEE_OUTPUT_END:
-        mov eax, dword ptr [edi]
-        mov ecx, edi
-        call dword ptr [eax]
-        jmp[MeleeDamageOutput_return]
+        jmp [MeleeDamageOutput_return]
     }
 }
 
 __declspec(naked) void RangedDamageOutputFork() {
     __asm
     {
-        mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x7A
-        call[count_equipped_artifact]
-        test eax, eax
-        je RANGE_OUTPUT_2
-        fld dword ptr ss : [esp + 0x18]
-        fmul dword ptr [constf_0_9]
-        fstp dword ptr ss : [esp + 0x18]        
-
-    RANGE_OUTPUT_2:
-        mov eax, dword ptr [edi]
-        mov ecx, edi
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x85
-        call[count_equipped_artifact]
-        test eax, eax
-        je RANGE_OUTPUT_3
-        fld dword ptr ss : [esp + 0x18]
-        fmul dword ptr [constf_0_5]
-        fstp dword ptr ss : [esp + 0x18]
-
-    RANGE_OUTPUT_3:
-        mov eax, dword ptr [edi]
-        mov ecx, edi
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0xC6
-        call[count_equipped_artifact]
-        test eax, eax
-        je RANGE_OUTPUT_END
-        fld dword ptr ss : [esp + 0x18]
-        fmul dword ptr [constf_0_7]
-        fstp dword ptr ss : [esp + 0x18]
-
-    RANGE_OUTPUT_END:
+        call ranged_output_multiplier
+        fmul dword ptr [esp + 0x18]
+        fstp dword ptr [esp + 0x18]
         mov edx, dword ptr [edi + 0x4]
         mov eax, dword ptr [edx + 0x8]
-        jmp[RangedDamageOutput_return]
+        jmp [RangedDamageOutput_return]
     }
 }
 
 __declspec(naked) void AllDamageOutputFork() {
     __asm
     {
-        test edi, edi
-        jz ALL_DAMAGE_OUTPUT_RETURN
-        mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr [eax]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        push 0x4
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        jz ALL_DAMAGE_OUTPUT_ARCANE_PROTECTION
-        mov ecx, dword ptr ss : [esp + 0x20]
-        mov dword ptr ss : [esp + 0x20], eax
-        fild dword ptr ss : [esp + 0x20]
-        fmul dword ptr [constf_percent]
-        mov dword ptr ss : [esp + 0x20], ecx
-        mov eax, dword ptr [ebp]
-        mov ecx, ebp
-        call dword ptr [eax + 0x1B0]
-        mov ecx, dword ptr ss : [esp + 0x20]
-        mov dword ptr ss : [esp + 0x20], eax
-        fimul dword ptr ss : [esp + 0x20]
-        fsubr dword ptr [constf_1]
-        fmul dword ptr ss : [esp + 0x18]
-        fstp dword ptr ss : [esp + 0x18]
-        mov dword ptr ss : [esp + 0x20], ecx
-
-        ALL_DAMAGE_OUTPUT_ARCANE_PROTECTION:
-        mov edx, dword ptr [edi + 0x4]
-		mov eax, dword ptr [edx + 0x8]
-        mov edx, dword ptr [eax + edi + 0x4]
-        lea ecx, dword ptr [eax + edi + 0x4]
-        push 0x36
-        call dword ptr [edx + 0x290]
-        test al, al
-        jz ALL_DAMAGE_OUTPUT_RETURN
-
-        // Total spellpower (base + skills + artifacts + combat buffs):
-        // CombatHero vtable +0x244 = GetEffectiveSpellPower(spellRef*, int flag), ret 8.
-        // spellRef = { spell* (may be 0), spellId (0 = no spell context), 0, 0, 0 }
-        xor eax, eax
-        push eax
-        push eax
-        push eax
-        push eax
-        push eax                            // zeroed 5-dword spellRef on the stack
-        mov edx, dword ptr [edi + 0x4]
-        mov eax, dword ptr [edx + 0x8]
-        mov edx, dword ptr [eax + edi + 0x4]
-        lea ecx, dword ptr [eax + edi + 0x4]
-        push 0                              // arg2 = flag (always 0 at game call sites)
-        lea eax, dword ptr [esp + 0x4]
-        push eax                            // arg1 = &spellRef
-        call dword ptr [edx + 0x244]        // eax = total spellpower, callee pops both args
-        add esp, 0x14                       // free spellRef
-
-        sar eax, 0x1
-        test eax, eax
-        jz ALL_DAMAGE_OUTPUT_RETURN
-        push eax
-        fild dword ptr ss: [esp]
-        fmul dword ptr[constf_percent]
-        fsubr dword ptr [constf_1]
-        fmul dword ptr ss: [esp + 0x1C]     // damage is at [esp+0x18] before the push
-        fstp dword ptr ss: [esp + 0x1C]
-        add esp, 0x4
-
-        ALL_DAMAGE_OUTPUT_RETURN:
+        mov edx, ebp
+        call all_output_multiplier
+        fmul dword ptr [esp + 0x18]
+        fstp dword ptr [esp + 0x18]
         mov edx, dword ptr [ebx]
         mov ecx, ebx
         call dword ptr [edx + 0xC]
-
-        jmp[AllDamageOutput_return]
+        jmp [AllDamageOutput_return]
     }
 }

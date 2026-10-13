@@ -47,9 +47,9 @@ static float __fastcall creature_init_flat_bonus(int* inventory) {
 static int __fastcall creature_init_percent_bonus(int* inventory) {
     int percent = 0;
     if (count_equipped_artifact(inventory, ARTIFACT_CELESTIAL_JUSTICAR_SWORD)) percent += 15;
-    percent += 5 * count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_1);
-    percent += 5 * count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_2);
-    percent += 5 * count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_3);
+    if (count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_1))             percent += 5;
+    if (count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_2))             percent += 5;
+    if (count_equipped_artifact(inventory, ARTIFACT_ARTIFICIER_3))             percent += 5;
     return percent;
 }
 
@@ -61,13 +61,15 @@ static float __fastcall creature_initless_multiplier(int* inventory) {
     return multiplier;
 }
 
-// Flat hero initiative bonus.
-// combatHero = CombatHero subobject (vtable 0x00E8499C, see .cursor/rules/h5x-re-hero-stats.mdc).
+// Flat hero initiative bonus, added after the hero specialty multiplier (spec 0x29 does not scale it).
+// combatHero = CombatHero CombatUnit subobject (vtable 0x00E8499C, see src/structs/Hero.h).
 static float __fastcall hero_init_bonus(ICombatHero* combatHero) {
-    IHero* hero = combatHero->hero();
-    int* inventory = hero->inventory();
-
     float bonus = 0.1f;
+    IHero* hero = combatHero->hero();
+    if (!hero) return bonus;
+    int* inventory = hero->inventory();
+    if (!inventory) return bonus;
+
     if (count_equipped_artifact(inventory, ARTIFACT_MOONBLADE))        bonus += 1.0f;
     if (count_equipped_artifact(inventory, ARTIFACT_RING_OF_CELERITY)) bonus += 2.0f;
     if (count_equipped_artifact(inventory, ARTIFACT_GENJIS_SANDALS))   bonus += 1.0f;
@@ -128,14 +130,12 @@ __declspec(naked) void CreatureInitlessFork() {
 
 // Hook at 0x00BC1F77, at the end of the hero initiative getter (vtable +0x1BC, impl 0x00BC1EB0).
 // Overwritten game code: mov ecx,[esp+0xC] / test ecx,ecx (replicated before returning).
-// At entry: esi = getter subobject; the CombatHero subobject is derived through the
-// vbtable at [esi-0x118]. Hero initiative float at [esp+0x4].
+// At entry: esi = CombatHero CombatUnit subobject (+0x11C) on both paths (the spec 0x29 branch recomputes it
+// through the vbtable, which gives the same pointer). Hero initiative float at [esp+0x4].
 __declspec(naked) void HeroInitiativeFork() {
     __asm
     {
-        mov eax, dword ptr [esi - 0x118]
-        mov ecx, dword ptr [eax + 0x8]
-        lea ecx, dword ptr [ecx + esi - 0x118] // ecx = CombatHero subobject
+        mov ecx, esi
         call hero_init_bonus                   // st0 = total flat bonus
         fadd dword ptr ss : [esp + 0x4]
         fstp dword ptr ss : [esp + 0x4]

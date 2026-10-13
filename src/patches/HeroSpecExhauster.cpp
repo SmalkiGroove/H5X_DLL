@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Exhauster also reduce speed by 1
 
@@ -26,7 +27,7 @@ __declspec(naked) void ExhausterFork() {
 		lea ecx, dword ptr [edx + eax + 0x4]
 		mov eax, dword ptr [ecx]
 		
-		push 0x2F
+		push HERO_SPEC_PRUDENT
 		call dword ptr [eax + 0x294]
 		test al, al
 		jz EXHAUSTER_END

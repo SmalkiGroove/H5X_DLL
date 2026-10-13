@@ -68,7 +68,7 @@ static int __fastcall inferno4_ignores_fire_resistance(int spell, ICombatUnit* c
 
 // enemy_hero = the combat hero facing the unit whose luck is computed
 static int __fastcall inferno6_enemy_luck(int* enemy_hero, int luck) {
-	IHero* hero = (IHero*)((GetPtr)(*(int***)enemy_hero)[0])(enemy_hero);
+	IHero* hero = combat_creature_detail::combat_hero_from_outer(enemy_hero)->hero();
 	if (inferno_pieces(hero) >= 6) luck -= inferno6_luck_malus;
 	return luck;
 }

@@ -275,6 +275,8 @@ struct IHero {
 
 // CombatHero (vtable 0x00E8499C) — extends shared CombatUnit interface.
 // Subobject: mov edx,[edi+4] / mov eax,[edx+8] / lea ecx,[eax+edi+4]
+// (edi = NWorld::ICombatHero interface, complete +0xA0, as returned by a side's vtable +0x0C; its vtable slot 0
+//  0x00819270 returns [this+0x10] = the same IHero as hero(). C++: combat_creature_detail::combat_hero_from_outer.)
 // AdvMap hero (IHero) at [this - 0x6C].
 
 struct ICombatHero : ICombatUnit {

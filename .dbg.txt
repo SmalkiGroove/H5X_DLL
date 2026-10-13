@@ -1,7 +1,0 @@
-E4FE9C + 4C => 008A8390
-
-args:
-ecx = stack ptr
-[esp+8] = percent hp reduction between 0 and 1
-[esp+4] = ebp ?
-[esp+0] = return address

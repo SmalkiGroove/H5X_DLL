@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Shaman spec double casters mana and spellpower
 
@@ -21,7 +22,7 @@ void ShamanMatriarchTweak_init(pugi::xml_document& doc) {
 __declspec(naked) void ShamanMatriarchManaFork() {
 	__asm
 	{
-		push 0x40
+		push HERO_SPEC_RESEARCHER
 		call dword ptr [eax + 0x190]
 		test al, al
 		jz SHAMAN_MATRIARCH_MANA_END
@@ -46,7 +47,7 @@ __declspec(naked) void ShamanMatriarchSpwrFork() {
 		lea ecx, dword ptr [edx + eax + 0x4]
 		mov eax, dword ptr [ecx]
 
-		push 0x40
+		push HERO_SPEC_RESEARCHER
 		call dword ptr [eax + 0x294]
 		test al, al
 		jz SHAMAN_MATRIARCH_SPWR_END

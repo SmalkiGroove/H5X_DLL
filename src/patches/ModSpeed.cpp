@@ -7,36 +7,31 @@
 
 void SpeedFork();
 
-int Speed_fork = 0x004BC139;
-int Speed_return = 0x004BC14F;
+int Speed_fork = 0x004BC139;    // creature speed: vanilla artifact bonus (Boots of Swiftness +1, Ring of Caution -1) up to sub ebx,eax
+int Speed_return = 0x004BC161;  // call [edx+330h], then ebx is added to the speed
 
 void Speed_init(pugi::xml_document& doc) {
-    assembly_patches.push_back({ PATCH_HOOK, Speed_fork, 22, SpeedFork, 0, 0, 0 });
+    assembly_patches.push_back({ PATCH_HOOK, Speed_fork, 40, SpeedFork, 0, 0, 0 });
 }
 
+// Speed added by the hero's artifacts (replaces the vanilla value kept in ebx).
+static int __fastcall speed_artifact_bonus(IHero* hero) {
+    int* inventory = hero->inventory();
+    return 2 * count_equipped_artifact(inventory, ARTIFACT_BOOTS_OF_SWIFTNESS)
+        + count_equipped_artifact(inventory, ARTIFACT_HARPY_BOOTS)
+        - count_equipped_artifact(inventory, ARTIFACT_199);
+}
+
+// esi = IHero, edi = speed accumulator (kept). At return the game expects ebx = artifact bonus,
+// edx = [esi] and ecx = esi for its call [edx+330h].
 __declspec(naked) void SpeedFork() {
     __asm
     {
-        mov edx, dword ptr [esi]
-        push 0x39
         mov ecx, esi
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        call[count_equipped_artifact]
-        lea ebx, dword ptr [eax * 2]
-
+        call speed_artifact_bonus
+        mov ebx, eax
         mov edx, dword ptr [esi]
-        push 0x9D
         mov ecx, esi
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        call[count_equipped_artifact]
-        add ebx, eax
-
-        mov     eax, [esi]
-        push 0xC7
-        // ... -1
-
-        jmp[Speed_return]
+        jmp [Speed_return]
     }
 }

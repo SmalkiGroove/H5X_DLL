@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Overheater has the effect of the Exploding Corpses skill and ice-proof per level
 
@@ -20,7 +21,7 @@ __declspec(naked) void IceProofAbilityFork() {
     {
         mov edx, [ebx]
 		mov ecx, ebx
-		push 0x53
+		push HERO_SPEC_INFERNAL_MACHINE
 		call dword ptr [edx + 0x190]
 		test eax, eax
 		je OVERHEATER_RETURN

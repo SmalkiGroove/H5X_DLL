@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // New skill that has the effect of Vessel of Elrath spec
 // and move Eternal Light to Master of Abjuration
@@ -18,7 +19,7 @@ __declspec(naked) void VengefulLightFork() {
     __asm
     {
         mov ecx, edi
-        push 0x52
+        push HERO_SPEC_VESSEL_OF_ELRATH
         call dword ptr [eax + 0x294]
         test al, al
         jnz VENGEFUL_LIGHT_RETURN

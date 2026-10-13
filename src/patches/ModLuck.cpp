@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // ADD LUCK BUFFS FROM ADDITIONAL SOURCES
 // skill Avenger +mastery Luck
@@ -104,7 +105,7 @@ __declspec(naked) void LuckDebuffFork() {
         mov ecx, [eax + 0x8]
         mov edx, [ecx + edi + 0x4]
         lea ecx, [ecx + edi + 0x4]
-        push 0x35
+        push HERO_SPEC_MATRON_SALVO
         call dword ptr [edx + 0x294]
         test al, al
         jz LUCK_END

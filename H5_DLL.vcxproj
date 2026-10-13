@@ -349,6 +349,7 @@
     <ClInclude Include="src\structs\Creature.h" />
     <ClInclude Include="src\structs\Spell.h" />
     <ClInclude Include="src\types\Abilities.h" />
+    <ClInclude Include="src\types\HeroSpecs.h" />
     <ClInclude Include="src\types\Skill.h" />
     <ClInclude Include="src\types\Skills.h" />
   </ItemGroup>

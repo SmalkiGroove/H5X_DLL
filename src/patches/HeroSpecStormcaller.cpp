@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Stormcaller adds bonus lightning damage per level
 
@@ -29,7 +30,7 @@ __declspec(naked) void StormcallerFork() {
         
         mov eax, dword ptr [esi]
         mov ecx, esi
-        push 0x44
+        push HERO_SPEC_STORMCALLER
         call dword ptr [eax + 0x294]
         test al, al
         jz STORMCALLER_END
@@ -45,7 +46,7 @@ __declspec(naked) void StormcallerFork() {
         fmul dword ptr [eax + 0x850]
         push 0x0
         fnstcw word ptr [esp + 0x1C]
-        push 0x44
+        push HERO_SPEC_STORMCALLER
         movzx eax, word ptr [esp + 0x20]
         fadd dword ptr ds : 0x00E0A7E4
         or ah, 0xC

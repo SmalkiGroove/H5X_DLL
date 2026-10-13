@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Temptress gives shooters atb
 
@@ -28,7 +29,7 @@ __declspec(naked) void TemptressFork() {
 		lea ecx, dword ptr [edx + eax + 0x4]
 		mov eax, dword ptr [ecx]
 
-		push 0x13
+		push HERO_SPEC_SUCCUBUSES
 		call dword ptr [eax + 0x294]
 		test al, al
 		jz TEMPTRESS_END

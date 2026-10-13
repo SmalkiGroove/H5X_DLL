@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "types/HeroSpecs.h"
 
 // Enlightened gain bonus experience
 
@@ -20,7 +21,7 @@ __declspec(naked) void EnlightenedFork() {
 
 	    mov eax, dword ptr [esi]
 	    mov ecx, esi
-		push 0x33
+		push HERO_SPEC_DARK_ACOLYTE
 		call dword ptr [eax + 0x190]
 		test al, al
 		jz ENLIGHTENED_END

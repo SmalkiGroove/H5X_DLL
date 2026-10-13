@@ -32,7 +32,7 @@ void __stdcall elementalVirtuoso_reset() {
 
 int __fastcall elementVirtuoso_check(ICombatHero* combatHero) {
     int stacks = 0;
-    if (combatHero->has_skill(PERK_ELEMENTS_VIRTUOSO) == 1) {
+    if (combatHero->has_perk(PERK_ELEMENTS_VIRTUOSO)) {
         int slot = elementalVirtuosoGetSlot(combatHero);
         if (slot != -1) {
             for (int i = 1; i < 5; i++) {
@@ -47,7 +47,7 @@ void __fastcall elementVirtuoso_cast(ICombatUnit* caster, int spellElement) {
     if (spellElement != 0) {
         if (caster->unit_kind() == 2) {
             ICombatHero* combatHero = (ICombatHero*)caster;
-            if (combatHero->has_skill(PERK_ELEMENTS_VIRTUOSO) == 1) {
+            if (combatHero->has_perk(PERK_ELEMENTS_VIRTUOSO)) {
                 int slot = elementalVirtuosoGetSlot(combatHero);
                 if (slot != -1) {
                     elementalVirtuosoSlots[slot].elem[spellElement] = true;
