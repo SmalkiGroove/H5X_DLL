@@ -104,14 +104,13 @@ void ElementalistChain_init(pugi::xml_document& doc);
 void TemptressTweak_init(pugi::xml_document& doc);
 void InfantryCommanderTweak_init(pugi::xml_document& doc);
 void Enlightened_init(pugi::xml_document& doc);
-void ShamanMatriarchTweak_init(pugi::xml_document& doc);
 void LoneHunterTweak_init(pugi::xml_document& doc);
 void ExhausterTweak_init(pugi::xml_document& doc);
 void WorldBreaker_init(pugi::xml_document& doc);
 void SpecBlackKnights_init(pugi::xml_document& doc);
 
 void AtbTweaks_init(pugi::xml_document& doc);
-void CreatureSpellpower_init(pugi::xml_document& doc);
+void CasterCreatures_init(pugi::xml_document& doc);
 void BattleDiveTweak_init(pugi::xml_document& doc);
 void EnergyChannelTweak_init(pugi::xml_document& doc);
 void PawStrikeTweak_init(pugi::xml_document& doc);
@@ -169,6 +168,7 @@ void RangersArmor_init(pugi::xml_document& doc);
 void RingOfDevastation_init(pugi::xml_document& doc);
 void PlumedBoots_init(pugi::xml_document& doc);
 void Dragonsbane_init(pugi::xml_document& doc);
+void PirateSmasher_init(pugi::xml_document& doc);
 
 void LightningStun_init(pugi::xml_document& doc);
 void FireBurn_init(pugi::xml_document& doc);

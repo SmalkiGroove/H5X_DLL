@@ -61,14 +61,13 @@ void init_patches(pugi::xml_document& doc) {
     TemptressTweak_init(doc);              // OK
     InfantryCommanderTweak_init(doc);      // OK
     Enlightened_init(doc);                 // OK
-    ShamanMatriarchTweak_init(doc);        // OK
     LoneHunterTweak_init(doc);             // OK
     ExhausterTweak_init(doc);              // OK
     WorldBreaker_init(doc);                // OK
 	SpecBlackKnights_init(doc);            // OK
 
     AtbTweaks_init(doc);                   // OK
-    CreatureSpellpower_init(doc);          // OK
+    CasterCreatures_init(doc);             // OK
     BattleDiveTweak_init(doc);             // OK
     EnergyChannelTweak_init(doc);          // OK
     PawStrikeTweak_init(doc);              // OK
@@ -126,6 +125,7 @@ void init_patches(pugi::xml_document& doc) {
     RingOfDevastation_init(doc);           // OK
     PlumedBoots_init(doc);                 // OK
     Dragonsbane_init(doc);                 // OK
+    PirateSmasher_init(doc);               // OK
 
     LightningStun_init(doc);               // OK
     FireBurn_init(doc);                    // OK

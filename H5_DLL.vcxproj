@@ -194,8 +194,10 @@
     <ClCompile Include="src\patches\ArtfsetPreserve.cpp" />
     <ClCompile Include="src\patches\ArtfsetInferno.cpp" />
     <ClCompile Include="src\patches\ArtfsetNecro.cpp" />
+    <ClCompile Include="src\patches\ArtfsetAcademy.cpp" />
     <ClCompile Include="src\patches\ArtfsetExpand.cpp" />
     <ClCompile Include="src\patches\BarbarianCape.cpp" />
+    <ClCompile Include="src\patches\PirateSmasher.cpp" />
     <ClCompile Include="src\patches\BattleDive.cpp" />
     <ClCompile Include="src\patches\BloodyClawNecklace.cpp" />
     <ClCompile Include="src\patches\ChainHitCount.cpp" />
@@ -270,7 +272,6 @@
     <ClCompile Include="src/patches/ColdDeathFix.cpp" />
     <ClCompile Include="src/patches/CombatAIFix.cpp" />
     <ClCompile Include="src/patches/ConjureAtb.cpp" />
-    <ClCompile Include="src/patches/CreatureSpellpower.cpp" />
     <ClCompile Include="src/patches/Earthquake.cpp" />
     <ClCompile Include="src/patches/ElementalVision.cpp" />
     <ClCompile Include="src/patches/ElementalWarriors.cpp" />
@@ -297,7 +298,7 @@
     <ClCompile Include="src/patches/HeroSpecLoneHunter.cpp" />
     <ClCompile Include="src/patches/HeroSpecMasterOfElements.cpp" />
     <ClCompile Include="src/patches/HeroSpecOverheater.cpp" />
-    <ClCompile Include="src/patches/HeroSpecShamans.cpp" />
+    <ClCompile Include="src/patches/ModCasterCreatures.cpp" />
     <ClCompile Include="src/patches/HeroSpecStormcaller.cpp" />
     <ClCompile Include="src/patches/HeroSpecCovenMistress.cpp" />
     <ClCompile Include="src/patches/HeroSpecTemptress.cpp" />

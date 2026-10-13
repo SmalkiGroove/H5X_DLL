@@ -58,7 +58,7 @@ IDs 1..10 are the vanilla sets (`ARTIFACT_SET_VANILLA_*`): names from the old `A
 | 8 | Ogres | `0x004BB25F`, `0x004BC579`, `0x008CE937` | |
 | 9 | Runic | | `0x004B0E54` |
 | 10 | Demonic | `0x008603AD` | |
-| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp`, 12 Sylvan: `ArtfsetPreserve.cpp`, 13 Inferno: `ArtfsetInferno.cpp`, 14 Necropolis: `ArtfsetNecro.cpp` | |
+| 11..34 | H5X sets (`artifacts.lua`) | DLL only — 11 Haven: `ArtfsetHaven.cpp`, 12 Sylvan: `ArtfsetPreserve.cpp`, 13 Inferno: `ArtfsetInferno.cpp`, 14 Necropolis: `ArtfsetNecro.cpp`, 15 Academy: `ArtfsetAcademy.cpp` | |
 
 `0x004D8D7F` is the generic call inside `0x004D8D60`.
 
@@ -133,4 +133,19 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 | 6 | Hero's creatures have `ABILITY_UNDEAD` (10): no morale (morale functions check `has_ability(10)`), undead immunities and spell targeting | `artfset_necro_ability` |
 | 6 + Necropolis class | Hero's undead creatures — all of them with 6 pieces — have `ABILITY_REGENERATION` (60) | `artfset_necro_ability` |
 
-Hook sites to avoid: `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.
+## Academy set (15) — `ArtfsetAcademy.cpp`
+
+"Academy hero" = `HERO_CLASS_ACADEMY_MIGHT` (13) / `HERO_CLASS_ACADEMY_MAGIC` (14). 6 pieces: scripted. No patch of its own (no `_init`): its helpers are called by other patches' hooks (`Artfset.h`).
+
+| Pieces | Effect | Where |
+|---|---|---|
+| 4 | Hero's caster creatures have twice their mana and spellpower (DefaultStats `+0x117C`) | `artfset_academy_casters`, called by `ModCasterCreatures.cpp` (also Researcher spec) |
+| 4 + Academy class | Hero's Mages / Archmages / Battle Mages (63 / 64 / 162) have +10 health | `artfset_academy_health`, called by `ModHealth.cpp` |
+
+### Sites used by the Academy set
+
+- **Creature mana** `func_GetCreatureManaPoints` (`0x004BAB30`, `ecx` = `ICreature`, arg = `IHero` or 0): base mana = creature data `+0x74`; vanilla Sar-Issus (4) with 2 pieces → × DefaultStats `+0x117C`. Hooked at `0x004BAB46` (13 bytes) by `ModCasterCreatures.cpp`.
+- **Creature spellpower** (`0x008A3ACD`–`0x008A3B35`, `edi` = base spellpower from `func_CreatureSpellpowerFormula` `0x004BAD20` (`__fastcall`(creature ID, count), replaced by `ModCasterCreatures.cpp`), `eax` = side at `0x008A3B01`): `func_CountArtifactSetPieces` (`0x004D8D60`, `ecx` = side, `edx` = set: side `+0x0C` → hero `+0x00` → `IHero +0x328`) ≥ 2 → × DefaultStats `+0x117C` stored at `[esp+0xC]`, tooltip notification `0x009BBA20` (`ecx` = notify context, `dl` = 1, set ID, 0, 0). Hooked at `0x008A3B01` (17 bytes) by `ModCasterCreatures.cpp`; the Academy set skips the notification.
+- **Creature health** `func_GetCreatureHealth` (`0x004BC470`): `ModHealth.cpp` at `0x004BC4F4` (hero flat bonuses), `Artificier.cpp` at `0x004BC4C1` / `0x004BC5E7` / `0x004BC624` (mini-artifact % health).
+
+Hook sites to avoid: `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB`, `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.
