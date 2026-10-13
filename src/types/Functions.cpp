@@ -22,11 +22,19 @@ ThiscallInt_IntPtr get_spell_school = (ThiscallInt_IntPtr)0x00A34350;
 ThiscallInt_IntPtr is_spell_empowered = (ThiscallInt_IntPtr)0x00A34100;
 ThiscallInt_IntPtr get_unit_spellproof = (ThiscallInt_IntPtr)0x0097D2A0;
 FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int apply_spell_damage = (FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)0x004E6B60;
+// func_ComputeMagicDamage (ret 18h): damage left after the target's resistance to a spell.
+// (spell ID used as element reference: 3 Lightning Bolt, 4 Ice Bolt (cold bonus), 5 Fireball (fire bonus); caster (0 for bonus damage),
+//  damage, target, 0, estimate (1 = attack prediction, no roll), 1, 0)
+FastcallInt_Int_IntPtr_Float_IntPtr_Int_Int_Int_Int compute_magic_damage = (FastcallInt_Int_IntPtr_Float_IntPtr_Int_Int_Int_Int)0x0097D740;
+// Spell visual launcher 0x009790C0 (ret 0Ch): ecx = spell ref {0, spell ID, 0, 0, 0}, edx = caster unit, then target unit, time,
+// 0x00F495D4. Plays the spell's projectile (CombatUnit +0x144) and impact (+0x148), returns the impact time.
+// Spell ID 0xF7 = the "STORMSTRIKE" bolt (ABILITY_STORMSTRIKE, 0x00A60964).
+FastcallInt_IntPtr_IntPtr_IntPtr_Int_Int launch_spell_visual = (FastcallInt_IntPtr_IntPtr_IntPtr_Int_Int)0x009790C0;
+ThiscallVoid_IntPtr destroy_spell_ref = (ThiscallVoid_IntPtr)0x0041A3C0;  // spell ref destructor (frees +0x8, releases +0x0)
 
 ThiscallIntPtr_Int get_creature_data = (ThiscallIntPtr_Int)0x0089FBF0;
 ThiscallInt_IntPtr get_creature_town = (ThiscallInt_IntPtr)0x004BA910;  // ICreature* -> faction (creature data +0x98)
 FastcallByte_IntPtr func_GetCreatureFlying = (FastcallByte_IntPtr)0x004BA950;
-ThiscallInt_Int_Int get_mitigated_damage = (ThiscallInt_Int_Int)0x0097D740;
 ThiscallInt_IntPtr get_unit_luck_clamped = (ThiscallInt_IntPtr)0x004BB3C0;
 FastcallUint_Int_IntPtr_Char get_damage_stack_count = (FastcallUint_Int_IntPtr_Char)0x00A6BD90;
 ThiscallPtrPtr_Void construct_creature_lightning_fx_event = (ThiscallPtrPtr_Void)0x00C9A620;

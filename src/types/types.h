@@ -34,6 +34,9 @@ typedef char(__fastcall* FastcallByte_IntPtr)(int*);
 typedef bool(__thiscall* ThiscallBool_IntPtr)(int*);
 typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int)(int*, int*, int, int, int, int);
 typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_Int_Int)(int*, int*, int, int);
+typedef int(__fastcall* FastcallInt_Int_IntPtr_Float_IntPtr_Int_Int_Int_Int)(int, int*, float, int*, int, int, int, int);
+typedef int(__fastcall* FastcallInt_IntPtr_IntPtr_IntPtr_Int_Int)(int*, int*, int*, int, int);
+typedef void(__thiscall* ThiscallVoid_IntPtr)(int*);
 
 // CombatUnit vtable slot types
 using Const = ThisCallInt;

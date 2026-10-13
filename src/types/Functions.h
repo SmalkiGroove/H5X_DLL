@@ -32,13 +32,15 @@ extern ThiscallInt_IntPtr get_spell_school;
 extern ThiscallInt_IntPtr is_spell_empowered;
 extern ThiscallInt_IntPtr get_unit_spellproof;
 extern FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int apply_spell_damage;
+extern FastcallInt_Int_IntPtr_Float_IntPtr_Int_Int_Int_Int compute_magic_damage;
+extern FastcallInt_IntPtr_IntPtr_IntPtr_Int_Int launch_spell_visual;
+extern ThiscallVoid_IntPtr destroy_spell_ref;
 
 // --- Creatures / combat ---
 
 extern ThiscallIntPtr_Int get_creature_data;
 extern ThiscallInt_IntPtr get_creature_town;
 extern FastcallByte_IntPtr func_GetCreatureFlying;
-extern ThiscallInt_Int_Int get_mitigated_damage;
 extern ThiscallInt_IntPtr get_unit_luck_clamped;
 extern FastcallUint_Int_IntPtr_Char get_damage_stack_count;
 extern ThiscallPtrPtr_Void construct_creature_lightning_fx_event;

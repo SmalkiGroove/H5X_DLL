@@ -59,7 +59,7 @@ struct CombatUnit_vtable {
 	int* get_combat_unit_ptr; // 0x060 (96) - 0x008AE230 [shared] func_CombatUnit_GetCombatUnitPtr
 	int* get_combat_unit_ptr_mi; // 0x064 (100) - 0x008AE230 [shared] func_CombatUnit_GetCombatUnitPtr
 	int* build_runtime_data; // 0x068 (104) - hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData
-	int* get_side_ptr_a; // 0x06C (108) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function)
+	int* get_side_ptr_a; // 0x06C (108) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — same impl as +0x070 get_combat_stack
 	GetPtr get_combat_stack; // 0x070 (112) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — combat stack interface (NWorld::ICombatCreature, complete +0xA0; ICombatStack in Creature.h), 0 for heroes
 	int* get_hero_aux_subobject; // 0x074 (116) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret)
 	int* get_hero_aux_subobject_b; // 0x078 (120) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret)
@@ -138,7 +138,7 @@ struct CombatUnit_vtable {
 	GetInt get_defense; // 0x19C (412) - hero 0x00BBFE60 func_GetHeroDefenseCombat — IHero::get_defense + [this+0x40] (+ buff 0x121 bonus); creature 0x008A32B0 FUN_008a32b0 — wrapper: 0 under buff 0xF5, halved under buff 0x149, else func_GetUnitDefense @ 0x008A22F0
 	int* get_field_90; // 0x1A0 (416) - hero 0x00BBF5A0 func_CombatHero_ReturnZeroC (xor eax,eax; ret); creature 0x008A1010 func_CombatCreature_GetField90 (returns dword [this-0x90])
 	int* get_combat_bonus; // 0x1A4 (420) - hero 0x00AA2E60 (no Ghidra function: ret 4); creature 0x008A1590 func_CombatCreature_GetCombatBonus
-	GetInt get_top_creature_hp; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZeroD (mov eax,0x64; ret); creature 0x008A0F30 func_CombatCreature_GetTierFlag — round((1.0 - float[this-0x50]) * vfunc[this-0xA8]+0x50 + 0.5), min 1 - likely remaining HP of the top creature
+	GetInt get_creature_max_hp; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZeroD (mov eax,0x64; ret); creature 0x008A0F30 func_CombatCreature_GetTierFlag — max HP of one creature after the stack's HP reduction: round((1 - ICombatStack+0x58) * ICombatStack get_creature_health + 0.5), min 1
 	GetInt get_luck; // 0x1AC (428) - 0x00A6BD10 [shared] func_CombatUnit_GetLuck — get_luck_raw (+0x1B4) clamped to [-5, 5]
 	GetInt get_morale; // 0x1B0 (432) - 0x00A6BD50 [shared] func_CombatUnit_GetMorale — get_morale_raw (+0x1B8) clamped to [-5, 5]
 	GetInt get_luck_raw; // 0x1B4 (436) - hero 0x00BBFF00 func_GetCreatureLuckDebuffContext — hero raw luck: IHero luck (+0x08) minus buff 0x99 penalty; creature 0x00A6ABF0 func_GetUnitLuck

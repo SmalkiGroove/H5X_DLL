@@ -132,7 +132,7 @@ struct ICreature {
 //         count, +0x8 used by slot 0x44); empty history reads zeros at 0x00FEFAC8
 //   +0x2C dead flag (cleared by add_creatures)          +0x2D defending (func_GetUnitDefense reads complete +0xCD)
 //   +0x44 / +0x45 flags (slots 0x18 / 0x14)              +0x48 magic element
-//   +0x4C status flags (0x2000 = Horror of the Death)    +0x58 float (slots 0x44 / 0x4C / 0x54)
+//   +0x4C status flags (0x2000 = Horror of the Death)    +0x58 float, max HP reduction fraction (slots 0x4C / 0x54)
 //   +0x80 Treachery triggered                            +0x84 rage points (thresholds: slot 0x80)
 //   +0x88 alternate stats object (slot 0x1C returns 8, slot 0x50 uses FUN_004BCD60)
 // "current count" = last history entry +0x4.
@@ -161,9 +161,9 @@ struct CombatStack_vtable {
 	int* unknown_40; // 0x40 (64) - 0x008A8050 FUN_008a8050, thiscall(uint time): records a history entry (top creature hp * base count)
 	int* unknown_44; // 0x44 (68) - 0x008A3DB0, thiscall(arg): CombatUnit +0x1F4(arg, last entry +0x8 * (1 - [this+0x58]))
 	int* add_creatures; // 0x48 (72) - 0x008A7D40 FUN_008a7d40, thiscall(uint time, int count): revives a dead stack, raises base count to current + count (resurrection)
-	int* add_float_58; // 0x4C (76) - 0x008A8390, thiscall(arg, float value): [this+0x58] = clamp([this+0x58] + value, 0, 0.99), then FUN_008A8260
+	int* add_health_reduction; // 0x4C (76) - 0x008A8390, thiscall(uint time, float fraction): [this+0x58] = clamp([this+0x58] + fraction, 0, 0.99) (fraction of each creature's max HP removed, CombatUnit +0x1A8), then FUN_008A8260 adjusts the top creature's HP
 	GetInt get_creature_health; // 0x50 (80) - 0x008A2130 FUN_008a2130, hp of one creature: func_GetCreatureHealth (or FUN_004BCD60 with [this+0x88]) + FUN_008D9390; buff 0x147 replaces it with a DefaultStats +0x39C based value
-	int* get_float_58; // 0x54 (84) - 0x008AE090, returns float [this+0x58] (st0)
+	int* get_health_reduction; // 0x54 (84) - 0x008AE090, returns float [this+0x58] (st0)
 	GetInt get_magic_element; // 0x58 (88) - 0x00CE6790, returns [this+0x48]
 	CheckValue set_magic_element; // 0x5C (92) - 0x008A2A70 FUN_008a2a70, [this+0x48] = arg, logs ": magic element changed to"
 	int* unknown_60; // 0x60 (96) - 0x008A2B10, FUN_004BCB50(creature, &[this+0x5C])
@@ -196,6 +196,11 @@ struct ICombatStack {
 	}
 	int magic_element() {
 		return instance->get_magic_element((int*)this);
+	}
+	// Removes fraction (0..0.99 in total) of each creature's max HP, at combat time `time`.
+	void add_health_reduction(int time, float fraction) {
+		typedef void(__thiscall* AddHealthReductionFn)(int*, int, float);
+		((AddHealthReductionFn)instance->add_health_reduction)((int*)this, time, fraction);
 	}
 };
 
@@ -259,8 +264,9 @@ struct ICombatCreature : ICombatUnit {
 	int* creature_ref() {
 		return instance->get_unit_ref((int*)this);
 	}
+	// Max HP of one creature, after the stack's HP reduction (ICombatStack::add_health_reduction)
 	int hit_points() {
-		return instance->get_top_creature_hp((int*)this);
+		return instance->get_creature_max_hp((int*)this);
 	}
 	int mana_points() {
 		return instance->get_mana((int*)this);
