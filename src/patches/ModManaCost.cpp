@@ -169,9 +169,9 @@ __declspec(naked) void ManaCostFork() {
         MANA_BY_SCHOOL:
         mov ecx, edi
         call[get_spell_school]
-        cmp eax, 0x1
+        cmp eax, SPELL_SCHOOL_DARK
         je MANA_DARK_1
-        cmp eax, 0x3
+        cmp eax, SPELL_SCHOOL_NATURAL
         je MANA_NATURE_1
 
         jmp MANACOST_RETURN

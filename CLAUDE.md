@@ -39,7 +39,7 @@ Binary / address conventions (always applies):
 | `src/globals.*` | Logging, `assignValueToAddress<T>`, shared float/int constants (`constf_0_5`, `consti_2`, …) used as memory operands from asm |
 | `src/types/Functions.*` | Typed pointers to game functions (`count_equipped_artifact`, `has_skill`, `engine_alloc`, …) |
 | `src/types/types.h` | One typedef per calling convention/signature + vtable slot aliases (`GetInt`, `GetPtr`, `SetATBValue`, …) |
-| `src/types/{Artifacts,Skills,Abilities,HeroClasses,HeroSpecs,Spells}.h` | Game ID enums (`ARTIFACT_ID` + `ARTIFACT_SET_ID`, `SKILL_ID`, `CreatureAbility`, `HeroClass`, `HeroSpec`, `SPELL_ID` + `SPELL_ELEMENT_ID`); `HeroClasses.h` / `HeroSpecs.h` / `Abilities.h` / `Spells.h` are not in `pch.h`, include them explicitly. Enum names work as inline-asm immediates (`push HERO_SPEC_STORMCALLER`) |
+| `src/types/{Artifacts,Skills,Abilities,HeroClasses,HeroSpecs,Spells}.h` | Game ID enums (`ARTIFACT_ID` + `ARTIFACT_SET_ID`, `SKILL_ID`, `CreatureAbility`, `HeroClass`, `HeroSpec`, `SPELL_ID` + `SPELL_SCHOOL_ID` + `SPELL_ELEMENT_ID`); `HeroClasses.h` / `HeroSpecs.h` / `Abilities.h` / `Spells.h` are not in `pch.h`, include them explicitly. Enum names work as inline-asm immediates (`push HERO_SPEC_STORMCALLER`) |
 | `src/structs/*.h` | RE'd vtables/structs: `CombatUnit.h` (shared hero/creature combat vtable), `Hero.h` (AdvMap hero), `Creature.h` (army stack `ICreature`, combat stack `ICombatStack` = NWorld::ICombatCreature at +0xA0), `Spell.h` |
 | `src/patches/*.cpp` | ~125 feature modules, one per file |
 | `addresses.txt` | Legacy cheat-sheet of patch sites (artifact/skill/spec checks) and stat functions |

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "types/Artifacts.h"
 #include "types/HeroClasses.h"
+#include "types/Spells.h"
 #include "Artfset.h"
 
 // SYLVAN ARTIFACT SET (12)
@@ -50,7 +51,7 @@ static bool is_favored_enemy(IHero* hero, ICreature* creature) {
 }
 
 bool artfset_sylvan_spellpower_doubled(IHero* hero, int* spell) {
-	return get_spell_school(spell) == 3 && sylvan_pieces(hero) >= 4;  // 3 = nature magic
+	return get_spell_school(spell) == SPELL_SCHOOL_NATURAL && sylvan_pieces(hero) >= 4;
 }
 
 static float __fastcall sylvan4_favored_multiplier(ICombatUnit* attacker, ICombatUnit* target, float multiplier) {

@@ -90,14 +90,14 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 
 | Pieces | Effect | Hook |
 |---|---|---|
-| 4 | Hero's effective spellpower ×2 for nature spells (`get_spell_school` = 3) | `artfset_sylvan_spellpower_doubled`, applied by `ModEffectiveSpellpower.cpp` at `0x00BC05A2` (5), end of the CombatHero spellpower-for-spell function: `ebx` = final spellpower before the `>= 1` clamp, `esi` = hero CombatUnit subobject, `edi` = spell ref (0 without spell) |
+| 4 | Hero's effective spellpower ×2 for nature spells (`get_spell_school` = `SPELL_SCHOOL_NATURAL`, 3) | `artfset_sylvan_spellpower_doubled`, applied by `ModEffectiveSpellpower.cpp` at `0x00BC05A2` (5), end of the CombatHero spellpower-for-spell function: `ebx` = final spellpower before the `>= 1` clamp, `esi` = hero CombatUnit subobject, `edi` = spell ref (0 without spell) |
 | 4 + Sylvan class | Sylvan creatures (`get_creature_town` = 4) deal +0.2 damage multiplier to the hero's favored enemies | `PATCH_CALL 0x00A5AE0C` → wrapper calling `FUN_00A59340` then adding the bonus |
 | 6 | Creatures always roll good luck | `0x008A3F98` (24) in the creature luck roll `0x008A3EF0`: replaces the own hero skill `0x7C` (Supernatural Luck) check; non-zero → `edi = 1` at `0x008A3FB2` (forced good luck), enemy skill `0xA7` still cancels it. Supersedes the removed `GoldenGoose.cpp` (artifact 161 had this effect) |
 | 6 + Sylvan class | Spell damage taken × clamp(1 − luck × DefaultStats `+0x704`, 0, 1) for luck > 0 | `0x0097B055` (17) replaces the skill `0xB3` check; `PATCH_WRTE 0x0097B072` makes it per luck point |
 
 ### Sites used by the Sylvan set
 
-- **Spellpower for a spell** (CombatHero, `__thiscall`, `ret 8`): ends at `0x00BC0582`–`0x00BC05B2` (buff `0x14D`, clamp `>= 1`). School dispatch at `0x00BC045E`: `get_spell_school` 1 = dark (`0x00BC04A8`), 2 = light (`0x00BC0473`, `StaffOfTheSaint.cpp`), 3 = nature (no vanilla branch). Also hooked: `ModEffectiveSpellpower.cpp` `0x00BC0582` (flat bonuses) and `0x00BC05A2` (set multipliers), `Pariah.cpp` / `Twilight.cpp` bytes.
+- **Spellpower for a spell** (CombatHero, `__thiscall`, `ret 8`): ends at `0x00BC0582`–`0x00BC05B2` (buff `0x14D`, clamp `>= 1`). School dispatch at `0x00BC045E`: `get_spell_school` (`SPELL_SCHOOL_ID` in `types/Spells.h`, the engine MagicSchool enum, not the `spells.lua` constants) 1 = dark (`0x00BC04A8`), 2 = light (`0x00BC0473`, `StaffOfTheSaint.cpp`), 3 = nature (no vanilla branch). Also hooked: `ModEffectiveSpellpower.cpp` `0x00BC0582` (flat bonuses) and `0x00BC05A2` (set multipliers), `Pariah.cpp` / `Twilight.cpp` bytes.
 - **`FUN_00A59340`** favored-enemy damage multiplier, custom convention: `ecx` = attacker, `eax` = target (CombatUnit subobjects), returns float in `st0`. Vanilla: own hero spec `0x1C` (Forest Guardian) + attacker faction 4 + target in the hero's favored enemies → `1 + clamp(level × DefaultStats[+0x85C] + [+0x858], 0, 10)`, else 1.0. Only caller: `func_ComputeDamageMitigation` (`0x00A5A900`) at `0x00A5AE0C` (result multiplied into the damage).
 - **Favored enemies**: `IHero` vtable `+0x25C` (`0x00B4CE20`, returns `[this+0x188]`; `IHero::favored_enemies()`), then its vtable `+0x0C` (creature id) → bool.
 - **Creature of a combat unit**: `ICombatCreature::creature()` (`src/structs/Creature.h`). CombatUnit vtable `+0x70` `get_combat_stack` returns the combat stack interface `ICombatStack` (RTTI `NWorld::ICombatCreature`, vtable `0x00E4FE9C`, complete object `+0xA0`; null for heroes), whose slot `+0` returns the `ICreature*` (`type_id` at `+0x1C`, `count` at `+0x20`). All 35 slots are documented in `CombatStack_vtable`. Faction: `0x004BA910` (`get_creature_town`, creature data `+0x98`).
@@ -154,7 +154,7 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 
 | Pieces | Effect | Where |
 |---|---|---|
-| 4 | Hero's effective spellpower ×2 for dark magic spells (`get_spell_school` = 1) | `artfset_dungeon_spellpower_doubled`, applied by `ModEffectiveSpellpower.cpp` (`0x00BC05A2`) |
+| 4 | Hero's effective spellpower ×2 for dark magic spells (`get_spell_school` = `SPELL_SCHOOL_DARK`, 1) | `artfset_dungeon_spellpower_doubled`, applied by `ModEffectiveSpellpower.cpp` (`0x00BC05A2`) |
 | 4 + Dungeon class | The hero has the perk `SPEC_DARKNESS_AFFINITY` (47): Mass Slow / Mass Confusion | own hook at `0x00B4D0B0` (IHero skill mastery returns 1 for perk 47) |
 | 6 | Hero's creatures immune to Curse of the Netherworld; +2 creature initiative | `artfset_dungeon_unholy_word_immune` (`UnholyWordImmunitiesFix.cpp`), `artfset_dungeon_initiative` (`ModInitiative.cpp`) |
 | 6 + Dungeon class | Base creatures 71 / 73 / 77 / 81 and upgrades (creature data `+0x100` = base creature, 0 for a base) immune to mind control (ability 19) | `artfset_dungeon_ability`, shared ability hook (after Sandro's Cloak) |

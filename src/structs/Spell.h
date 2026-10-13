@@ -16,11 +16,7 @@
 // Combat stack spellRef (5 dwords): see SpellRef below — used by GetEffectiveSpellPower,
 // func_GetSpellDamage, func_ComputeSpellDamage.
 
-// --- Spell school @ SSpell+0x88 (func_GetSpellSchool; returns 8 if unresolved) ---
-
-enum SPELL_SCHOOL {
-	SPELL_SCHOOL_UNKNOWN = 8,
-};
+// --- Spell school @ SSpell+0x88 (func_GetSpellSchool; SPELL_SCHOOL_NONE if unresolved): SPELL_SCHOOL_ID, types/Spells.h ---
 
 // --- Element @ SSpell+0xD4 when +0xD8 != 0 (func_GetSpellElement): SPELL_ELEMENT_ID, types/Spells.h ---
 
@@ -184,7 +180,7 @@ struct ISpellDb {
 		return raw ? raw->tier : 0;
 	}
 	int school() const {
-		return raw ? raw->school : SPELL_SCHOOL_UNKNOWN;
+		return raw ? raw->school : SPELL_SCHOOL_NONE;
 	}
 	int mana_cost() const {
 		return raw ? raw->mana_cost : 0;

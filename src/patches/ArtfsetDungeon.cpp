@@ -36,7 +36,7 @@ static bool is_dungeon_class(IHero* hero) {
 }
 
 bool artfset_dungeon_spellpower_doubled(IHero* hero, int* spell) {
-	return get_spell_school(spell) == 1 && dungeon_pieces(hero) >= 4;  // 1 = dark magic
+	return get_spell_school(spell) == SPELL_SCHOOL_DARK && dungeon_pieces(hero) >= 4;
 }
 
 // Called by the skill mastery hook for SPEC_DARKNESS_AFFINITY (no skill mastery call inside: no recursion)

@@ -3,6 +3,20 @@
 // Spell IDs (spell ref +0x04, func_GetSpellID; ecx of func_ComputeMagicDamage / the spell visual launcher).
 // Mass spells map to their single version with func_GetMassSpellMapping (0x00A33E20); the perk a mass spell
 // needs comes from 0x00A33CF0. Names from the game data; IDs 259-276 are unused.
+// Spell schools (func_GetSpellSchool 0x00A34350, SSpell +0x88): the engine's MagicSchool enum (game_data/core/types.xml).
+// Not the script constants of spells.lua (SPELL_SCHOOL_ANY = 0, LIGHT = 1, DARK = 2, NATURAL = 3, DESTRUCT = 4).
+enum SPELL_SCHOOL_ID : int {
+	SPELL_SCHOOL_DESTRUCT = 0,    // MAGIC_SCHOOL_DESTRUCTIVE
+	SPELL_SCHOOL_DARK = 1,
+	SPELL_SCHOOL_LIGHT = 2,
+	SPELL_SCHOOL_NATURAL = 3,     // MAGIC_SCHOOL_SUMMONING
+	SPELL_SCHOOL_ADVENTURE = 4,
+	SPELL_SCHOOL_RUNIC = 5,
+	SPELL_SCHOOL_WARCRIES = 6,
+	SPELL_SCHOOL_SPECIAL = 7,
+	SPELL_SCHOOL_NONE = 8,        // also returned when the spell is not resolved
+};
+
 // Spell elements (func_GetSpellElement 0x00A342C0, SSpell +0xD4 when +0xD8 is set). Lightning damage is air,
 // ice damage is water.
 enum SPELL_ELEMENT_ID : int {
