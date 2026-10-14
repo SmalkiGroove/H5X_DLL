@@ -31,6 +31,7 @@ void init_patches(pugi::xml_document& doc) {
     MasterOfFireFix_init(doc);             // OK
     EncourageFix_init(doc);                // OK
     DemonRageSkillBuffFix_init(doc);       // OK
+    PerkCreatureGiftFix_init(doc);         // 
 
     Health_init(doc);                      // OK
     CreatureAttack_init(doc);              // OK

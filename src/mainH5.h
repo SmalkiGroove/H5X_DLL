@@ -71,6 +71,7 @@ void EliteCasters_init(pugi::xml_document& doc);
 void UnholyWordImmunitiesFix_init(pugi::xml_document& doc);
 void BookOfPowerFix_init(pugi::xml_document& doc);
 void DemonRageSkillBuffFix_init(pugi::xml_document& doc);
+void PerkCreatureGiftFix_init(pugi::xml_document& doc);
 void MasterOfFireFix_init(pugi::xml_document& doc);
 void EncourageFix_init(pugi::xml_document& doc);
 
