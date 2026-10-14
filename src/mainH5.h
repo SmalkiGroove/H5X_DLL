@@ -197,3 +197,6 @@ void HallOfIntrigue_init(pugi::xml_document& doc);
 void MarketExchangeRates_init(pugi::xml_document& doc);
 void LuaChangeAtb_init(pugi::xml_document& doc);
 void LuaUnitAttack_init(pugi::xml_document& doc);
+void RemoveMapScriptCheck_init(pugi::xml_document& doc);
+void NetworkInterval_init(pugi::xml_document& doc);
+void CombatCamera_init(pugi::xml_document& doc);

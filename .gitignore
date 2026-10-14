@@ -131,3 +131,6 @@ H5X.lock~
 # Ghidra MCP
 h5x-ghidra-mcp/.venv
 h5x-ghidra-mcp/uv.lock
+
+# No commit
+local/

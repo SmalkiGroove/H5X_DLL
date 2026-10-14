@@ -154,6 +154,9 @@ void init_patches(pugi::xml_document& doc) {
     MarketExchangeRates_init(doc);         // OK
     LuaChangeAtb_init(doc);                // OK
     LuaUnitAttack_init(doc);               // 
+    RemoveMapScriptCheck_init(doc);        // 
+    NetworkInterval_init(doc);             // 
+    CombatCamera_init(doc);                // 
     
 }
 

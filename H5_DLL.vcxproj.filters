@@ -560,6 +560,15 @@
     <ClCompile Include="src\patches\LuaUnitAttack.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\RemoveMapScriptCheck.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\NetworkInterval.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\CombatCamera.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\Dragonsbane.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
