@@ -112,6 +112,7 @@ void init_patches(pugi::xml_document& doc) {
     ArtfsetDungeon_init(doc);              // OK
     ArtfsetDwarven_init(doc);              // OK
     ArtfsetAcademy_init(doc);              // 
+    ArtfsetFrost_init(doc);                // 
     AnkhOfTheSaint_init(doc);              // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //

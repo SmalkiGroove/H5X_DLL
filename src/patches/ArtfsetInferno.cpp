@@ -12,18 +12,16 @@
 //    count / weekly growth (rounded, >= 1) instead of count, so a tier 7 (growth 1) is unchanged.
 // 4 Inferno: fire spells cast by the hero's side are never resisted by enemy units: no resistance roll, no spell
 //            proof / resistance multiplier at all (abilities, buffs, artifacts, skills). Immunities still apply.
+//            (resistance bypass hook in ModSpellPenetration.cpp)
 // 6: enemy units get -5 luck
 // 6 Inferno: hero's creatures gain Fire Shield (ability 62)
 
-void ArtfsetInfernoFireResistFork();
 void ArtfsetInfernoEnemyLuckFork();
 void ArtfsetInfernoFlameTilesFork();
 static int __fastcall liquid_flame_count(ICombatUnit* unit);
 
 static const int inferno6_luck_malus = 5;
 
-int ArtfsetInfernoFireResist_fork = 0x0097D2FB;   // func_ComputeSpellDamageMultiplier, after the hit chance: cmp eax,64h / mov [esp+14h],eax
-int ArtfsetInfernoFireResist_return = 0x0097D302;
 int ArtfsetInfernoEnemyLuck_fork = 0x00989E70;    // func_ComputeLuckModifiers, after the enemy hero debuffs: mov eax,[esp+1Ch] / test eax,eax
 int ArtfsetInfernoEnemyLuck_return = 0x00989E76;
 int ArtfsetInfernoFlameTiles_fork = 0x00A629DA;   // func_ApplyAfterHitEffects, attacker has ability 168: mov ecx,[esi+40h] / cmp ecx,[esi+44h]
@@ -32,7 +30,6 @@ int ArtfsetInfernoFlameCountNew_fork = 0x0098B13F;  // liquid flame creation: ca
 int ArtfsetInfernoFlameCountCmp_fork = 0x0098AD5D;  // damage of a would-be flame, compared to an existing one: same code
 
 void ArtfsetInferno_init(pugi::xml_document& doc) {
-	assembly_patches.push_back({ PATCH_HOOK, ArtfsetInfernoFireResist_fork, 7, ArtfsetInfernoFireResistFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, ArtfsetInfernoEnemyLuck_fork, 6, ArtfsetInfernoEnemyLuckFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_HOOK, ArtfsetInfernoFlameTiles_fork, 6, ArtfsetInfernoFlameTilesFork, 0, 0, 0 });
 	assembly_patches.push_back({ PATCH_CALL, ArtfsetInfernoFlameCountNew_fork, 6, (void*)liquid_flame_count, 0, 0, 0 });
@@ -58,12 +55,10 @@ int artfset_inferno_ability(ICombatUnit* unit, int ability) {
 	return pieces >= 6 && is_inferno_class(hero);
 }
 
-// spell = spell ID (get_spell_id), caster / target = CombatUnit subobjects (either may be 0)
-static int __fastcall inferno4_ignores_fire_resistance(int spell, ICombatUnit* caster, ICombatUnit* target) {
-	if (!caster || !target) return 0;
-	if (get_spell_element((int*)spell) != ELEMENT_FIRE) return 0;
+bool artfset_inferno_ignores_resistance(int spell, ICombatUnit* caster, ICombatUnit* target) {
+	if (get_spell_element((int*)spell) != ELEMENT_FIRE) return false;
 	IHero* hero = owner_hero(caster);
-	if (inferno_pieces(hero) < 4 || !is_inferno_class(hero)) return 0;
+	if (inferno_pieces(hero) < 4 || !is_inferno_class(hero)) return false;
 	return owner_hero(target) != hero;  // enemy units only (neutrals have no hero)
 }
 
@@ -118,38 +113,6 @@ static void __fastcall inferno4_flame_tiles(int* attack) {
 static int __fastcall liquid_flame_count(ICombatUnit* unit) {
 	int scaled = (int)(((ICombatCreature*)unit)->growth_ratio() + 0.5f);
 	return scaled < 1 ? 1 : scaled;
-}
-
-// func_ComputeSpellDamageMultiplier (__fastcall, ret 18h) returns the % of the spell resisted (0..100).
-// eax = hit chance (100 = immune), ebp = spell ID, edi = caster unit, [esp+0x34] = target unit (1st stack arg).
-// Not immune and bypassed: return 0 (nothing resisted) before the resistance roll and func_ComputeSpellDamageMitigation.
-__declspec(naked) void ArtfsetInfernoFireResistFork() {
-	__asm
-	{
-		mov dword ptr [esp + 0x14], eax
-		cmp eax, 0x64
-		je INFERNO_FIRE_VANILLA
-		push dword ptr [esp + 0x34]
-		mov edx, edi
-		mov ecx, ebp
-		call inferno4_ignores_fire_resistance
-		test eax, eax
-		jne INFERNO_FIRE_NOT_RESISTED
-		mov eax, dword ptr [esp + 0x14]
-		cmp eax, 0x64
-
-	INFERNO_FIRE_VANILLA:
-		jmp [ArtfsetInfernoFireResist_return]
-
-	INFERNO_FIRE_NOT_RESISTED:
-		xor eax, eax
-		pop edi
-		pop esi
-		pop ebp
-		pop ebx
-		add esp, 0x20
-		ret 0x18
-	}
 }
 
 // edi = enemy combat hero (or 0), esi = luck modifier being returned

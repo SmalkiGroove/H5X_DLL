@@ -155,6 +155,7 @@ void ArtfsetInferno_init(pugi::xml_document& doc);
 void ArtfsetDungeon_init(pugi::xml_document& doc);
 void ArtfsetDwarven_init(pugi::xml_document& doc);
 void ArtfsetAcademy_init(pugi::xml_document& doc);
+void ArtfsetFrost_init(pugi::xml_document& doc);
 void AnkhOfTheSaint_init(pugi::xml_document& doc);
 void DragonArtifactTweaks_init(pugi::xml_document& doc);
 void WandOfSpellTweak_init(pugi::xml_document& doc);

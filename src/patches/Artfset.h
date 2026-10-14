@@ -12,6 +12,11 @@ int artfset_orcs_ability(ICombatUnit* unit, int ability);
 
 // Stat bonuses of artifact sets, called by the stat hooks of other patches.
 
+// Inferno (13), 4 pieces + Inferno class / Frost (21), 4 pieces: fire / ice spells of the hero's side are never resisted
+// by enemy units (ModSpellPenetration.cpp). spell = spell ID, caster / target = CombatUnit subobjects (not null).
+bool artfset_inferno_ignores_resistance(int spell, ICombatUnit* caster, ICombatUnit* target);
+bool artfset_frost_ignores_resistance(int spell, ICombatUnit* caster, ICombatUnit* target);
+
 // Academy (15), 4 pieces: final spellpower of the hero, +2% per knowledge point (ModEffectiveSpellpower.cpp), and of
 // the hero's caster creatures, +2% per maximum mana point (ModCasterCreatures.cpp; unit = creature CombatUnit).
 int artfset_academy_hero_spellpower(IHero* hero, int spellpower);

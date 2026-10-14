@@ -524,6 +524,9 @@
     <ClCompile Include="src\patches\ArtfsetDwarven.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\ArtfsetFrost.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\ArtfsetOrcs.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
