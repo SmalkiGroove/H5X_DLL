@@ -371,6 +371,9 @@
     <ClCompile Include="src/patches/UnholyWordImmunitiesFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
+    <ClCompile Include="src/patches/DemonRageSkillBuffFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
     <ClCompile Include="src/patches/ImbueBalistaAtbFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>

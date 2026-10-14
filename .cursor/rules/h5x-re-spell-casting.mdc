@@ -81,6 +81,9 @@ An effect shown on a unit is a spell record (ID in the `SpellID` enum of `game_d
 
 The engine gives behaviour to known effect IDs only: a new ID is an icon and a tooltip, its gameplay stays in the DLL.
 
+- **Skill buffs** (`<spellBuffs>` of `Skills.xdb`, SSkill `+0x50`, one per mastery): `func_ApplySkillSpellBuffs` adds them to each unit through `+0x260`(effect, duration `0x7FFFFFFD`, value = skill mastery, 0, 0, time, no caster).
+- **Demon Rage effects** `0x12E`–`0x130` (`SPELL_DEMON_RAGE_LEVEL_1..3`, effect category 6 of `func_GetEffectCategory`): the bonuses (`func_GetDemonRageBonusValue`, rage level from `func_GetDemonRageLevel` = presence of the effect) use the stack's own creature in DefaultStats `+0x4B4` (`DemonRage.Bonuses`, 0x2C-byte entries, `func_GetDemonRageBonuses`); the description (`func_BuildDemonRageDescription`, called by the effect's description getter `func_GetEffectDescriptionParams`) uses the effect value `+0x20` as the creature ID. `DemonRageSkillBuffFix.cpp` stores the creature ID there for skill buffs (`0x00C55CCD`).
+
 **Spell table size**: 353 records (IDs 0–352), hardcoded in `func_InitSpellTable` (`0x0084C960`, `push 161h` at `0x0084C9BF`) and `func_GetSpellCount` (`0x00847890`, `mov eax,161h`). H5X effects from ID 353 need `heroes-expansion/game_binary/patches/h5toe/h5m_spells-count.yml` (file offsets `0x0044BDC0` / `0x00446C91`), whose count must equal the number of `SpellID` entries. `func_GetSpellRecord` (`0x008496A0`) has no bounds check: the DLL skips effects at or above `func_GetSpellCount`.
 
 ## Named helpers

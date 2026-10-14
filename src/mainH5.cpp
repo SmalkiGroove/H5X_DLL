@@ -30,6 +30,7 @@ void init_patches(pugi::xml_document& doc) {
     BookOfPowerFix_init(doc);              // OK
     MasterOfFireFix_init(doc);             // OK
     EncourageFix_init(doc);                // OK
+    DemonRageSkillBuffFix_init(doc);       // OK
 
     Health_init(doc);                      // OK
     CreatureAttack_init(doc);              // OK
