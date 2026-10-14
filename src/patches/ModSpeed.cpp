@@ -6,6 +6,7 @@
 // (157) Harpy Boots : +1 Speed
 // (199) Unused moved from Ring of Caution : -1 Speed
 // Orcs set (18), 6 pieces : +2 Speed (ArtfsetOrcs.cpp)
+// Bandit set (28), 5 pieces : +1 Speed (ArtfsetBandit.cpp)
 
 void SpeedFork();
 
@@ -22,7 +23,8 @@ static int __fastcall speed_artifact_bonus(IHero* hero) {
     return 2 * count_equipped_artifact(inventory, ARTIFACT_BOOTS_OF_SWIFTNESS)
         + count_equipped_artifact(inventory, ARTIFACT_HARPY_BOOTS)
         - count_equipped_artifact(inventory, ARTIFACT_199)
-        + artfset_orcs_speed(hero);
+        + artfset_orcs_speed(hero)
+        + artfset_bandit_speed(hero);
 }
 
 // esi = IHero, edi = speed accumulator (kept). At return the game expects ebx = artifact bonus,

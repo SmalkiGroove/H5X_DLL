@@ -230,4 +230,12 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 
 - **Sorrow** (`SPELL_SORROW` `0x115`): morale (`0x00989DA1`) and luck (`0x0098A2F4`) subtract `func_GetSpellDamageTableValue(0x115, effect +0x20 = mastery, effect +0x28 = spellpower)` — Sorrow `<damage>`: Base 1 / 2 / 3 / 4 by mastery, + 0.02 per spellpower, truncated. Added with `ICombatUnit::add_permanent_effect` (`+0x25C`).
 
+## Bandit set (28) — `ArtfsetBandit.cpp`
+
+No patch of its own.
+
+| Pieces | Effect | Where |
+|---|---|---|
+| 5 | Hero's creatures +1 speed and `ABILITY_NO_ENEMY_RETALIATION` (5; the attack code reads it through CombatUnit `+0x28C`) | `artfset_bandit_speed` (`ModSpeed.cpp`, `0x004BC139`), `artfset_bandit_ability` (shared ability hook) |
+
 Hook sites to avoid: `0x008AB32D` is `ModStartingRage.cpp`. `0x00A6A6D0`, `0x00A6A9B2` are `ArtfsetDwarven.cpp`. `0x008A4A0A`, `0x008A4A6F`, `0x008A24FF`, `0x008A2576` are `OffensiveDefensiveFormation.cpp`. `0x00B4D150` is `ArtfsetDungeon.cpp`. `0x004BAB46`, `0x008A3B01` are `ModCasterCreatures.cpp`. `0x004E66C2` is `PhoenixFeatherCape.cpp`. `0x008A4B5C` / `0x008A25ED` are `ModAttack.cpp` / `ModDefense.cpp`. `0x008A3F98`–`0x008A3FAF` is `ArtfsetPreserve.cpp` (Sylvan 6). `0x0097D2FB` is `ModSpellPenetration.cpp` (resistance bypass: Inferno 4, Frost 4). `0x00989E70`, `0x00A629DA`, `0x0098B13F`, `0x0098AD5D` are `ArtfsetInferno.cpp`. `0x008A3B35` is `ModCasterCreatures.cpp` (Academy %). `0x008AB2A1`, `0x00BC22A2`, `0x008A134B`, `0x009783CD`, `0x0097CF9A` are `ArtfsetAcademy.cpp`. `0x008AB267` is `ModStartingEffects.cpp` (effects of the enemy hero on every creature at combat start: Frost 4, Spirit 5, Shackles of the Last Man). `0x008A3838` is the shared ability hook in `ModAbilities.cpp`.

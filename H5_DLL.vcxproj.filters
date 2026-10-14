@@ -536,6 +536,9 @@
     <ClCompile Include="src\patches\ArtfsetSpirit.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\ArtfsetBandit.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\ArtfsetOrcs.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>

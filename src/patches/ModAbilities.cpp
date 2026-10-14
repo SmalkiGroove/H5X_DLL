@@ -17,7 +17,7 @@
 // (146) Barbarian Cape => removes Cowardice
 // Artifact sets (Artfset.h) => Inferno: Liquid Flame Breath, Fire Shield; Necropolis: Undead, Regeneration;
 //   Dungeon: Immunity to Mind Control (dark elves, after Sandro's Cloak); Dwarven: Presence of Commander, Aura of Bravery;
-//   Orcs: Beat-up (Lizard Bite)
+//   Orcs: Beat-up (Lizard Bite); Bandit: No Enemy Retaliation
 
 // func_CombatCreature_HasAbility (0x008A34C0, CombatUnit +0x28C): ebp = creature CombatUnit subobject,
 // esi = ability, edi = 0, ebx = hero whose Sandro's Cloak cancels mind immunity, [esp+0x1C] = owner IHero.
@@ -87,7 +87,7 @@ static int __fastcall creature_ability_override(ICombatCreature* unit, int abili
 static int __fastcall artfset_has_ability(ICombatUnit* unit, int ability) {
     return artfset_inferno_ability(unit, ability) || artfset_necro_ability(unit, ability) || artfset_dungeon_ability(unit, ability)
         || artfset_dwarven_ability(unit, ability)
-        || artfset_orcs_ability(unit, ability);
+        || artfset_orcs_ability(unit, ability) || artfset_bandit_ability(unit, ability);
 }
 
 __declspec(naked) void CreatureAbilitiesFork() {

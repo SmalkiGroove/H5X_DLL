@@ -197,6 +197,7 @@
     <ClCompile Include="src\patches\ArtfsetDwarven.cpp" />
     <ClCompile Include="src\patches\ArtfsetFrost.cpp" />
     <ClCompile Include="src\patches\ArtfsetSpirit.cpp" />
+    <ClCompile Include="src\patches\ArtfsetBandit.cpp" />
     <ClCompile Include="src\patches\ArtfsetOrcs.cpp" />
     <ClCompile Include="src\patches\ArtfsetNecro.cpp" />
     <ClCompile Include="src\patches\ArtfsetAcademy.cpp" />
