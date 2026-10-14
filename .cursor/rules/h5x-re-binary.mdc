@@ -25,4 +25,4 @@ File offset for `.text`: `file_offset = VA - 0x400C00`.
 - All patch targets are **absolute VAs** in the game process (runtime memory patching).
 - Use `VirtualProtect` before writes; see `mainH5.cpp` apply loop.
 - `addresses.txt` is the developer RVA/function reference; cross-check with Ghidra for H5X.exe.
-- Named Ghidra functions use `func_*` prefix; do not rename existing labels when doing RE.
+- Named Ghidra functions use `func_*` prefix.

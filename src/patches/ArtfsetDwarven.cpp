@@ -16,8 +16,8 @@
 void RuneChargeCastFork();
 void RuneChargeActivateFork();
 
-int RuneChargeCast_fork = 0x00A6A6D0;        // FUN_00a6a6d0 (thiscall(spell ref), ret 4): consumes a charge after a cast (creature / hero on_spell_cast)
-int RuneChargeActivate_fork = 0x00A6A9B2;    // FUN_00a6a970: consumes a charge (unit +0x2B8 list, FUN_00989270)
+int RuneChargeCast_fork = 0x00A6A6D0;        // func_ConsumeSpellCharge (thiscall(spell ref), ret 4): consumes a charge after a cast (creature / hero on_spell_cast)
+int RuneChargeActivate_fork = 0x00A6A9B2;    // FUN_00a6a970: consumes a charge (unit +0x2B8 list, func_SpellCharges_Consume)
 int RuneChargeActivate_return = 0x00A6A9D5;  // mov al,1
 
 static const int dwarven_commanders[] = { 92, 94, 96, 98, 100, 102 };  // base creatures
@@ -64,8 +64,8 @@ int artfset_dwarven_ability(ICombatUnit* unit, int ability) {
 	return is_dwarven_commander(unit);
 }
 
-// self = `this` of FUN_00a6a6d0 / FUN_00a6a970 (vbptr at self+4, virtual base = the CombatUnit subobject).
-// Replaces: unit +0x2B8 (charge list) -> FUN_00989270(spell).
+// self = `this` of func_ConsumeSpellCharge / FUN_00a6a970 (vbptr at self+4, virtual base = the CombatUnit subobject).
+// Replaces: unit +0x2B8 (charge list) -> func_SpellCharges_Consume(spell).
 static void __fastcall consume_charge(char* self, int spell) {
 	int** vbtable = *(int***)(self + 4);
 	ICombatUnit* unit = (ICombatUnit*)(self + 4 + (int)vbtable[2]);

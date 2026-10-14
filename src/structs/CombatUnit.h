@@ -138,7 +138,7 @@ struct CombatUnit_vtable {
 	GetInt get_defense; // 0x19C (412) - hero 0x00BBFE60 func_GetHeroDefenseCombat — IHero::get_defense + [this+0x40] (+ buff 0x121 bonus); creature 0x008A32B0 FUN_008a32b0 — wrapper: 0 under buff 0xF5, halved under buff 0x149, else func_GetUnitDefense @ 0x008A22F0
 	int* get_field_90; // 0x1A0 (416) - hero 0x00BBF5A0 func_CombatHero_ReturnZeroC (xor eax,eax; ret); creature 0x008A1010 func_CombatCreature_GetField90 (returns dword [this-0x90])
 	int* get_combat_bonus; // 0x1A4 (420) - hero 0x00AA2E60 (no Ghidra function: ret 4); creature 0x008A1590 func_CombatCreature_GetCombatBonus
-	GetInt get_creature_max_hp; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZeroD (mov eax,0x64; ret); creature 0x008A0F30 func_CombatCreature_GetTierFlag — max HP of one creature after the stack's HP reduction: round((1 - ICombatStack+0x58) * ICombatStack get_creature_health + 0.5), min 1
+	GetInt get_creature_max_hp; // 0x1A8 (424) - hero 0x00BBF5C0 func_CombatHero_ReturnZeroD (mov eax,0x64; ret); creature 0x008A0F30 func_CombatCreature_GetMaxHp — max HP of one creature after the stack's HP reduction: round((1 - ICombatStack+0x58) * ICombatStack get_creature_health + 0.5), min 1
 	GetInt get_luck; // 0x1AC (428) - 0x00A6BD10 [shared] func_CombatUnit_GetLuck — get_luck_raw (+0x1B4) clamped to [-5, 5]
 	GetInt get_morale; // 0x1B0 (432) - 0x00A6BD50 [shared] func_CombatUnit_GetMorale — get_morale_raw (+0x1B8) clamped to [-5, 5]
 	GetInt get_luck_raw; // 0x1B4 (436) - hero 0x00BBFF00 func_GetCreatureLuckDebuffContext — hero raw luck: IHero luck (+0x08) minus buff 0x99 penalty; creature 0x00A6ABF0 func_GetUnitLuck
@@ -169,8 +169,8 @@ struct CombatUnit_vtable {
 	int* ret_void_noop_218; // 0x218 (536) - hero 0x00782CF0 func_CombatHero_RetVoid (ret); creature 0x008A4B70 func_CombatCreature_RetVoid218
 	int* stub_return_zero_g; // 0x21C (540) - hero 0x00A332C0 FUN_00a332c0 (xor al,al; ret 4); creature 0x008A15B0 func_CombatCreature_StubReturnZero
 	int* get_mana_context; // 0x220 (544) - hero 0x00BC0030 func_CombatHero_GetManaContext; creature 0x00A6BB10 func_CombatCreature_GetManaContext
-	int* on_spell_cast; // 0x224 (548) - hero 0x00BBF610 func_CombatHero_GetStatStub224 — thiscall(float, int): pays the cast and sets post-cast ATB (0.5 for mass spells, else skill-mastery based) via +0x18C; creature 0x008A11C0 func_CombatCreature_GetStatStub224 — fails if current mana (+0x234) < func_ComputeUnitManaCost, else writes new mana via +0x22C and sets ATB via +0x18C
-	int* add_spell; // 0x228 (552) - hero 0x00BBFE00 FUN_00bbfe00 — thiscall(arg), void: calls IHero vtable +0xE8(arg, 1); creature 0x00A739D0 func_CombatCreature_GetCurrentMana — thiscall(arg), void: appends arg to the 0x14-stride list at [this-0x3C] unless present (likely: add spell)
+	int* on_spell_cast; // 0x224 (548) - hero 0x00BBF610 func_CombatHero_OnSpellCast — thiscall(float, int): pays the cast and sets post-cast ATB (0.5 for mass spells, else skill-mastery based) via +0x18C; creature 0x008A11C0 func_CombatCreature_OnSpellCast — fails if current mana (+0x234) < func_ComputeUnitManaCost, else writes new mana via +0x22C and sets ATB via +0x18C
+	int* add_spell; // 0x228 (552) - hero 0x00BBFE00 FUN_00bbfe00 — thiscall(arg), void: calls IHero vtable +0xE8(arg, 1); creature 0x00A739D0 func_CombatCreature_AddSpell — thiscall(arg), void: appends arg to the 0x14-stride list at [this-0x3C] unless present (likely: add spell)
 	int* set_current_mana; // 0x22C (556) - hero 0x00BBFAC0 func_CombatHero_GetManaStub22C — thiscall(int): writes [this-0x68] (read by +0x234), enqueues unit refresh if changed; creature 0x008AE7E0 (no Ghidra function) — writes [this-0x8C] (read by +0x234)
 	int* get_hero_mana_stub_230; // 0x230 (560) - hero 0x00BBFAE0 FUN_00bbfae0; creature 0x00CE6720 func_CombatCreature_GetManaStub230
 	int* get_current_mana; // 0x234 (564) - hero 0x00BBFB80 func_GetHeroCurrentManaCombat (returns dword [this-0x68]); creature 0x008AE820 (no Ghidra function: returns dword [this-0x8c])
@@ -206,7 +206,7 @@ struct CombatUnit_vtable {
 	int* unknown_2ac; // 0x2AC (684) - 0x00A72F80 [shared] FUN_00a72f80
 	int* unknown_2b0; // 0x2B0 (688) - 0x00A730B0 [shared] FUN_00a730b0
 	int* unknown_2b4; // 0x2B4 (692) - hero 0x00BC1950 FUN_00bc1950; creature 0x008A22E0 FUN_008a22e0
-	GetPtr get_spell_charges; // 0x2B8 (696) - 0x00BFF420 [shared] FUN_00bff420 (returns dword [this-0x40]) — spell charge list: 0x10-byte entries {spell ID, charges, extra charges, used} at +0x1C/+0x20; FUN_00989270 consumes one (thiscall(spell)), FUN_00989210 adds, FUN_00989190 = blocked
+	GetPtr get_spell_charges; // 0x2B8 (696) - 0x00BFF420 [shared] func_CombatUnit_GetSpellCharges (returns dword [this-0x40]) — spell charge list: 0x10-byte entries {spell ID, charges, extra charges, used} at +0x1C/+0x20; func_SpellCharges_Consume consumes one (thiscall(spell)), func_SpellCharges_Add adds, func_SpellCharges_IsBlocked = blocked
 	int* unknown_2bc; // 0x2BC (700) - 0x008AE9F0 [shared] FUN_008ae9f0 (returns dword [this-0x30])
 	int* unknown_2c0; // 0x2C0 (704) - 0x008AEA10 [shared] FUN_008aea10
 	int* unknown_2c4; // 0x2C4 (708) - hero 0x00BBFCE0 FUN_00bbfce0; creature 0x00782CF0 func_CombatHero_RetVoid (ret)

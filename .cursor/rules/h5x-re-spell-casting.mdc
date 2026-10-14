@@ -65,7 +65,7 @@ The ATB bonus goes to the **target unit** (context `+0x18`), not the caster.
 
 ## Named helpers
 
-All are direct callees of `func_CastSpell`, and the names are Ghidra's (do not rename).
+All are direct callees of `func_CastSpell`, and the names are Ghidra's.
 
 | Address | Name | Verified role |
 |---|---|---|
@@ -114,8 +114,8 @@ CombatUnit vtable slot `+0x224` (`on_spell_cast`) pays the mana cost and sets po
 
 | Side | Impl | Behaviour |
 |---|---|---|
-| Hero | `0x00BBF610` `func_CombatHero_GetStatStub224` (misleading Ghidra name) | ATB = 0.5 for mass spells, else based on mastery; artifact-set, perk `0xA2` and default-stats adjustments; applied via `set_atb` (`+0x18C`) |
-| Creature | `0x008A11C0` `func_CombatCreature_GetStatStub224` | Fails if current mana (`+0x234`) minus `func_ComputeUnitManaCost` is negative; otherwise writes the new mana via `+0x22C` and sets ATB via `+0x18C` |
+| Hero | `0x00BBF610` `func_CombatHero_OnSpellCast` (misleading Ghidra name) | ATB = 0.5 for mass spells, else based on mastery; artifact-set, perk `0xA2` and default-stats adjustments; applied via `set_atb` (`+0x18C`) |
+| Creature | `0x008A11C0` `func_CombatCreature_OnSpellCast` | Fails if current mana (`+0x234`) minus `func_ComputeUnitManaCost` is negative; otherwise writes the new mana via `+0x22C` and sets ATB via `+0x18C` |
 
 ## Infrastructure (shared with ATB/Lua RE)
 

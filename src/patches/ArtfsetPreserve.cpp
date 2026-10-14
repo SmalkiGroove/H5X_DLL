@@ -23,7 +23,7 @@ static const int sylvan4_spells[] = {
 	SPELL_WASP_SWARM, SPELL_LAND_MINE, SPELL_ARCANE_CRYSTAL, SPELL_FORGETFULNESS, SPELL_REGENERATION, SPELL_SUMMON_ELEMENTALS,
 };
 
-int ArtfsetSylvanFavored_fork = 0x00A5AE0C;       // func_ComputeDamageMitigation: call FUN_00A59340
+int ArtfsetSylvanFavored_fork = 0x00A5AE0C;       // func_ComputeDamageMitigation: call func_ComputeFavoredEnemyMultiplier
 int ArtfsetSylvanFavored_func = 0x00A59340;       // favored enemy damage multiplier (Forest Guardian), ecx = attacker, eax = target
 int ArtfsetSylvanLuck_fork = 0x008A3F98;          // creature luck roll: own hero has skill 0x7C (Supernatural Luck)
 int ArtfsetSylvanLuck_return = 0x008A3FB0;        // je (no forced luck) / mov edi,1 (forced good luck)

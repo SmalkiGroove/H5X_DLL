@@ -9,13 +9,13 @@ void LightningTouchPreviewMinFork();
 void LightningTouchPreviewMaxFork();
 void LightningTouchAttackFork();
 
-// FUN_00a63020, attack prediction (cursor hint): min / max damage, before func_GetAdditionalFireDmg (estimate = 1).
+// func_ComputeAttackPrediction, attack prediction (cursor hint): min / max damage, before func_GetAdditionalFireDmg (estimate = 1).
 // Ranged flag: byte [esp+0x1C] in the body (can shoot (CombatUnit +0x1E0) and not forced to melee), [esp+0x24] at both hooks.
 int LightningTouchPreviewMin_fork = 0x00A634FD;    // push edi / push 0 / mov edx,ebx
 int LightningTouchPreviewMin_return = 0x00A63502;  // mov ecx,esi / call func_GetAdditionalFireDmg
 int LightningTouchPreviewMax_fork = 0x00A63554;    // push ebp / push 0 / mov edx,ebx
 int LightningTouchPreviewMax_return = 0x00A63559;
-// FUN_00a673c0, attack resolution: after func_GetAdditionalWaterDmg
+// func_ResolveAttackHit, attack resolution: after func_GetAdditionalWaterDmg
 int LightningTouchAttack_fork = 0x00A67C7C;        // mov ecx,[ebp] / mov edx,[ecx]
 int LightningTouchAttack_return = 0x00A67C81;
 
@@ -60,7 +60,7 @@ static int __fastcall lightning_touch_estimate(ICombatUnit* attacker, ICombatUni
     return lightning_touch_damage(attacker, target, damage, 1);
 }
 
-// context = attack context (FUN_00a673c0 this): +0x00 attacker, +0x14 ranged (byte), +0x1C estimate, +0x38 time.
+// context = attack context (func_ResolveAttackHit this): +0x00 attacker, +0x14 ranged (byte), +0x1C estimate, +0x38 time.
 // bonus_damage = elemental bonus summed with the fire and cold bonuses (0x00A67D7E).
 static void __fastcall lightning_touch_attack(int* context, ICombatUnit* target, int damage, int* bonus_damage) {
     if (((char*)context)[0x14]) return;  // ranged attack

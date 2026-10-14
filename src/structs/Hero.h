@@ -66,8 +66,8 @@ struct Hero_vtable {
 	int* call_220;
 	int* call_224;
 	int* call_228;
-	int* learn_spell; // 0xE8 (232) - 0x00B54720, thiscall(spell ID, flag), returns bool (al): FUN_00b545a0(CHero = this - 0x1C, spell, no source, flag), the permanent learn path (Mage Guild)
-	int* add_sourced_spell; // 0xEC (236) - 0x00B54740, thiscall(spell ID, source perk): FUN_00b545a0(CHero, spell, perk, 0) (mass / empowered versions granted by a perk)
+	int* learn_spell; // 0xE8 (232) - 0x00B54720, thiscall(spell ID, flag), returns bool (al): func_HeroLearnSpell(CHero = this - 0x1C, spell, no source, flag), the permanent learn path (Mage Guild)
+	int* add_sourced_spell; // 0xEC (236) - 0x00B54740, thiscall(spell ID, source perk): func_HeroLearnSpell(CHero, spell, perk, 0) (mass / empowered versions granted by a perk)
 	int* call_240;
 	int* call_244;
 	int* call_248;

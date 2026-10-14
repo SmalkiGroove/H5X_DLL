@@ -4,19 +4,19 @@
 
 // Increase number of artifact sets to ARTIFACT_SET_MAX (40)
 // The hero keeps one equipped-piece count per set in a vector (IHero [this+0x264], CHero +0x280), created with
-// 10 entries by the two CHero constructors and rebuilt with 10 entries by the equip handler FUN_00B51590,
+// 10 entries by the two CHero constructors and rebuilt with 10 entries by the equip handler func_UpdateArtifactSetCounts,
 // which also skips set IDs > 10. The getter (IHero vtable +0x328) is replaced by a bounds-checked version so a
 // vector still holding 10 entries (e.g. restored from an older save) reads 0 instead of past its end.
 
 // Set effects applied when the hero's equipment changes (Artfset.h): func_CheckArtifactPassiveEffects (0x00B5A410)
-// runs after every equip / unequip, once FUN_00B51590 has rebuilt the set counts, and ends with the spellbook
+// runs after every equip / unequip, once func_UpdateArtifactSetCounts has rebuilt the set counts, and ends with the spellbook
 // refresh. The set effects run just before that refresh.
 
 void ArtifactSetCountFork();
 void ArtfsetEquipFork();
 
 int ArtifactSetCount_fork = 0x00B5AD70;  // IHero vtable +0x328
-int ArtfsetEquip_fork = 0x00B5A4AA;      // func_CheckArtifactPassiveEffects: call FUN_00b53b10 (spellbook refresh), ecx = CHero (IHero - 0x1C)
+int ArtfsetEquip_fork = 0x00B5A4AA;      // func_CheckArtifactPassiveEffects: call func_RefreshHeroSpellbook (spellbook refresh), ecx = CHero (IHero - 0x1C)
 int ArtfsetEquip_refresh = 0x00B53B10;
 
 void ArtfsetExpand_init(pugi::xml_document& doc) {

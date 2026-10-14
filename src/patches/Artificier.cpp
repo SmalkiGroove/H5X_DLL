@@ -12,7 +12,7 @@
 // Effect (MicroArtifactEffects.xdb), how the game applies it, vanilla formula -> new formula:
 //   1  Wounding           no combat effect found in H5X.exe                   K/5 + 1         (kept)
 //   2  Piercing           + attack (func_GetCreatureAttack)                   K/4 + 1         -> curve, max 16
-//   3  Armor Crushing     - target defense on hit (buff 0xB3, FUN_00a629b0)   K/15 + 1        -> K/3 + 1, max 20
+//   3  Armor Crushing     - target defense on hit (buff 0xB3, func_ApplyAfterHitEffects)   K/15 + 1        -> K/3 + 1, max 20
 //   4  Health             + hit points (func_GetCreatureHealth)               K/5 + 1 (flat)  -> K/4 + 1, max 20 (% health)
 //   5  Defence            + defense (func_GetCreatureDefense)                 K/4 + 1         -> curve, max 16
 //   6  Magic Protection   - % spell damage (func_ComputeSpellDamageMitigation) 85% from K=60  -> curve, max 50

@@ -5,7 +5,7 @@
 
 void PirateSmasherFork();
 
-int PirateSmasher_fork = 0x00A62CE4;    // FUN_00a629b0 (after a hit), Armor Crushing value: movsx eax,byte ptr [esp+14h] / test eax,eax
+int PirateSmasher_fork = 0x00A62CE4;    // func_ApplyAfterHitEffects (after a hit), Armor Crushing value: movsx eax,byte ptr [esp+14h] / test eax,eax
 int PirateSmasher_return = 0x00A62CEB;  // jle (no crushing); else target CombatUnit +0x260 (buff 0xB3, permanent, value = eax)
 
 const int pirate_smasher_crushing = 3;

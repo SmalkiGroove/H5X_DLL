@@ -113,7 +113,7 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
 
 - **Ghidra is authoritative**: project `h5x-ghidra-mcp/H5X.rep`, loaded from `G:\__H5__\H5Xdev\bin\H5X.exe`. `H5_Game.exe` in the same folder is the vanilla exe — its addresses do **not** match.
 - Ghidra MCP (`mcp__ghidra__*` tools, configured in `.mcp.json` for Claude Code and `.cursor/mcp.json` for Cursor): decompile/disassemble by address, xrefs, rename, comments. Needs Ghidra running with the GhidraMCP plugin on port 8080; MCP servers load at session start. Raw bytes (vtables, thunks, constants) can be read from `H5X.exe` directly with the section table above.
-- Naming: functions named by the project use the `func_*` prefix. Do not rename existing labels; only name `FUN_*` ones.
+- Naming: functions named by the project use the `func_*` prefix.
 - The rules' section table lists **RVAs** (add `0x400000` for VAs). `.text` file offset = `VA − 0x400C00`.
 - Rule files (Cursor auto-loads them; in Claude Code read the relevant one on demand):
   - `.cursor/rules/h5x-re-combat-unit.mdc` — full 181-slot `CombatUnit` vtable (hero `0x00E8499C`, creature `0x00E4FBA4`), impls after thunks with Ghidra names. **Auto-generated** from `src/structs/CombatUnit.h`.

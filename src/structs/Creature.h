@@ -178,7 +178,7 @@ struct CombatStack_vtable {
 	int* get_flag_m4; // 0x70 (112) - 0x008AE0A0, returns byte [this-0x4] (complete +0x9C)
 	int* refresh_horror_flag; // 0x74 (116) - 0x008A5570 FUN_008a5570, non-undead: sets flag 0x2000 in [this+0x4C] when an enemy has ABILITY_HORROR_OF_THE_DEATH (137)
 	GetInt get_value_54; // 0x78 (120) - 0x00C61AC0, returns [this+0x54]
-	CheckValue add_rage; // 0x7C (124) - 0x008A2C20 FUN_008a2c20, rage gain for rage users (FUN_008A16B0: creature town 10): scaled by buffs 0x11/0x12/0x14/0x148, hero skill 0xB8, hero buff 0xCC
+	CheckValue add_rage; // 0x7C (124) - 0x008A2C20 func_CombatStack_AddRage, rage gain for rage users (FUN_008A16B0: creature town 10): scaled by buffs 0x11/0x12/0x14/0x148, hero skill 0xB8, hero buff 0xCC
 	CheckValue get_rage_threshold; // 0x80 (128) - 0x008A2B20, arg = rage level 0..3: DefaultStats +0x400 table, scaled down when the hero's skill 0xAC mastery > 3
 	int* update_rage; // 0x84 (132) - 0x008A84E0 FUN_008a84e0, resets [this+0x84] when CombatUnit +0x5C, else recomputes the rage level and its effects
 	int* apply_rage_level; // 0x88 (136) - 0x008A1760, rage level (FUN_008A1640: [this+0x84] against the thresholds) -> level effects
