@@ -403,6 +403,9 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 - `position()`
 - `size()`
 - `max_mana()`
+- `add_permanent_effect()`
+- `add_timed_effect()`
+- `has_ability()`
 - `combat_stack()`
 - `is_dead()`
 - `atb_info()`

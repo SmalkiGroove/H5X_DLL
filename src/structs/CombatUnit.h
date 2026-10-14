@@ -243,6 +243,22 @@ struct ICombatUnit {
 	int max_mana() {
 		return instance->get_mana((int*)this);
 	}
+	// Effects (spell records shown in the unit's effect list; see h5x-re-spell-casting.mdc). value = effect +0x20 (e.g.
+	// spell mastery: Sorrow evaluates its <damage> table with it and spellpower), level +0x24, spellpower +0x28,
+	// time = start time (10000 at combat start), caster = CombatUnit or nullptr.
+	// vtable +0x25C: lasts the whole combat (end time 0x7FFFFFFE).
+	void add_permanent_effect(int effect, int value, int level, int spellpower, int time, ICombatUnit* caster) {
+		typedef void(__thiscall* AddEffectFn)(int*, int, int, int, int, int, int*);
+		((AddEffectFn)instance->apply_spell_effect_4arg)((int*)this, effect, value, level, spellpower, time, (int*)caster);
+	}
+	// vtable +0x260: lasts `duration` time units (turns x func_GetTurnDuration).
+	void add_timed_effect(int effect, int duration, int value, int level, int spellpower, int time, ICombatUnit* caster) {
+		typedef void(__thiscall* AddEffectFn)(int*, int, int, int, int, int, int, int*);
+		((AddEffectFn)instance->apply_spell_effect_5arg)((int*)this, effect, duration, value, level, spellpower, time, (int*)caster);
+	}
+	bool has_ability(int ability) {
+		return (char)instance->has_ability((int*)this, ability) != 0;
+	}
 	// Combat stack interface (ICombatStack, Creature.h), nullptr for heroes (vtable +0x70).
 	int* combat_stack() {
 		return instance->get_combat_stack((int*)this);

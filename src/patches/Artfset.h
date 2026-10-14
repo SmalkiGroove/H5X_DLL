@@ -19,6 +19,11 @@ bool artfset_frost_ignores_resistance(int spell, ICombatUnit* caster, ICombatUni
 // Frost (21), 4 pieces: the enemy hero freezes the creature at combat start (ModStartingEffects.cpp).
 // unit = creature CombatUnit, enemy = the combat hero of the other side (not null), time = combat start time.
 void artfset_frost_starting_freeze(ICombatUnit* unit, ICombatHero* enemy, int time);
+// Spirit (26), 5 pieces: Sorrow for the whole combat on the creature at combat start (ModStartingEffects.cpp, same
+// arguments as above), and the attack / defense multiplier of the enemy creatures (ModAttack.cpp / ModDefense.cpp;
+// enemy_hero = the hero facing the creature).
+void artfset_spirit_starting_sorrow(ICombatUnit* unit, ICombatHero* enemy, int time);
+float artfset_spirit_enemy_stat_multiplier(IHero* enemy_hero);
 
 // Academy (15), 4 pieces: final spellpower of the hero, +2% per knowledge point (ModEffectiveSpellpower.cpp), and of
 // the hero's caster creatures, +2% per maximum mana point (ModCasterCreatures.cpp; unit = creature CombatUnit).

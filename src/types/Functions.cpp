@@ -73,6 +73,26 @@ ThiscallVoid_IntPtr_Float set_atb_info_value = (ThiscallVoid_IntPtr_Float)0x00A2
 
 // --- DLL helpers ---
 
+static int func_ComputeSpellHitChance = 0x0097C9F0;
+
+// The game function takes the target in eax and (spell, caster, 0) on the stack, ret 0Ch.
+__declspec(naked) int __stdcall spell_hit_chance(ICombatUnit* target, int spell, ICombatUnit* caster) {
+	__asm
+	{
+		mov eax, dword ptr [esp + 0x4]
+		push 0
+		push dword ptr [esp + 0x10]
+		push dword ptr [esp + 0x10]
+		call [func_ComputeSpellHitChance]
+		ret 0xC
+	}
+}
+
+float turn_duration() {
+	typedef float(__cdecl* TurnDurationFn)();
+	return ((TurnDurationFn)0x00A2D700)();
+}
+
 // Adventure map hero of the side owning the unit (nullptr without hero).
 // unit (vtable +0x0C) -> side, side (vtable +0x0C) -> combat hero, combat hero (vtable +0x00) -> IHero.
 IHero* owner_hero(ICombatUnit* unit) {

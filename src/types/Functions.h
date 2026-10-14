@@ -74,6 +74,12 @@ extern ThiscallVoid_IntPtr_Float set_atb_info_value;
 struct IHero;
 struct ICombatUnit;
 
+// func_ComputeSpellHitChance (0x0097C9F0): % of `spell` (ID) resisted by `target` when cast by `caster` (may be null),
+// 100 = immune (magic / element / artifact immunities, plus the resistance chance otherwise).
+int __stdcall spell_hit_chance(ICombatUnit* target, int spell, ICombatUnit* caster);
+// func_GetTurnDuration (0x00A2D700): time units of one turn (DefaultStats +0x50 / +0x48), for effect durations.
+float turn_duration();
+
 // Adventure map hero of the side owning a combat unit (CombatUnit subobject), nullptr without hero.
 IHero* owner_hero(ICombatUnit* unit);
 

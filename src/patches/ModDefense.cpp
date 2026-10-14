@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "types/Artifacts.h"
+#include "Artfset.h"
 
 // EDIT ENEMY CREATURES DEFENSE FROM ARTIFACTS
 // ARTIFACT_SHACKLES_OF_THE_LAST_MAN (159) -2 defense
 // ARTIFACT_OGRE_CLUB (196) -25% defense
+// Spirit set (26), 5 pieces : -20% defense (ArtfsetSpirit.cpp)
 
 void CreatureDefenseFork();
 
@@ -22,6 +24,7 @@ static int __fastcall enemy_defense_artifacts(ICombatCreature* unit, int defense
     if (!hero) return defense;
     if (hero->has_artifact(ARTIFACT_OGRE_CLUB))
         defense = (int)(defense * 0.75f);
+    defense = (int)(defense * artfset_spirit_enemy_stat_multiplier(hero));
     if (hero->has_artifact(ARTIFACT_SHACKLES_OF_THE_LAST_MAN))
         defense -= 2;
     return defense;

@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "types/Artifacts.h"
+#include "Artfset.h"
 
 // EDIT ENEMY CREATURES ATTACK FROM ARTIFACTS
 // ARTIFACT_SHACKLES_OF_THE_LAST_MAN (159) -2 attack
 // ARTIFACT_OGRE_SHIELD (197) -25% attack
+// Spirit set (26), 5 pieces : -20% attack (ArtfsetSpirit.cpp)
 
 void CreatureAttackFork();
 
@@ -22,6 +24,7 @@ static int __fastcall enemy_attack_artifacts(ICombatCreature* unit, int attack) 
     if (!hero) return attack;
     if (hero->has_artifact(ARTIFACT_OGRE_SHIELD))
         attack = (int)(attack * 0.75f);
+    attack = (int)(attack * artfset_spirit_enemy_stat_multiplier(hero));
     if (hero->has_artifact(ARTIFACT_SHACKLES_OF_THE_LAST_MAN))
         attack -= 2;
     return attack;
