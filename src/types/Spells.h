@@ -2,7 +2,8 @@
 
 // Spell IDs (spell ref +0x04, func_GetSpellID; ecx of func_ComputeMagicDamage / the spell visual launcher).
 // Mass spells map to their single version with func_GetMassSpellMapping (0x00A33E20); the perk a mass spell
-// needs comes from 0x00A33CF0. Names from the game data; IDs 259-276 are unused.
+// needs comes from 0x00A33CF0. Names from the game data; IDs 259-276 come from game_data/core/types.xml
+// (enum SpellID, missing from .dbg.txt). The exe loads 353 records (IDs 0-352): spell table size 0x161 at 0x0084C9BF, func_GetSpellCount 0x00847890.
 // Spell schools (func_GetSpellSchool 0x00A34350, SSpell +0x88): the engine's MagicSchool enum (game_data/core/types.xml).
 // Not the script constants of spells.lua (SPELL_SCHOOL_ANY = 0, LIGHT = 1, DARK = 2, NATURAL = 3, DESTRUCT = 4).
 enum SPELL_SCHOOL_ID : int {
@@ -290,6 +291,25 @@ enum SPELL_ID : int {
 	SPELL_RUNE_OF_REVIVE = 257,
 	SPELL_RUNE_OF_DRAGONFORM = 258,
 
+	SPELL_ABILITY_REFRESH_RUNE = 259,
+	SPELL_SPEC_BORDERGUARD = 260,
+	SPELL_SPEC_AXE_MASTER = 261,
+	SPELL_SPEC_BEAR_RAIDERS = 262,
+	SPELL_SPEC_MAGISTER = 263,
+	SPELL_SPEC_DEFENDER = 264,
+	SPELL_SKILL_DWARVEN_LUCK = 265,
+	SPELL_SKILL_OFFENSIVE_FORMATION = 266,
+	SPELL_SKILL_DEFENSIVE_FORMATION = 267,
+	SPELL_SKILL_DISTRACT = 268,
+	SPELL_SKILL_ABSOLUTE_PROTECTION = 269,
+	SPELL_EFFECT_SET_AFIRE = 270,
+	SPELL_ABILITY_AGILITY = 271,
+	SPELL_EFFECT_FINE_RUNE = 272,
+	SPELL_EFFECT_STRONG_RUNE = 273,
+	SPELL_EFFECT_BATTLE_FRENZY = 274,
+	SPELL_EFFECT_RUNIC_ATTUNEMENT = 275,
+	SPELL_EFFECT_MASTER_OF_INITIATIVE = 276,
+	
 	SPELL_SORROW = 277,
 	SPELL_VAMPIRISM = 278,
 	SPELL_DEEP_FREEZE = 279,
@@ -371,4 +391,7 @@ enum SPELL_ID : int {
 	SPELL_ABILITY_CUSTOM3 = 350,
 	SPELL_ABILITY_CUSTOM4 = 351,
 	SPELL_EFFECT_FIRST_AID_TENT_PLAGUE = 352,
+	// H5X effects (display only, applied by the DLL). Need the spell table expansion of the exe
+	// (heroes-expansion/game_binary/patches/h5toe/h5m_spells-count.yml).
+	SPELL_EFFECT_SHACKLES_OF_THE_LAST_MAN = 353,
 };

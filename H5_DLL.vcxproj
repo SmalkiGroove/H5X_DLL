@@ -207,6 +207,7 @@
     <ClCompile Include="src\patches\ChainHitCount.cpp" />
     <ClCompile Include="src\patches\ColdDeath.cpp" />
     <ClCompile Include="src\patches\ModStartingRage.cpp" />
+    <ClCompile Include="src\patches\ModStartingEffects.cpp" />
     <ClCompile Include="src\patches\DragonArtifactsTweaks.cpp" />
     <ClCompile Include="src\patches\Dragonsbane.cpp" />
     <ClCompile Include="src\patches\SecretsOfDestruct.cpp" />

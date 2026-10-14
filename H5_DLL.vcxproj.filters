@@ -455,6 +455,9 @@
     <ClCompile Include="src\patches\ModStartingRage.cpp">
       <Filter>Source Files\patches\Functions</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\ModStartingEffects.cpp">
+      <Filter>Source Files\patches\Functions</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\StaffOfTheSaint.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>

@@ -112,7 +112,6 @@ void init_patches(pugi::xml_document& doc) {
     ArtfsetDungeon_init(doc);              // OK
     ArtfsetDwarven_init(doc);              // OK
     ArtfsetAcademy_init(doc);              // 
-    ArtfsetFrost_init(doc);                // 
     AnkhOfTheSaint_init(doc);              // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
@@ -123,6 +122,7 @@ void init_patches(pugi::xml_document& doc) {
     SpearOfTheFrostLord_init(doc);         // OK
     PhoenixFeatherCape_init(doc);          // OK
 	StartingRage_init(doc);                // OK
+    StartingEffects_init(doc);             // 
 	StaffOfTheSaint_init(doc);             // OK
 	BarbarianCape_init(doc);               // OK
     RangersArmor_init(doc);                // OK

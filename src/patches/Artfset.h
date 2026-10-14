@@ -16,6 +16,9 @@ int artfset_orcs_ability(ICombatUnit* unit, int ability);
 // by enemy units (ModSpellPenetration.cpp). spell = spell ID, caster / target = CombatUnit subobjects (not null).
 bool artfset_inferno_ignores_resistance(int spell, ICombatUnit* caster, ICombatUnit* target);
 bool artfset_frost_ignores_resistance(int spell, ICombatUnit* caster, ICombatUnit* target);
+// Frost (21), 4 pieces: the enemy hero freezes the creature at combat start (ModStartingEffects.cpp).
+// unit = creature CombatUnit, enemy = the combat hero of the other side (not null), time = combat start time.
+void artfset_frost_starting_freeze(ICombatUnit* unit, ICombatHero* enemy, int time);
 
 // Academy (15), 4 pieces: final spellpower of the hero, +2% per knowledge point (ModEffectiveSpellpower.cpp), and of
 // the hero's caster creatures, +2% per maximum mana point (ModCasterCreatures.cpp; unit = creature CombatUnit).

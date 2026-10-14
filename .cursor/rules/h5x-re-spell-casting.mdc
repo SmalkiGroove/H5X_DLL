@@ -69,6 +69,20 @@ Vanilla flow (`Earthquake.cpp` changes it, see below):
 
 `Earthquake.cpp` (H5X): cast allowed everywhere (`0x0097C38C` → `jmp`); `func_IsDamagingSpell` returns true for `0x29` (byte `0x004E5D4C`); `func_PrepareSpellDamageParams` evaluates the `<duration>` table for `0x29` (hook `0x00976BA6`); `func_ComputeSpellHitChance` returns 100 for flying creatures (hook `0x0097C9F0`); step 4 is replaced (hook `0x0097E513` → `0x0097E718`) by the damage spell pipeline on each creature allowed by `<Target>` (`func_IsAllyOfCaster`): `func_PrepareSpellDamageParams`, `func_GetSpellDamage`, `func_ComputeElementalChainDmg`, `func_ApplySpellDamage`, then the ATB loss. Walls are unchanged.
 
+## Effects on units (buffs)
+
+An effect shown on a unit is a spell record (ID in the `SpellID` enum of `game_data/core/types.xml`, entry in `RefTables/UndividedSpells.xdb`, `.xdb` with `NameFileRef`, `LongDescriptionFileRef`, `EffectTexture`). It is added through CombatUnit slots that build an effect object (`FUN_004E4E40` / `FUN_004E4D30`: `+0x38` effect ID, `+0x1C` end time, `0x7FFFFFFE` = whole combat, `+0x20` value, `+0x24` level, `+0x28` spellpower, `+0x2C` start time, caster via `FUN_004E4C10`):
+
+| Slot | Call | Use |
+|---|---|---|
+| `+0x25C` | thiscall(effect, value, level, spellpower, time, caster), `ret 18h` | Whole-combat effect (e.g. `0x39` at `0x008A14CB`); `ModStartingEffects.cpp` |
+| `+0x260` | thiscall(effect, duration, value, level, spellpower, time, caster), `ret 1Ch` | Timed effect (Frozen `0xC9` in `func_CheckIceSpellFreeze` `0x004E6600`); `ArtfsetFrost.cpp` |
+| `+0x264` | thiscall(effect object), `ret 4` | Adds an already built effect |
+
+The engine gives behaviour to known effect IDs only: a new ID is an icon and a tooltip, its gameplay stays in the DLL.
+
+**Spell table size**: 353 records (IDs 0–352), hardcoded in `func_InitSpellTable` (`0x0084C960`, `push 161h` at `0x0084C9BF`) and `func_GetSpellCount` (`0x00847890`, `mov eax,161h`). H5X effects from ID 353 need `heroes-expansion/game_binary/patches/h5toe/h5m_spells-count.yml` (file offsets `0x0044BDC0` / `0x00446C91`), whose count must equal the number of `SpellID` entries. `func_GetSpellRecord` (`0x008496A0`) has no bounds check: the DLL skips effects at or above `func_GetSpellCount`.
+
 ## Named helpers
 
 All are direct callees of `func_CastSpell`, and the names are Ghidra's.
