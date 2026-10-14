@@ -227,6 +227,14 @@ struct ICombatUnit {
 	int* unit_ref() {
 		return instance->get_unit_ref((int*)this);
 	}
+	// Combat stack interface (ICombatStack, Creature.h), nullptr for heroes (vtable +0x70).
+	int* combat_stack() {
+		return instance->get_combat_stack((int*)this);
+	}
+	// Dead stack (vtable +0x5C, false for heroes): func_CastSpell and the damage code skip such units.
+	bool is_dead() {
+		return instance->get_state_flag_7c((int*)this);
+	}
 	int* atb_info() {
 		return instance->get_atb_info((int*)this);
 	}

@@ -31,6 +31,20 @@ FastcallInt_Int_IntPtr_Float_IntPtr_Int_Int_Int_Int compute_magic_damage = (Fast
 // Spell ID 0xF7 = the "STORMSTRIKE" bolt (ABILITY_STORMSTRIKE, 0x00A60964).
 FastcallInt_IntPtr_IntPtr_IntPtr_Int_Int launch_spell_visual = (FastcallInt_IntPtr_IntPtr_IntPtr_Int_Int)0x009790C0;
 ThiscallVoid_IntPtr destroy_spell_ref = (ThiscallVoid_IntPtr)0x0041A3C0;  // spell ref destructor (frees +0x8, releases +0x0)
+ThiscallIntPtr_Int get_spell_record = (ThiscallIntPtr_Int)0x008496A0;  // func_GetSpellRecord: ecx = spell ID -> NDb::SSpell* (Spell.h), 0 if unresolved
+// Damage spell pipeline, in func_CastSpell order (case 0x0097DE65: Magic Arrow, Lightning Bolt, ...):
+// func_PrepareSpellDamageParams (ret 0Ch): base damage (spell ID, spellpower, mastery, combat vtable +0x3C result,
+//   0): "damage" table (Earthquake: "duration" table, Earthquake.cpp), empowered x, week of the element.
+FastcallInt_Int_Int_Int_IntPtr_IntPtr prepare_spell_damage = (FastcallInt_Int_Int_Int_IntPtr_IntPtr)0x00976B90;
+// func_GetSpellDamage (ret 18h): damage after the caster's bonuses and the target's immunities / resistance / spell
+//   proof (damage, spell ref {handle, spell ID, ...}, caster, target, 1, time, multiplier (cast context +0x34), 1).
+FastcallInt_Int_IntPtr_IntPtr_IntPtr_Int_Int_Float_Int get_spell_damage = (FastcallInt_Int_IntPtr_IntPtr_IntPtr_Int_Int_Float_Int)0x0097D600;
+// func_ComputeElementalChainDmg (ret 10h): extra elemental damage against the target's element ("FLYING_SIGN_ELEMENTAL_DAMAGE"),
+//   added to the damage (time, damage, caster, target, spell ID, 0).
+FastcallInt_Int_Int_IntPtr_IntPtr_Int_Int compute_elemental_spell_damage = (FastcallInt_Int_Int_IntPtr_IntPtr_Int_Int)0x00977E60;
+// func_IsAllyOfCaster: target (edx) belongs to the side controlled by the caster (ecx) and is not under the other
+//   side's control (func_IsUnitControlledByOtherSide: hypnotized).
+FastcallByte_IntPtr_IntPtr is_ally_of_caster = (FastcallByte_IntPtr_IntPtr)0x004E5750;
 
 ThiscallIntPtr_Int get_creature_data = (ThiscallIntPtr_Int)0x0089FBF0;
 ThiscallInt_IntPtr get_creature_town = (ThiscallInt_IntPtr)0x004BA910;  // ICreature* -> faction (creature data +0x98)
@@ -40,6 +54,10 @@ FastcallUint_Int_IntPtr_Char get_damage_stack_count = (FastcallUint_Int_IntPtr_C
 ThiscallPtrPtr_Void construct_creature_lightning_fx_event = (ThiscallPtrPtr_Void)0x00C9A620;
 FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int collect_adjacent_units = (FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int)0x00B3D560;
 FastcallInt_IntPtr_IntPtr_Int_Int get_unit_adjacency_roll = (FastcallInt_IntPtr_IntPtr_Int_Int)0x00A59990;
+// func_CollectAllCombatUnits (ecx = combat, edx = engine vector {begin, end, capacity}, freed first): units of both
+// sides (combat vtable +0x84(side) -> side vtable +0x6C). Entries are not CombatUnit subobjects: unit = entry + 4 +
+// [[entry + 4] + 8] (Earthquake.cpp).
+FastcallVoid_IntPtr_IntPtr collect_all_combat_units = (FastcallVoid_IntPtr_IntPtr)0x00AF55E0;
 
 CdeclPtr_Uint engine_alloc = (CdeclPtr_Uint)0x00878FD0;
 CdeclVoid_Ptr engine_free = (CdeclVoid_Ptr)0x00879240;

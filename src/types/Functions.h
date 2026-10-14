@@ -35,6 +35,11 @@ extern FastcallInt_IntPtr_IntPtr_Int_Int_Int_Int apply_spell_damage;
 extern FastcallInt_Int_IntPtr_Float_IntPtr_Int_Int_Int_Int compute_magic_damage;
 extern FastcallInt_IntPtr_IntPtr_IntPtr_Int_Int launch_spell_visual;
 extern ThiscallVoid_IntPtr destroy_spell_ref;
+extern ThiscallIntPtr_Int get_spell_record;
+extern FastcallInt_Int_Int_Int_IntPtr_IntPtr prepare_spell_damage;
+extern FastcallInt_Int_IntPtr_IntPtr_IntPtr_Int_Int_Float_Int get_spell_damage;
+extern FastcallInt_Int_Int_IntPtr_IntPtr_Int_Int compute_elemental_spell_damage;
+extern FastcallByte_IntPtr_IntPtr is_ally_of_caster;
 
 // --- Creatures / combat ---
 
@@ -46,6 +51,7 @@ extern FastcallUint_Int_IntPtr_Char get_damage_stack_count;
 extern ThiscallPtrPtr_Void construct_creature_lightning_fx_event;
 extern FastcallVoid_IntPtr_IntPtr_Int_Int_Int_Int_Int collect_adjacent_units;
 extern FastcallInt_IntPtr_IntPtr_Int_Int get_unit_adjacency_roll;
+extern FastcallVoid_IntPtr_IntPtr collect_all_combat_units;
 
 // --- Engine alloc ---
 

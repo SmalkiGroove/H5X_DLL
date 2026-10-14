@@ -15,9 +15,9 @@ Entry copies the context with `func_CopySpellCastContext` (`0x00988E70`). If the
 1. **Buff/debuff spells** (`func_IsSpellBuffOrDebuff`):
    - `func_IsMassSpell` selects `func_CastMassSpellBuff` or `func_CastSingleSpellBuff`.
    - Before the cast, the effect parameter is adjusted for three spells:
-     - `0x22`: `param × 100000 + func_GetCastSpellPower` (power clamped to [0, 100000]), rounded.
+     - `0x22`: `param × 100000 + func_GetSpellDurationTableValue` (power clamped to [0, 100000]), rounded.
      - `0x12`: 2 if the parameter was 3, else 1.
-     - `0xD`: `func_GetCastSpellMastery` rounded, minimum 0.
+     - `0xD`: `func_GetSpellDamageTableValue` rounded, minimum 0.
    - When context `+0x4` is `0x14` or `0x12`, it then calls `func_RefreshSpellTargets`.
 2. **All other spells:** switch on spell ID. IDs `1`–`0x27` go through the byte table `0x0097E8D4` and jump table `0x0097E8B0`. `0x28` is tested directly. IDs `0x29`–`0x11D` go through `0x0097E928` and `0x0097E8FC`.
 
@@ -29,10 +29,10 @@ Entry copies the context with `func_CopySpellCastContext` (`0x00988E70`). If the
 | `0x8`, `0x11D` | `0x0097DFA0` | `func_CastAreaSpell`, then a `CSpellFxEvent` |
 | `0xA`, `0x15`, `0x23` | `0x0097DB9D` | `func_CastGlobalSpell` |
 | `0x20` | `0x0097DBC0` | `func_CheckSpellHitsTarget`, `func_ApplySpellHitEffects`, Teleport Assault ATB (below), `func_FinishSpellCast` |
-| `0x26` | `0x0097DD9A` | `func_GetCastSpellPower`, `func_PrepareSpellDamageParams`, `func_CastChainLightning` |
+| `0x26` | `0x0097DD9A` | `func_GetSpellDurationTableValue`, `func_PrepareSpellDamageParams`, `func_CastChainLightning` |
 | `0x27` | `0x0097DA49` | `func_PrepareSpellDamageParams`, `func_GetSpellDamage`, `func_ComputeElementalChainDmg`, `func_ApplySpellDamage` |
 | `0x28` | `0x0097DE34` | `func_CastMeteorShower` |
-| `0x29` | `0x0097E228` | Healing (below) |
+| `0x29` | `0x0097E228` | Earthquake (below) |
 | `0x2A`, `0x30` | `0x0097E077` | `func_RezAbilities`, then a `CSpellCastEvent`, `func_FinishSpellCast` |
 | `0x2B` | `0x0097E735` | `func_SpellSummonElementals` |
 | `0xEB` | `0x0097E74B` | `func_SpellConjurePhoenix` |
@@ -57,11 +57,17 @@ The ATB bonus goes to the **target unit** (context `+0x18`), not the caster.
 2. It sets the target's ATB (`+0x184` → `[info+0x1C]`) to `func_ClampFloat(ATB + 0.5, 0.0, 1.25)` via `set_atb` (`+0x18C`).
 3. `func_IsCastATBResetBlocked` returns true if the unit has buff `0x13`, `0xC9`, `0x14A` or `0x150`, or if `FUN_004E48A0` returns non-zero.
 
-### Spell `0x29`: healing
+### Spell `0x29`: Earthquake
 
-1. `func_GetCastSpellMastery`, `func_GetCastSpellPower`, `func_CollectSpellTargets`.
-2. `func_ApplySpellHealing`, plus a `CSpellDamageEvent` (ID `0x29`) per target.
-3. If the hero has `has_skill(0x8B)` (`PERK_SIPHON_GRACE` in `Skills.h`), it also heals adjacent targets: `func_GetAdjacentSpellTargets`, `func_IsValidSpellSplashTarget`, `func_ApplySpellHealing`, and a `CSpellSplashEvent` tagged `0x8B`.
+Vanilla flow (`Earthquake.cpp` changes it, see below):
+
+1. `func_GetSpellDamageTableValue` and `func_GetSpellDurationTableValue` (spell `0x29`, context mastery `+0x30`, spellpower `+0x2C`), each rounded and divided by 50 (`[esp+0x8C]` / `[esp+0x90]`).
+2. Global FX (caster vtable `+0x288`), then `func_CollectEarthquakeTargets`: walls / towers (unit vtable `+0x84` object alive) and type `0x11B` objects (vtable `+0x8C`).
+3. Each wall takes `combat->vt[0xC]()->vt[0xC](duration / 50, damage / 50) × 50` through unit vtable `+0x1F4`; the other objects take it through `func_ApplyUnitDamage` with a `CSpellDamageEvent` (ID `0x29`) each. A summary `CSpellDamageEvent` follows.
+4. If the caster has `has_skill(0x8B)` (skill 139), every unit of `func_CollectAllCombatUnits` that passes `func_IsValidSpellSplashTarget` takes `round(spellpower × DefaultStats+0x670 + DefaultStats+0x66C)` physical damage (`func_ApplyUnitDamage`, no spell resistance) and loses `DefaultStats+0x674` ATB (no clamp); a `CSpellSplashEvent` tagged `0x8B` sums it up. Block `0x0097E513`–`0x0097E718`.
+5. `func_CheckSpellCastable` (`0x0097C320`) refuses the cast when `func_CollectEarthquakeTargets` finds nothing (`0x0097C38C`).
+
+`Earthquake.cpp` (H5X): cast allowed everywhere (`0x0097C38C` → `jmp`); `func_IsDamagingSpell` returns true for `0x29` (byte `0x004E5D4C`); `func_PrepareSpellDamageParams` evaluates the `<duration>` table for `0x29` (hook `0x00976BA6`); `func_ComputeSpellHitChance` returns 100 for flying creatures (hook `0x0097C9F0`); step 4 is replaced (hook `0x0097E513` → `0x0097E718`) by the damage spell pipeline on each creature allowed by `<Target>` (`func_IsAllyOfCaster`): `func_PrepareSpellDamageParams`, `func_GetSpellDamage`, `func_ComputeElementalChainDmg`, `func_ApplySpellDamage`, then the ATB loss. Walls are unchanged.
 
 ## Named helpers
 
@@ -93,14 +99,18 @@ All are direct callees of `func_CastSpell`, and the names are Ghidra's.
 | `0x00861630` | `func_SpellSummonElementals` | Spell `0x2B` |
 | `0x00862130` | `func_SpellConjurePhoenix` | Spell `0xEB` |
 | `0x0085CDA0` | `func_SpellFirewall` | Spell `0xEC` |
-| `0x00978FF0` | `func_CollectSpellTargets` | Spell `0x29` |
-| `0x00A616E0` | `func_ApplySpellHealing` | Spell `0x29` (main targets and splash) |
-| `0x00AF55E0` | `func_GetAdjacentSpellTargets` | Spell `0x29` splash |
-| `0x00B3DE90` | `func_IsValidSpellSplashTarget` | Spell `0x29` splash |
+| `0x00978FF0` | `func_CollectEarthquakeTargets` | Spell `0x29`: walls / towers; also used by `func_CheckSpellCastable` |
+| `0x00A616E0` | `func_ApplyUnitDamage` | Physical damage to a unit (walls: vtable `+0x1F4`); spell `0x29`, also attack effects |
+| `0x00AF55E0` | `func_CollectAllCombatUnits` | `ecx` = combat, `edx` = vector: units of both sides. Entries are not CombatUnit subobjects: unit = entry + 4 + `[[entry+4]+8]` |
+| `0x00B3DE90` | `func_IsValidSpellSplashTarget` | Spell `0x29` perk block (position check) |
 | `0x00C558B0` | `func_CheckSpellHitsTarget` | Spell `0x20`: hit gate before effects |
 | `0x00A5A480` | `func_ApplySpellHitEffects` | Spell `0x20` |
-| `0x00A34CD0` | `func_GetCastSpellPower` | Evaluates the spell's power table (`SSpell+0xA0..0xA4`); returns `DAT_00E0BE10` if empty |
-| `0x00A34CA0` | `func_GetCastSpellMastery` | Same for the mastery table (`SSpell+0x94..0x98`) |
+| `0x00A34CD0` | `func_GetSpellDurationTableValue` | Evaluates the `<duration>` table (`SSpell+0xA0..0xA4`) with `func_EvalSpellScalingTable` (`0x00A34C40`): `spellpower × PerPower + Base` of the mastery entry. `ecx` = spell ID, `edx` = mastery, stack = spellpower, `ret 4`; returns `DAT_00E0BE10` if empty |
+| `0x00A34CA0` | `func_GetSpellDamageTableValue` | Same for the `<damage>` table (`SSpell+0x94..0x98`); used by `func_PrepareSpellDamageParams` |
+| `0x0097C9F0` | `func_ComputeSpellHitChance` | `eax` = target, (spell ID, caster, ?), `ret 0xC`: resisted percentage, 100 = immune (magic / element / artifact immunities, resistance). Element checks only for `func_IsDamagingSpell` spells |
+| `0x004E5CB0` | `func_IsDamagingSpell` | `edx` = caster: byte table `0x004E5D24` (spell ID − 1) → `0x004E5D18` (0 true, 1 spell `0xD` with spec `0x2A`, 2 false). Gates spell proof (`func_ComputeSpellDamageMitigation`) and element immunities |
+| `0x004E5750` | `func_IsAllyOfCaster` | `ecx` = caster, `edx` = target: target belongs to the side the caster controls and is not controlled by the other side (`func_IsUnitControlledByOtherSide`) |
+| `0x008496A0` | `func_GetSpellRecord` | `ecx` = spell ID → `NDb::SSpell*` (`Spell.h`). `func_IsSpellTargetNeutral` (`0x00A34500`) / `func_IsSpellTargetNotHostile` (`0x00A34520`) read `<Target>` at `+0xD0` |
 | `0x004738F0` | `func_ClampFloat` | `clamp(value, min, max)`, `ret 0xC`, result in ST0 |
 | `0x004E4A20` | `func_IsCastATBResetBlocked` | See spell `0x20` |
 | `0x00BBEFD0` | `func_FinishSpellCast` | Post-cast step for spell `0x20` and spells `0x2A`/`0x30`; calls `func_CheckVesselOfElrath` |

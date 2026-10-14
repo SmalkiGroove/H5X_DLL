@@ -9,7 +9,7 @@
 //   RTTI .?AUSSpell@NDb@@ @ 0x00F43B10
 //   Base NDb::CResource — RTTI .?AVCResource@NDb@@ @ 0x00F2745C
 //
-// Runtime resolve: SpellDbRef → FUN_0084da30 / thunk FUN_008496a0 → SSpell*.
+// Runtime resolve: SpellDbRef → FUN_0084da30 / func_GetSpellRecord (0x008496A0, ecx = spell ID; get_spell_record) → SSpell*.
 // Cast-time getters (func_GetSpellID, func_GetSpellElement, …) take spell id in ECX
 // after mass/empowered remapping; they internally resolve SSpell via SpellDbRef context.
 //
@@ -20,12 +20,14 @@
 
 // --- Element @ SSpell+0xD4 when +0xD8 != 0 (func_GetSpellElement): SPELL_ELEMENT_ID, types/Spells.h ---
 
-// --- Targeting class @ SSpell+0xD0 ---
+// --- Target @ SSpell+0xD0: the .xdb <Target> field, DBSpellTarget (game_data/core/types.xml) ---
+// func_IsSpellTargetNeutral = target is neutral, func_IsSpellTargetNotHostile = target is not hostile (func_ComputeSpellHitChance: no resistance
+// roll for non-hostile spells on the caster's own units).
 
-enum SPELL_TARGET_CLASS {
-	SPELL_TARGET_SINGLE = 0,
-	SPELL_TARGET_AREA = 1,
-	SPELL_TARGET_GLOBAL = 2,
+enum SPELL_TARGET_ID {
+	SPELL_TARGET_FRIEND = 0,
+	SPELL_TARGET_HOSTILE = 1,
+	SPELL_TARGET_NEUTRAL = 2,
 };
 
 // --- NDb::CResource header (shared by all DB resources incl. SSpell) ---
@@ -58,13 +60,16 @@ struct CResource_header {
 	int field_28; // 0x28
 };
 
-// Power/mastery table entry — 0x0C bytes each @ [SSpell+0x94..0x98] / [+0xA0..+0xA4]
-// FUN_00a34c40: damage = mastery * entry[+8] + entry[+4]
+// <damage> / <duration> table entry — 0x0C bytes each @ [SSpell+0x94..0x98] / [+0xA0..+0xA4], one per mastery
+// func_EvalSpellScalingTable (ecx = table, edx = mastery, stack = spellpower; the last entry is used above its size):
+//   value = spellpower * per_power + base
+// func_GetSpellDamageTableValue (0x00A34CA0) evaluates <damage>, func_GetSpellDurationTableValue (0x00A34CD0) <duration>
+// (ecx = spell ID, edx = mastery, stack = spellpower; ret 4); both return DAT_00E0BE10 for an empty table.
 
 struct SSpell_scaling_entry {
-	float base; // 0x00
-	float per_mastery; // 0x04
-	float per_power; // 0x08
+	int field_00; // 0x00
+	float base; // 0x04 — <Base>
+	float per_power; // 0x08 — <PerPower>
 };
 
 // FX timing vector entry — 8 bytes each @ [SSpell+0xDC..+0xE0]; func_GetSpellFxTiming
@@ -83,21 +88,27 @@ struct SSpell {
 	int school; // 0x88 — func_GetSpellSchool
 	char pad_8c[0x90 - 0x8C];
 	int mana_cost; // 0x90 — base mana (func_GetSpellManaCost)
-	int mastery_table_begin; // 0x94
-	int mastery_table_end; // 0x98
-	int power_table_begin; // 0xA0
-	int power_table_end; // 0xA4
+	int damage_table_begin; // 0x94 — <damage> (SSpell_scaling_entry vector)
+	int damage_table_end; // 0x98
+	int damage_table_capacity; // 0x9C
+	int duration_table_begin; // 0xA0 — <duration>
+	int duration_table_end; // 0xA4
 	char pad_a8[0xCD - 0xA8];
 	char field_cd; // 0xCD — FUN_00a34670
 	char field_ce; // 0xCE — FUN_00a34650
 	char pad_cf;
-	int target_class; // 0xD0 — 0/1/2 (FUN_00a34500 / FUN_00a34520)
+	int target; // 0xD0 — SPELL_TARGET_ID (func_IsSpellTargetNeutral / func_IsSpellTargetNotHostile)
 	int element; // 0xD4 — func_GetSpellElement / FUN_00a342f0
 	char has_element; // 0xD8 — gate for func_GetSpellElement
 	char pad_d9[0xDC - 0xD9];
 	int fx_timing_begin; // 0xDC — vector begin
 	int fx_timing_end; // 0xE0 — vector end
 };
+
+static_assert(offsetof(SSpell, damage_table_begin) == 0x94, "SSpell layout");
+static_assert(offsetof(SSpell, duration_table_begin) == 0xA0, "SSpell layout");
+static_assert(offsetof(SSpell, target) == 0xD0, "SSpell layout");
+static_assert(offsetof(SSpell, element) == 0xD4, "SSpell layout");
 
 // Lazy-resolve handle passed to FUN_0084da30 (SpellDbRef)
 
@@ -189,8 +200,8 @@ struct ISpellDb {
 		if (!raw || !raw->has_element) return ELEMENT_NONE;
 		return raw->element;
 	}
-	int target_class() const {
-		return raw ? raw->target_class : 0;
+	int target() const {
+		return raw ? raw->target : SPELL_TARGET_HOSTILE;
 	}
 };
 
