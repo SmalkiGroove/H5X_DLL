@@ -1,12 +1,10 @@
 #include "pch.h"
-#include "Artfset.h"
 
 // ADD BONUS HP FROM ADDITIONAL ARTIFACTS
 // (128) Plunderer Vest : +1 HP
 // (169) Ring of Supernatural Strength : +3 HP
 // (156) Barbarian Cuirass : +3% HP
 // (100) Regal Armour : +6% HP (rounded up)
-// Academy set (15), 4 pieces + Academy hero : mages +10 HP (ArtfsetAcademy.cpp)
 
 void HealthFork();
 
@@ -27,7 +25,6 @@ static int __fastcall health_artifact_bonus(IHero* hero, ICreature* creature) {
     if (hero->has_artifact(ARTIFACT_BARBARIAN_CUIRASS)) bonus += base_health / 32;      // ~3%
     if (hero->has_artifact(ARTIFACT_REGAL_ARMOUR))      bonus += base_health / 16 + 1;  // ~6%, rounded up
 
-    bonus += artfset_academy_health(hero, creature);
     return bonus;
 }
 

@@ -67,6 +67,9 @@ FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int
 FastcallVoid_IntPtr_Char_3Int notify_artifact_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB9C0;
 
 FastcallVoid_Int enqueue_unit_refresh = (FastcallVoid_Int)0x0050C020;
+// func_SetATBInfoValue: ATB info (CombatUnit +0x184) +0x1C = min(value, 1.25), then a unit refresh. Unlike set_atb
+// (+0x18C) it does not notify the owner: used for the starting ATB (func_InitCombatEffects, func_InitCombat).
+ThiscallVoid_IntPtr_Float set_atb_info_value = (ThiscallVoid_IntPtr_Float)0x00A2D6A0;
 
 // --- DLL helpers ---
 

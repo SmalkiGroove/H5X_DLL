@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Artfset.h"
 
 // EDIT DAMAGE OUTPUT MODIFIERS FROM ARTIFACTS
 // (132) Butcher Glaive : +15% melee damage
@@ -9,6 +10,7 @@
 // (198) Shield of Dwarven Kings : -30% ranged damage
 // Skill Courage reduce all damages per Morale point
 // Skill Arcane Protection reduce all damages by 0.5% per spellpower
+// Academy set (15), 6 pieces + Academy hero : -20% damage for mages and their adjacent allies (ArtfsetAcademy.cpp)
 
 void MeleeDamageInputFork();
 void RangedDamageInputFork();
@@ -82,6 +84,8 @@ static float __fastcall all_output_multiplier(int* hero_interface, ICombatUnit* 
         if (half_spellpower != 0)
             multiplier *= 1.0f - half_spellpower * 0.01f;
     }
+
+    multiplier *= artfset_academy_damage_taken(defender);
     return multiplier;
 }
 

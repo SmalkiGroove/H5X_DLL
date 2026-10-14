@@ -140,17 +140,26 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 
 ## Academy set (15) — `ArtfsetAcademy.cpp`
 
-"Academy hero" = `HERO_CLASS_ACADEMY_MIGHT` (13) / `HERO_CLASS_ACADEMY_MAGIC` (14). 6 pieces: scripted. No patch of its own (no `_init`): its helpers are called by other patches' hooks (`Artfset.h`).
+"Academy hero" = `HERO_CLASS_ACADEMY_MIGHT` (13) / `HERO_CLASS_ACADEMY_MAGIC` (14). "Casters" = the hero's creatures with mana (CombatUnit `+0x238` > 0). "Mages" = Mage / Archmage / Battle Mage (63 / 64 / 162). Own hooks in `ArtfsetAcademy_init`; the other effects are helpers (`Artfset.h`) called by other patches.
 
 | Pieces | Effect | Where |
 |---|---|---|
-| 4 | Hero's caster creatures have twice their mana and spellpower (DefaultStats `+0x117C`) | `artfset_academy_casters`, called by `ModCasterCreatures.cpp` (also Researcher spec) |
-| 4 + Academy class | Hero's Mages / Archmages / Battle Mages (63 / 64 / 162) have +10 health | `artfset_academy_health`, called by `ModHealth.cpp` |
+| 4 | Hero's spellpower +2% per knowledge point (every spell and the spellpower without a spell, after the Sylvan / Dungeon ×2) | `artfset_academy_hero_spellpower`, `ModEffectiveSpellpower.cpp` (`0x00BC05A2`) |
+| 4 | Casters' spellpower +2% per maximum mana point (after the Researcher ×2, before the buff multiplier) | `artfset_academy_caster_spellpower`, `ModCasterCreatures.cpp` (`0x008A3B35`) |
+| 4 + Academy class | Hero and mages use 15% less ATB to cast: ATB after the cast = a + (1 − a) × 0.15 (a = vanilla value, 0 for creatures), like the vanilla Sar-Issus formula | hero: `artfset_academy_hero_cast_atb`, `ModAtbReset.cpp` (`0x00BBF8D1`); mages: own hook `0x008A134B` |
+| 6 | Hero and casters start the combat with +0.5 ATB (max 1) | own hooks `0x00BC22A2` (hero), `0x008AB2A1` (creatures) |
+| 6 | Casters' spells cost 4 less mana (min 1; the Ring of the Magister is hero-only, `ModManaCost.cpp`) | own hook `0x009783CD` |
+| 6 | Casters' spells skip the targets' resistance bonuses, like the Staff of the Magister (45) on the caster's hero (immunities still apply) | own hook `0x0097CF9A` |
+| 6 + Academy class | Mages and the creatures adjacent to one of the hero's mages (diagonals included) take 20% less attack damage | `artfset_academy_damage_taken`, `ModDamageOutput.cpp` (`0x00A5AD6E`) |
 
 ### Sites used by the Academy set
 
-- **Creature mana** `func_GetCreatureManaPoints` (`0x004BAB30`, `ecx` = `ICreature`, arg = `IHero` or 0): base mana = creature data `+0x74`; vanilla Sar-Issus (4) with 2 pieces → × DefaultStats `+0x117C`. Hooked at `0x004BAB46` (13 bytes) by `ModCasterCreatures.cpp`.
-- **Creature spellpower** (`0x008A3ACD`–`0x008A3B35`, `edi` = base spellpower from `func_CreatureSpellpowerFormula` `0x004BAD20` (`__fastcall`(creature ID, count), replaced by `ModCasterCreatures.cpp`), `eax` = side at `0x008A3B01`): `func_CountArtifactSetPieces` (`0x004D8D60`, `ecx` = side, `edx` = set: side `+0x0C` → hero `+0x00` → `IHero +0x328`) ≥ 2 → × DefaultStats `+0x117C` stored at `[esp+0xC]`, tooltip notification `0x009BBA20` (`ecx` = notify context, `dl` = 1, set ID, 0, 0). Hooked at `0x008A3B01` (17 bytes) by `ModCasterCreatures.cpp`; the Academy set skips the notification.
+- **Creature mana** `func_GetCreatureManaPoints` (`0x004BAB30`, `ecx` = `ICreature`, arg = `IHero` or 0): base mana = creature data `+0x74`; vanilla Sar-Issus (4) with 2 pieces → × DefaultStats `+0x117C`. Hooked at `0x004BAB46` (13 bytes) by `ModCasterCreatures.cpp` (Researcher spec).
+- **Creature spellpower** (`0x008A3ACD`–`0x008A3B6B`, `esi` = `CCombatCreature`, `edi` = base spellpower from `func_CreatureSpellpowerFormula` `0x004BAD20` (`__fastcall`(creature ID, count), replaced by `ModCasterCreatures.cpp`), `eax` = side at `0x008A3B01`): `func_CountArtifactSetPieces` (`0x004D8D60`, `ecx` = side, `edx` = set: side `+0x0C` → hero `+0x00` → `IHero +0x328`) ≥ 2 → × DefaultStats `+0x117C` stored at `[esp+0xC]`, tooltip notification `0x009BBA20` (`ecx` = notify context, `dl` = 1, set ID, 0, 0). Then `0x008A3B35`: result = round(buff multiplier `0x008D9460`(`ecx` = `esi+0xA0`, `edx` = 8) × `[esp+0xC]`). Hooked at `0x008A3B01` (17 bytes, Researcher) and `0x008A3B35` (6 bytes, Academy %) by `ModCasterCreatures.cpp`.
+- **Starting ATB**: creatures in `func_InitCombatEffects` (`0x008AAEC0`, `esi` = `CCombatCreature`): initial ATB, Agility (ability `0x41`, +0.5), then with an owner hero (`ebp` = `NWorld::ICombatHero`) hero spec `0x19`. Heroes in `func_InitCombat` (`0x00BC2010`, `esi` = `CCombatHero`, `[esi+0x44]` ATB info, `[esi+0xB0]` IHero): skill `0x9B` (+DefaultStats `+0x6BC`), spec `0x4A` (0.9999). Both write the ATB info with `func_SetATBInfoValue` (`0x00A2D6A0`, `set_atb_info_value`: min 1.25, unit refresh).
+- **Post-cast ATB**: hero `func_CombatHero_OnSpellCast` (`0x00BBF610`, see `h5x-re-spell-casting.mdc`); creature `func_CombatCreature_OnSpellCast` (`0x008A11C0`): not a rune and vtable `+0x1CC` false → ATB info = 0 at `0x008A134B`.
+- **Creature mana cost** `func_ComputeUnitManaCost` (`0x009781E0`, `ecx` = spell, `edx` = caster, ret 4): base cost, hero school perks, creature block (side hero skill `0x94` halves, `EliteCastersFix.cpp` / `ArcaneBrillance.cpp`), then `0x009783CD` (`edi` = `[esp+0x10]` = cost, `[esp+0x18]` = school), spec 2, DefaultStats `+0x778`.
+- **Resistance** `func_ComputeSpellHitChance`: with a caster, `0x0097CF89` side hero → `SecretsOfDestruct.cpp` (`0x0097CF8D`) → Staff of the Magister check at `0x0097CF9A` (`eax` = hero inventory, `[esp+0x30]` = caster); jumps to `0x0097D0B0` past the resistance bonuses (race buff `0x52`, spec `0xF`, artifacts `0xD` / `0x1B`, magic resistance flag 8).
 - **Creature health** `func_GetCreatureHealth` (`0x004BC470`): `ModHealth.cpp` at `0x004BC4F4` (hero flat bonuses), `Artificier.cpp` at `0x004BC4C1` / `0x004BC5E7` / `0x004BC624` (mini-artifact % health).
 
 ## Dungeon set (16) — `ArtfsetDungeon.cpp`

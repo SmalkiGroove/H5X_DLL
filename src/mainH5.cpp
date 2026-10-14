@@ -111,6 +111,7 @@ void init_patches(pugi::xml_document& doc) {
     ArtfsetInferno_init(doc);              // OK
     ArtfsetDungeon_init(doc);              // OK
     ArtfsetDwarven_init(doc);              // OK
+    ArtfsetAcademy_init(doc);              // 
     AnkhOfTheSaint_init(doc);              // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
@@ -134,7 +135,7 @@ void init_patches(pugi::xml_document& doc) {
     IceFreeze_init(doc);                   // OK
     EarthPierce_init(doc);                 // OK
     ChainLightning_init(doc);              // OK
-    Earthquake_init(doc);                  // 
+    Earthquake_init(doc);                  // OK
     Vulnerability_init(doc);               // OK
     Frenzy_init(doc);                      // OK
     //ConjureAtb_init(doc);                  //

@@ -67,6 +67,7 @@ extern FastcallVoid_IntPtr_Char_3Int notify_spec_buff;
 // --- CRM / unit refresh ---
 
 extern FastcallVoid_Int enqueue_unit_refresh;
+extern ThiscallVoid_IntPtr_Float set_atb_info_value;
 
 // --- DLL helpers (Functions.cpp) ---
 

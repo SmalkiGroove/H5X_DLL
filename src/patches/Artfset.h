@@ -12,10 +12,15 @@ int artfset_orcs_ability(ICombatUnit* unit, int ability);
 
 // Stat bonuses of artifact sets, called by the stat hooks of other patches.
 
-// Academy (15), 4 pieces: the hero's caster creatures have twice their mana and spellpower (ModCasterCreatures.cpp).
-bool artfset_academy_casters(IHero* hero);
-// Academy (15), 4 pieces + Academy class: flat health added to each of the hero's mages (ModHealth.cpp).
-int artfset_academy_health(IHero* hero, ICreature* creature);
+// Academy (15), 4 pieces: final spellpower of the hero, +2% per knowledge point (ModEffectiveSpellpower.cpp), and of
+// the hero's caster creatures, +2% per maximum mana point (ModCasterCreatures.cpp; unit = creature CombatUnit).
+int artfset_academy_hero_spellpower(IHero* hero, int spellpower);
+int artfset_academy_caster_spellpower(ICombatUnit* unit, int spellpower);
+// Academy (15), 4 pieces + Academy class: the hero's ATB after a cast, 15% of the ATB used saved (ModAtbReset.cpp).
+float artfset_academy_hero_cast_atb(IHero* hero, float atb);
+// Academy (15), 6 pieces + Academy class: attack damage multiplier of a defending unit, mages and their adjacent
+// allies (ModDamageOutput.cpp).
+float artfset_academy_damage_taken(ICombatUnit* defender);
 // Sylvan (12) / Dungeon (16), 4 pieces: the hero's spellpower is doubled for nature / dark magic spells
 // (ModEffectiveSpellpower.cpp). spell = spell ref (not null).
 bool artfset_sylvan_spellpower_doubled(IHero* hero, int* spell);

@@ -11,6 +11,8 @@
 // MULTIPLY THE FINAL SPELLPOWER (after every flat bonus and buff, before the >= 1 clamp)
 // Sylvan set (12), 4 pieces : x2 for nature spells (ArtfsetPreserve.cpp)
 // Dungeon set (16), 4 pieces : x2 for dark spells (ArtfsetDungeon.cpp)
+// Academy set (15), 4 pieces : +2% per knowledge point, every spell and the spellpower shown without a spell
+//   (ArtfsetAcademy.cpp)
 
 void EffectiveSpellpowerFork();
 void SpellpowerMultiplierFork();
@@ -49,11 +51,10 @@ static int __fastcall element_power_bonus(ICombatHero* hero, int spell, int spel
 
 // Final spellpower for the spell. hero_unit = hero CombatUnit subobject, spell = spell ref (0 without spell context).
 static int __fastcall multiplied_spellpower(ICombatUnit* hero_unit, int* spell, int spellpower) {
-    if (!spell) return spellpower;
     IHero* hero = owner_hero(hero_unit);
-    if (artfset_sylvan_spellpower_doubled(hero, spell) || artfset_dungeon_spellpower_doubled(hero, spell))
-        return spellpower * 2;
-    return spellpower;
+    if (spell && (artfset_sylvan_spellpower_doubled(hero, spell) || artfset_dungeon_spellpower_doubled(hero, spell)))
+        spellpower *= 2;
+    return artfset_academy_hero_spellpower(hero, spellpower);
 }
 
 // esi = hero complete object (vbptr at esi+4), edi = spell (0 without spell context), ebx = spellpower,

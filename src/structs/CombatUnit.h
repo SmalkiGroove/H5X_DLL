@@ -227,6 +227,22 @@ struct ICombatUnit {
 	int* unit_ref() {
 		return instance->get_unit_ref((int*)this);
 	}
+	// Combat object (CCombat) of the unit (vtable +0x08); its vtable +0x108 = silent / estimate combat.
+	int* combat() {
+		return ((GetPtr)instance->get_owner_ref)((int*)this);
+	}
+	// Tile {x, y} of the unit (vtable +0x40); with size n it covers x-n+1..x, y-n+1..y.
+	void position(int* out) {
+		typedef int*(__thiscall* PositionFn)(int*, int*);
+		((PositionFn)instance->get_position_2d)((int*)this, out);
+	}
+	int size() {
+		return instance->get_size((int*)this);
+	}
+	// Maximum mana (vtable +0x238): hero max mana, creature func_GetCreatureManaPoints (0 for non-casters).
+	int max_mana() {
+		return instance->get_mana((int*)this);
+	}
 	// Combat stack interface (ICombatStack, Creature.h), nullptr for heroes (vtable +0x70).
 	int* combat_stack() {
 		return instance->get_combat_stack((int*)this);
