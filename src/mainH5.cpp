@@ -153,6 +153,7 @@ void init_patches(pugi::xml_document& doc) {
     HallOfIntrigue_init(doc);              // OK
     MarketExchangeRates_init(doc);         // OK
     LuaChangeAtb_init(doc);                // OK
+    LuaUnitAttack_init(doc);               // 
     
 }
 

@@ -557,6 +557,9 @@
     <ClCompile Include="src\patches\LuaChangeAtb.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\LuaUnitAttack.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\Dragonsbane.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>

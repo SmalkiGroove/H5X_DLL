@@ -89,6 +89,32 @@ The table is a `{const char* name, lua_CFunction fn}` array:
 
 > Do **not** overwrite the terminator to add a command. The tutorial table (`FUN_005668E0`, `toggleTutorialMode`, `showMessage`, …) starts right after it at `0x00F33040`. The combat context would then run on into the tutorial commands. Replace an unused entry instead, as `LuaChangeAtb.cpp` does, or move the table.
 
+## Engine → Lua combat callbacks
+
+The script manager (`this` of `func_CombatDeath`; `func_CombatDisplayUpdate` `0x0054AD10` reaches it as `esi - 0x564`) runs the combat script callbacks:
+
+| Offset | Content |
+|---|---|
+| `+0x2A0` | `CCombat` (same object as CombatUnit vtable `+0x08`): vtable `+0x120` → script names object, whose vtable `+0x08` = thiscall(CombatUnit) → `{char* begin, char* end}` (the unit's script name) |
+| `+0x1B4` | Script runner: vtable `+0x00` = thiscall(`const char* code`), runs the Lua string without waiting |
+| `+0x1F0` | Callbacks resumed when a waited script ends |
+| `+0x4F0` | Byte: the combat has a script (all callbacks are skipped otherwise) |
+
+| Callback | Function | How |
+|---|---|---|
+| `DoPrepare()` / `DoStart()` | `func_CombatPrepare` / `func_CombatStart` (`0x0056FBB0` area), combat state `0x4000` / `0x8000` | `func_ScriptRunThreadWithCallback` (`0x00CAD110`): the combat waits for the script |
+| `UnitMove("%s")` | `func_CombatTurn` (`0x0056FF00` area) | Same, with a continuation object (`FUN_0056FE30`): the script can play the turn |
+| `UnitDeath("%s")` | `func_CombatDeath` `0x0056FA90`, from the display loop of `func_CombatDisplayUpdate` (`0x0054B3F8`: each display event is dynamic-cast to `CCombatEventDeath`, unit at `+0x28`) | Runner `+0x1B4` vtable `+0x00`: no wait |
+| `UnitAttack("%s","%s")` (H5X) | `LuaUnitAttack.cpp` | See below |
+
+Combat events (`NWorld::CCombatEvent*`, posted with `CCombat` vtable `+0x100`, none when vtable `+0x108` = silent): `CCombatEventFight` (`func_CCombatEventFight_ctor` `0x00C4E4B0`; `+0x28` flag, `+0x2C` attacker, `+0x30`/`+0x34` target vector, only filled by `0x00B3BB50`, empty for normal creature attacks), `CCombatEventDeath` (`0x00C4E640`; `+0x28` unit), `CCombatEventHeroDefaultAttack` (`0x00C4EA60`; `+0x28` hero, `+0x2C` target, set to 0 when the attack killed it). All units there are CombatUnit pointers.
+
+### H5X `UnitAttack(attacker, defender)` (`src/patches/LuaUnitAttack.cpp`)
+
+The events don't reliably name the defender, so the pair is captured in the attack logic and run from the display loop:
+1. **Capture:** `func_CreatureAttackEffects` entry `0x00A65260` (`[esp+8]` attacker, `[esp+0xC]` final target after `func_CombatAttackWithRedirects`; creatures and war machines, one call per attack action) and `func_HeroDefaultAttack` entry `0x008CEAC0` (`ecx` hero object, CombatUnit = virtual base 2; `eax` target). Silent combats are skipped. The script names are resolved at once and queued (max 64).
+2. **Run:** hook at `0x0054B2D4` in `func_CombatDisplayUpdate`, after the display flag `0x40` test and before the `UnitDeath` loop. It runs `if UnitAttack then UnitAttack("a","d") end` per queued pair through the runner (no wait; only when `+0x4F0` is set). The queue is dropped when the manager's `CCombat` changes (new combat).
+
 ## Combat arena: `ICombatArenaCommon`
 
 The arena object is `NUI::CCombatArenaScreen`. `NCombatArenaScript::ICombatArenaCommon` is a **virtual base** of it (RTTI `pdisp=16`, `vdisp=16`), so its offset is resolved through the vbtable at runtime.
