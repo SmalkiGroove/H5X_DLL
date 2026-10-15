@@ -10,7 +10,8 @@
 // queued instead, and the queue is run by the combat display loop (FUN_0054AD10, 0x0054B2D4), just before the
 // loop that runs UnitDeath: like UnitDeath, the call does not wait for the script, the attack is already resolved
 // (damage dealt, deaths applied), and UnitAttack runs before the UnitDeath calls of the same events.
-// The call is "if UnitAttack then UnitAttack("a","d") end": scripts without the function are unaffected.
+// The call is "if UnitAttack then UnitAttack("a","d") end"; the game still prints a "Value was NIL" warning for each
+// attack when the global is missing, so combat-startup.lua defines an empty UnitAttack.
 
 int __fastcall unit_attack_record(ICombatUnit* attacker, ICombatUnit* defender);
 void __fastcall unit_attack_flush(char* manager);

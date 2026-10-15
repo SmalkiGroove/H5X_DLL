@@ -226,6 +226,8 @@
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
     <ClCompile Include="src\patches\LuaChangeAtb.cpp" />
     <ClCompile Include="src\patches\LuaUnitAttack.cpp" />
+    <ClCompile Include="src\patches\LuaGameStartTrigger.cpp" />
+    <ClCompile Include="src\patches\DiagnosticsMP.cpp" />
     <ClCompile Include="src\patches\RemoveMapScriptCheck.cpp" />
     <ClCompile Include="src\patches\NetworkInterval.cpp" />
     <ClCompile Include="src\patches\CombatCamera.cpp" />

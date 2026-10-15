@@ -154,6 +154,8 @@ void init_patches(pugi::xml_document& doc) {
     MarketExchangeRates_init(doc);         // OK
     LuaChangeAtb_init(doc);                // OK
     LuaUnitAttack_init(doc);               // 
+    LuaGameStartTrigger_init(doc);         // 
+    DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics
     RemoveMapScriptCheck_init(doc);        // 
     NetworkInterval_init(doc);             // 
     CombatCamera_init(doc);                // 

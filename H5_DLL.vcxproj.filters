@@ -560,6 +560,12 @@
     <ClCompile Include="src\patches\LuaUnitAttack.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\LuaGameStartTrigger.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\DiagnosticsMP.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\RemoveMapScriptCheck.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
