@@ -74,6 +74,8 @@ void DemonRageSkillBuffFix_init(pugi::xml_document& doc);
 void PerkCreatureGiftFix_init(pugi::xml_document& doc);
 void MasterOfFireFix_init(pugi::xml_document& doc);
 void EncourageFix_init(pugi::xml_document& doc);
+void EmptyWindowRectFix_init(pugi::xml_document& doc);
+void DocWindowSaveFix_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
 void CreatureAttack_init(pugi::xml_document& doc);

@@ -32,6 +32,8 @@ void init_patches(pugi::xml_document& doc) {
     EncourageFix_init(doc);                // OK
     DemonRageSkillBuffFix_init(doc);       // OK
     PerkCreatureGiftFix_init(doc);         // 
+    EmptyWindowRectFix_init(doc);          // OK
+    DocWindowSaveFix_init(doc);            // OK
 
     Health_init(doc);                      // OK
     CreatureAttack_init(doc);              // OK
@@ -155,7 +157,7 @@ void init_patches(pugi::xml_document& doc) {
     LuaChangeAtb_init(doc);                // OK
     LuaUnitAttack_init(doc);               // 
     LuaGameStartTrigger_init(doc);         // 
-    DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics
+    //DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics
     RemoveMapScriptCheck_init(doc);        // 
     NetworkInterval_init(doc);             // 
     CombatCamera_init(doc);                // 

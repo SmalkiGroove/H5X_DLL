@@ -224,6 +224,12 @@
     <ClCompile Include="src/patches/EncourageFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
+    <ClCompile Include="src/patches/EmptyWindowRectFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="src/patches/DocWindowSaveFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
     <ClCompile Include="src/patches/EnlightenmentForBarbsFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>

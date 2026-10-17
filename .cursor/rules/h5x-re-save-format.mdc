@@ -1,0 +1,85 @@
+---
+description: Save files (.sav) — file layout, binary saver encoding (varints, tagged fields, object chunks, object table), save/load entry points, interface stack, window fields as saved
+globs: src/patches/DocWindowSaveFix.cpp, src/patches/EmptyWindowRectFix.cpp
+alwaysApply: false
+---
+
+# Save files
+
+Verified on H5X.exe with Ghidra, and by parsing saves from `Documents\My Games\Heroes of Might and Magic V - Tribes of the East\Profiles\<profile>\Saves\save_N.sav`: 10 single-player and network saves from July to October 2026. Python parser: `C:\Users\Guillaume\AppData\Roaming\Claude\side-session-notes\local_56563e3f-bac2-4b90-86ba-ef55dd6271dc\save-parser\` (`extract.py` file → zlib streams, `parse.py` chunks and table, `graph.py` reference graph, `tree.py`/`dump.py` field dumps).
+
+## Encoding (binary structure saver)
+
+- **Varint** (lengths): if bit 0 of the first byte is 0, the value is `byte >> 1` (1 byte, 0..127). Otherwise it is `u32 >> 1` (4 bytes, little endian).
+- **Field** = `tag (1 byte)` + `varint length` + `content`. Tags are the chunk numbers the serializer passes (`(*saver+0x28)(tag, ptr, size, 1)` for raw data, `(*saver+0x1C)(tag, …)` / `(*saver+0x20)()` to open and close a nested chunk). Fields nest freely. Absent or default fields are often omitted.
+- A **u32 / pointer** field is `tag 08 <4 bytes>` (`08` = varint 4). An **object pointer** is written as the object's address at save time (its id). A null pointer is `0`.
+- **Containers**: count in `[2]` (vectors / lists, `FUN_008393D0`) or in `[3]` with the bucket count in `[4]` (hash maps, `FUN_0048CE40`). Then one `[1]` per element (key or item), and for maps one `[2]` per element (value).
+- **Strings**: field with the raw bytes. Hrefs look like `/UI/Doc/Root.(WindowSimple).xdb#xpointer(/WindowSimple)`. DB resources (`CDBPtr`) are saved as their href and resolved again on load.
+- The saver's vtable: `+0x1C` open chunk (returns bool), `+0x20` close chunk, `+0x24` read count, `+0x28` raw data, `+0x3C` **IsReading** (0 = writing), `+0x44` version.
+
+## File layout
+
+| Offset | Content |
+|---|---|
+| `0` | `u32` version: `0x00030000` / `0x00030004` (single player), `0x00030002` (network). `FUN_007E5B70` (read save info) checks the high word `0x0003`. |
+| `4` | `u32` size of the description block. The root structure starts at `6 + size` (verified on all saves). |
+| `8` | Description block (`FUN_007EE000`, fields 2..13): map name, map type ("Custom Map"), save name ("Autosave 3"), map href, preview data, player settings. Text is UTF-16 LE. |
+| `6 + size` | Root structure: `[5]` empty, `[4]` u32 4, `[3]` u8 1, `[1]` **roots** (see below), `[2]` = `u32 raw size` + zlib **object chunks**, `[0]` = `u32 raw size` + zlib **object table**, then a trailing `[5]` (empty in network saves, 56 bytes in single-player saves, unknown). |
+
+### Object chunks (zlib stream of `[2]`)
+
+A sequence of `01 <varint len> 00 08 <u32 id> 01 <varint len> {fields}`: `[0]` = the object id, `[1]` = the object's `operator&` (vtable `+0xC` of its `CObjectBase` subobject). The chunks are in the same order as the table records.
+
+### Object table (zlib stream of `[0]`)
+
+9-byte records `[u32 type][u32 id][u8 live]`. `type` is the factory class id (for UI classes, the XDB `ClassTypeID`: `CWindowSimple` = `0x110772C1`, `CWindowScreen` = `0x11075B80`, `CWindowMSButton` = `0x11075B87`). `live` = 0 for **released** objects: they were referenced but dead, so the save writes an empty chunk and the load re-creates an empty object (the cause of the `EmptyWindowRectFix` crash). Saves always contain a few hundred to a few thousand released objects, mostly scene objects `0x1741141` and `0x2191161`, without the mod's help.
+
+Load: `FUN_00CB6AE0` reads the table, creates every object through the factory (`FUN_00C1AD90` → `FUN_00C1AD40`, hash by type id), then calls each object's `operator&` in table order.
+
+## Roots: single player vs network
+
+- **Network** saves: `[1]` = `{[1] <id>}`, one root, the game state (type `0x200C2C0B`). The whole graph (about 22k objects) hangs from it.
+- **Single-player** saves: `[1]` is the inline serialization of `FUN_00838DC0`. It holds resource caches (tags 101..232: sounds, fonts, textures, models, skeletons, animations), `[1]` the console log (`console_log.txt` buffer), `[2]` = `DAT_00FE7198` (list, usually empty), `[3]` = **interface stack** `DAT_00FE719C` (`{[2] count, [1] id…}`), `[4]` u8, `[11]` unknown (2 KB). The interfaces are the roots:
+  - `0x2D121B40` main menu (→ `/UI/MainMenu2` screen),
+  - `0x17298480` / `0x17298482` Custom Game lobby (CustomGameCreate / CustomGameWait screens, `map-tag.xdb`), only when the game was started from the lobby,
+  - `0x200C2C00` adventure-map interface (→ AdventureScreen-Heavy, minimap, resource bar, TownHeroPanel, …). **The game world (`0x200C2C12` → `0x200C2C0B`) is reachable only through it.**
+  So a single-player save contains every window tree of every screen on the stack. Window objects are deserialized on load, not rebuilt from XDB: a change to a screen's XDB does not reach games loaded from older saves, except through `DocWindowSaveFix`.
+
+## Code
+
+| Address | Role |
+|---|---|
+| `0x007EE680` | Save game (`save_%d.sav`): description (`FUN_007EE000`), then `FUN_00838DC0` in write mode |
+| `0x007EE3A0` | Load game ("save is not valid"): `FUN_00838940` (pop every interface), read description, objects, `FUN_00838510` (post-load) |
+| `0x007E8D00`, `0x007F0A90` | Two other load paths with the same `FUN_00838940` … `FUN_00838510` frame |
+| `0x00838DC0` | Root serializer (both directions): `FUN_009B5EE0`, `FUN_00A4AC90` (resource caches), chunk 2 = `DAT_00FE7198`, chunk 3 = `DAT_00FE719C` (interface stack, `FUN_008393D0`), chunk 4, `FUN_008847E0` |
+| `0x00838510` | Post-load: interface vtable `+0x10` on each interface, then activates the top one (vtable `+0`, arg 1) |
+| `0x00838940` | Pops (deactivates and releases) every interface of `DAT_00FE719C`. Called first by each load path, and from about ten other places |
+| `0x007E5B70` | Reads a save's description (load menu) |
+| `0x00CB6AE0` | Object table reader and object loader |
+
+## Window objects as saved
+
+`CWindow` is the primary base of every window class (offset 0). Its methods run with `this = object + 0x10C`: the `IWindow` thunks subtract `[ecx-4]` (vtordisp, 0 outside constructors) and then 4 for `CWindowSimple` (IWindow at `+0x110`) or `0x134` for `CWindowScreen` (IWindow at `+0x240`). The `IWindow` subobject is `object + 0x10 + vbtable[2]` (vbptr at `+0x10`).
+
+`CWindow::operator&` (`FUN_00A51A00`, `this` = `object + 0xFC`) fields:
+
+| Field | Object offset | Content |
+|---|---|---|
+| `[3]` | — | base (`FUN_006F5C80`) |
+| `[4]` | `+0x28` | parent window |
+| `[9]` | `+0xA0` (begin `+0xA4`, end `+0xA8`) | children `vector<CWindow*>` |
+| `[10]` | `+0xC4` (buckets `+0xC8`/`+0xCC`, size `+0xD4`) | children `hash_map<CWindow*, bool>`, node `{next, key, value}`, bucket = `ptr % count`. It holds a few more entries than the vector (non-window objects `0x2D138340`) |
+| `[15]` / `[16]` | | Shared and instance hrefs |
+| `[20]` | | per-window object `0x1715A340` (one per window) |
+
+Other fields used by the code: instance desc `CDBPtr` at `+0x18` (`this-0xF4`), Shared `CDBPtr` at `+0xF0` (`this-0x1C`). Vtable slot 2 (`[object]+8`) returns the typed instance desc (`CWindowSimple`: `[object+0xF8]`, `CWindowScreen`: `[object+0x1C0]`). `SWindow::Name` is at desc `+0x58` (`{begin, end}`), `SWindow::ClassTypeID` at `+0x44`. `SWindowShared::Children` is at `+0x48` (`vector<CDBPtr<SWindow>>`, 8-byte entries, resolved by `FUN_00BE51B0`).
+
+`IWindow` slots: `+0x8C` AddChild(IWindow* child, bool), `+0x90` child count (recursive flag), `+0x98` child by index, `+0xAC` InitByDesc (`FUN_00A500C0`: creates the Shared children with `FUN_00B8DBC0` = create window from desc + register, then AddChild), `+0xE8` name (`&desc->Name`), `+0xEC` name compare.
+
+`CWindowScreen::operator&` (`FUN_00489AA0`, `this` = `object + 0x230`, thunk `0x0048EDC0` in vtable `0x00E13B10` slot 3): `[1]` CWindow part, `[4]` owning interface, `[6]` named handlers (`ShowConsole`), `[7]` …, `[8]` **button-group map** at `+0x1F8` (`hash_map<pair<int groupId, IWindow* parent>, CObj<group>>`, node `{next, id, window, group}`, size `+0x208`). It is filled lazily by `GetOrCreateButtonGroup` (`FUN_004885F0`, screen vtable `0x00E13B34` slot `+0x68`) and never cleaned when a dialog closes.
+
+## H5X specifics
+
+- The encyclopedia (`/UI/Doc/Root`, window `DocRootWindow`) is a static child of the AdventureScreen-Heavy, CustomGameWait, MPWait and HotSeatWait screens (`www` pak). Before `DocWindowSaveFix` it was about 77% of a single-player save (two copies when started from the lobby, about 160k objects each). All 13 button groups of the adventure screen belong to it.
+- `DocWindowSaveFix.cpp` replaces `0x00E13B1C` (screen `operator&`). When writing, it unlinks `DocRootWindow` from `[9]`/`[10]` and the encyclopedia's entries from `[8]`, then restores them. When reading, it lists the screens, and `FUN_00838510` re-creates the missing `DocRootWindow` from the screen's Shared children. `FUN_00838940` clears the list. Result on a Stadium game: 11.5 MB → 4 MB, 455k → 133k objects.
