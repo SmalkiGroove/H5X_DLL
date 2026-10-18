@@ -1,0 +1,153 @@
+---
+description: Adventure map files (.h5m) — archive layout, map.xdb objects and players, GroundTerrain.bin encoding, footprints and passability, coordinate conventions, H5X_Stadium layout
+globs: tools/h5m/**
+alwaysApply: false
+---
+
+# Adventure maps (.h5m)
+
+Verified on the six maps of `G:\__H5__\H5Xdev\Maps` (`00-test`, `H5X_8Kindoms`, `H5X_Challengers`, `H5X_Duel`, `H5X_Stadium`, `H5X_Survival`, October 2026). Map sources are also kept in `G:\__H5__\heroes-expansion\maps` (editor files, not always the latest copy). Reader: `tools/h5m/h5m.py` (`summary`, `terrain`, `regions`, see the end of this file).
+
+## Archive
+
+A `.h5m` is a plain **zip**. Everything sits in one folder `Maps/Multiplayer/<Name>/` (all H5X maps are multiplayer maps):
+
+| File | Content |
+|---|---|
+| `map-tag.xdb` | `AdvMapDescTag`, the map list entry: `AdvMapDesc` href (`map.xdb#xpointer(/AdvMapDesc)`), name / description refs, `TileX` / `TileY`, `MapGoal`, `teams`, `HasUnderground`, `CustomGameMap`, `Version` 3 |
+| `map.xdb` | `AdvMapDesc`: every object, player, objective and map setting (XML, 0.1 to 9 MB) |
+| `GroundTerrain.bin` / `UndergroundTerrain.bin` | Terrain (binary saver encoding, see below). Named by `GroundTerrainFileName` / `UndergroundTerrainFileName` in `map.xdb` |
+| `*.txt` | Texts, **UTF-16 LE with BOM** (`name.txt`, `description.txt`, `TownName.N.txt`, `TownBiography.N.txt`, `Rumour.txt`, objective and scenario captions). Objects point to them with relative hrefs |
+| `MapScript.xdb` + `MapScript.lua` | `Script` resource (`<FileName href="MapScript.lua"/>`), referenced by `AdvMapDesc/MapScript`. The `.lua` file name is free (`mechanics.(Script).lua`, `H5X_FinalRush.lua`, `map.lua`) |
+| other `.xdb` / `.dds` | Extra scripts or images (`8kingdoms.dds`, `enabler.(Script).xdb`, an empty `h5x-duel.xdb` in Stadium) |
+
+Shared object definitions are **not** in the map: objects reference them by absolute href (`/MapObjects/Gold_Mine.(AdvMapMineShared).xdb#xpointer(/AdvMapMineShared)`), resolved in the game paks `G:\__H5__\H5Xdev\data\*.pak` (zip; `h5x-*.pak` override `data.pak` / `a2p1-data.pak`, lookup is case-insensitive).
+
+## Coordinates
+
+- Tiles `x` = 0 … `TileX-1` left → right, `y` = 0 … `TileY-1` **bottom → top**: `y = 0` is the bottom edge of the minimap. In Stadium the player towns are at `y = 126` (top) and the second towns at `y = 17` (bottom).
+- `Pos` = `{x, y, z}`. `z` is always 0; the level is `Floor` (0 surface, 1 underground). Interactive objects have integer positions; `AdvMapStatic` decorations often have fractional ones (`43.65`, 1119 of 2430 in Stadium), the occupied tile is `floor()`.
+- `Rot` is in **radians** (0, 1.5708, 3.14159, 4.71239, and 22.5° steps on statics, sometimes `6.28319` or `3e-06`). Footprints turn **counter-clockwise with y up**, snapped to the nearest quarter turn: one turn maps `(dx, dy)` → `(-dy, dx)`. Checked on all six maps: the other sense puts 2.6× to 26× more active tiles on blocked tiles.
+- Size presets seen: 136, 176, 216. `BorderSize` is 1 on all maps.
+- Lua functions use the same `x, y, floor` (`GetObjectPosition`, `MoveHero`, …).
+
+## map.xdb
+
+Root `AdvMapDesc`, children in this order (empty ones omitted):
+
+| Field | Content |
+|---|---|
+| `CustomGameMap`, `Version` (3), `TileX`, `TileY`, `HasUnderground`, `HasSurface`, `InitialFloor` | Header |
+| `objects` | One `<Item href="#n:inline(<Type>)" id="item_<GUID>">` per object, the object inline (below) |
+| `tiles` | Tile textures used by the terrain (`/MapObjects/_(AdvMapTile)/Grass/Road.xdb#…`); the order differs from the layer order in the `.bin` |
+| `GroundTerrainFileName`, `UndergroundTerrainFileName`, `NameFileRef`, `DescriptionFileRef` | File refs |
+| `players` | Always 8 `Item`s (see below) |
+| `Objectives` | `Primary` / `Secondary` → `Common` / per player → `Objectives` → `Item` (`Kind` = `OBJECTIVE_KIND_DEFEAT_ALL`, `OBJECTIVE_KIND_MANUAL`, …, `Name`, `Award`, triggers). A secondary objective named `H5X` (`Secondary/Common/Objectives/Item`, in every H5X map except Duel and Survival) is the hook of `advmap-manager.lua` (replaced by `GAME_START_TRIGGER`, `LuaGameStartTrigger_init`) |
+| `ScenarioInformation` | 8 `OBJECTIVE_KIND_SCENARIO_INFO` items (`scenario-caption.N.txt`) |
+| `MapScript` | `MapScript.xdb#xpointer(/Script)`. Maps without one still run `advmap-startup.lua` thanks to `RemoveMapScriptCheck_init` |
+| `NewDayTrigger`, `WarFogEnterTrigger` | `{Action/FunctionName}` Lua callbacks (empty in Stadium) |
+| `spellIDs`, `artifactIDs`, `AvailableHeroes`, `disabledArtifactSets`, `isUntransferable` | Map-wide allowed lists (Stadium: 70 spells) |
+| `HeroMaxLevel` (50), `moons`, `RandomMoons`, `MoonCalendarModifications`, `MapRumours`, `GroundAmbientLights`, `Weather`, `Music`, `sRMGProps` (random map generator props, `RMGmap` false), `ImportantArtifacts`, `RacesRandomGroups`, … | Settings |
+
+### Players
+
+`players/Item[i]` is `PLAYER_{i+1}`. Fields: `ActivePlayer`, `Team` (0 = no teams; map-tag `teams` says the same), `CanBeHumanPlayer` / `CanBeComputerPlayer`, `MainTown` (`#xpointer(id(item_<GUID>)/AdvMapTown)`, a reference to an object id of the same file), `HeroInTown`, `StartHero`, `Race` / `Colour` (`TOWN_NO_TYPE` / `PCOLOR_NEUTRAL` = chosen in the lobby), `DefaultBonus`, `TavernFilter`, `Add/RemoveHeroTrigger`.
+
+### Objects
+
+Every object starts with `Pos`, `Rot`, `Floor`, `Name` (script name for Lua, usually empty; `H5X_Duel` names its 80 towns and objects: `TOWN_1`, `TOWN_ACADEMY_1`, …), `CombatScript`, `pointLights`, `Shared` (href to the shared definition). Type-specific fields:
+
+| Type | Fields |
+|---|---|
+| `AdvMapStatic` | `IsRemovable`, `TerrainAligned`, `ScalePercent`. Decoration; 80 to 90% of all objects |
+| `AdvMapTown` | `PlayerID`, `Specialization` (href `/GameMechanics/TownSpecialization/<Faction>/…`, gives the faction of a `RandomTown`), `buildings` (`Type` `TB_*`, `InitialUpgrade` / `MaxUpgrade` `BLD_UPG_*`), `Editable` (name / biography refs), `armySlots`, `spellIDs` (allowed guild spells), `CaptureTrigger`, `HeroDeployTrigger`, `ShipTile` |
+| `AdvMapHero` | `PlayerID`, `Experience`, `armySlots` (`Creature`, `Count`), `artifactIDs`, `Editable` (`Offence`/`Defence`/`Spellpower`/`Knowledge`, `skills`, `perkIDs`, `spellIDs`, war machines), `PrimarySkillMastery`, `LossTrigger`. `Shared` = hero definition (empty for a placeholder) |
+| `AdvMapMonster` | `Custom` (true = `Amount`/`Amount2` are the fixed min / max count; false = count from difficulty, `Amount` 0), `AttackType`, `MoveType`, `DoesNotGrow`, `Mood` (`MONSTER_MOOD_*`), `Courage`, `Resources` / `ArtifactID` (reward), `AdditionalStacks` (`Creature`, `CustomAmount`, `Amount`, `Amount2`: extra stacks of the same guard), `AllowQuickCombat`, `RacesRandomGroupID` |
+| `AdvMapGarrison` | `PlayerID`, `armySlots`, `CollectableArmy`, `AllowQuickCombat`, `TownType` |
+| `AdvMapBuilding` | `PlayerID`, `CaptureTrigger`, `GroupID` (pairs teleports: the two `Monolith_Two_Way` of one group are linked), `showCameras`. Covers every visitable building (Learning Stone, Arena, Monolith, Black Market, Buoy, …) |
+| `AdvMapMine` / `AdvMapDwarvenWarren` | `PlayerID`, `CaptureTrigger`, `armySlots`, `CreatureSwapBlockedForAI` |
+| `AdvMapAbanMine` | `AvailableResources` (7 flags: wood, ore, mercury, crystal, sulfur, gem, gold) |
+| `AdvMapDwelling` | `PlayerID`, `RandomCreatures`, `creaturesEnabled`, `RndSource`, `LinkToPlayer`, `LinkToTown` (random dwellings `/MapObjects/Random/RandomDwellingN.xdb`) |
+| `AdvMapTreasure` | `IsCustom`, `Amount`, `MessageFileRef` (Chest, Campfire, resource piles) |
+| `AdvMapArtifact` | `armySlots` (guard), `spellID` (scrolls), `RandomShiftRadius`, `untransferable`. Random: `/MapObjects/Random/Random-Minor|Major…` |
+| `AdvMapSeerHut` | `Quest` (a full objective with `Award`) |
+| `AdvMapSphinx` | `Riddle`, `RandomRiddle` |
+| `AdvMapShrine` | `SpellID` (`SPELL_NONE` = random) |
+| `AdvMapSign` | `MessageFileRef` |
+| `AdvMapHillFort` | `CreaturesUpgradesFilter` |
+| `AdvMapShipyard` | `ShipTile` (relative) |
+| also seen | `AdvMapTent`, `AdvMapCartographer`, `AdvMapPrison`, `AdvMapStand` (8 Kingdoms, Duel) |
+
+### Footprints and passability
+
+The Shared definition (`AdvMap*Shared`) lists tile offsets relative to `Pos`, before rotation:
+
+- `blockedTiles`: impassable.
+- `activeTiles`: the visit tiles (the hero stops there to interact). Not walkable through.
+- `passableTiles`, `holeTiles`: rarely used.
+- `FlyPassable`, `WaterBased`, `TerrainAligned`, `Type` (`BUILDING_*`), `messagesFileRef`.
+
+Monsters have no blocked tile: their tile is the active one and they **guard the 8 neighbouring tiles**. A garrison blocks its own tile. Terrain blocks lowered tiles (height 0: water, lava flow, map rim) and the shore samples of grid `[10]`.
+
+## Terrain .bin
+
+Same encoding as the save files (`h5x-re-save-format.mdc`): `tag (1 byte)` + varint length + content, the varint being `byte >> 1` when bit 0 is 0, else `u32 >> 1`. `N` = map size, vertex grids are `(N+1) × (N+1)`, row = y, column = x.
+
+```
+[4] u32 4                       version
+[1] {
+  [1] {
+    [2] u32 N   [3] u32 N       size
+    [4] {                       texture layers, in paint order
+      [2] u32 count
+      [1] { [2] grid u8 weights   [3] { [3] tile href } }   × count
+    }
+    [5] grid f32 height         2.0 = ground level, 0 = lowered (water / lava / rim), 4.0 = raised
+    [7] grid u8                 height × 8 (16 = 2.0, 32 = 4.0)
+    [8] grid u8                 0/1, a few dozen vertices (unknown)
+    [10] grid u8 (2N+1)²        half-tile mask, non-zero on lowered areas and their shores (bit flags 34, 4, 42, 50, 38, 148, 255)
+    [13] { [1] u32 0  [2] u32 0 }
+    [14] u8 1
+    [15] grid u8                all 1 (unknown)
+    [16] { [1] u32 M  [2] u32 M  [3] { [2] u8 [3] u8 } × M² }   M = ceil((N+1)/3), unknown
+  }
+}
+[0] [2] [5] empty
+```
+
+A grid is `{ [1] u32 width, [2] u32 height, [3] raw bytes }`. Layer weights are 0…255 per vertex; the first layer is the base (255 everywhere), later layers are painted over it, so the visible texture is the last layer with a high weight. Same structure for `UndergroundTerrain.bin` and on all six maps.
+
+Passability mask used by `h5m.py`: tile walkable if not all four corner heights are 0, grid `[10]` at the tile centre (`[2y+1][2x+1]`) is 0, and no object blocks it. On Stadium this matters: the outer 3 tiles are lowered and marked in `[10]`; without that mask the rim becomes a road around every guard. The exact engine rule (cliffs between height levels, the meaning of the `[10]` bits) is not traced in the exe.
+
+## H5X_Stadium
+
+136 × 136, surface only, 3022 objects (2430 statics), 2 players (`PLAYER_1`, `PLAYER_2`, team 0, random race), objective `OBJECTIVE_KIND_DEFEAT_ALL`, `MapScript.lua` only prints a banner. Left / right mirror symmetric.
+
+| Area | Content |
+|---|---|
+| Home towns | `PLAYER_1` Stronghold town (Chadrak Kush spec.) at `(8,126)`, `PLAYER_2` Preserve (Eteramon) at `(125,126)`, both `RandomTown` with the faction from `Specialization`. Each sits in a closed pocket (region of ~75 tiles) |
+| Lanes (x 3…15 and 120…132) | A single corridor down to `y ≈ 12`, cut by guards placed on the axis (`x = 9` / `126`): two side-by-side stacks at the town exit `(8,118)` / `(10,118)`; a gallery `y 97…116` lined with weak stacks and side stacks on the walls; 66 Mummies + 6 Bone Dragons `(9,95)`; an orc army `(9,77)`; a room of 8 random L3 stacks (`y 56…75`); AntiMagic garrison 500 Blood Witches + 1 Red Dragon `(9,55)`; Griffins + Marksmen `(9,50)`; a room of 4 big mixed stacks; AntiMagic garrison 500 Horned Demons + 5 Balors `(9,37)`; three Sylvan stacks (Pixies, Sprites, Dryads + Treants) at `y = 32, 26, 20`; 47 Green Dragons `(9,12)` at the exit. Rewards on the lane: Learning Stones, chests, campfires, mines, Dwarven Warrens, abandoned mines |
+| Second towns | Neutral Necropolis towns (Putor spec.) at `(22,17)` and `(111,17)`, in the bottom corners, just past the last lane guard. The lane exit opens on the central area at the same time: nothing separates the second town from the centre |
+| Monolith shortcut | `Monolith_Two_Way` group 1 links `(15,121)` (home pocket) and `(29,11)` (next to the left second town); group 2 links `(120,120)` and `(105,11)` |
+| Central area (x 16…119) | One connected region with side corridors along the lanes (`x ≈ 31`, `x ≈ 104`) up to the top. Sub-areas: bottom centre orc fortress (`x 51…84`, `y 4…14`) behind Orcish garrisons `(50,9)` / `(85,9)` with Seer Hut, Tavern, Mercenary Camp, huge Hag / Witch / Wyvern / Paokai stacks; behind it two Orcish garrisons `(66,15)` / `(69,15)` (900 goblins ×2 …) and two Cyclops stacks guard an Orc dwelling `(67,18)`; Sphinxes at `(50,41)`, `(50,45)`, `(85,39)`, `(85,43)`; four Sylvan armies around `(60…75, 84…87)`; a lava ring at the centre with 999 Legendary Dragons `(68,68)`; two Dwarven boxes (`x 38…51` / `84…97`, `y 103…117`) behind Dwarven garrisons `(37,110)` / `(98,110)` with 6 Dwarven Warrens, a Dwarven Treasury and Dragon Flame Tongue; a lake at the top centre (Shipyard `(68,131)`, Kraken 150, buoys) with two Inferno armies `(67,126)` / `(69,126)`. Hill Forts at `(30,6)` and `(105,6)` |
+| Test leftover | An `AdvMapHero` of `PLAYER_1` at `(68,68)`, empty `Shared`, 100 Red / Magma / Horror Dragons, 500 Hellmares, 1800 Marble Gargoyles, 500 Zealots: same tile as the Legendary Dragon stack |
+
+## Other maps
+
+| Map | Size | Floors | Players | Objects | Notes |
+|---|---|---|---|---|---|
+| `00-test` | 176 | 1 | 2 (teams 1 / 2) | 60 | 2 heroes, test map, `map.lua` + `H5X_MapScript.xdb` |
+| `H5X_8Kindoms` | 216 | 2 | 8 | 4044 (1739 underground) | Tents, Cartographers, a Prison, `mechanics.(Script).lua` |
+| `H5X_Challengers` | 216 | 1 | 4 | 2751 | `H5X_FinalRush.lua` |
+| `H5X_Duel` | 216 | 2 | 2 | 7653 | 18 towns, named objects for Lua (`TOWN_*`) |
+| `H5X_Survival` | 216 | 1 | 6 (mixed teams) | 4802 | `enabler.(Script).xdb` |
+
+## Tool
+
+```bash
+python tools/h5m/h5m.py summary  G:/__H5__/H5Xdev/Maps/H5X_Stadium.h5m
+python tools/h5m/h5m.py terrain  G:/__H5__/H5Xdev/Maps/H5X_Stadium.h5m
+python tools/h5m/h5m.py regions  G:/__H5__/H5Xdev/Maps/H5X_Stadium.h5m out/stadium 0
+```
+
+`regions` writes `<out>.png` (6 px per tile, y up; dark = blocked, blue = water / rim, red = monster guard zones, orange = garrisons, white = visit tiles, other colours = regions) and `<out>.txt` (each region with its bounding box and the objects visited from it, then every monster / garrison with the regions it separates). Regions are 8-connected walkable tiles outside guard zones. Needs `numpy` and `Pillow`.

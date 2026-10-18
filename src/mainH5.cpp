@@ -13,6 +13,8 @@ void init_patches(pugi::xml_document& doc) {
     LevelCurve_init(doc);                  // OK
     HeroScreenUI_init(doc);                // OK
     BattlefieldSize_init(doc);             // OK
+    RemoveMapScriptCheck_init(doc);        // OK
+    NetworkInterval_init(doc);             // OK
     
     ArcaneRenewalFix_init(doc);            // OK
     EmpoweredArmageddon_init(doc);         // OK
@@ -31,7 +33,7 @@ void init_patches(pugi::xml_document& doc) {
     MasterOfFireFix_init(doc);             // OK
     EncourageFix_init(doc);                // OK
     DemonRageSkillBuffFix_init(doc);       // OK
-    PerkCreatureGiftFix_init(doc);         // 
+    PerkCreatureGiftFix_init(doc);         // OK
     EmptyWindowRectFix_init(doc);          // OK
     DocWindowSaveFix_init(doc);            // OK
 
@@ -126,7 +128,7 @@ void init_patches(pugi::xml_document& doc) {
     SpearOfTheFrostLord_init(doc);         // OK
     PhoenixFeatherCape_init(doc);          // OK
 	StartingRage_init(doc);                // OK
-    StartingEffects_init(doc);             // 
+    StartingEffects_init(doc);             // OK
 	StaffOfTheSaint_init(doc);             // OK
 	BarbarianCape_init(doc);               // OK
     RangersArmor_init(doc);                // OK
@@ -154,14 +156,13 @@ void init_patches(pugi::xml_document& doc) {
     GiveHeroSkill_init(doc);               // OK
     HallOfIntrigue_init(doc);              // OK
     MarketExchangeRates_init(doc);         // OK
+    CombatCamera_init(doc);                // OK
+
     LuaChangeAtb_init(doc);                // OK
-    LuaUnitAttack_init(doc);               // 
-    LuaGameStartTrigger_init(doc);         // 
-    //DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics
-    RemoveMapScriptCheck_init(doc);        // 
-    NetworkInterval_init(doc);             // 
-    CombatCamera_init(doc);                // 
-    
+    LuaUnitAttack_init(doc);               // OK
+    LuaGameStartTrigger_init(doc);         // OK
+
+    //DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics    
 }
 
 int main() {

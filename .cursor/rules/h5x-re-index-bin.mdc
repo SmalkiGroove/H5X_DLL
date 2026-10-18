@@ -1,0 +1,112 @@
+---
+description: DB object index (index.bin) — binary layout, type IDs from types.xml, which objects are listed, how the exe loads and merges it, updating it with the mod's content
+globs: tools/h5index/**
+alwaysApply: false
+---
+
+# DB object index (index.bin)
+
+Verified on the three copies in the game paks and on the mod's `G:\__H5__\heroes-expansion\game_data\core\index.bin` (October 2026), and in Ghidra on H5X.exe. Tool: `tools/h5index/h5index.py` (end of this file).
+
+## What it is
+
+A list of **every DB object of the game data, grouped by class type**: for each `TypeID`, the hrefs of all XDB objects of that type. The engine asks it for "all objects of type X".
+
+**The map editor's object palette is the `AdvMapObjectLink` list**: every indexed link shows up as a placeable object, whatever it points to. The mod's links were picked by hand (commits "add artifact links in index.bin", "creatures links for editor", "editor heroes": 207 links). `game_data/artifacts/MapObjects/_(AdvMapObjectLink)/Artifacts/` also holds 10 link files that must stay out of the index: `Artificier`, `BloodCrystal`, `Freida`, `Graal` (a second Tear of Asha), `PotionOfExperience`, `PotionOfMana`, `PotionOfStamina`, `Princess_Aelina`, `ShantiriEast`, `XXX`. Adding them (2026-10-18) put Shantiri East, Blood Crystal, the potions and a duplicate Tear of Asha in the editor. The palette shows a link under its file name, whether or not its target exists; a link's target does not need to be indexed (most mod artifact map objects were not, and their links showed).
+
+**Editor categories** are defined in `H5Xdev/editor/MapFilters.xml`: each filter lists folder prefixes of `AdvMapObjectLink` files (`MapObjects\_(AdvMapObjectLink)\GenericHeroes\` = ". Heroes (Generic)", `…\Heroes\` = ". Heroes (Scenario)", `…\Monsters\`, `…\Artifacts\`, `…\Towns\`, …). A link with `<Link href>` places that object, a link with `<RndGroup href>` places a random member of an `AdvMapSharedGroup`. `<IconFile>` is relative to `H5Xdev/Complete/` (mod source: `heroes-expansion/editor/Complete/`, deployed by `sync-editor.ps1`). `<HideInEditor>true` hides a listed link: the mod hides vanilla links by overriding the file at the same path. The mod's copy of `MapFilters.xml` is `heroes-expansion/editor/editor/MapFilters.xml` (deployed to `H5Xdev/editor/` by `sync-editor.ps1`); it renames ". Heroes (Generic)" to ". Heroes by class" and ". Heroes (Scenario)" to ". All heroes".
+
+**Icon cache**: the editor renders each link's icon once and keeps it in `H5Xdev/editor/IconCache/AdvMapObjectLink/<link path without .xdb>` (binary saver format). A link whose `IconFile` changes keeps its old icon until that cache file is deleted; new paths are cached on first display. **Delete single entries or folders, never the whole cache**: the vanilla icons are not rebuilt the same way (deleting it on 2026-10-18 removed the icons of every object). `H5Xprod/editor/IconCache` holds a full copy (1,692 entries); the 2026-10-18 restore copied it back, except the links whose `IconFile` exists in `heroes-expansion/editor/Complete` (mod heroes, artifacts and creatures), which are rebuilt from the repo icons.
+
+**Hero palette** (2026-10-18, `heroes-expansion/tools/generators/editor-heroes.py`; after a run, delete the `GenericHeroes` and `Heroes` folders of the icon cache): "Heroes by class" holds the 16 H5X classes. Links are `GenericHeroes/<Class>.xdb` (named after the English class name, reusing the vanilla files `Knight`, `Ranger`, `Runemage`, `Wizard`, `Warlock`, `Barbarian`, `Demonlord`), with `RndGroup` = `/MapObjects/_(AdvMapSharedGroup)/Heroes/Classes/<Class>.xdb` (6 heroes each) and the class icons of `Icons/Generated/…/Classes/`. "All heroes" holds one link per hero of `_(AdvMapSharedGroup)/Heroes/Any.xdb` (96), `Heroes/<Faction>/<English name>.(AdvMapObjectLink).xdb`, with a 128×128 icon made from the hero's `FaceTexture`. Battle Commander heroes (Tazar, Darkstorm) and the Vampire Princess (Tamika) join the might class of their faction. Every other link of both folders is overridden with `HideInEditor` true: vanilla `Necromancer`, `EntryPoint`, the campaign heroes, and the older mod links (`Heaven/`, `ReadHeaven/`, `Neutral/`, …).
+
+**Artifact palette** (`heroes-expansion/tools/generators/editor-artifacts.py`, helpers shared with `editor-heroes.py` in `editor_links.py`): one link `Artifacts/<Name>.(AdvMapObjectLink).xdb` per entry of `Artifacts.xdb` that has an `ArtifactShared` other than the `XXX` placeholder, is not in the `INVENTORY` slot (except the grail, kept in the vanilla `Graal.xdb` path) and is not a `POTION_*`. `<Name>` is the text folder (`/Text/Game/Artifacts/<Name>/`), the icon (64×64) comes from the entry's `Icon`. The `Random-*.xdb` links stay as they are; every other link of the folder is hidden. On 2026-10-18 it gives the 192 artifacts already in the editor plus Dawn Gleam (added 2026-09-19 without a link).
+
+Links with a missing target (2026-10-18): `PhoenixFeather` (→ `PhoenixFeather.(AdvMapArtifactShared).xdb`, removed from the index: it showed a Phoenix Feather that should not be placeable) and `ShacklesOfTheLastMan` (→ `ShantiriNorth.(AdvMapArtifactShared).xdb`, still indexed). `Kujins_Bull` and `Gudkov` are vanilla links with missing targets. The Phoenix Feather Cape texts now belong to `ARTIFACT_DWARVEN_SMITHY_HUMMER` (`PhoenixFeatherCape.(AdvMapArtifactShared).xdb`, link `PhoenixFeatherCape`), and `PHOENIX_FEATHER_CAPE` holds the Solar Ring.
+
+| Copy | Size | Types | Hrefs |
+|---|---|---|---|
+| `data.pak` (H5 1.x, 2007) | 29.9 MB | 240 | 289,162 |
+| `a2p1-data.pak` (ToE, 2008) | 32.1 MB | 244 | 312,277 |
+| `h5x-core.pak` = `heroes-expansion/game_data/core/index.bin` | 32.2 MB | 244 | 312,484 = ToE + 207 `AdvMapObjectLink` (artifacts, creatures, heroes) |
+
+The ToE copy lists objects that were never shipped (`/RMGTemp/CurrentMap/…`, `/Test/…`, about 24k hrefs): it was built on a developer machine. Harmless.
+
+## Binary layout
+
+Same encoding as the save files (`h5x-re-save-format.mdc`): `tag (1 byte)` + varint length + content, the varint being one byte `n << 1` when `n < 0x80`, else the u32 `(n << 1) | 1`. A file is one saved object:
+
+```
+[4] u32 4                                  version
+[1] { [2] u32 root_id }                    root object id (any value; 0x1025FED0 in ToE, 0x07DD6EA0 in the mod)
+[0] 9 bytes: u32 0x3027D440, u32 root_id, u8 1     object table: one record [type][id][live]
+[2] {                                      object chunks
+  [1] {
+    [0] u32 root_id
+    [1] {                                  the index object
+      [2] {                                hash_map<u32 TypeID, vector<CDBPtr>>
+        [3] u32 count (244)   [4] u32 buckets (389)
+        [1] u32 TypeID        × count      keys, in bucket order: key % 389 from high to low
+        [2] {                 × count      values, same order
+          [2] u32 n
+          [1] { [2] href }    × n          CDBPtr saved as its href (latin-1 string)
+        }
+      }
+    }
+  }
+}
+[5] empty
+```
+
+`h5index.py` rewrites the three copies byte for byte from their parsed content.
+
+## Keys: TypeID
+
+The key is the class `TypeID` of `types.xml` (`game_data/core/types.xml`, also in `data.pak` / `a2p1-data.pak`): `Base/SharedClasses/Item` with `Type` = `TYPE_TYPE_CLASS` gives `TypeName` and `TypeID` (286 classes in the mod's file). `TypeID` is written as a **signed** decimal: the 31 IDs ≥ `0x80000000` (`Camera` `0xB4513180`, `CreatureVisual`, `SpellVisual`, `ArenaBuilding`, `RMGSimpleCustomArmyTemplate`, …) appear negative. The ToE `types.xml` lacks some of the classes its index uses; their IDs can be read back from the index (all hrefs of one key end with the same type name).
+
+Examples: `AdvMapStatic` `0x160BD480` (205,030 hrefs), `AdvMapObjectLink` `0x161312C0`, `AdvMapStaticShared` `0x16130CC0`, `AdvMapMonsterShared`, `AdvMapArtifactShared`, `AdvMapHeroShared`, `Texture` `0x12069B8E`, `WindowSimple` `0x1107C380`. A DB type id is not the runtime class id of the save files (`CWindowSimple` is `0x110772C1` there).
+
+## Which objects are listed
+
+Checked by scanning every `.xdb` of `data.pak` + `a2p1-data.pak` and comparing with the ToE index (all hrefs match except the unshipped files above and 123 shipped objects missing from the index, mostly `UI/CommonBoxes` windows and campaign map objects):
+
+- the **root element** of every XDB file: `/<path>#xpointer(/<Root>)`, e.g. `/MapObjects/Gold_Mine.(AdvMapMineShared).xdb#xpointer(/AdvMapMineShared)`;
+- every **inline object with an id**: an element carrying `id="…"` whose first child is a class (`<Item href="#n:inline(AdvMapStatic)" id="item_X"><AdvMapStatic>`): `/<path>#xpointer(id(item_X)/AdvMapStatic)`. Maps, dialog scenes, arenas and effects contribute most of the 312k hrefs this way.
+
+Only class types are listed (structs, enums and tables are not). An object is listed once, under its own type only (not its base classes). `<path>` is the path inside the pak (= inside a `heroes-expansion/game_data/<pak>/` folder), with a leading `/`. Lookups in `h5index.py` ignore case.
+
+## In the exe
+
+| Address | Role |
+|---|---|
+| `0x00BA0690` | Returns `"index.bin"` |
+| `0x00499F90` | Single index ctor (`this`, VFS, load flag), vtable `0x00E1430C`, 0x10 bytes. If the flag is set, reads `index.bin` from that VFS and loads the object (`FUN_0049AE10`); if nothing was loaded, creates an empty map object (`FUN_0049B370`, 0x24 bytes) at `+0xC` |
+| `0x004998C0` | Writes `index.bin` (saver vtable `+0xC` with the map object) |
+| `0x00499B80` | Re-reads `index.bin` (vtable slot 10) |
+| `0x00499850` / `0x00499860` | Vtable `+0x1C` / `+0x20`: forward to the map object at `+0xC` (add object / query a type) |
+| `0x0049A0F0` | Composite index ctor, vtable `0x00E14344`: one single index per child VFS |
+| `0x0049A210` | Factory: 1 VFS → single index, several → composite |
+| `0x00C6CD40` | DB setup: if the data VFS (`+0x70`) is a `NVFS::CCombinerVFS`, takes its children, builds the index (`+0x78`) |
+| `0x00499C60` | Composite `+0x20` (query a type): asks each child **from the last to the first** and merges the results, dropping hrefs already returned. Writes (`+0x1C`, `+0x28`) go to the last child |
+
+So every file system combined into the data VFS can carry its own `index.bin`, and the results are merged. The mod ships a full copy (ToE + its additions) in `h5x-core.pak`; duplicates with the ToE copy are dropped at query time. A pak holding only the mod's objects (`--delta`) should work the same if each pak is its own child VFS, but that is **not tested in game**: keep shipping the full copy.
+
+## Mod update of 2026-10-18
+
+`h5index.py update` added 35,795 mod objects to `game_data/core/index.bin` (now 348,279 hrefs, 35.9 MB, deployed in `h5x-core.pak`): 33,133 encyclopedia windows (`UI/Doc`, `www*` paks: `WindowTextView`, `WindowMSButton`, `WindowSimple`, `UISSendUIMessage`, …), then `Creature` 890, `Texture` 555, `Model` 211, `AdvMapArtifactShared` 193, `Material` 172, `BasicSkelAnim` 151, `Character` 46, `Effect` 35, `AdvMapHeroShared` 30, `CreatureVisual` 28, `TownBuildingSharedStats` 22, `AdvMapMonsterShared` 13, `Spell` 3, … The 10 unlisted `AdvMapObjectLink` files were added, then removed again, and the committed `PhoenixFeather` link was removed (see above). The hero palette then added 98 links and the 16 class groups (348,392 hrefs).
+
+## Tool
+
+```bash
+python tools/h5index/h5index.py stats   G:/__H5__/heroes-expansion/game_data/core/index.bin
+python tools/h5index/h5index.py list    G:/__H5__/heroes-expansion/game_data/core/index.bin AdvMapObjectLink
+python tools/h5index/h5index.py missing G:/__H5__/heroes-expansion/game_data/core/index.bin G:/__H5__/heroes-expansion/game_data
+python tools/h5index/h5index.py update  G:/__H5__/heroes-expansion/game_data/core/index.bin G:/__H5__/heroes-expansion/game_data
+python tools/h5index/h5index.py diff    old.bin new.bin
+MSYS_NO_PATHCONV=1 python tools/h5index/h5index.py remove <index.bin> "/MapObjects/…#xpointer(/AdvMapObjectLink)" …
+```
+
+- `update` keeps every existing entry in place and appends the missing hrefs per type (sorted), then overwrites the index unless `--out` is given. It **skips `AdvMapObjectLink`** (lists them as "not added"): `--links-under PREFIX` (repeatable) adds the missing links of one folder, e.g. `--links-under "/MapObjects/_(AdvMapObjectLink)/Heroes/"` after `editor-heroes.py`; `--links` adds all of them, only when every listed link is wanted.
+- `remove` drops the given hrefs (case-insensitive). From Git Bash, set `MSYS_NO_PATHCONV=1`, otherwise arguments starting with `/` are turned into Windows paths and match nothing. `--base toe` rebuilds from the ToE copy of `a2p1-data.pak` instead (drops entries added by hand). `--delta` writes the mod's objects only.
+- Type names: `types.xml` next to the index, else `<game_data>/core/types.xml`, completed from the index. Tags without a class TypeID are reported and skipped.
+- A full scan of `game_data` (37k XDB files) and a 32 MB load take a few minutes. Then `sync-core.ps1` packs `h5x-core.pak`.

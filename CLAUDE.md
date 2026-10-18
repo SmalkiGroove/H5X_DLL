@@ -3,6 +3,8 @@
 Runtime-patching DLL for **Heroes of Might and Magic V: Tribes of the East**, H5X mod build (`H5X.exe`, 32-bit, ToE 3.1 based).
 Fork of [dredknight/H5_DLL](https://github.com/dredknight/H5_DLL). `CURSOR.md` is the equivalent guide for Cursor; this file is the Claude Code one.
 
+The mod's content (game data, Lua scripts, UI and encyclopedia, texts) is managed in `G:\__H5__\heroes-expansion`. Refer to its `CLAUDE.md` when needed.
+
 Binary / address conventions (always applies):
 @.cursor/rules/h5x-re-binary.mdc
 
@@ -47,6 +49,8 @@ Binary / address conventions (always applies):
 | `.cursor/hooks/sync-*.py` | Regenerate rule files from `src/structs/*.h` |
 | `h5x-ghidra-mcp/` | Ghidra project `H5X.rep` + MCP bridge (`bridge_mcp_ghidra.py` → `http://127.0.0.1:8080/`) |
 | `Dependencies/` | libzippp/zlib/bz2 libs (linked, only used by dormant `getXmlTree`) |
+| `tools/h5m/h5m.py` | Adventure map reader (`summary`, `terrain`, `regions` → region PNG + gate list), see `h5x-map-format.mdc` |
+| `tools/h5index/h5index.py` | DB object index (`index.bin`) reader / updater (`stats`, `list`, `diff`, `missing`, `update`), see `h5x-re-index-bin.mdc` |
 
 ## Patch module anatomy
 
@@ -121,6 +125,8 @@ Before hooking an address, grep `src/patches` for it (and nearby addresses) — 
   - `.cursor/rules/h5x-re-spell-casting.mdc` — `func_CastSpell` @ `0x0097D7B0`: spell-ID dispatch table, named callees, event sizes, post-cast ATB.
   - `.cursor/rules/h5x-re-artifact-sets.mdc` — hero set piece counts (`IHero` +0x328) and class (+0x258), set ID list with exe call sites, the 10 → 40 set expansion, Haven set hooks.
   - `.cursor/rules/h5x-re-save-format.mdc` — `.sav` layout and saver encoding (varints, tagged fields, object chunks, object table), save/load entry points, single-player interface stack roots, window and screen fields as saved (`DocWindowSaveFix`).
+  - `.cursor/rules/h5x-map-format.mdc` — `.h5m` maps: archive layout, `map.xdb` objects / players / footprints, `GroundTerrain.bin` encoding, coordinates (y up, counter-clockwise rotation), H5X_Stadium layout.
+  - `.cursor/rules/h5x-re-index-bin.mdc` — `index.bin` (DB objects by class `TypeID`): layout, type IDs from `types.xml`, listing rule, exe loader and per-VFS merge, updating it with the mod's content.
 - Struct headers are the source of truth for vtables; after editing `CombatUnit.h`, `Hero.h` or `Creature.h`, regenerate the rules (Cursor does this via `afterFileEdit`; Claude Code does not):
   ```bash
   python .cursor/hooks/sync-combat-unit-rule.py

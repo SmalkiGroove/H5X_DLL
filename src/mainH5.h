@@ -55,6 +55,8 @@ void HeroMaxSkills_init(pugi::xml_document& doc);
 void LevelCurve_init(pugi::xml_document& doc);
 void HeroScreenUI_init(pugi::xml_document& doc);
 void BattlefieldSize_init(pugi::xml_document& doc);
+void RemoveMapScriptCheck_init(pugi::xml_document& doc);
+void NetworkInterval_init(pugi::xml_document& doc);
 
 void ArcaneRenewalFix_init(pugi::xml_document& doc);
 void EmpoweredArmageddon_init(pugi::xml_document& doc);
@@ -197,10 +199,10 @@ void LearnWarcries_init(pugi::xml_document& doc);
 void GiveHeroSkill_init(pugi::xml_document& doc);
 void HallOfIntrigue_init(pugi::xml_document& doc);
 void MarketExchangeRates_init(pugi::xml_document& doc);
+void CombatCamera_init(pugi::xml_document& doc);
+
 void LuaChangeAtb_init(pugi::xml_document& doc);
 void LuaUnitAttack_init(pugi::xml_document& doc);
 void LuaGameStartTrigger_init(pugi::xml_document& doc);
+
 void DiagnosticsMP_init(pugi::xml_document& doc);
-void RemoveMapScriptCheck_init(pugi::xml_document& doc);
-void NetworkInterval_init(pugi::xml_document& doc);
-void CombatCamera_init(pugi::xml_document& doc);
