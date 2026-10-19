@@ -4,7 +4,6 @@
 
 // ADD INITIATIVE FROM ADDITIONAL ARTIFACTS
 // (131) Plunderer Shoes : +1 creatures init
-// (57)  Boots of Swiftness : +2 creatures init
 // (157) Harpy Boots : +1 creatures init
 // Dungeon set (16), 6 pieces : +2 creatures init (ArtfsetDungeon.cpp)
 // (22)  Celestial Justicar Sword : +15% creature init
@@ -40,7 +39,6 @@ static float __fastcall creature_init_flat_bonus(IHero* hero) {
     int* inventory = hero->inventory();
     float bonus = artfset_dungeon_initiative(hero);
     if (count_equipped_artifact(inventory, ARTIFACT_PLUNDERER_SHOES))   bonus += 1.0f;
-    if (count_equipped_artifact(inventory, ARTIFACT_BOOTS_OF_SWIFTNESS)) bonus += 2.0f;
     if (count_equipped_artifact(inventory, ARTIFACT_HARPY_BOOTS))       bonus += 1.0f;
     return bonus;
 }

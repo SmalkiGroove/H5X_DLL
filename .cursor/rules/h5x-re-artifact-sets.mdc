@@ -88,6 +88,8 @@ Before this, only the getter's bound was raised (`0x00B5AD7A`). Counts for IDs >
 
 Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (good morale) and `+0x1D0` (luck); see `h5x-re-combat-unit.mdc`. Supernatural Luck (creature luck wrapper `0x008A3EF0`, own hero skill `0x7C` checked at `0x008A3F98`) is the vanilla model for "always lucky"; the Sylvan set now owns that check (see below).
 
+The good luck multiplier itself comes from `func_GetGoodLuckMultiplier` (`0x00A6A680`, `this` with the vbptr at `this+4`): DefaultStats `+0xACC`, or `+0x6A8` when the hero has skill `0x74`. Its only callers are the hero luck roll (`0x00A6B8B1`) and the creature forced good luck path (`0x008A4030`). `GoldenGoose.cpp` hooks its entry (6 bytes) and adds +0.33 when the unit's hero has artifact 161 (Golden Goose).
+
 ## Sylvan set (12) — `ArtfsetPreserve.cpp`
 
 "Sylvan hero" = `HERO_CLASS_PRESERVE_MIGHT` (9) / `HERO_CLASS_PRESERVE_MAGIC` (10).
@@ -97,7 +99,7 @@ Morale and luck rolls are `CombatUnit` slots `+0x1C8` (bad morale), `+0x1CC` (go
 | 4 | Hero's effective spellpower ×2 for nature spells (`get_spell_school` = `SPELL_SCHOOL_NATURAL`, 3) | `artfset_sylvan_spellpower_doubled`, applied by `ModEffectiveSpellpower.cpp` at `0x00BC05A2` (5), end of the CombatHero spellpower-for-spell function: `ebx` = final spellpower before the `>= 1` clamp, `esi` = hero CombatUnit subobject, `edi` = spell ref (0 without spell) |
 | 4 | Hero learns the nature spells of tiers 1–3 for good (Wasp Swarm, Land Mine, Arcane Crystal, Forgetfulness, Regeneration, Summon Elementals; `spells.lua` lists) | `artfset_sylvan_teach_spells`, equip hook in `ArtfsetExpand.cpp` (`0x00B5A4AA`) |
 | 4 + Sylvan class | Sylvan creatures (`get_creature_town` = 4) deal +0.2 damage multiplier to the hero's favored enemies | `PATCH_CALL 0x00A5AE0C` → wrapper calling `func_ComputeFavoredEnemyMultiplier` then adding the bonus |
-| 6 | Creatures always roll good luck | `0x008A3F98` (24) in the creature luck roll `0x008A3EF0`: replaces the own hero skill `0x7C` (Supernatural Luck) check; non-zero → `edi = 1` at `0x008A3FB2` (forced good luck), enemy skill `0xA7` still cancels it. Supersedes the removed `GoldenGoose.cpp` (artifact 161 had this effect) |
+| 6 | Creatures always roll good luck | `0x008A3F98` (24) in the creature luck roll `0x008A3EF0`: replaces the own hero skill `0x7C` (Supernatural Luck) check; non-zero → `edi = 1` at `0x008A3FB2` (forced good luck), enemy skill `0xA7` still cancels it. Supersedes the old `GoldenGoose.cpp` effect (artifact 161 used to force good luck; it now raises the good luck multiplier) |
 | 6 + Sylvan class | Spell damage taken × clamp(1 − luck × DefaultStats `+0x704`, 0, 1) for luck > 0 | `0x0097B055` (17) replaces the skill `0xB3` check; `PATCH_WRTE 0x0097B072` makes it per luck point |
 
 ### Sites used by the Sylvan set

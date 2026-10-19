@@ -119,6 +119,8 @@ void init_patches(pugi::xml_document& doc) {
     ArtfsetDwarven_init(doc);              // OK
     ArtfsetAcademy_init(doc);              // 
     AnkhOfTheSaint_init(doc);              // OK
+    GoldenGoose_init(doc);                 //
+    TarotDeck_init(doc);                   //
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
     AllSeeingCrownTweak_init(doc);         // OK

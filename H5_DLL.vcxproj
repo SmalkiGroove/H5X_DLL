@@ -297,6 +297,7 @@
     <ClCompile Include="src/patches/FirstAidTent.cpp" />
     <ClCompile Include="src/patches/Fortunate.cpp" />
     <ClCompile Include="src/patches/Frenzy.cpp" />
+    <ClCompile Include="src/patches/GoldenGoose.cpp" />
     <ClCompile Include="src/patches/ArcaneRenewalFix.cpp" />
     <ClCompile Include="src/patches/EmpoweredArmageddonFixes.cpp" />
     <ClCompile Include="src/patches/EnlightenmentForBarbsFix.cpp" />
@@ -344,6 +345,7 @@
     <ClCompile Include="src/patches/SnareFix.cpp" />
     <ClCompile Include="src/patches/ModSpellImmune.cpp" />
     <ClCompile Include="src/patches/StackSplit1.cpp" />
+    <ClCompile Include="src/patches/TarotDeck.cpp" />
     <ClCompile Include="src/patches/TowerDamage.cpp" />
     <ClCompile Include="src/patches/TownBuildingTweaks.cpp" />
     <ClCompile Include="src/patches/MarketExchangeRates.cpp" />
