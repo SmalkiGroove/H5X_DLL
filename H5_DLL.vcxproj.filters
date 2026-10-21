@@ -251,9 +251,6 @@
     <ClCompile Include="src/types/Functions.cpp">
       <Filter>Source Files\Types</Filter>
     </ClCompile>
-    <ClCompile Include="src/patches/HeroSpecWorldBreaker.cpp">
-      <Filter>Source Files\patches\Heroes</Filter>
-    </ClCompile>
     <ClCompile Include="src/patches/HeroSpecCovenMistress.cpp">
       <Filter>Source Files\patches\Heroes</Filter>
     </ClCompile>
@@ -459,6 +456,21 @@
       <Filter>Source Files\patches\Combat</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\BloodyClawNecklace.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\MercenaryBand.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\NoRetreat.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\NagaCommandersHelmet.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\ElrathsDivineShield.cpp">
+      <Filter>Source Files\patches\Artefacts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\DragonFlameTongue.cpp">
       <Filter>Source Files\patches\Artefacts</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\SpearOfTheFrostLord.cpp">

@@ -206,6 +206,11 @@
     <ClCompile Include="src\patches\PirateSmasher.cpp" />
     <ClCompile Include="src\patches\BattleDive.cpp" />
     <ClCompile Include="src\patches\BloodyClawNecklace.cpp" />
+    <ClCompile Include="src\patches\MercenaryBand.cpp" />
+    <ClCompile Include="src\patches\NoRetreat.cpp" />
+    <ClCompile Include="src\patches\NagaCommandersHelmet.cpp" />
+    <ClCompile Include="src\patches\ElrathsDivineShield.cpp" />
+    <ClCompile Include="src\patches\DragonFlameTongue.cpp" />
     <ClCompile Include="src\patches\ChainHitCount.cpp" />
     <ClCompile Include="src\patches\ColdDeath.cpp" />
     <ClCompile Include="src\patches\ModStartingRage.cpp" />
@@ -316,7 +321,6 @@
     <ClCompile Include="src/patches/HeroSpecStormcaller.cpp" />
     <ClCompile Include="src/patches/HeroSpecCovenMistress.cpp" />
     <ClCompile Include="src/patches/HeroSpecTemptress.cpp" />
-    <ClCompile Include="src/patches/HeroSpecWorldBreaker.cpp" />
     <ClCompile Include="src/patches/ImbueBalistaAtbFix.cpp" />
     <ClCompile Include="src/patches/LearnWarcries.cpp" />
     <ClCompile Include="src/patches/LevelCurve.cpp" />

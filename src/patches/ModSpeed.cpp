@@ -2,9 +2,7 @@
 #include "Artfset.h"
 
 // ADD SPEED FROM ADDITIONAL ARTIFACTS
-// (57)  Boots of Swiftness : disabled (vanilla +1 Speed removed)
 // (157) Harpy Boots : +1 Speed
-// (199) Unused moved from Ring of Caution : -1 Speed
 // Orcs set (18), 6 pieces : +2 Speed (ArtfsetOrcs.cpp)
 // Bandit set (28), 5 pieces : +1 Speed (ArtfsetBandit.cpp)
 
@@ -21,7 +19,6 @@ void Speed_init(pugi::xml_document& doc) {
 static int __fastcall speed_artifact_bonus(IHero* hero) {
     int* inventory = hero->inventory();
     return count_equipped_artifact(inventory, ARTIFACT_HARPY_BOOTS)
-        - count_equipped_artifact(inventory, ARTIFACT_199)
         + artfset_orcs_speed(hero)
         + artfset_bandit_speed(hero);
 }

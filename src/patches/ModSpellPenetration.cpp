@@ -2,7 +2,10 @@
 #include "Artfset.h"
 
 // EDIT SPELL PENETRATION FROM ARTIFACTS
+// Damaging spells cast by the hero ignore part of the target's magic resistance (resisted part multiplied, like
+// Arcanism right after; the multipliers stack):
 // (119) Genji's Silksword : 20% spell penetration
+// (137) Chaos Shroud : 66% spell penetration
 
 // SPELLS NEVER RESISTED (no resistance roll, no spell proof / resistance multiplier; immunities still apply)
 // Inferno set (13), 4 pieces + Inferno hero : fire spells of the hero's side against enemy units (ArtfsetInferno.cpp)
@@ -14,9 +17,11 @@ void ResistanceBypassFork();
 int ResistanceBypass_fork = 0x0097D2FB;    // func_ComputeSpellDamageMultiplier, after the hit chance: cmp eax,64h / mov [esp+14h],eax
 int ResistanceBypass_return = 0x0097D302;
 
+// func_ComputeSpellDamageMultiplier, damaging spell of a hero caster (edi, +0x74 checked non-null):
+// has_skill(SKILL_ARCANISM) check replaced; resisted part (float) at [esp+0x10]
 int SpellPenetration_fork = 0x0097D43B;
-int SpellPenetration_return = 0x0097D464;
-int SpellPenetration_end = 0x0097D47F;
+int SpellPenetration_return = 0x0097D464;   // Arcanism: fild table[mastery] (eax = mastery)
+int SpellPenetration_end = 0x0097D47F;      // no Arcanism
 
 void SpellPenetration_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, SpellPenetration_fork, 41, SpellPenetrationFork, 0, 0, 0 });
@@ -62,28 +67,26 @@ __declspec(naked) void ResistanceBypassFork() {
     }
 }
 
+// caster = hero CombatUnit subobject; returns the multiplier of the resisted part
+static float __fastcall artifact_penetration_multiplier(int* caster) {
+    int* aux = ((GetPtr)(*(int***)caster)[0x74 / 4])(caster);       // get_hero_aux_subobject
+    IHero* hero = (IHero*)((GetPtr)(*(int***)aux)[0])(aux);
+    float multiplier = 1.0f;
+    if (hero->has_artifact(ARTIFACT_GENJIS_SILKSWORD)) multiplier *= 0.8f;
+    if (hero->has_artifact(ARTIFACT_CHAOS_SHROUD))     multiplier *= 0.34f;
+    return multiplier;
+}
+
 __declspec(naked) void SpellPenetrationFork() {
     __asm
     {
-        mov edx, dword ptr [edi]
         mov ecx, edi
-        call dword ptr [edx + 0x74]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x77
-        call[count_equipped_artifact]
-        test eax, eax
-        je SPELL_PENETRATION_RETURN
-        fld dword ptr ss: [esp + 0x10]
-        fmul dword ptr [constf_0_8]
+        call artifact_penetration_multiplier
+        fmul dword ptr ss: [esp + 0x10]
         fstp dword ptr ss: [esp + 0x10]
-        
-        SPELL_PENETRATION_RETURN:
+
+        // Arcanism mastery of the hero
+
         mov edx, dword ptr [edi]
         mov ecx, edi
         call dword ptr [edx + 0x74]

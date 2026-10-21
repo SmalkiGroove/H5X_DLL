@@ -7,7 +7,7 @@
 // (62) Cloak of Sylanna : from +50% to +33% to earth resistance
 // (84) Frozen Heart : from +25% to +33% to ice resistance
 // (85) Phoenix Feather Cape : from +25% to +33% to fire resistance
-// (124) Elrath Divine Shield : +40% to all element resistance
+// (124) Black Hole : +67% to all element resistance
 
 void ElemProofFork();
 void FireProofAbilityFork();
@@ -38,10 +38,10 @@ void ElemProof_init(pugi::xml_document& doc) {
 static void __fastcall elemental_resistance_bonuses(IHero* defender, ICombatUnit* target, int spell, int* notify_context, float* resisted) {
     if (!defender) return;
 
-    // Elrath's Divine Shield: +40% resistance to every element
-    if (defender->has_artifact(ARTIFACT_ELRATHS_DIVINE_SHIELD)) {
-        notify_artifact_buff(notify_context, 0, ARTIFACT_ELRATHS_DIVINE_SHIELD, 0, 0);
-        *resisted *= 0.6f;
+    // Black Hole: +60% resistance to every element
+    if (defender->has_artifact(ARTIFACT_BLACK_HOLE)) {
+        notify_artifact_buff(notify_context, 0, ARTIFACT_BLACK_HOLE, 0, 0);
+        *resisted *= 0.33f;
     }
 
     // Magic Filter: +80% resistance to one element per unit, derived from the unit pointer

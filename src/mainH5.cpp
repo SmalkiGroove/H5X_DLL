@@ -69,7 +69,6 @@ void init_patches(pugi::xml_document& doc) {
     Enlightened_init(doc);                 // OK
     LoneHunterTweak_init(doc);             // OK
     ExhausterTweak_init(doc);              // OK
-    WorldBreaker_init(doc);                // OK
 	SpecBlackKnights_init(doc);            // OK
 
     AtbTweaks_init(doc);                   // OK
@@ -127,6 +126,11 @@ void init_patches(pugi::xml_document& doc) {
 	ShieldOfCrystalIce_init(doc);          // OK
 	PendantOfMastery_init(doc);            // OK
 	BloodyClawNecklace_init(doc);          // OK
+    MercenaryBand_init(doc);               //
+    NoRetreat_init(doc);                   //
+    NagaCommandersHelmet_init(doc);        //
+    ElrathsDivineShield_init(doc);         //
+    DragonFlameTongue_init(doc);           //
     SpearOfTheFrostLord_init(doc);         // OK
     PhoenixFeatherCape_init(doc);          // OK
 	StartingRage_init(doc);                // OK
