@@ -147,6 +147,7 @@ void PariahTweak_init(pugi::xml_document& doc);
 void ArcaneBrillance_init(pugi::xml_document& doc);
 void ColdDeathFreeze_init(pugi::xml_document& doc);
 void LightningTouch_init(pugi::xml_document& doc);
+void ThrillOfCombat_init(pugi::xml_document& doc);
 void ElementsVirtuoso_init(pugi::xml_document& doc);
 void SecretsOfDestruct_init(pugi::xml_document& doc);
 void Unsettle_init(pugi::xml_document& doc);

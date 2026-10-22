@@ -4,7 +4,7 @@
 // (DefaultStats +0xAD4, 0.4 -> 0.6).
 // Patches func_CombatHero_ScheduleTimelineHook164 (0x00A6CF90, CombatUnit +0x164), the good morale effect: called by
 // the turn end (0x00A6B468) when the good morale roll (+0x1CC) succeeds, and by the creature version 0x008A0DB0.
-// Heroes never roll good morale (their +0x1CC returns false), so only creatures get there.
+// Heroes roll good morale only after attacking with the skill Thrill of Combat (ThrillOfCombat.cpp), which also gets the bonus.
 
 void ElrathsDivineShieldFork();
 

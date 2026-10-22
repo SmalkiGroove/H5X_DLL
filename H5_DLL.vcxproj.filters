@@ -443,6 +443,9 @@
     <ClCompile Include="src\patches\LightningTouch.cpp">
       <Filter>Source Files\patches\Skills</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\ThrillOfCombat.cpp">
+      <Filter>Source Files\patches\Skills</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\Magnetism.cpp">
       <Filter>Source Files\patches\Combat</Filter>
     </ClCompile>

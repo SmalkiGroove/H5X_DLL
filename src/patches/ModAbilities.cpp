@@ -14,6 +14,7 @@
 // (182) Ranger's Cape => Agility
 // (162) Dawn Gleam => Child of Light
 // (163) Ardent Smith => Flame Wave
+// (130) Captain's Hook => Wound
 // (146) Barbarian Cape => removes Cowardice
 // Artifact sets (Artfset.h) => Inferno: Liquid Flame Breath, Fire Shield; Necropolis: Undead, Regeneration;
 //   Dungeon: Immunity to Mind Control (dark elves, after Sandro's Cloak); Dwarven: Presence of Commander, Aura of Bravery;
@@ -72,6 +73,7 @@ static int __fastcall creature_ability_override(ICombatCreature* unit, int abili
     case ABILITY_AGILITY:                return artifact_ability(own_hero, ARTIFACT_RANGERS_CAPE);
     case ABILITY_BOND_OF_LIGHT:          return artifact_ability(own_hero, ARTIFACT_DAWN_GLEAM);           // Child of Light
     case ABILITY_FLAMEWAVE:              return artifact_ability(own_hero, ARTIFACT_ARDENT_SMITH);
+    case ABILITY_WOUND:                  return artifact_ability(own_hero, ARTIFACT_CAPTAINS_HOOK);
     case ABILITY_COWARDICE:
         return own_hero && own_hero->has_artifact(ARTIFACT_BARBARIAN_CAPE) ? ABILITY_REMOVED : ABILITY_VANILLA;
     case ABILITY_IMMUNITY_TO_MIND_CONTROL:

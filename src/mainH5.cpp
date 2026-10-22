@@ -104,6 +104,7 @@ void init_patches(pugi::xml_document& doc) {
     ArcaneBrillance_init(doc);             // OK
     ColdDeathFreeze_init(doc);             // OK
     LightningTouch_init(doc);              // OK
+    ThrillOfCombat_init(doc);              // OK
     ElementsVirtuoso_init(doc);            // OK
     SecretsOfDestruct_init(doc);           // OK
     Unsettle_init(doc);                    // OK
@@ -118,19 +119,19 @@ void init_patches(pugi::xml_document& doc) {
     ArtfsetDwarven_init(doc);              // OK
     ArtfsetAcademy_init(doc);              // 
     AnkhOfTheSaint_init(doc);              // OK
-    GoldenGoose_init(doc);                 //
-    TarotDeck_init(doc);                   //
+    GoldenGoose_init(doc);                 // OK
+    TarotDeck_init(doc);                   // OK
     DragonArtifactTweaks_init(doc);        // OK
     WandOfSpellTweak_init(doc);            //
     AllSeeingCrownTweak_init(doc);         // OK
 	ShieldOfCrystalIce_init(doc);          // OK
 	PendantOfMastery_init(doc);            // OK
 	BloodyClawNecklace_init(doc);          // OK
-    MercenaryBand_init(doc);               //
-    NoRetreat_init(doc);                   //
-    NagaCommandersHelmet_init(doc);        //
-    ElrathsDivineShield_init(doc);         //
-    DragonFlameTongue_init(doc);           //
+    MercenaryBand_init(doc);               // OK
+    NoRetreat_init(doc);                   // OK
+    NagaCommandersHelmet_init(doc);        // OK
+    ElrathsDivineShield_init(doc);         // OK
+    DragonFlameTongue_init(doc);           // OK
     SpearOfTheFrostLord_init(doc);         // OK
     PhoenixFeatherCape_init(doc);          // OK
 	StartingRage_init(doc);                // OK

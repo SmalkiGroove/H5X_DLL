@@ -251,6 +251,7 @@
     <ClCompile Include="src\patches\Spiteful.cpp" />
     <ClCompile Include="src\patches\StaffOfTheSaint.cpp" />
     <ClCompile Include="src\patches\LightningTouch.cpp" />
+    <ClCompile Include="src\patches\ThrillOfCombat.cpp" />
     <ClCompile Include="src\patches\WhipStrike.cpp" />
     <ClCompile Include="src\pugixml.cpp" />
     <ClInclude Include="src/mainH5.h" />
