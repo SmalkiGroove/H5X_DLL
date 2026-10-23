@@ -192,6 +192,7 @@ The good luck multiplier itself comes from `func_GetGoodLuckMultiplier` (`0x00A6
 | 4 | Offensive / Defensive Formation bonus, counted once more (×2 with the perk) | `artfset_dwarven_formation`, `OffensiveDefensiveFormation.cpp` |
 | 4 + Fortress class | Base creatures 92 / 94 / 96 / 98 / 100 / 102 and upgrades get Presence of Commander (116) and Aura of Bravery (155) | `artfset_dwarven_ability`, shared ability hook |
 | 6 | Hero's creatures take 50% less spell damage (when the spell has a target) | `artfset_dwarven_spell_proof`, `ModSpellProof.cpp` (`0x0097AFC0`) |
+| 6 | Hero's creatures get +5 maximum HP | `artfset_dwarven_health`, `ModHealth.cpp` (`0x004BC4F4`, flat HP bonus of the hero's artifacts) |
 | 6 + Fortress class | Runes (school `SPELL_SCHOOL_RUNIC`) are not consumed when cast; resources are still paid | own hooks `0x00A6A6D0`, `0x00A6A9B2` |
 
 ### Sites used by the Dwarven set

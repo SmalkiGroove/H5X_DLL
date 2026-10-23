@@ -51,6 +51,8 @@ void artfset_dungeon_teach_spells(IHero* hero);
 int artfset_dwarven_formation(IHero* hero);
 // Dwarven (17), 6 pieces: the hero's creatures take 50% less spell damage (ModSpellProof.cpp).
 bool artfset_dwarven_spell_proof(IHero* hero);
+// Dwarven (17), 6 pieces: flat maximum HP of the hero's creatures (ModHealth.cpp).
+int artfset_dwarven_health(IHero* hero);
 // Orcs (18), 6 pieces: speed (ModSpeed.cpp) and morale (ModMorale.cpp) of the hero's creatures.
 int artfset_orcs_speed(IHero* hero);
 int artfset_orcs_morale(IHero* hero);

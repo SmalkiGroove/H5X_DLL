@@ -10,7 +10,7 @@
 //   (OffensiveDefensiveFormation.cpp)
 // 4 Fortress: hero's creatures of base 92, 94, 96, 98, 100, 102 (and their upgrades) have Presence of Commander and
 //   Aura of Bravery (shared has_ability hook, ModAbilities.cpp)
-// 6: hero's creatures take 50% less spell damage (ModSpellProof.cpp)
+// 6: hero's creatures take 50% less spell damage (ModSpellProof.cpp) and get +5 maximum HP (ModHealth.cpp)
 // 6 Fortress: runes are not consumed when activated (hooks below); their resource cost is still paid
 
 void RuneChargeCastFork();
@@ -21,6 +21,7 @@ int RuneChargeActivate_fork = 0x00A6A9B2;    // FUN_00a6a970: consumes a charge 
 int RuneChargeActivate_return = 0x00A6A9D5;  // mov al,1
 
 static const int dwarven_commanders[] = { 92, 94, 96, 98, 100, 102 };  // base creatures
+static const int dwarven6_health = 5;
 
 typedef void(__thiscall* ConsumeSpellCharge)(int*, int);
 static ConsumeSpellCharge consume_spell_charge = (ConsumeSpellCharge)0x00989270;  // thiscall(charge list, spell ID)
@@ -45,6 +46,10 @@ int artfset_dwarven_formation(IHero* hero) {
 
 bool artfset_dwarven_spell_proof(IHero* hero) {
 	return dwarven_pieces(hero) >= 6;
+}
+
+int artfset_dwarven_health(IHero* hero) {
+	return dwarven_pieces(hero) >= 6 ? dwarven6_health : 0;
 }
 
 static bool is_dwarven_commander(ICombatUnit* unit) {
