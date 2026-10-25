@@ -210,6 +210,7 @@ void CombatCamera_init(pugi::xml_document& doc);
 
 void LuaChangeAtb_init(pugi::xml_document& doc);
 void LuaUnitAttack_init(pugi::xml_document& doc);
-void LuaGameStartTrigger_init(pugi::xml_document& doc);
+void LuaRandom_init(pugi::xml_document& doc);
+void LuaCombatFunctions_init(pugi::xml_document& doc);
 
 void DiagnosticsMP_init(pugi::xml_document& doc);

@@ -42,7 +42,7 @@ Root `AdvMapDesc`, children in this order (empty ones omitted):
 | `tiles` | Tile textures used by the terrain (`/MapObjects/_(AdvMapTile)/Grass/Road.xdb#…`); the order differs from the layer order in the `.bin` |
 | `GroundTerrainFileName`, `UndergroundTerrainFileName`, `NameFileRef`, `DescriptionFileRef` | File refs |
 | `players` | Always 8 `Item`s (see below) |
-| `Objectives` | `Primary` / `Secondary` → `Common` / per player → `Objectives` → `Item` (`Kind` = `OBJECTIVE_KIND_DEFEAT_ALL`, `OBJECTIVE_KIND_MANUAL`, …, `Name`, `Award`, triggers). A secondary objective named `H5X` (`Secondary/Common/Objectives/Item`, in every H5X map except Duel and Survival) is the hook of `advmap-manager.lua` (replaced by `GAME_START_TRIGGER`, `LuaGameStartTrigger_init`) |
+| `Objectives` | `Primary` / `Secondary` → `Common` / per player → `Objectives` → `Item` (`Kind` = `OBJECTIVE_KIND_DEFEAT_ALL`, `OBJECTIVE_KIND_MANUAL`, …, `Name`, `Award`, triggers). A secondary objective named `H5X` (`Secondary/Common/Objectives/Item`, in every H5X map except Duel and Survival) is the hook of `advmap-manager.lua` |
 | `ScenarioInformation` | 8 `OBJECTIVE_KIND_SCENARIO_INFO` items (`scenario-caption.N.txt`) |
 | `MapScript` | `MapScript.xdb#xpointer(/Script)`. Maps without one still run `advmap-startup.lua` thanks to `RemoveMapScriptCheck_init` |
 | `NewDayTrigger`, `WarFogEnterTrigger` | `{Action/FunctionName}` Lua callbacks (empty in Stadium) |

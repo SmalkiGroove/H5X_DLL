@@ -1,0 +1,203 @@
+---
+description: Lua script engine of H5X.exe — Lua 4.0 runtime, script contexts (advmap, combat, town, tutorial), function tables, CLuaScriptEngine, argument parsing, threads, engine → Lua callbacks, single player vs multiplayer, H5X Lua extensions
+globs: src/patches/Lua*.cpp, src/patches/EnableScripts.cpp, src/patches/RemoveMapScriptCheck.cpp, src/patches/DiagnosticsMP.cpp
+alwaysApply: false
+---
+
+# Lua script engine
+
+Engine-side (exe) view. For the script API as seen from Lua (functions, constants, triggers, mod conventions, Lua 4 gotchas), see `G:\__H5__\heroes-expansion\.cursor\rules\lua.md`. For combat ATB commands and the combat callbacks in detail, see `h5x-re-combat-atb.mdc`.
+
+## Runtime
+
+- **Lua 4.0** (Nival build): Lua 4.0 parser/debug messages (`upvalue must be global or local to immediately outer scope`, ``value for `lua_getinfo' is not a function``), no standard libraries (the engine registers its own `mod`, `sqrt`, `floor`, …). Numbers are doubles.
+- Stack values are 16-byte `TObject`s: tag at `+0x00` (Lua 4.0 tags: 0 userdata, 1 nil, 2 number, 3 string, 4 table, 5 function), value at `+0x08` (double for numbers).
+- A Lua state is a `0xC4`-byte `NScript::CScriptWrapper` (vtable `0x00E98178`) created by `FUN_00D0CBA0` (name string, `OutputDebugString` "Opening LUA stack f_luaOpen" then "Opening LUA stack (new thread)"). Threads (`startThread`) are separate stacks of the same state (`CLuaThread`).
+- Thread scheduler `FUN_004C0720` (`thiscall(state)`): walks the thread list (state `+0x20`, node `+0x08` = thread). For each live thread (`+0x30` = 0, not finished) with a sleep counter (`+0x2C`) > 0, it decrements the counter and skips the thread while it stays > 0; otherwise it resumes the thread (`FUN_00D0C880`). Finished threads are unlinked and freed. Run by `CScriptWrapper` vtable `+0x24` (`FUN_00D0FDF0`, which first stores the state in the "current state" global `DAT_010DD5BC`) and by engine vtable `+0x08`.
+- RTTI: `NScript::CLuaScriptEngine` (type descriptor `0x00F74560`), `NScript::CLUACallParam`, `CLuaThread`, `NScript::IScriptEngineCallbackExtContext`.
+
+## Script contexts
+
+A context = a name, a list of function tables and an owner object. `FUN_00837790` (startup) registers them with `FUN_00838030` into the registry vector `DAT_010DB9EC`..`DAT_010DB9F0` (0x18-byte entries: name `{begin, end}`, …, `+0x0C`/`+0x10` vector of table pointers).
+
+| Context | Tables (getter → table) | Owner (`dynamic_cast` target in the functions) | Startup script | Created by |
+|---|---|---|---|---|
+| `"combat"` | shared, combat, cinematic, tutorial helpers, callback | `NCombatArenaScript::ICombatArenaCommon` (combat screen subobject `+0x57C`) | `scripts/combat-startup.lua` | Combat script manager constructor `0x0054C2F0` → runner `+0x1B4` (`FUN_00CACFB0`), loaded by `func_LoadCombatScript` `0x0053E810` |
+| `"advmap"` | shared, advmap objects, advmap game, tutorial helpers | `NAdventureMapScript::IAdventureMap` | `scripts/advmap-startup.lua`, `createAdvmapAliases();`, then the map script | Single player: adventure screen constructor `0x006089A0` (runner at screen `+0x40`, `func_LoadAdvmapScript`). Multiplayer / hotseat: world script system loader `0x00992D00` (`CWorld +0x1D0`, runner `+0x0C`) |
+| `"town"` | shared, town game vars, tutorial helpers | town screen | `scripts/town-startup.lua`, then the town's own script (town vtable `+0xD0`) | Town screen (gate `0x0061D380`), runner at `+0x390`, `func_LoadTownScript` `0x006146F0` |
+| `"tutorial"` | combat, cinematic, tutorial | — | — | — |
+
+### Function tables
+
+Each table is a `{const char* name, lua_CFunction fn}` array ending with `{0, 0}`; a getter returns its address (`mov eax, imm32 / ret`). Dump one with the getter → table walk (Python over `H5X.exe`, `.rdata`/`.data` VAs from the section table).
+
+| Getter | Table | Entries | Content |
+|---|---|---|---|
+| (core, `FUN_00CAB500`) | `0x00F7BCB8`..`0x00F7BD38` | 16 | `sleep` `0x004BFE80`, `startThread` `0x004BFE20`, `errorHook` `0x004BFF20`, `isEqual` `0x004C19E0`, `_ERRORMESSAGE` `0x00CABA10`, `parse` `0x00CABB60`, `print` `0x00CAC850`, `consoleCmd` `0x00CABCA0`, `doFile` `0x00CABDA0`, `mod`, `sqrt`, `floor`, `ceil`, `intg`, `frac`, `round` (`0x00CABF00`..`0x00CAC710`). Registered first in every engine |
+| `0x006B5000` | `0x00F39A0C` | 5 | Shared: `GetDifficulty`, `Save`, `Load`, `GetMapDataPath`, `GetSoundTimeInSleeps` |
+| `0x005668D0` | `0x00F32E90`..`0x00F33038` | 53 | Combat (see `h5x-re-combat-atb.mdc`): `GetHost` `0x00567000`, `GetUnitSide` `0x005677A0`, `GetUnits`, `AddCreature`, `UnitCast*Spell`, `GetGameVar` / `SetGameVar`, `commandMove` / `commandShot` / …, `setATB` `0x0056CF60`, `RemoveAllUnits` (H5X: `changeATB`), `combatSetPause`, `playAnimation`, `MessageBox`, `ShowFlyingSign`, … |
+| `0x005668C0` | `0x00F33080` | 1 | `EnableCinematicCamera` |
+| `0x005668E0` | `0x00F33040`..`0x00F33078` | 7 | Tutorial: `toggleTutorialMode`, `showMessage`, `clearMessage`, `changeSubject`, `subject`, `shots`, `shotsNumber`. Starts right after the combat terminator |
+| `0x00773BC0` | `0x00F3E004` | 6 | `IsTutorialItemEnabled`, `TutorialActivateHint`, `TutorialSetBlink`, `TutorialMessageBox`, `IsTutorialMessageBoxOpen`, `IsTutorialEnabled` |
+| `0x00CACDD0` | `0x00F7BD40` | 2 | `Callback` `0x00CAD310`, `Error` `0x00CAD4C0` (waited calls, below) |
+| `0x005C0800` | `0x00F34C28`..`0x00F34F40` | 99 | Advmap objects / heroes / towns / players: `GetPlayerState` `0x005C1390` … `GetPlayerNecroEnergy` `0x005D3900` (`GetHeroStat`, `AddHeroCreatures`, `GiveArtefact`, `MoveHero`, `StartCombat`, `SetHeroCombatScript`, `GetArtifactSetItemsCount`, `IsAIPlayer`, …) |
+| `0x005D69C0` | `0x00F35000`..`0x00F35388` | 113 | Advmap game: `Win` / `Loose`, `GetDate`, `GetCurrentPlayer`, objectives, regions, fog, `MessageBox` / `QuestionBox` (+ `*ForPlayers`), `SetTrigger` = `Trigger` `0x005DD530`, `StopTrigger` `0x005DDFA0`, `GetGameVar` / `SetGameVar`, `random` `0x005DFC30`, `CreateCaravan`, `GetSavedCombat*`, `UpgradeTownBuilding`, `IsPlayerCurrent`, … |
+| `0x00663F30` | `0x00F38144` | 2 | Town: `GetGameVar`, `SetGameVar` |
+
+Ghidra names many handlers `lua_<Name>` (advmap) but most combat ones are unnamed: take the address from the table. Aliases share a handler (`EnableAutoFinish` = `combatEnableFinish`, `GetUnitPosition` = `pos`, `MessageBox` = `MessageBoxInt`, `SetTrigger` = `Trigger`).
+
+> Never overwrite a terminator to add a function: the next table follows (combat → tutorial). Replace an unused entry (`LuaChangeAtb.cpp` reuses `RemoveAllUnits`, `PATCH_INT` on name and function) or move the table.
+
+## Creating an engine: `FUN_00CAB880`
+
+`__fastcall(name string {begin, end}, owner)`. Looks the name up in the registry and, if found:
+1. `func_EngineAlloc(0x38)` + `FUN_00CAB790` → a **new** `CLuaScriptEngine` with a **new Lua state** (`FUN_00879770` → `FUN_00D0CBA0`). Two loaders asking for the same context name get two independent states.
+2. Registers the core table, then every table of the context, through engine vtable `+0x10`(name, fn).
+3. Stores the owner (ref-counted) at `+0x24`.
+
+Returns 0 for an unknown name.
+
+### `CLuaScriptEngine` (0x38 bytes, vtable `0x00E93760`)
+
+| Slot | Address | Role |
+|---|---|---|
+| `+0x00` | `0x00CAB4A0` | `bool run(const char* code)`: runs a string (`FUN_009AC310`, chunk name `"DoString script"`), no wait, false on an empty string or an error |
+| `+0x04` | `0x00CAB4E0` | `error(const char* message)`: `FUN_009ACA70`, reports and throws (`_CxxThrowException`) out of the current Lua call |
+| `+0x08` | `0x00CAB4F0` | Thread scheduler step `FUN_004C0720` on the state (see Runtime) |
+| `+0x0C` | `0x00CAB580` | `owner()`: returns `+0x24` |
+| `+0x10` | `0x00CAB490` | `register(name, fn)` → `FUN_00879710` → `FUN_00D0C6F0` |
+
+Fields: `+0x14` state holder (vtable `0x00E14488`, `+0x08` Lua state), `+0x1C` Lua state used by `run`, `+0x24` owner.
+
+## C functions
+
+Handlers are `int __fastcall lua_X(int L)` (0 = no state → return 0) and return the number of results. Typical body:
+
+1. `func_ReadLuaCombatCommandArgs` (`0x00B0F690`, used by every context despite the name): checks the arguments against a format string and parses them into a vector of `0x1C`-byte entries, reporting errors with the function name. Returns false on error.
+2. Owner: a call context object (vtable `0x00E14488`, `+0x08` = state) → `FUN_00B0F650` = `dynamic_cast<CLuaScriptEngine>` → vtable `+0x0C` (owner), then `__RTDynamicCast` to `IAdventureMap` / `ICombatArenaCommon` / …; on failure `"Can't run: can't get adventure map"` / `"... combat arena"` / `"... valid execution context"`.
+3. Errors: `FUN_00B0F610` (same lookup, returns the engine) → vtable `+0x04`(message).
+4. Results: push with `FUN_004BF900` (number), …; `FUN_004C2820` / `FUN_004C2850` clean up the call context.
+
+### Argument format (`FUN_0087AD40`)
+
+One letter per argument, optionally followed by `[default]` (used when the argument is missing; without a default a missing argument is an error):
+
+| Letter | Check | Stored in the 0x1C entry |
+|---|---|---|
+| `n` | number (string convertible) | `+0x00` int (rounded), `+0x04` float |
+| `s` | string | `+0x0C` engine string `{begin, end, cap}` |
+| `b` | boolean (nil = false; default text `"false"` = false) | `+0x08` byte |
+| `t` | table (tag 4) | — |
+| `u` | userdata → engine object | `+0x18` ref-counted object |
+| `.` | stop checking: the rest is read by hand | — |
+
+Examples: `GetHost` `"n"`, `Callback` `"n."`, `SetTrigger` / `MessageBoxForPlayers` / `print` `"."`, `doFile` / `parse` / `consoleCmd` `"s"`, `GetCurrentPlayer` `""` (no check).
+
+### Stack helpers (`__fastcall(ctx, index)`; `ctx +0x10` = state; state `+0x0C` top, `+0x10` base, `+0x14` stack, `+0x18` stack end)
+
+| Address | Role |
+|---|---|
+| `0x004BF270` | Argument count |
+| `0x004BF580` | Type tag of argument `index` (-1 when absent) |
+| `0x004BF5C0` | Is number |
+| `0x004BF690` | Is string |
+| `0x004BF7A0` | To number (double in `st0`, converts strings) |
+| `0x004BF800` | To string |
+| `0x004BF900` | Push number (`thiscall(ctx, double)`) |
+
+## Core functions
+
+- `doFile(path)` (`CoreLoadScript`): runs a script file of the game data (`dofile` is an alias defined in `combat-startup.lua`).
+- `parse(code)` (`CoreParse`): compiles a string into a function (the trigger runner calls `parse([[...]])()`).
+- `print(...)` (`CorePrint`) → game console. `consoleCmd(cmd)` (`CoreConsoleCommand`) → console command.
+- `startThread(fn, args...)` (`0x004BFE20`): at least one argument, the first a function (tag 5); `FUN_004BFD40` creates the thread with the remaining arguments. It does not run at once: the scheduler starts it.
+- `sleep(n)` (`0x004BFE80`): sets the current thread's sleep counter (`+0x2C`) to `n` rounded (no argument → 1), then the thread yields. It sleeps for `n` scheduler steps, **about 0.2 s each** (in game `sleep(10)` lasts about 2 s, consistent with the `/ 200` of `GetSoundTimeInSleeps` on a length in ms), not milliseconds. Ignored when the call context `+0x50` > 0 or the thread is finished. `GetSoundTimeInSleeps(sound)` (`0x006B5E60`) = sound length (`FUN_00CF0430`) / 200, as a number of steps.
+- `errorHook(fn | nil)` (`0x004BFF20`): exactly one argument; a function sets the thread's error handler (`FUN_00D0C4D0`), `nil` clears it (`FUN_00D0C480`) ("errorHook: arg type must be function or nil").
+- `isEqual(a, b)` (`0x004C19E0`, format `"uu"`, error name `IsEqual`): true when both userdata arguments are the same engine object.
+- Shared `Save(name)` / `Load(name)` (`0x006B58D0` / `0x006B5AA0`, format `"s"`): save the game under `name` through the execution context (`NCommonScript::IContext`, save `FUN_006B5660`: "No world - unable to save") / load it. `GetMapDataPath()`, `GetDifficulty()` use the same context.
+- `errorHook(fn | nil)`: function called when a script error stops the thread ("errorHook: arg type must be function or nil").
+- `_ERRORMESSAGE`: Lua 4.0 error message hook.
+
+## Random generators
+
+`NWorld::CRandomGenerator` (complete vtable `0x00E5129C`, created by `FUN_008C06C0` which returns the `IRandomGenerator` subobject `+0x1C`, vtable `0x00E51284`; initial state 123456789):
+
+| Slot | Address | Role |
+|---|---|---|
+| `+0x04` | `0x008C07B0` | `SetSeed(int)` (state at interface `+0x08`) |
+| `+0x08` | `0x008C04E0` | `RandomFloat(float min, float max)` |
+| `+0x0C` | `0x008C04C0` | `RandomInt(int min, int max)`, **inclusive** = `min + Random(max - min + 1)` |
+| `+0x10` | `0x008C0470` | `Random(n)` in `[0, n)` (0 for n = 0): `s1 = s*0x343FD + 0x269EC3`, `s2 = s1*0x343FD + 0x269EC3`, state = `s2`, result = `(unsigned)((s1 >> 7) ^ (s2 << 6)) % n` |
+
+- Adventure map: vanilla Lua `random(n)` (`0x005DFC30`, format `"n"`, "Random`s top must be positive") = `IAdventureMap` vtable `+0x0C`(n) → `[0, n)`. Adventure screen: its own generator (`+0x88`, seeded from `CWorld` vtable `+0x124`). World script system: `[+0x10]` vtable `+0x10`.
+- Combat: `CCombat` vtable `+0x0C` → `[+0xD4]` `IRandomGenerator`; luck, morale and ability rolls (`FUN_00A5A170`) call `RandomInt(0, 100)` on it (`CombatUnit [this-0x78]` = `CCombat`).
+
+## Engine → Lua
+
+### Combat (runner = combat script manager `+0x1B4`, an `IScriptEngineCallbackExtContext` holding the engine at `+0x1C`)
+
+- No wait: runner vtable `+0x00`(code). Used for `UnitDeath("%s")` and H5X `UnitAttack`.
+- Wait: `func_ScriptRunThreadWithCallback` (`0x00CAD110`, `thiscall(code, continuation)`): stores the continuation under a new id (`+0x38` counter) and runs the code wrapped by `FUN_00CACEA0` with `errorHandler = function() Error(%i) end;`, `errorHook(errorHandler);` and `Callback(%i, %s);`. The Lua `Callback(id, …)` (2 arguments) / `Error(id)` resumes the continuation: the combat waits until the called function (and its sleeps) is over. Used for `DoPrepare()`, `DoStart()`, `UnitMove("%s")`.
+- Manager `+0x4F0` = 1 when the combat has a script; every callback is skipped otherwise.
+- Details (who calls what, display loop, turn pending byte): `h5x-re-combat-atb.mdc`.
+
+### Adventure map triggers
+
+- `SetTrigger` / `Trigger` (`0x005DD530`): types 0..16 (`NEW_DAY_TRIGGER` 0 … `HERO_TOUCH_TRIGGER` 16, 10 unused). It does not register directly: it posts a `CSetTriggerActionCmd` (ctor `0x005E9450`, `0x1C` bytes, execute `0x00427B90` → trigger object vtable `+0x08`(name)).
+- `func_World_FireTrigger` (`CWorld` vtable `+0x21C`, `0x009902B0`):
+  - Single player: queues a `CEventTrigger`; the display loop (`0x005A5D90`, event `0x24`) runs `func_AdvMap_RunTriggerEvent` (`0x00607C20`, adventure screen = game object `+0x5F4`): `func_AdvMap_BuildTriggerLuaCall` → `errorHook(StopTrigger); parse([[func(params)]])(); StopTrigger();` on the screen runner (`+0x40`), `+0x70` counter.
+  - Multiplayer / hotseat: `CWorldScriptSystem` (`CWorld +0x1D0`) runs it at once (`func_World_RunTriggerDirect` `0x00990070`).
+- `StopTrigger` must exist as a Lua function (`advmap-startup.lua`: `function StopTrigger() end --needed for lualib`).
+
+### Town
+
+`func_LoadTownScript` runs `town-startup.lua` and the town's script when the town screen opens (single player only, see below). H5X does not use town scripts.
+
+## Single player vs multiplayer
+
+`func_IsTriggerScriptHost` (`0x006B9DE0`, `fastcall(params)`) = world params (`CWorld` vtable `+0x14` → `&CWorld+0x88`) with neither `+0x88` (multiplayer) nor `+0x89` (hotseat) set, i.e. single player. Vanilla gates every display-side context with it:
+
+| Gate | Context | Vanilla outside single player | H5X |
+|---|---|---|---|
+| `0x0054CE2A` | Combat script | "Warning: scripts are not allowed", no script | `EnableScripts.cpp`: loaded in hotseat, and in network multiplayer on the human attacker's machine only (else the human defender's) |
+| `0x00608EC9` | Advmap script on the adventure screen | "console script commands are not allowed" | Vanilla |
+| `0x00607C33` | Queued trigger event | Not run (never queued there anyway) | Vanilla |
+| `0x0061D380` | Town script | Not loaded | Vanilla |
+| `0x00549CCD` | `combat_flyby` console command | "Flyby`s are not allowed in multiplayer or hotseat" | Vanilla |
+
+- Outside single player the map script runs in the **world's** script system instead: loader `0x00992D00` (`CWorld` vtable slot `0x009941A0` → `[+0x1D0]`), which returns at once in single player. It builds the `"advmap"` engine, runs `advmap-startup.lua`, `createAdvmapAliases();`, the map script (`RemoveMapScriptCheck.cpp` makes it run without a map script too). Triggers run there (`FireTrigger`).
+- Bypassing the gates outside single player: the map script runs in two separate `"advmap"` states (world system + adventure screen), so its top-level code runs twice (hotseat log: `All scripts successfully loaded !` and every `SetTrigger` twice), and in network multiplayer every machine runs the combat script, so its effects are played once per human player.
+- Lua functions act on the game through posted world commands (`CSetTriggerActionCmd`, `CSetATBValue`, `CSetPlayerMoneyCmd` from `SetPlayerResource` (`FUN_005D5440`, 0x1C bytes), …), posted with the owner's vtable `+0x04` (`IAdventureMap`, arena). Where the command goes depends on the owner:
+  - **World script system** (`CWorldScriptSystem`, vtable `0x00E61D14`, `+0x04` = `0x0098D050`): `FUN_00B0F550` executes it at once on the local world (command vtable `+0x1C`). No network: every machine runs the same script on its own copy of the world, deterministically.
+  - **Adventure screen** (`IAdventureMap` vtable `0x00E29A2C`, `+0x04` = `0x006035D0`): forwards to the transceiver at screen `+0x1C`, vtable `+0x00`.
+    - Single player: `NWorld::CSinglePlayerTransceiver` (vtable `0x00E43C54`).
+    - Multiplayer: `NWorld::CMultiPlayerTransceiver` (vtable `0x00E43F1C`, ctor `FUN_007C9EC0`). Its post `FUN_007C9810` looks the peer list (`+0x48`, 0x1C-byte entries, peer id at `+0x0C`) up for the session's id (session object `+0x34`, vtable `+0x2C`, presumably the host). The result is stored at `+0x54` (`FUN_007C8C10`, -1 when not found, i.e. on the host itself).
+    - On the host (`+0x54` < 0) the command is executed locally (`FUN_00B0F550`), once no peer bit of `+0x58` is pending. On a client it is serialized (`FUN_0079EDF0`) and sent to that peer (`+0x34` vtable `+0x1C`).
+    - So **a display-side script that runs on N machines posts its command N times, all executed by the host**: the "once per human player" effects. How the host then propagates the results to the clients was not traced.
+  - Combat arena: vtable `+0x04` → `FUN_00559C80` → `[this+0xC]` vtable `+0x00`, presumably the same transceiver (not checked). In network multiplayer a display-side script must run on one machine only (`EnableScripts.cpp` for combat).
+- Which machines open a combat (in game): only the machines of the players who fight. Other players either keep playing (simultaneous turns) or wait and only see heroes moving in revealed areas, never the combat. So a combat against neutrals or AI opens on one machine; only a human vs human combat opens on two.
+- Local player: not in `IPlayer` (`+0x184` is human, `+0x188` host type: 0 `HUMAN`, 1 `COMPUTER`, same on every machine). The adventure screen keeps it at `+0x3C` (world at `+0x18`). See `h5x-re-combat-atb.mdc` for the player and side owner slots.
+
+## H5X Lua extensions (DLL)
+
+| Module | What |
+|---|---|
+| `LuaChangeAtb.cpp` | Combat `changeATB(unit, delta)` in the `RemoveAllUnits` entry, reuses `lua_setATB` |
+| `LuaUnitAttack.cpp` | Combat callback `UnitAttack(attacker, defender)`, queued by the attack code, run from the display loop (`0x0054B2D4`) |
+| `LuaRandom.cpp` | `random(a, b)` (inclusive, integers) in advmap (handler of the vanilla `random` entry `0x00F35140`) and combat (H5X combat table). Advmap: `IAdventureMap` vtable `+0x0C`(n). Combat: per-combat copy of the combat generator's state, same algorithm, so the battle's own rolls are untouched |
+| `LuaCombatFunctions.cpp` | H5X combat table: replaces the combat context's pointer to the cinematic table (`0x00F33080`) in the context registry (`0x010DB9EC`) by a DLL table that starts with `EnableCinematicCamera`. Combat ports of the advmap hero functions `GetHeroLevel`, `GetHeroStat`, `GetHeroSkillMastery`, `HasArtefact`, `GetArtifactSetItemsCount`, `KnowHeroSpell` (same arguments and results), for the two combat heroes given by script name or unit name (`attacker-hero` / `defender-hero`) |
+| `LuaScript.h` / `.cpp` | Shared helpers: `lua_owner` (execution context cast), `lua_error` (printf format), `lua_number_arg`, `lua_string_arg`, `lua_has_arg`, `lua_push_number`, `lua_push_bool`, `engine_object_released` |
+| `RemoveMapScriptCheck.cpp` | World loader `0x00992D00` runs the start-up scripts on maps without a map script |
+| `EnableScripts.cpp` | Combat script gate (above) |
+| `DiagnosticsMP.cpp` | Temporary multiplayer logging of triggers, commands, waited calls (not initialised) |
+
+## Recipes and pitfalls
+
+- **New Lua function**: write an `int __fastcall(int* state)` C++ handler with the `LuaScript.h` helpers (owner through `0x00B0F650` with a fake call context whose `+0x08` = state, then the exe's `__RTDynamicCast` `0x00D119FC` with the `CObjectBase` descriptor `0x00F272C0` and `IAdventureMap` `0x00F34FCC` / `ICombatArenaCommon` `0x00F32224`; results pushed with `0x004BF900` (number) / `0x004BF8C0` (nil), `return` the count). Register it:
+  - combat: add it to `H5X_COMBAT_FUNCTIONS` (`LuaCombatFunctions.cpp`);
+  - other contexts: same technique (replace one of the context's table pointers in the registry at init, the registry is built by the CRT start-up before the DLL runs; repointing a getter would come too late), or reuse an unused entry (`changeATB` reuses `RemoveAllUnits` and jumps into `lua_setATB`).
+- Advmap hero functions take the hero's script name and use `IAdventureMap` vtable `+0x14`(name) → `IHero`; the only other `IAdventureMap` call among them is `+0x00` (world, `GetArtifactSetItemsCount` checks the sets manager `+0x1E8`). Hero slots used: `+0x20` level, `+0x38` script name (`&+0x24`), `+0x74` equipped (`0x004BA880`), `+0x78` backpack (`0x005C06F0`), `+0xD0` knows spell, `+0x174` skill mastery, `+0x32C` sets map (`0x00B09FD0`(set, equipped)). `GetHeroStat` calls one of 10 member function pointers at `0x00FD9100` (12 bytes: function, this adjustment, vbtable offset; `this = hero + 4 + [[hero+4] + offset] + adjustment`). Counts: artifacts `0x008478A0` (255), skills `0x008478B0` (255), spells `0x00847890`.
+- A Lua global defined in a script (`function random(...)`) replaces the C function of the same name.
+- **Calling Lua from the DLL**: use the context's runner (`vtable +0x00`(code)) from a display loop, never from game logic (attack, damage, spell resolution), where a script would interleave with the resolution. Guard calls to optional globals (`if F then F() end`); the game still prints a "Value was NIL" warning for a missing global, so define an empty function in the startup script.
+- `SetGameVar` / `GetGameVar` are the only way to pass data between the advmap and combat states (separate Lua states).
+- A script's top-level code may run more than once per game (new state per engine, reloads); make start-up code idempotent.

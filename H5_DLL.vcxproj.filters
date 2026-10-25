@@ -102,6 +102,9 @@
     <ClInclude Include="src\patches\ElementsVirtuoso.h">
       <Filter>Header Files\Patches</Filter>
     </ClInclude>
+    <ClInclude Include="src\patches\LuaScript.h">
+      <Filter>Header Files\Patches</Filter>
+    </ClInclude>
     <ClInclude Include="src\structs\CombatUnit.h">
       <Filter>Header Files\Structs</Filter>
     </ClInclude>
@@ -587,7 +590,13 @@
     <ClCompile Include="src\patches\LuaUnitAttack.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
-    <ClCompile Include="src\patches\LuaGameStartTrigger.cpp">
+    <ClCompile Include="src\patches\LuaRandom.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\LuaScript.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\LuaCombatFunctions.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\DiagnosticsMP.cpp">

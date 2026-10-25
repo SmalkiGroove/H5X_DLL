@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Save files
 
-Verified on H5X.exe with Ghidra, and by parsing saves from `Documents\My Games\Heroes of Might and Magic V - Tribes of the East\Profiles\<profile>\Saves\save_N.sav`: 10 single-player and network saves from July to October 2026. Python parser: `C:\Users\Guillaume\AppData\Roaming\Claude\side-session-notes\local_56563e3f-bac2-4b90-86ba-ef55dd6271dc\save-parser\` (`extract.py` file → zlib streams, `parse.py` chunks and table, `graph.py` reference graph, `tree.py`/`dump.py` field dumps).
+Verified on H5X.exe with Ghidra, and by parsing saves from `Documents\My Games\Heroes of Might and Magic V - Tribes of the East\Profiles\<profile>\Saves\save_N.sav`: 10 single-player and network saves from July to October 2026.
 
 ## Encoding (binary structure saver)
 

@@ -7,7 +7,7 @@ std::vector<assembly_patch> assembly_patches;
 
 void init_patches(pugi::xml_document& doc) {
 
-    Scripts_init(doc);                     // OK
+    Scripts_init(doc);
     Pest_init(doc);                        // OK
     HeroMaxSkills_init(doc);               // OK
     LevelCurve_init(doc);                  // OK
@@ -167,7 +167,8 @@ void init_patches(pugi::xml_document& doc) {
 
     LuaChangeAtb_init(doc);                // OK
     LuaUnitAttack_init(doc);               // OK
-    LuaGameStartTrigger_init(doc);         // OK
+    LuaRandom_init(doc);
+    LuaCombatFunctions_init(doc);
 
     //DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics    
 }

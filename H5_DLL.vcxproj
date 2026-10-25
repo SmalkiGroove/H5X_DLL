@@ -231,7 +231,9 @@
     <ClCompile Include="src\patches\LuaTweaks.cpp" />
     <ClCompile Include="src\patches\LuaChangeAtb.cpp" />
     <ClCompile Include="src\patches\LuaUnitAttack.cpp" />
-    <ClCompile Include="src\patches\LuaGameStartTrigger.cpp" />
+    <ClCompile Include="src\patches\LuaRandom.cpp" />
+    <ClCompile Include="src\patches\LuaScript.cpp" />
+    <ClCompile Include="src\patches\LuaCombatFunctions.cpp" />
     <ClCompile Include="src\patches\DiagnosticsMP.cpp" />
     <ClCompile Include="src\patches\RemoveMapScriptCheck.cpp" />
     <ClCompile Include="src\patches\NetworkInterval.cpp" />
@@ -369,6 +371,7 @@
     <ClCompile Include="src/patches/WeakeningStrike.cpp" />
     <ClInclude Include="src\patches\Artfset.h" />
     <ClInclude Include="src\patches\ElementsVirtuoso.h" />
+    <ClInclude Include="src\patches\LuaScript.h" />
     <ClInclude Include="src\pugixml.hpp" />
     <ClInclude Include="src\structs\CombatUnit.h" />
     <ClInclude Include="src\structs\Creature.h" />
