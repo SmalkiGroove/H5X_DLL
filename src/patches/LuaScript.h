@@ -25,3 +25,6 @@ void lua_push_bool(int* state, bool value);      // 1 or nil
 bool engine_object_released(int* object);
 
 int __fastcall lua_random(int* state);             // LuaRandom.cpp
+// Combat script generator (LuaRandom.cpp): [0, range) from a per-combat copy of the combat's generator, so script
+// draws never shift the battle's own rolls.
+unsigned int combat_script_random(int* combat, unsigned int range);

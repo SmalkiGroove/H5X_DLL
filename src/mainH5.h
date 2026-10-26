@@ -212,5 +212,6 @@ void LuaChangeAtb_init(pugi::xml_document& doc);
 void LuaUnitAttack_init(pugi::xml_document& doc);
 void LuaRandom_init(pugi::xml_document& doc);
 void LuaCombatFunctions_init(pugi::xml_document& doc);
+void LuaCastAreaSpell_init(pugi::xml_document& doc);
 
 void DiagnosticsMP_init(pugi::xml_document& doc);

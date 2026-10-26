@@ -167,10 +167,11 @@ void init_patches(pugi::xml_document& doc) {
 
     LuaChangeAtb_init(doc);                // OK
     LuaUnitAttack_init(doc);               // OK
-    LuaRandom_init(doc);
-    LuaCombatFunctions_init(doc);
+    LuaRandom_init(doc);                   // OK
+    LuaCombatFunctions_init(doc);          // OK
+    LuaCastAreaSpell_init(doc);            // OK
 
-    //DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics    
+    //DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics
 }
 
 int main() {

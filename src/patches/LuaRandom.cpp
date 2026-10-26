@@ -29,6 +29,15 @@ static unsigned int next_random(unsigned int* state, unsigned int range) {
 	return (unsigned int)(((int)first >> 7) ^ (int)(second << 6)) % range;
 }
 
+unsigned int combat_script_random(int* combat, unsigned int range) {
+	if (combat != random_combat) {
+		int* generator = ((ThiscallIntPtr_IntPtr)(*(int***)combat)[0x0C / 4])(combat);
+		random_combat = combat;
+		random_state = (unsigned int)generator[0x08 / 4];
+	}
+	return next_random(&random_state, range);
+}
+
 int __fastcall lua_random(int* state) {
 	if (!state) return 0;
 	int a, b;
@@ -50,12 +59,7 @@ int __fastcall lua_random(int* state) {
 	}
 	else if (arena) {
 		int* combat = ((ThiscallIntPtr_IntPtr)(*(int***)arena)[0x08 / 4])(arena);
-		if (combat != random_combat) {
-			int* generator = ((ThiscallIntPtr_IntPtr)(*(int***)combat)[0x0C / 4])(combat);
-			random_combat = combat;
-			random_state = (unsigned int)generator[0x08 / 4];
-		}
-		value = (int)next_random(&random_state, range);
+		value = (int)combat_script_random(combat, range);
 	}
 	else {
 		lua_error(state, "random: can't get adventure map or combat arena");

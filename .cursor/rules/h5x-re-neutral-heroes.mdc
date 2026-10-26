@@ -1,0 +1,86 @@
+---
+description: Neutral heroes — why map heroes need an owner, monster fight setup (guarded loader, defender hero slot), StartCombat ambush with an enemy hero, prison heroes as an editor-side hero configuration, proposed design and open questions
+globs:
+alwaysApply: false
+---
+
+# Neutral heroes (design notes, not implemented)
+
+Goal: neutral monster stacks led by a hero, shown on the map as a hero, with the hero configured in the map editor (level, stats, skills, perks, spells, artifacts). Research of 2026-10-26 on H5X.exe (Ghidra + raw disassembly, RTTI); **nothing implemented or tested in game**. Statements marked *unverified* are inferences.
+
+Many of the functions below are not defined as functions in the Ghidra project (decompile returns "No function found"): read them from the raw bytes (capstone on `H5X.exe`, file offset from the section table) or create them in Ghidra first.
+
+## Map heroes must have an owner
+
+- Lua `SetObjectOwner` (`lua_SetObjectOwner` `0x005CB910`) refuses a hero with player 0: "Can`t make hero "%s" neutral".
+- Lua `StartCombat` (`lua_StartCombat` `0x005D3B90`) rejects an enemy hero that "not belongs to any player" or "is not reserved".
+- Heroes without an owner exist only off the map: the heroes pool (`NWorld::CHeroesPool`, tavern) and prisons (`NWorld::CAdvMapPrison`).
+- The map editor (`H5_MapEditor.exe` / `H5X_Editor.exe`) does not load the DLL. Allowing `PLAYER_NONE` there needs an editor binary patch (`heroes-expansion/game_binary/patches/h5editor/*.yml`), or a hand edit of `PlayerID` in `map.xdb`. What the game does with an `AdvMapHero` at `PLAYER_NONE` on load was not tested.
+- A real ownerless hero on the map would touch turn processing, AI, fog / vision, flag colour, the hero-vs-hero fight path, saves and victory conditions. **Rejected.**
+
+## Combat entry from the adventure map
+
+`0x00433440` (hero interacts with a map object → fight) casts the target object and creates one `ICombatArenaAndOpponentsLoader` (0x20 bytes) per kind; the loader's only method builds the two sides:
+
+| Target | Loader class | Ctor | Interface vtable (method) | Builder |
+|---|---|---|---|---|
+| Hero | `CCombatHeroVsHeroArenaAndOpponentsLoader` | `0x00435DC0` | `0x00E0F370` (`0x00435E60`) | |
+| Town | `CCombatHeroVsTownArenaAndOpponentsLoader` | `0x00435F30` | | |
+| Guarded (monsters) | `CCombatHeroVsGuardedArenaAndOpponentsLoader` | `0x00436090` (call `0x0043382E`) | `0x00E0F3C0` (`0x00436130`) | `0x00856460` |
+| Flagged | `CCombatHeroVsFlaggedArenaAndOpponentsLoader` | `0x004361F0` | | |
+| Caravan | `CCombatHeroVsCaravanArenaAndOpponentsLoader` | `0x00436570` | | |
+| Ambush (Lua `StartCombat`) | `CCombatHeroVsAmbushArenaAndOpponentsLoader` | `0x00436350` (from `0x00432FE0`) | `0x00E0F410` (`0x004363F0`) | `0x00854E10` |
+
+Sphinx has a loader too (`CCombatHeroVsSphinxArenaAndOpponentsLoader`). `CAdvMapMonster` derives from `IAdvMapGuarded` (and `IAdvMapMonster` at `+0xC8`, `IArmy` at `+0xD8`), so **monster fights use the guarded loader**.
+
+### Combat army (`0x004DCDB0`)
+
+`CCombatArmy` (0xE4 bytes): `__thiscall (combat, IHero* hero_or_null, int flag)`. The hero is stored at `+0x2C` (ref-counted), `hero->vtable+0xD8` is read when it is not null. The loaders then add it with `combat->vtable+0x80(army + 0x20, side)` (1 = attacker, 0 = defender).
+
+### Guarded loader `0x00856460` (monster fights)
+
+`fastcall(combat = ecx, attacker hero = edx, [esp+4] = ?, [esp+8] = guarded object)`.
+
+- `0x00856517`: `[esp+0x14] = 0`, the **defender hero**.
+- `0x00856509`–`0x00856554`: guarded object → virtual base → vtable `+0x1C` → if not null, its virtual base → vtable `+0x74` → service `S`; `S->vtable+0x48(attacker->vtable+0x00(1))` is stored in `[esp+0x14]`. `S` is not identified. In the prison code (below), `world->vtable+0x74` is the heroes pool, and `CWorld` slot `+0x74` (`0x00CF2AA0`) returns `[world+0x40]`, so `S` may be the heroes pool (*unverified*: slot `+0x48` of the `CHeroesPool` vtable `0x00E9659C`, `0x00CE7A00`, looks like a bool test, which does not fit).
+- `0x008565F0`–`0x00856626`: attacker army = `CCombatArmy(combat, attacker->vtable+0x00(1), 1)`, added as side 1. `attacker->vtable+0x00(1)` returns the attacker's `IHero`.
+- `0x0085663D`–`0x00856670`: defender army = `CCombatArmy(combat, [esp+0x14], 1)`, creatures from the guarded object (`0x004DB3C0(guarded)`), added as side 0.
+
+**Hook point for a hero-led monster**: put the linked hero's `IHero` into `[esp+0x14]` before `0x0085663D` (e.g. replace the store at `0x00856517` or hook after `0x00856554`). The engine already passes a hero there in some vanilla case.
+
+### Lua `StartCombat` (ambush)
+
+`StartCombat(hero, enemyHero, n, creature1, count1, …, script, finishTrigger, arena, quickCombat)` posts a `CCreateAmbushForHeroCmd` (vtable `0x00E0FBB4`, 0x5C bytes, ctor `0x005D6920`). Related classes: `CAmbushBase`, `CAmbush`, `CAmbushWithHero`. `enemyHero` must be owned by a player and in that player's reserve (`players/Item/ReserveHeroes` in `map.xdb`; Lua `DeployReserveHero`, `UnreserveHero`). The ambush builder `0x00854E10` creates the defender army with a null hero; how `CAmbushWithHero` adds its hero was not traced.
+
+Lua-only route (vanilla): disable the monster, touch trigger, `StartCombat` with a reserved enemy hero, read the result with `GetSavedCombat*`. Limits: needs a player that owns the reserved hero (no spare slot in H5X multiplayer maps), AI heroes and touch triggers, multiplayer behaviour unknown. Good for a scripted set piece only.
+
+## Prison heroes: hero configuration from the editor
+
+An `AdvMapPrison` (`Shared`, `PrisonedHero`, `RandomHero`) holds a full inline `AdvMapHero` (`<PrisonedHero href="#n:inline(AdvMapHero)">`), configured in the editor with the normal hero panels: `Shared` (hero definition), `Experience`, `armySlots`, `artifactIDs`, `Editable` (`Offence` / `Defence` / `Spellpower` / `Knowledge`, `skills`, `perkIDs`, `spellIDs`, war machines, `TalismanLevel`), `OverrideMask`, `PrimarySkillMastery`, `LossTrigger`. Its `PlayerID` is the editor default (`PLAYER_1`). Example: `heroes-expansion/game_data/maps/Maps/Multiplayer/S4/S4.xdb` (prison at `(9,49)`, floor 1, hero Havez).
+
+`IAdvMapPrison` (subobject `+0xC8` of `CAdvMapPrison`, vtable `0x00E10FE0`) has one method, `0x004557B0` (`ret 4`, arg = world): when the pending flag `[this+0xC]` is set and no hero is cached at `[this+8]`, it gets the heroes pool (`world->vtable+0x74`), takes a hero from it (`pool->vtable+0x30(…)`, from the prison's DB record `[this-0xC0]` through `0x008E7860`), stores it at `[this+8]`, calls `pool->vtable+0x2C(hero, 1)` and `hero->vtable+0x1F0(1)`, then clears the flag. So the prisoner is a configured, ownerless hero object of the world, kept by the prison and saved with it.
+
+Map hero definition files (`AdvMapHeroShared`, e.g. `heroes-expansion/game_data/heroes/MapObjects/Academy/Astral.(AdvMapHeroShared).xdb`) also have an `Editable` block (stats, skills, perks, spells, war machines) but no experience or artifacts; flags `ScenarioHero`, `HideInEditor`.
+
+`AdvMapMonster` fields (types.xml): `Shared`, `Custom`, `Amount`, `Amount2`, `AttackType`, `MoveType`, `DoesNotGrow`, `MessageFileRef`, `Script`, `Resources`, `ArtifactID`, `Mood`, `Courage`, `AllowQuickCombat`, `DoesNotDependOnDifficulty`, `AdditionalStacks`, `SingleMonsterNameFileRef`, `MultipleMonstersNameFileRef`, `RacesRandomGroupID`, `relationsOverrides`. No hero field; adding one would need both exes patched (fixed record layouts). Every map object also has `Name` and `CombatScript`.
+
+## Proposed design
+
+1. **Look and army**: an `AdvMapMonster` whose creature uses a hero model on the adventure map (mod data). Keeps monster behaviour: tooltip, join / flee, growth, AI danger estimate.
+2. **Hero configuration**: an `AdvMapPrison` with its hero set up in the editor, linked by name (e.g. prison `Captain1`, monster `Captain1_army`). Names are saved, so the DLL keeps no state.
+3. **Hidden prison**: a custom `AdvMapPrisonShared` in the mod data with no model (or a tiny marker) and no active tile, so it cannot be seen or visited. Unchecked: whether the editor can place and select it; otherwise place it in a sealed area.
+4. **DLL hook** in the guarded loader: find the prison named after the monster, take its hero (`[prison IAdvMapPrison + 8]`) and pass it as the defender hero. Army = the monster's creatures (or the prison hero's `armySlots`, a design choice).
+5. **After the fight**: if the attacker wins, remove the prison as well and decide what happens to the hero's artifacts.
+
+Alternatives: captain heroes defined only in hero files plus a DLL table for level / artifacts; H5X Lua functions to adjust the linked hero at map start.
+
+## Open questions / first tests
+
+- Prototype: hook the guarded loader and give one test monster a hardcoded pool or prison hero. Check the fight runs.
+- Does the combat AI play a hero turn on a side with no owner? (main risk)
+- Combat UI for that side: portrait, colour.
+- After the fight: experience for defeating a hero, artifact loot, defeat handling of an unowned hero (`CDefeatHeroCmd`), quick combat (`CQuickCombat`), battle replays.
+- Does leveling from `Experience` at map start add random stat / skill picks on top of the editor values?
+- Multiplayer sync: fine if everything comes from world state (prison, names).
+- AI danger estimate ignores the hero.
+- What a hand-edited `AdvMapHero` at `PLAYER_NONE` does on load.
