@@ -239,6 +239,9 @@
     <ClCompile Include="src/patches/DocWindowSaveFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
+    <ClCompile Include="src/patches/RmgGuardPoolFix.cpp">
+      <Filter>Source Files\patches\ToE_fixes</Filter>
+    </ClCompile>
     <ClCompile Include="src/patches/EnlightenmentForBarbsFix.cpp">
       <Filter>Source Files\patches\ToE_fixes</Filter>
     </ClCompile>
@@ -609,6 +612,12 @@
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\NetworkInterval.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\RmgArtifactLog.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\patches\RmgGuardLog.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\patches\CombatCamera.cpp">

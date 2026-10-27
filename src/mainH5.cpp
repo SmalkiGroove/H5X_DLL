@@ -36,6 +36,7 @@ void init_patches(pugi::xml_document& doc) {
     PerkCreatureGiftFix_init(doc);         // OK
     EmptyWindowRectFix_init(doc);          // OK
     DocWindowSaveFix_init(doc);            // OK
+    RmgGuardPoolFix_init(doc);             // OK
 
     Health_init(doc);                      // OK
     CreatureAttack_init(doc);              // OK
@@ -172,6 +173,8 @@ void init_patches(pugi::xml_document& doc) {
     LuaCastAreaSpell_init(doc);            // OK
 
     //DiagnosticsMP_init(doc);               // TEMPORARY: multiplayer script diagnostics
+    //RmgArtifactLog_init(doc);              // TEMPORARY: rmg artifact spawn diagnostics
+    //RmgGuardLog_init(doc);                 // TEMPORARY: rmg monsters spawn diagnostics
 }
 
 int main() {

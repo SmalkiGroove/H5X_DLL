@@ -1,0 +1,103 @@
+---
+description: Random map generator (RMG) — generation pipeline and its functions, template / parameter data, treasure blocks and how artifacts are picked and placed, guard strength, RMG random generator, MMH55 RMG exe patches (creature strength, upgrade points, dimension door)
+alwaysApply: false
+---
+
+# Random map generator (RMG)
+
+Verified in Ghidra on H5X.exe (October 2026). The RMG code is vanilla ToE 3.1: the bytes and addresses of the MMH55 3.1 RMG patches match H5X.exe, and no DLL patch touches it yet. Classes are in namespace `NRMG` (`CRandomMapGenerator`, `CRandomMap`, `CGameZone` and its water / dwarven / subterra / sub-inferno variants, `CTerrainProcessor`, `CTreasureBlockDistributor` vtable `0x00E82750`, `CMonsterSetter` vtable `0x00E82728`); the UI side is `NUI::CRMGScreen` / `CRMGConnector`.
+
+## Data
+
+| Data | Where | Notes |
+|---|---|---|
+| Templates | `data/RMG/Templates/*.xdb` (`RMGTemplate`), 21 in `data.pak`, 4 more in `a2p1-data.pak` (`S0-1P2Z2K3*.T`, `S3-5P2-8Z8K2M`) | Per zone: `TreasureBlocksTotalValue`, `TreasureDensity`, `TreasureChestDensity`, `TreasureBuildingPoints`, `ShopPoints`, `ShrinePoints`, `BuffPoints`, `UpgBuildingsDensity`, `ResourceBuildingsDensity`, `LuckMoralBuildingsDensity`, `Mines`, `Dwellings`, `Prisons`, `LandCartographer`, `GuardStrenght`, `TownGuardStrenght`, … No artifact list: artifacts only come from treasure blocks (below). The mod ships no RMG data |
+| Parameters | `/RMG/Params/Default.xdb` (`RMGParameters`) | Mine radii and guards, `DistBetweenTreasureBlocks`, `MinDistanceBetweenTreasureBlocks` (8), `CreatureStackParams`, lights, map texts |
+| Other | `/RMG/TownRandomSpecGroup.xdb`, `/RMG/CustomArmyTemplates/...`, `/GameMechanics/RefTables/RMGPresetTable.xdb` | |
+| Object paths | hardcoded strings `0x00E56960`–`0x00E57AD0` | Random dwellings, mines, Witch Hut, shrines, Cartographer (`0x00E577D0` land, `0x00E57830` water), resources and `Chest` / `Campfire` (`AdvMapTreasureShared`), Prison, Dragon Utopia, Crypt, … |
+
+UI options, stored in the generator and saved into the map as `sRMGProps.InitialParams.*`: `MonsterLevel` (+0x60), `ResourceMultiplier` (+0xA8, the resource level 0–4), `ExpMultiplier` (+0xB0, the experience level 0–4), `WaterAmount` (+0x58), `HasUnderground` (+0x1D), `RandomTowns` (+0xA5), `Minimap` (+0xA4), `Grail` (+0xB5). Texts: `game_texts/.../UI/RMGScreen/TemplateInfo/{MonsterLevel,ResourceLevel,ExpLevel,...}`.
+
+## Pipeline
+
+`func_RMG_Start` `0x00904DD0` stores the progress / log callbacks (`NRMG::ICallbackProgress`, `ICallbackLog`, at +0xC8 / +0xCC), logs "RMG started." and creates the editor DB. `func_RMG_GenerateMap` `0x0090E7E0` seeds the generator (seed = +0x90, else `time()`) and runs the steps; each step logs `Rnd Counter(<step>): %d.` (the generator call count before it) and `at %g <step done>`:
+
+| Step | Function |
+|---|---|
+| CreateMap | `func_RMG_CreateMap` `0x0090CB00` |
+| LoadTemplate | `func_RMG_LoadTemplate` `0x0090BD80` |
+| GenerateGameZones (start points) | `func_RMG_GenerateGameZones` `0x00905070` |
+| FillZones | `func_RMG_FillZones` `0x00907D90` ("filling zones, %d") |
+| CalcBorderTiles | `func_RMG_CalcBorderTiles` `0x00904240` |
+| FillTerrain | `0x00915DC0` (only when map flag +0x8C is set, not identified) then `func_RMG_FillTerrain` `0x00918270` |
+| PlaceTowns | `func_RMG_PlaceTowns` `0x009058E0` |
+| FillDistToTownsTable | `0x00904770` (when +0xA6), `func_RMG_FillDistToTownsTable` `0x00904C10` |
+| ZoneConnections | `func_RMG_ZoneConnections` `0x00904920` |
+| MainObjects | `func_RMG_PlaceMainObjects` `0x00907150`, per zone (below) |
+| Roads | `func_RMG_CreateRoads` `0x00904CF0` |
+| Statics | `func_RMG_PlaceStatics` `0x00906130` |
+| Additional objects | `func_RMG_PlaceAdditionalObjects` `0x00906380` |
+| Treasure blocks | `func_RMG_PlaceTreasureBlocks` `0x00905D00` |
+| Finish | `func_RMG_FinishMap` `0x00904AD0` |
+| Save | `func_RMG_SaveMap` `0x0090A980` (`map.xdb` objects, terrain files, `sRMGProps.*`; temp folder `RMGTemp/CurrentMap/`) |
+| Destroy temp DB | `func_RMG_DestroyTempDb` `0x0092ACF0` |
+
+`func_RMG_PlaceMainObjects`, per zone, in order: `func_RMGZone_PlaceMines` `0x00920630`, `func_RMGZone_PlaceHero` `0x0091C3A0`, `func_RMGZone_PlaceDwellings` `0x0091E910`, `func_RMGZone_PlaceUpgradeBuildings` `0x0091F140` (points from `0x00921A50` / `0x00921A10`, then the ExpMultiplier scale at `0x00907603`), `func_RMGZone_PlacePrisons` `0x00920370`, `func_RMGZone_PlaceCartographer` `0x00920C50`, `func_RMGZone_PlaceShrines` `0x00920000`, `func_RMGZone_PlaceResourceBuildings` `0x00920EC0`, `func_RMGZone_PlaceTreasuryBuildings` `0x00921360`, `func_RMGZone_PlaceLuckMoraleObjects` `0x00921D70`, `func_RMGZone_PlaceShops` `0x009221D0`, `func_RMG_PlaceZoneTreasuresAndChests` `0x00905E60`, `func_RMGZone_CreateRoad` `0x0091BDB0`.
+
+Failure messages go to the log callback only (not to `H5.log`): "Can't place treasure %s at zone #%d, floor %d (town at %d:%d)", "cant place mine %s at zone %d", "Cant set shrine %s in zone %d", "Can't place building / dwelling / resource building / shop building …" (strings `0x00E57D4A`–`0x00E58038`). Where the connector writes them was not checked.
+
+## Random generator
+
+64-bit LCG `x = x * 0x343FD + 0x269EC3` in `0x01040030`, call counter `0x01040028`. `func_RMG_SetSeed` `0x00BA6650`, `func_RMG_Random(n)` `0x00BA6700` (`__fastcall`, `ecx = n`, returns `0 … n-1`, 0 when n = 0), `func_RMG_RandomFloat(min, max)` `0x00BA6790`, `func_RMG_RandomSkip` `0x00BA6680`, `func_RMG_GetRandomCounter` `0x00BA6800`. Any added or removed call changes every later choice of the same seed.
+
+## Object creation
+
+`func_RMG_PlaceObject` `0x009145B0` (`ecx` = 0x20-byte output DB link, `edx` = shared DB link: type name string (begin, end, cap, e.g. `AdvMapArtifactShared`), a byte, an int, href string (begin +0x14, end +0x18); stack: tile pos, rotation, zone context, floor; `ret 0x10`). It cuts the type name at `"Shared"` to get the object type (`AdvMapArtifact`), makes a new object in the map DB with id `item_<random 32 bits>` (`#xpointer(id(...))`, `0x009156E0`) and sets `Pos`, `Rot`, `Floor` and `Shared`. Returns 0 (nothing created, nothing logged) when the type name is shorter than 6 characters, has no `"Shared"`, or the DB refuses the object or one of the fields. On success the caller appends the output link to the map object list (`CRandomMap` +0x40, 0x20-byte records).
+
+Loose treasures (`func_RMGZone_PlaceTreasures` `0x0091F8A0`, used for `TreasureDensity` and `TreasureChestDensity`) pick from a fixed `AdvMapTreasureShared` table (names at `0x00FF9EFC`, stride 0x20): resources, gold, chests, campfires. No artifacts.
+
+## Treasure blocks (the only RMG artifacts)
+
+`func_RMG_PlaceTreasureBlocks` walks the template zones (stride 0x74) and calls `func_RMGZone_DistributeTreasureBlocks` `0x009198A0` with the zone's `TreasureBlocksTotalValue` (template zone +0x64). The zone's `CTreasureBlockDistributor` (zone +0x12C) gets `func_TreasureBlockDistributor_Setup` `0x00BA8050` (total value +0x94, zone tiles +0x8C, town position +0x98 / +0x9C and "has town" +0xA0, other objects +0x88) then `func_TreasureBlockDistributor_Distribute` `0x00BA94C0`.
+
+**Artifact pool**, built once in `func_TreasureBlockDistributor_ctor` `0x00BA8100` from the `Artifacts.xdb` RefTable (`0x00FE72CC`, `func_GetArtifactInfo(id)` `0x008481D0` = `table + 8 + id * 0x74`, `func_GetArtifactTableSize` `0x008478A0` returns 255). An ID 1…254 is kept when:
+
+- `CanBeGeneratedToSell` (`SArtifact` +0x3C) is true,
+- `ArtifactShared` (+0x5C) resolves to an object (`0x004A7EA0`),
+- it is not 10 (`ARTIFACT_OCEAN_CHARM`), unless the map has water (generator flag +0x8D).
+
+Kept IDs go to the vector +0x70 (all classes), and by `Type` (+0x24: 0 minor, 1 major, 2 relic, 3 grail) to +0x4C / +0x58 / +0x64; a grail is never kept. The hash map +0x34 maps the ID to the shared's DB link (`func_RMG_LinkMap_Get` `0x00BA9EF0`, inserts an empty link for a missing key). `SArtifact` offsets read: +0x24 `Type`, +0x34 `CostOfGold`, +0x3C `CanBeGeneratedToSell`, +0x5C `ArtifactShared`. On 2026-10-27 the mod's table gives 60 minors, 66 majors, 44 relics, every relic at 20000 gold. `Distribute` only reads +0x70; no reader of the per-class vectors was found.
+
+**Blocks**: `func_TreasureBlockDistributor_FindBlocks` `0x00BA82C0` picks block spots (0x1C-byte records at +0x7C: center, tile vector at +8, value +0x14, weight +0x18), at least `MinDistanceBetweenTreasureBlocks` apart, and shares the zone value: equally, or by weight in a town zone. Then for each block of value > 599:
+
+1. guard: `func_MonsterSetter_MakeGuard` `0x00BA7690` (`CMonsterSetter` at +0x90) with power `round(value * 2.5 + 0.5)`, facing the open side; its link is appended to the map list right away;
+2. artifact candidates: pool IDs with `CostOfGold / 5 + 500 < value < 7 * CostOfGold / 5` (`0x00BA98A3`); for a 20000 relic, 4500 < value < 28000. One is drawn with `func_RMG_Random`, and when there was a candidate the block value drops by `CostOfGold / 5` (the rest goes to the treasures);
+3. block tiles: tile 1 gets the artifact (`func_RMG_PlaceObject` with the ID's shared link, call `0x00BA9AEF`), the others random treasures from the `0x01040E10` / `0x01040F10` tables by tile value.
+
+**A failed artifact placement leaves the guard and the other treasures with nothing on tile 1** and logs nothing (`0x00BA9AF6`). `src/patches/RmgArtifactLog.cpp` (diagnostic hook at `0x00BA9AF4`, right after the call) logs every attempt in `H5.log`: `RmgArtifact: placed` / `NOT PLACED`, artifact ID, class, cost, tile, floor, block value and the shared href. Blocks with no candidate artifact are not logged. In two generated maps (2026-10-27) all 382 and 395 artifact placements succeeded, so the RMG does create them; a missing artifact there comes from later (map load or game).
+
+## Guards
+
+`func_MonsterSetter_MakeGuard` `0x00BA7690` (`__thiscall CMonsterSetter`, args: out DB link, power, `float*` tile, rotation; `ret 0x10`) makes every RMG guard (8 call sites: connections, mines, dwellings, treasure blocks, …). The out link is empty when no monster was made; callers append it anyway.
+
+1. Power < 100: "no monster set at %d:%d, power: %d" to the RMG log, empty link.
+2. Power × MonsterLevel option (`[esi+0x34]`, switch `0x00BA77A9`, table `0x00BA79D4`): 0.4 (`0x00E12FE4`), 0.9 (`0x00E1A704`), 1.7 (`0x00E826FC`), 4 (`0x00E11C80`), 12 (`0x00E57D34`).
+3. With a random chance (`0x00E18580`), a custom army template: `0x00BA71B0` picks it, `0x00BA7040` places it.
+4. Else `func_MonsterSetter_PickCreature` `0x00BA6910` (town 1 = any, power, out total power, out count, out creature): it draws `r = func_RMG_Random(...)`, and keeps every creature 1…998 except 89 and 114 (table size `0x00ACB380` returns 999, creature info `0x00ADA2A0`) whose `Power` (+0x84) satisfies `(r + 10) / k * Power <= power <= (r + 10) * k * Power`. k starts at 1.1 and grows (× `0x00E12F1C`) until at least 10 creatures are kept, so even power-1 placeholders can come in. One is drawn, and the count is random around `power / Power`.
+5. `func_MonsterSetter_PlaceCreature` `0x00BA6F00` looks the creature up in the setter's creature → `MonsterShared` link map (built by the ctor `0x00BA7CF0` for every creature 1…998 but 89 / 114, through `0x00A14540`), and places it with `0x00914B40`. **An empty href (creature without `MonsterShared`) returns an empty link: no monster, no log.**
+
+On 2026-10-27, 52 mod creatures have a real `Power` and no `MonsterShared`: `CREATURE_DRUID_OF_THE_COUNCIL` (190, 862), `CREATURE_AVATAR_OF_DEATH` (193, 15000), `CREATURE_DARKSTORM_1`–`50` (901–950, 111–5555 in steps of about 111). The Darkstorm powers cover the whole range of normal guards, so they are often among the candidates and give guardless treasures. 758 placeholders (180, 192, 194–998) have `Power` 1 and no `MonsterShared`. Fixed by `src/patches/RmgGuardPoolFix.cpp`: hook at `0x00BA69EE` in the candidate loop (`mov ecx,esi` / `call 0x00ADA2A0`), which skips a creature whose `MonsterShared` (creature info +0xD4, resolved by `0x00A14540`) is missing or whose link (shared +0x0C) has an empty href, the link the constructor copies for `PlaceCreature`. Tested 2026-10-27: 500 guards placed, none missing, no excluded creature picked.
+
+`src/patches/RmgGuardLog.cpp` (diagnostic) wraps `func_MonsterSetter_MakeGuard` and the pick / custom army calls (`0x00BA798A`, `0x00BA7924`), and logs each guard in `H5.log`: `RmgGuard: placed` / `NO MONSTER`, tile, floor, power, creature and count (or custom army / power below 100 / no creature fits), href and caller.
+
+## MMH55 RMG exe patches (not applied)
+
+`D:\Workspace\H5Mod\archives\exe\todo\*.yml`, "Original 3.1" groups. Each line is `file offset ## VA`; the VAs and original bytes match H5X.exe.
+
+| Patch | Site | Change |
+|---|---|---|
+| `rmgcreaturestrength.yml` | `0x00BA77A9` (MakeGuard switch) | Rewrites the 5 cases to read their own floats stored in the freed code at `0x00BA77EA`–`0x00BA77FA`, moves the jump table at `0x00BA79D4`: 1 / 1.7 / 3 / 4 / 8 instead of 0.4 / 0.9 / 1.7 / 4 / 12 |
+| `rmgupgradepoints.yml` | immediates at `0x0090760A`, `0x0090761B`, … `0x00907643` (switch on ExpMultiplier `+0xB0`, `0x00907603`) | Upgrade building points scale 0.2 / 0.5 / 1 / 2 / 4 → 1 / 1.2 / 1.4 / 1.6 / 2 (default 1 → 1.4) |
+| `rmgdimensiondoor.yml` | `push 0x00F290E0` at `0x00920CB1` + string `0x00E577D0` | Land cartographer replaced: the cast target becomes `SAdvMapBuildingShared` (RTTI `0x00F28E94`) and the path `/MapObjects/RMGDimensionDoor.(AdvMapBuildingShared).xdb`. Needs that XDB in the mod data |
+
+All three are plain `PATCH_INT` / `PATCH_FLOAT` / `PATCH_WRTE` writes for the DLL; the creature strength one is cleaner as a hook on the switch than as the MMH55 code rewrite.

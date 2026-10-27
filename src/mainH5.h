@@ -57,6 +57,8 @@ void HeroScreenUI_init(pugi::xml_document& doc);
 void BattlefieldSize_init(pugi::xml_document& doc);
 void RemoveMapScriptCheck_init(pugi::xml_document& doc);
 void NetworkInterval_init(pugi::xml_document& doc);
+void RmgArtifactLog_init(pugi::xml_document& doc);
+void RmgGuardLog_init(pugi::xml_document& doc);
 
 void ArcaneRenewalFix_init(pugi::xml_document& doc);
 void EmpoweredArmageddon_init(pugi::xml_document& doc);
@@ -78,6 +80,7 @@ void MasterOfFireFix_init(pugi::xml_document& doc);
 void EncourageFix_init(pugi::xml_document& doc);
 void EmptyWindowRectFix_init(pugi::xml_document& doc);
 void DocWindowSaveFix_init(pugi::xml_document& doc);
+void RmgGuardPoolFix_init(pugi::xml_document& doc);
 
 void Health_init(pugi::xml_document& doc);
 void CreatureAttack_init(pugi::xml_document& doc);
