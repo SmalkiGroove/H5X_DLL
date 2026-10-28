@@ -620,6 +620,9 @@
     <ClCompile Include="src\patches\RmgGuardLog.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\RmgTeams.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\CombatCamera.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>

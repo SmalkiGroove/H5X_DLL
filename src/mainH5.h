@@ -59,6 +59,7 @@ void RemoveMapScriptCheck_init(pugi::xml_document& doc);
 void NetworkInterval_init(pugi::xml_document& doc);
 void RmgArtifactLog_init(pugi::xml_document& doc);
 void RmgGuardLog_init(pugi::xml_document& doc);
+void RmgTeams_init(pugi::xml_document& doc);
 
 void ArcaneRenewalFix_init(pugi::xml_document& doc);
 void EmpoweredArmageddon_init(pugi::xml_document& doc);

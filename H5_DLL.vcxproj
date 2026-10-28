@@ -240,6 +240,7 @@
     <ClCompile Include="src\patches\NetworkInterval.cpp" />
     <ClCompile Include="src\patches\RmgArtifactLog.cpp" />
     <ClCompile Include="src\patches\RmgGuardLog.cpp" />
+    <ClCompile Include="src\patches\RmgTeams.cpp" />
     <ClCompile Include="src\patches\CombatCamera.cpp" />
     <ClCompile Include="src\patches\Magnetism.cpp" />
     <ClCompile Include="src\patches\ModAbilities.cpp" />

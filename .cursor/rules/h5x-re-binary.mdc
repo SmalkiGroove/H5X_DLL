@@ -26,3 +26,7 @@ File offset for `.text`: `file_offset = VA - 0x400C00`.
 - Use `VirtualProtect` before writes; see `mainH5.cpp` apply loop.
 - `addresses.txt` is the developer RVA/function reference; cross-check with Ghidra for H5X.exe.
 - Named Ghidra functions use `func_*` prefix.
+
+## XDB reading
+
+XDB objects are read by `CXMLChunkSaver` (`IXmlSaver`, vtable `0x00E6668C`) in a pull model: each type's serializer asks for its fields by name (e.g. `RMGTemplate` `FUN_004a2340`: vtable +0x50 `StartChunk(name, index)` `0x009E25D0`, read, +0x54 `FinishChunk` `0x009E2200`). `StartChunk` with index 0 looks the child up by name (`FUN_00b838b0`, a rolling search over the children); index > 0 takes the child by position (`Item` lists). It returns false for a missing child, and the field keeps its default. **Children no serializer asks for are skipped without error**, so an extra element in an `.xdb` is harmless; the engine discards it, and a DLL hook on the type's serializer can read it through the same saver calls (verified October 2026). Caveat: the DLL patches on the first `TrackingCount` call, so objects the engine loaded and cached before that never reach such a hook (seen with RMG templates, `RmgTeams`); read the file itself as a fallback.

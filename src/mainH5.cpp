@@ -15,6 +15,7 @@ void init_patches(pugi::xml_document& doc) {
     BattlefieldSize_init(doc);             // OK
     RemoveMapScriptCheck_init(doc);        // OK
     NetworkInterval_init(doc);             // OK
+    // RmgTeams_init(doc);                // disabled: teams still missing in game, to resume later
     
     ArcaneRenewalFix_init(doc);            // OK
     EmpoweredArmageddon_init(doc);         // OK
@@ -118,7 +119,7 @@ void init_patches(pugi::xml_document& doc) {
     ArtfsetInferno_init(doc);              // OK
     ArtfsetDungeon_init(doc);              // OK
     ArtfsetDwarven_init(doc);              // OK
-    ArtfsetAcademy_init(doc);              // 
+    ArtfsetAcademy_init(doc);              // OK
     AnkhOfTheSaint_init(doc);              // OK
     GoldenGoose_init(doc);                 // OK
     TarotDeck_init(doc);                   // OK
