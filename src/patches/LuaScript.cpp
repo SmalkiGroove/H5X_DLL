@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "LuaScript.h"
 
-// LUA SCRIPT ENGINE HELPERS (no patch): argument reading, results and errors for the H5X Lua functions.
+// LUA SCRIPT ENGINE HELPERS (no patch of their own): H5X function tables, argument reading, results and errors.
 // Lua stack (state +0x10): +0x0C top, +0x10 base, +0x14 values (16 bytes: tag, ..., value at +8).
 // Tags: 1 nil, 2 number (double), 3 string.
 
@@ -20,6 +20,25 @@ static PushNilFn push_nil = (PushNilFn)0x004BF8C0;
 static ToStringFn to_string = (ToStringFn)0x004BF800;
 
 static void* const rtti_object_base = (void*)0x00F272C0;   // CObjectBase
+
+static const int lua_context_registry = 0x010DB9EC;   // vector of 0x18-byte contexts: +0x00/+0x04 name, +0x0C/+0x10 tables
+
+void lua_replace_context_table(const char* context_name, int vanilla_table, const LuaFunction* functions) {
+	size_t length = strlen(context_name);
+	char* context = *(char**)lua_context_registry;
+	char* contexts_end = *(char**)(lua_context_registry + 4);
+	for (; context && context < contexts_end; context += 0x18) {
+		const char* name = *(const char**)context;
+		if ((size_t)(*(const char**)(context + 4) - name) != length || memcmp(name, context_name, length) != 0) continue;
+		for (int* table = *(int**)(context + 0x0C); table < *(int**)(context + 0x10); ++table) {
+			if (*table != vanilla_table) continue;
+			assembly_patches.push_back({ PATCH_INT, (int)(uintptr_t)table, 4, nullptr, (int)(uintptr_t)functions, 0, 0, 0 });
+			return;
+		}
+	}
+	writeLog(ERRROR, std::string("LuaScript: no table to replace in the \"") + context_name
+		+ "\" Lua context, its H5X functions are not registered");
+}
 
 static char* lua_value(int* state, int index) {
 	char* stack = (char*)state[0x10 / 4];

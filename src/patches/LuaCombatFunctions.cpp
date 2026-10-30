@@ -37,22 +37,10 @@ static const LuaFunction H5X_COMBAT_FUNCTIONS[] = {
 	{ nullptr, nullptr }
 };
 
-static const int lua_context_registry = 0x010DB9EC;   // vector of 0x18-byte contexts: +0x00/+0x04 name, +0x0C/+0x10 tables
 static const int lua_cinematic_table = 0x00F33080;
 
 void LuaCombatFunctions_init(pugi::xml_document& doc) {
-	char* context = *(char**)lua_context_registry;
-	char* contexts_end = *(char**)(lua_context_registry + 4);
-	for (; context && context < contexts_end; context += 0x18) {
-		const char* name = *(const char**)context;
-		if (*(const char**)(context + 4) - name != 6 || memcmp(name, "combat", 6) != 0) continue;
-		for (int* table = *(int**)(context + 0x0C); table < *(int**)(context + 0x10); ++table) {
-			if (*table != lua_cinematic_table) continue;
-			assembly_patches.push_back({ PATCH_INT, (int)(uintptr_t)table, 4, nullptr, (int)(uintptr_t)H5X_COMBAT_FUNCTIONS, 0, 0, 0 });
-			return;
-		}
-	}
-	writeLog(ERRROR, "LuaCombatFunctions: combat Lua context not found, the H5X combat functions are not registered");
+	lua_replace_context_table("combat", lua_cinematic_table, H5X_COMBAT_FUNCTIONS);
 }
 
 typedef int*(__thiscall* FindUnitFn)(int*, const char**);

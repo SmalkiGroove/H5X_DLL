@@ -605,6 +605,9 @@
     <ClCompile Include="src\patches\LuaCastAreaSpell.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>
+    <ClCompile Include="src\patches\LuaAdvmapFunctions.cpp">
+      <Filter>Source Files\patches\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\patches\DiagnosticsMP.cpp">
       <Filter>Source Files\patches\Other</Filter>
     </ClCompile>

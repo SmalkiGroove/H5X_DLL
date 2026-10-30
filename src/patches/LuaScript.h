@@ -11,6 +11,10 @@ struct LuaFunction {
 	void* function;
 };
 
+// At init: replaces, in the engine's context registry (0x010DB9EC, built by the CRT start-up before the DLL runs), the
+// given context's pointer to a vanilla function table by an H5X table (which must repeat the vanilla entries).
+// Pushes a PATCH_INT; logs an error when the context or the table isn't found.
+void lua_replace_context_table(const char* context, int vanilla_table, const LuaFunction* functions);
 // Owner of the script engine (execution context) cast to the given interface, nullptr if it isn't one.
 int* lua_owner(int* state, int type_descriptor);
 // Script error with a printf format; throws out of the Lua call (no C++ object may need destruction in the caller).
