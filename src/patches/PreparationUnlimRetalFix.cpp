@@ -14,29 +14,26 @@ void PreparationUnlimRetalFix_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, PreparationUnlimRetalFix_fork, 7, PreparationUnlimRetalFixFork, 0, 0, 0 });
 }
 
+// before_attack = the retaliation already happened before the attack (effect 286 / 0x11E path)
+static bool __fastcall skip_post_hit_retaliation(ICombatUnit* retaliator, bool before_attack) {
+	return before_attack && retaliator->has_ability(ABILITY_UNLIMITED_RETALIATION);
+}
+
+// edi = retaliator; [esp+0x58] = retaliated before the attack, [esp+0x40] = vanilla retaliation flag
 __declspec(naked) void PreparationUnlimRetalFixFork() {
 	__asm {
-		// In this frame, [esp+0x58] is the local flag set by the
-		// "retaliate-before-attack" (effect 286 / 0x11E) path.
 		cmp byte ptr [esp + 0x58], 0x0
-		je UNLIMITED_RETAL_286_CONTINUE
-
-		// If the retaliator has Unlimited Retaliations (ability 6),
-		// skip the post-hit retaliation branch.
-		mov edx, dword ptr [edi]
+		setne dl
 		mov ecx, edi
-		push ABILITY_UNLIMITED_RETALIATION
-		call dword ptr [edx + 0x28C]
+		call skip_post_hit_retaliation
 		test al, al
 		jne UNLIMITED_RETAL_286_SKIP
 
-		UNLIMITED_RETAL_286_CONTINUE:
-
 		cmp byte ptr [esp + 0x40], 0x0
 		jz UNLIMITED_RETAL_286_SKIP
-		jmp[PreparationUnlimRetalFix_continue]
+		jmp [PreparationUnlimRetalFix_continue]
 
-		UNLIMITED_RETAL_286_SKIP:
-		jmp[PreparationUnlimRetalFix_skip]
+	UNLIMITED_RETAL_286_SKIP:
+		jmp [PreparationUnlimRetalFix_skip]
 	}
 }

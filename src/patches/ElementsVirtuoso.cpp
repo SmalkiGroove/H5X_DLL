@@ -79,7 +79,7 @@ __declspec(naked) void ElementsVirtuosoFork1() {
         call elementalVirtuoso_reset
         popad
         mov eax, dword ptr [esi]
-        call dword ptr [eax + 0xC]
+        call dword ptr [eax]CombatArmy_vtable.get_combat_hero
 		jmp[ElementsVirtuoso_return1]
     }
 }

@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "structs/Combat.h"
+#include "structs/Script.h"
 
 // LUA: UnitAttack(attacker, defender) combat script callback
 // Called with the script names of both units (the names UnitMove / UnitDeath receive) after each attack:
@@ -47,12 +49,10 @@ static std::vector<UnitAttackCall> unit_attack_queue;
 static int* unit_attack_combat = nullptr;    // combat of the last flush
 
 // Script name of a unit: names object (CCombat vtable +0x120), vtable +0x08 = thiscall(CombatUnit) -> {begin, end}
-static std::string unit_script_name(int* combat, ICombatUnit* unit) {
-	typedef int*(__thiscall* NamesFn)(int*);
-	typedef char**(__thiscall* NameFn)(int*, ICombatUnit*);
-	int* names = ((NamesFn)(*(int***)combat)[0x120 / 4])(combat);
+static std::string unit_script_name(ICombat* combat, ICombatUnit* unit) {
+	ICombatUnitNames* names = combat->unit_names();
 	if (!names) return std::string();
-	char** range = ((NameFn)(*(int***)names)[0x08 / 4])(names, unit);
+	char** range = names->name((int*)unit);
 	if (!range || !range[0] || range[1] <= range[0]) return std::string();
 	return std::string(range[0], range[1]);
 }
@@ -69,10 +69,9 @@ static void append_lua_string(std::string& out, const std::string& value) {
 
 int __fastcall unit_attack_record(ICombatUnit* attacker, ICombatUnit* defender) {
 	if (!attacker || !defender || attacker == defender) return 0;
-	int* combat = attacker->combat();
+	ICombat* combat = (ICombat*)attacker->combat();
 	if (!combat) return 0;
-	typedef char(__thiscall* CombatFlagFn)(int*);
-	if (((CombatFlagFn)(*(int***)combat)[0x108 / 4])(combat)) return 0;
+	if (combat->is_silent()) return 0;
 	if (unit_attack_queue.size() >= queue_limit) return 0;
 
 	UnitAttackCall call = { unit_script_name(combat, attacker), unit_script_name(combat, defender) };
@@ -95,15 +94,14 @@ void __fastcall unit_attack_flush(char* manager) {
 	calls.swap(unit_attack_queue);
 	if (!manager[manager_scripted]) return;
 
-	int* runner = (int*)(manager + manager_runner);
-	typedef void(__thiscall* RunFn)(int*, const char*);
+	IScriptRunner* runner = (IScriptRunner*)(manager + manager_runner);
 	for (const UnitAttackCall& call : calls) {
 		std::string code = "if UnitAttack then UnitAttack(";
 		append_lua_string(code, call.attacker);
 		code += ',';
 		append_lua_string(code, call.defender);
 		code += ") end";
-		((RunFn)(*(int***)runner)[0])(runner, code.c_str());
+		runner->run(code.c_str());
 	}
 }
 

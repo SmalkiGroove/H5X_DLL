@@ -11,26 +11,23 @@ void BloodyClawNecklace_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, BloodyClawNecklace_fork, 6, BloodyClawNecklaceFork, 0, 0, 0 });
 }
 
+static int __fastcall bloody_claw_max_damage(IHero* hero, int max_damage) {
+    if (!hero->has_artifact(ARTIFACT_NECKLACE_OF_THE_BLOODY_CLAW)) return max_damage;
+    return max_damage + (int)((unsigned int)max_damage >> 2);
+}
+
+// esi = IHero, edi = creature max damage
 __declspec(naked) void BloodyClawNecklaceFork() {
     __asm
     {
-        mov edx, dword ptr [esi]
+        mov edx, edi
         mov ecx, esi
-        push 0x6A
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        call[count_equipped_artifact]
-		test eax, eax
-        je SKIP_BLOODYCLAWNECKLACE_BONUS
-        mov ecx, edi
-        shr ecx, 2
-        add edi, ecx
+        call bloody_claw_max_damage
+        mov edi, eax
 
-        SKIP_BLOODYCLAWNECKLACE_BONUS:
         mov edx, dword ptr [esi]
         mov ecx, esi
         push 0x24
-
-        jmp[BloodyClawNecklace_return]
+        jmp [BloodyClawNecklace_return]
     }
 }

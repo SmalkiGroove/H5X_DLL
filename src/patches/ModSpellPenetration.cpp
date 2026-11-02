@@ -69,8 +69,8 @@ __declspec(naked) void ResistanceBypassFork() {
 
 // caster = hero CombatUnit subobject; returns the multiplier of the resisted part
 static float __fastcall artifact_penetration_multiplier(int* caster) {
-    int* aux = ((GetPtr)(*(int***)caster)[0x74 / 4])(caster);       // get_hero_aux_subobject
-    IHero* hero = (IHero*)((GetPtr)(*(int***)aux)[0])(aux);
+    ICombatHeroInterface* aux = (ICombatHeroInterface*)((ICombatUnit*)caster)->hero_interface();
+    IHero* hero = aux->hero();
     float multiplier = 1.0f;
     if (hero->has_artifact(ARTIFACT_GENJIS_SILKSWORD)) multiplier *= 0.8f;
     if (hero->has_artifact(ARTIFACT_CHAOS_SHROUD))     multiplier *= 0.34f;
@@ -89,14 +89,14 @@ __declspec(naked) void SpellPenetrationFork() {
 
         mov edx, dword ptr [edi]
         mov ecx, edi
-        call dword ptr [edx + 0x74]
+        call dword ptr [edx]CombatUnit_vtable.get_combat_hero
         mov edx, dword ptr [eax]
         mov ecx, eax
-        call dword ptr [edx]
+        call dword ptr [edx]CombatHeroInterface_vtable.get_hero
         mov edx, dword ptr [eax]
         mov ecx, eax
         push 0x12
-        call dword ptr [edx + 0x174]
+        call dword ptr [edx]Hero_vtable.get_skill_mastery
 		test eax, eax
         je SPELL_PENETRATION_END
         jmp[SpellPenetration_return]

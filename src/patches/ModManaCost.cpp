@@ -23,190 +23,67 @@ void ManaCost_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, ManaCost_fork, 15, ManaCostFork, 0, 0, 0 });
 }
 
+// cost x 0.9, with the x87 instructions of the original code (same rounding at the game's FPU precision)
+static int ninety_percent(int cost) {
+    int result;
+    __asm {
+        fild dword ptr [cost]
+        fmul dword ptr [constf_0_9]
+        fistp dword ptr [result]
+    }
+    return result;
+}
+
+static int at_least_one(int cost) {
+    return cost < 1 ? 1 : cost;
+}
+
+// cost = cost after the vanilla modifiers, magister = the hero wears the Ring of the Magister (replaces its
+// vanilla halving)
+static int __stdcall mana_cost(IHero* hero, int* spell, int cost, int magister) {
+    if (magister) cost = at_least_one(cost - 4);
+    if (hero->has_artifact(ARTIFACT_GENJIS_HAT)) cost = at_least_one(cost - 1);
+    if (hero->has_artifact(ARTIFACT_MOONLIGHT_COAT)) cost -= cost / 4;
+
+    switch (get_spell_element(spell)) {
+    case ELEMENT_WATER:
+        if (hero->skill_mastery(PERK_FROST_POWER)) cost = ninety_percent(cost);
+        if (hero->has_artifact(ARTIFACT_CROWN_OF_THE_FROST_LORD)) cost = at_least_one(cost / 2);
+        break;
+    case ELEMENT_FIRE:
+        if (hero->skill_mastery(PERK_BLAZE_POWER)) cost = ninety_percent(cost);
+        if (hero->has_artifact(ARTIFACT_BLAZING_SPELLBOOK)) cost = at_least_one(((cost * 5) >> 3) + (cost >> 3));
+        break;
+    case ELEMENT_AIR:
+        if (hero->skill_mastery(PERK_THUNDER_POWER)) cost = ninety_percent(cost);
+        break;
+    case ELEMENT_EARTH:
+        if (hero->skill_mastery(PERK_EARTH_POWER)) cost = ninety_percent(cost);
+        break;
+    }
+
+    switch (get_spell_school(spell)) {
+    case SPELL_SCHOOL_NATURAL:
+        if (hero->has_artifact(ARTIFACT_SYLVAN_AMULET)) cost = at_least_one(cost - 3);
+        break;
+    case SPELL_SCHOOL_DARK:
+        if (hero->has_artifact(ARTIFACT_DEADWOOD_STAFF)) cost = at_least_one(cost - 1);
+        break;
+    }
+    return cost;
+}
+
+// ebx = casting IHero, edi = spell, esi = mana cost, eax = Ring of the Magister count (vanilla halving replaced)
 __declspec(naked) void ManaCostFork() {
     __asm
     {
-        je MANA_ALL_1
-        sub esi, 0x4
-        cmp esi, 0x1
-        jge MANA_ALL_1
-        mov esi, 0x1
-
-        MANA_ALL_1 :
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0x74
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MANA_ALL_2
-        sub esi, 0x1
-        cmp esi, 0x1
-        jge MANA_ALL_2
-        mov esi, 0x1
-
-        MANA_ALL_2:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0xBA
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MANA_BY_ELEMENT
-        mov eax, esi
-        cdq
-        sub eax, edx
-        sar eax, 0x2
-        sub esi, eax
-
-        MANA_BY_ELEMENT:
-        mov ecx, edi
-        call[get_spell_element]
-        cmp eax, ELEMENT_AIR
-        je MANA_LIGHTNING_1
-        cmp eax, ELEMENT_FIRE
-        je MANA_FIRE_1
-        cmp eax, ELEMENT_WATER
-        je MANA_ICE_1
-        cmp eax, ELEMENT_EARTH
-        je MANA_EARTH_1
-
-        jmp MANA_BY_SCHOOL
-
-        MANA_ICE_1:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        push 0xE8
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        je MANA_ICE_2
+        push eax
         push esi
-        fild dword ptr ss: [esp]
-        fmul dword ptr [constf_0_9]
-        fistp dword ptr ss: [esp]
-        pop esi
-
-        MANA_ICE_2:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0x65
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MANA_BY_SCHOOL
-        mov eax, esi
-        cdq
-        sub eax, edx
-        sar eax, 0x1
+        push edi
+        push ebx
+        call mana_cost
         mov esi, eax
-        cmp esi, 0x1
-        jge MANA_BY_SCHOOL
-        mov esi, 0x1
-        jmp MANA_BY_SCHOOL
-
-        MANA_FIRE_1:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        push 0xE7
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        je MANA_FIRE_2
-        push esi
-        fild dword ptr ss: [esp]
-        fmul dword ptr [constf_0_9]
-        fistp dword ptr ss: [esp]
-        pop esi
-
-        MANA_FIRE_2:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0x97
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MANA_BY_SCHOOL
-        lea eax, dword ptr [esi + esi * 0x4]
-        cdq
-        sar eax, 0x3
-        sar esi, 0x3
-        add esi, eax
-        cmp esi, 0x1
-        jge MANA_BY_SCHOOL
-        mov esi, 0x1
-        jmp MANA_BY_SCHOOL
-
-        MANA_LIGHTNING_1:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        push 0xE9
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        je MANA_BY_SCHOOL
-        push esi
-        fild dword ptr ss: [esp]
-        fmul dword ptr [constf_0_9]
-        fistp dword ptr ss: [esp]
-        pop esi
-        jmp MANA_BY_SCHOOL
-
-        MANA_EARTH_1:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        push 0xEA
-        call dword ptr [edx + 0x174]
-        test eax, eax
-        je MANA_BY_SCHOOL
-        push esi
-        fild dword ptr ss: [esp]
-        fmul dword ptr [constf_0_9]
-        fistp dword ptr ss: [esp]
-        pop esi
-
-        MANA_BY_SCHOOL:
-        mov ecx, edi
-        call[get_spell_school]
-        cmp eax, SPELL_SCHOOL_DARK
-        je MANA_DARK_1
-        cmp eax, SPELL_SCHOOL_NATURAL
-        je MANA_NATURE_1
-
-        jmp MANACOST_RETURN
-
-        MANA_NATURE_1:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0x8C
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MANACOST_RETURN
-        sub esi, 0x3
-        cmp esi, 0x1
-        jge MANACOST_RETURN
-        mov esi, 0x1
-        jmp MANACOST_RETURN
-
-        MANA_DARK_1:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0x9A
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MANACOST_RETURN
-        sub esi, 0x1
-        cmp esi, 0x1
-        jge MANACOST_RETURN
-        mov esi, 0x1
-
-        MANACOST_RETURN:
         mov dword ptr ss: [esp + 0x10], esi
-        jmp[ManaCost_return]
+        jmp [ManaCost_return]
     }
 }

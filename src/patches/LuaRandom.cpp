@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "LuaScript.h"
+#include "structs/Combat.h"
 
 // LUA FUNCTION random(a, b): random integer in [min(a, b), max(a, b)], adventure map and combat scripts
 // - Adventure map: replaces the handler of the vanilla advmap random(n) entry (lua_random 0x005DFC30). The value
@@ -31,9 +32,9 @@ static unsigned int next_random(unsigned int* state, unsigned int range) {
 
 unsigned int combat_script_random(int* combat, unsigned int range) {
 	if (combat != random_combat) {
-		int* generator = ((ThiscallIntPtr_IntPtr)(*(int***)combat)[0x0C / 4])(combat);
+		IRandomGenerator* generator = ((ICombat*)combat)->random_generator();
 		random_combat = combat;
-		random_state = (unsigned int)generator[0x08 / 4];
+		random_state = generator->state;
 	}
 	return next_random(&random_state, range);
 }
@@ -52,14 +53,13 @@ int __fastcall lua_random(int* state) {
 	int low = a < b ? a : b;
 	unsigned int range = (unsigned int)((a < b ? b : a) - low) + 1;
 	int value = 0;
-	int* map = lua_owner(state, RTTI_ADVENTURE_MAP);
-	int* arena = map ? nullptr : lua_owner(state, RTTI_COMBAT_ARENA);
+	IAdventureMap* map = (IAdventureMap*)lua_owner(state, RTTI_ADVENTURE_MAP);
+	IArena* arena = map ? nullptr : (IArena*)lua_owner(state, RTTI_COMBAT_ARENA);
 	if (map) {
-		value = ((ThiscallInt_IntPtr_Int)(*(int***)map)[0x0C / 4])(map, (int)range);
+		value = map->random((int)range);
 	}
 	else if (arena) {
-		int* combat = ((ThiscallIntPtr_IntPtr)(*(int***)arena)[0x08 / 4])(arena);
-		value = (int)combat_script_random(combat, range);
+		value = (int)combat_script_random((int*)arena->combat(), range);
 	}
 	else {
 		lua_error(state, "random: can't get adventure map or combat arena");

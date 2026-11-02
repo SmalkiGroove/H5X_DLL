@@ -11,23 +11,22 @@ void RingOfDevastation_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, RingOfDevastation_fork, 6, RingOfDevastationFork, 0, 0, 0 });
 }
 
+static int __fastcall ring_of_devastation_attack(IHero* hero, int attack) {
+    return hero->has_artifact(ARTIFACT_RING_OF_DEVASTATION) ? attack + 10 : attack;
+}
+
+// esi = IHero, edi = ballista attack
 __declspec(naked) void RingOfDevastationFork() {
     __asm
     {
-        mov edx, dword ptr [esi]
+        mov edx, edi
         mov ecx, esi
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0xA8
-        call[count_equipped_artifact]
-		test eax, eax
-		je SKIP_RINGOFDEVASTATION_BONUS
-        add edi, 0xA
+        call ring_of_devastation_attack
+        mov edi, eax
 
-        SKIP_RINGOFDEVASTATION_BONUS:
         mov eax, dword ptr [esi]
         mov ecx, esi
         push 0x8
-        jmp[RingOfDevastation_return]
+        jmp [RingOfDevastation_return]
     }
 }

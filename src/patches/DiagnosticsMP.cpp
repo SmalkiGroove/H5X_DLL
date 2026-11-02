@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "structs/Script.h"
+#include "structs/AdvMap.h"
 
 // TEMPORARY DIAGNOSTICS: multiplayer script execution (H5.log, "[MP]" lines), to be removed after the test
 // Logs, with the time (GetTickCount), on each machine:
@@ -108,18 +110,25 @@ static std::string diag_engine_string(char** string) {
 }
 
 // Player id 1..8 of the world (CWorld vtable +0x68), nullptr when absent.
-static int* diag_player(int* world, int id) {
-	typedef int*(__thiscall* GetPlayerFn)(int*, int);
-	int* player = nullptr;
-	__try { player = ((GetPlayerFn)(*(int***)world)[0x68 / 4])(world, id); }
+static IPlayer* diag_player(int* world, int id) {
+	IPlayer* player = nullptr;
+	__try { player = ((IWorld*)world)->player(id); }
 	__except (EXCEPTION_EXECUTE_HANDLER) { player = nullptr; }
 	return player;
 }
 
-static int diag_player_slot(int* player, int offset) {
-	typedef int(__thiscall* SlotFn)(int*);
+// IPlayer vtable +0x184 (human flag)
+static int diag_player_human(IPlayer* player) {
 	int value = -1;
-	__try { value = ((SlotFn)(*(int***)player)[offset / 4])(player); }
+	__try { value = player->instance->is_human_player((int*)player); }
+	__except (EXCEPTION_EXECUTE_HANDLER) { value = -1; }
+	return value;
+}
+
+// IPlayer vtable +0x188 (host type, 0 = human)
+static int diag_player_host(IPlayer* player) {
+	int value = -1;
+	__try { value = player->instance->get_host_type((int*)player); }
 	__except (EXCEPTION_EXECUTE_HANDLER) { value = -1; }
 	return value;
 }
@@ -136,11 +145,11 @@ static void diag_dump_world(int* world, const char* when) {
 	if (script_system) runner = diag_bytes((unsigned char*)script_system + 0x08, 8);
 	diag_log("  script system " + diag_hex(script_system) + " (+08 world, +0C runner): " + runner);
 	for (int id = 1; id <= 8; ++id) {
-		int* player = diag_player(world, id);
+		IPlayer* player = diag_player(world, id);
 		if (!player) continue;
 		diag_log("  player " + std::to_string(id) + " " + diag_hex(player)
-			+ " human(+184)=" + std::to_string(diag_player_slot(player, 0x184) & 0xFF)
-			+ " host(+188)=" + std::to_string(diag_player_slot(player, 0x188))
+			+ " human(+184)=" + std::to_string(diag_player_human(player))
+			+ " host(+188)=" + std::to_string(diag_player_host(player))
 			+ " bytes: " + diag_bytes((unsigned char*)player, 0x80));
 	}
 }
@@ -206,7 +215,7 @@ __declspec(naked) void DiagCaptureWorldFork() {
 	{
 		mov eax, dword ptr [ebx]
 		mov ecx, ebx
-		call dword ptr [eax]
+		call dword ptr [eax]AdventureMap_vtable.get_world
 		pushad
 		push ebp
 		push eax
@@ -303,7 +312,7 @@ __declspec(naked) void DiagUnitDeathFork() {
 		popad
 		mov eax, dword ptr [ecx]
 		push esi
-		call dword ptr [eax]
+		call dword ptr [eax]ScriptRunner_vtable.run
 		jmp [DiagUnitDeath_return]
 	}
 }

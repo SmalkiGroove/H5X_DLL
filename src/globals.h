@@ -78,7 +78,6 @@ extern float constf_1_2;
 extern float constf_1_3;
 extern float constf_1_5;
 extern float constf_percent;
-extern float varf;
 
 
 #endif

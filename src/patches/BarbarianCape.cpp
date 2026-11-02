@@ -12,34 +12,25 @@ void BarbarianCape_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, BarbarianCape_fork, 5, BarbarianCapeFork, 0, 0, 0 });
 }
 
+// target = unit getting the fear effect: protected when its own hero wears the cape
+static bool __fastcall barbarian_cape_protects(ICombatUnit* target) {
+    IHero* hero = owner_hero(target);
+    return hero && hero->has_artifact(ARTIFACT_BARBARIAN_CAPE);
+}
+
+// [esi+4] = target unit
 __declspec(naked) void BarbarianCapeFork() {
     __asm
     {
         mov ecx, dword ptr [esi + 0x4]
-        mov edx, dword ptr [ecx]
-        call dword ptr [edx + 0xC]
-		mov edx, dword ptr [eax]
-		mov ecx, eax
-		call dword ptr [edx + 0xC]
-		test eax, eax
-		je SKIP_BARBARIAN_CAPE
-		mov edx, dword ptr [eax]
-		mov ecx, eax
-		call dword ptr [edx]
-		mov edx, dword ptr [eax]
-		mov ecx, eax
-		call dword ptr [edx + 0x74]
-		mov ecx, eax
-		push 0x92
-		call[count_equipped_artifact]
-		test eax, eax
-		jne ACTIVATE_BARBARIAN_CAPE
+        call barbarian_cape_protects
+        test al, al
+        jne ACTIVATE_BARBARIAN_CAPE
 
-        SKIP_BARBARIAN_CAPE:
-        call[get_defaultstats]
-        jmp[BarbarianCape_return]
+        call [get_defaultstats]
+        jmp [BarbarianCape_return]
 
-		ACTIVATE_BARBARIAN_CAPE:
-		jmp[BarbarianCape_end]
+    ACTIVATE_BARBARIAN_CAPE:
+        jmp [BarbarianCape_end]
     }
 }

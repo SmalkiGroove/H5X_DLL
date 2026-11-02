@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "structs/Combat.h"
 #include "types/Spells.h"
 
 // SPEC_LIGHTNING_TOUCH: the hero's creatures deal 10% bonus damage as lightning on melee attacks (resisted like Lightning Bolt).
@@ -32,7 +33,7 @@ void LightningTouch_init(pugi::xml_document& doc) {
 // Hero of the attacker's side: attacker -> side -> NWorld::ICombatHero (same chain as func_GetAdditionalFireDmg).
 static bool has_lightning_touch(ICombatUnit* attacker) {
     using namespace combat_creature_detail;
-    ICombatHero* hero = combat_hero_from_outer(call_unit_ref(attacker->unit_ref()));
+    ICombatHero* hero = combat_hero_from_outer(side_combat_hero(attacker->side()));
     return hero && hero->has_perk(SPEC_LIGHTNING_TOUCH);
 }
 
@@ -45,10 +46,9 @@ static int lightning_touch_damage(ICombatUnit* attacker, ICombatUnit* target, in
 // Stormstrike bolt from the attacker to the target at `time` (same call as ABILITY_STORMSTRIKE, 0x00A60964).
 // Like the fire / cold bonus events, nothing is shown when the combat flag CCombat +0x98 (vtable +0x108) is set.
 static void lightning_touch_show(ICombatUnit* attacker, ICombatUnit* target, int time) {
-    int* combat = ((GetPtr)attacker->instance->get_owner_ref)((int*)attacker);
+    ICombat* combat = (ICombat*)attacker->combat();
     if (!combat) return;
-    typedef char(__thiscall* CombatFlagFn)(int*);
-    if (((CombatFlagFn)(*(int***)combat)[0x108 / 4])(combat)) return;
+    if (combat->is_silent()) return;
 
     int spell_ref[5] = { 0, lightning_touch_visual, 0, 0, 0 };
     launch_spell_visual(spell_ref, (int*)attacker, (int*)target, time, 0x00F495D4);

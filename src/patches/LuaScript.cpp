@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "LuaScript.h"
+#include "structs/Script.h"
 
 // LUA SCRIPT ENGINE HELPERS (no patch of their own): H5X function tables, argument reading, results and errors.
 // Lua stack (state +0x10): +0x0C top, +0x10 base, +0x14 values (16 bytes: tag, ..., value at +8).
@@ -10,7 +11,6 @@ typedef void*(__cdecl* DynamicCastFn)(void*, int, void*, void*, int);    // __RT
 typedef void(__thiscall* PushNumberFn)(int*, double);                    // 0x004BF900
 typedef void(__thiscall* PushNilFn)(int*);                               // 0x004BF8C0
 typedef const char*(__fastcall* ToStringFn)(int*, int);                  // 0x004BF800
-typedef void(__thiscall* ScriptErrorFn)(int*, const char*);              // engine vtable +0x04
 
 static ScriptContextFn script_owner = (ScriptContextFn)0x00B0F650;
 static ScriptContextFn script_engine = (ScriptContextFn)0x00B0F610;
@@ -56,14 +56,14 @@ int* lua_owner(int* state, int type_descriptor) {
 
 void lua_error(int* state, const char* format, ...) {
 	int call_context[4] = { 0, 0, (int)(uintptr_t)state, 0 };
-	int* engine = script_engine(call_context);
+	IScriptEngine* engine = (IScriptEngine*)script_engine(call_context);
 	if (!engine) return;
 	char message[256];
 	va_list args;
 	va_start(args, format);
 	vsnprintf(message, sizeof(message), format, args);
 	va_end(args);
-	((ScriptErrorFn)(*(int***)engine)[0x04 / 4])(engine, message);
+	engine->error(message);
 }
 
 bool lua_has_arg(int* state, int index) {

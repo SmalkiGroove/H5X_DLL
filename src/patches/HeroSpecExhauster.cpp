@@ -13,27 +13,22 @@ void ExhausterTweak_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, Exhauster_fork, 13, ExhausterFork, 0, 0, 0 });
 }
 
+static bool __fastcall exhauster_slows(ICombatArmy* enemy_side) {
+	ICombatHero* hero = side_hero_unit(enemy_side);
+	return hero && hero->has_spec(HERO_SPEC_PRUDENT);
+}
+
+// eax = enemy side of the creature (CombatUnit vtable +0x10)
 __declspec(naked) void ExhausterFork() {
 	__asm
 	{
-		mov edx, dword ptr [eax]
 		mov ecx, eax
-		call dword ptr [edx + 0xC]
-		test eax, eax
-		je EXHAUSTER_END
-
-		mov ecx, dword ptr [eax + 0x4]
-		mov edx, dword ptr [ecx + 0x8]
-		lea ecx, dword ptr [edx + eax + 0x4]
-		mov eax, dword ptr [ecx]
-		
-		push HERO_SPEC_PRUDENT
-		call dword ptr [eax + 0x294]
+		call exhauster_slows
 		test al, al
 		jz EXHAUSTER_END
-		jmp[Exhauster_return]
+		jmp [Exhauster_return]
 
 	EXHAUSTER_END:
-		jmp[Exhauster_end]
+		jmp [Exhauster_end]
 	}
 }

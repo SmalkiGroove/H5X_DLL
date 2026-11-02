@@ -61,6 +61,8 @@ FastcallVoid_IntPtr_IntPtr collect_all_combat_units = (FastcallVoid_IntPtr_IntPt
 
 CdeclPtr_Uint engine_alloc = (CdeclPtr_Uint)0x00878FD0;
 CdeclVoid_Ptr engine_free = (CdeclVoid_Ptr)0x00879240;
+// Engine string {begin, end, capacity end}: thiscall(begin, end), edx unused; free with engine_free(begin).
+FastcallVoid_CharPtrPtr_Int_CharPtr_CharPtr make_engine_string = (FastcallVoid_CharPtrPtr_Int_CharPtr_CharPtr)0x00401B20;
 
 FastcallVoid_IntPtr_Char_3Int notify_spec_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB930;
 FastcallVoid_IntPtr_Char_3Int notify_skill_buff = (FastcallVoid_IntPtr_Char_3Int)0x009BB960;
@@ -93,12 +95,22 @@ float turn_duration() {
 	return ((TurnDurationFn)0x00A2D700)();
 }
 
-// Adventure map hero of the side owning the unit (nullptr without hero).
-// unit (vtable +0x0C) -> side, side (vtable +0x0C) -> combat hero, combat hero (vtable +0x00) -> IHero.
+// side (vtable +0x0C) -> combat hero, combat hero (vtable +0x00) -> IHero.
+IHero* side_hero(ICombatArmy* side) {
+	ICombatHeroInterface* combat_hero = (ICombatHeroInterface*)combat_creature_detail::side_combat_hero(side);
+	return combat_hero ? combat_hero->hero() : nullptr;
+}
+
+ICombatHero* side_hero_unit(ICombatArmy* side) {
+	return combat_creature_detail::combat_hero_from_outer(combat_creature_detail::side_combat_hero(side));
+}
+
+// unit (vtable +0x0C) -> own side
 IHero* owner_hero(ICombatUnit* unit) {
-	int* side = unit->unit_ref();
-	if (!side) return nullptr;
-	int* combat_hero = ((GetPtr)(*(int***)side)[0x0C / 4])(side);
-	if (!combat_hero) return nullptr;
-	return (IHero*)((GetPtr)(*(int***)combat_hero)[0])(combat_hero);
+	return side_hero(unit->side());
+}
+
+// unit (vtable +0x10) -> enemy side
+IHero* enemy_hero(ICombatUnit* unit) {
+	return side_hero(unit->enemy_side());
 }

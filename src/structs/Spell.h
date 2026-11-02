@@ -34,10 +34,10 @@ enum SPELL_TARGET_ID {
 
 struct CResource_vtable {
 	int* add_ref; // 0x00 — FUN_008c61d0 path calls [vtable+0]
+	int* call_4;
 	int* release; // 0x08 — scalar deleting dtor; arg 1 on final release
-	int* get_payload_size; // 0x10 — FUN_00849ff0 after lazy DB load
 	int* call_12;
-	int* call_16;
+	int* get_payload_size; // 0x10 — FUN_00849ff0 after lazy DB load
 	int* call_20;
 	int* call_24;
 	int* call_28;

@@ -11,38 +11,25 @@ void RangersArmor_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, RangersArmor_fork, 6, RangersArmorFork, 0, 0, 0 });
 }
 
+// Defense bonus of the defender against the attacker: 0x10 against large creatures when the defender's own hero
+// wears the Ranger's Cuirass
+static int __fastcall rangers_armor_bonus(ICombatUnit* defender, ICombatUnit* attacker) {
+    IHero* hero = owner_hero(defender);
+    if (!hero || !hero->has_artifact(ARTIFACT_RANGERS_CUIRASS)) return 0;
+    return attacker->size() > 1 ? 0x10 : 0;
+}
+
+// ebp = defending unit, ebx = attacking unit, [esp+0xC] = defense
 __declspec(naked) void RangersArmorFork() {
     __asm
     {
-        mov edx, dword ptr [ebp]
+        mov edx, ebx
         mov ecx, ebp
-        call dword ptr [edx + 0xC]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0xC]
-        test eax, eax
-        je SKIP_RANGERS_ARMOR
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x95
-        call[count_equipped_artifact]
-        test eax, eax
-        je SKIP_RANGERS_ARMOR
-        mov eax, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [eax + 0x44]
-        cmp eax, 0x1
-		jle SKIP_RANGERS_ARMOR
-		add dword ptr ss: [esp + 0xC] , 0x10
+        call rangers_armor_bonus
+        add dword ptr ss: [esp + 0xC], eax
 
-        SKIP_RANGERS_ARMOR:
         mov edx, dword ptr [ebx]
         push 0x9F
-        jmp[RangersArmor_return]
+        jmp [RangersArmor_return]
     }
 }

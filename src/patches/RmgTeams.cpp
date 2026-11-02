@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "structs/Database.h"
 #include <algorithm>
 #include <map>
 #include "libzippp.h"
@@ -29,17 +30,11 @@ int RmgTeamsRead_fork = 0x004A2465;     // add esp,3Ch / pop edi / xor eax,eax (
 int RmgTeamsRead_return = 0x004A246B;   // pop esi / ret 4
 int RmgTeamsSave_fork = 0x0090BD1C;     // call 0x00909CE0 in func_RMG_SaveMap
 
-typedef char(__fastcall* SaverStartChunkFn)(int* saver, int edx, const char* name, int index);
-typedef char(__fastcall* SaverBoolFn)(int* saver, int edx);
-typedef void(__fastcall* SaverVoidFn)(int* saver, int edx);
-typedef int(__fastcall* SaverIntFn)(int* saver, int edx);
 typedef void(__cdecl* SaverReadIntFn)(int* saver, const char* name, int index, int* value, int* value2);
 typedef int(__fastcall* SaveMapTeamsFn)(int generator);
 typedef int*(__fastcall* GetTemplateFn)(int* link);
 typedef int*(__fastcall* GetResourceFn)(int* path);
 typedef void*(__cdecl* DynamicCastFn)(void* ptr, int offset, void* src_type, void* dst_type, int is_reference);
-typedef int*(__fastcall* GetEditorObjectFn)(int* db, int edx, int* path);
-typedef char(__fastcall* SetPropertyFn)(int* object, int edx, char** path, int* value);
 typedef void(__fastcall* MakeStringFn)(char** str, int edx, const char* begin, const char* end);
 typedef void(__cdecl* EngineFreeFn)(void* ptr);
 typedef void(__fastcall* ReleaseFn)(int* object);
@@ -69,15 +64,15 @@ void RmgTeams_init(pugi::xml_document& doc) {
 }
 
 static char saver_start(int* saver, const char* name, int index) {
-	return ((SaverStartChunkFn)(*(int**)saver)[0x50 / 4])(saver, 0, name, index);
+	return ((IXmlChunkSaver*)saver)->start_chunk(name, index);
 }
 
 static void saver_finish(int* saver) {
-	((SaverVoidFn)(*(int**)saver)[0x54 / 4])(saver, 0);
+	((IXmlChunkSaver*)saver)->finish_chunk();
 }
 
 static int saver_count(int* saver) {
-	return ((SaverIntFn)(*(int**)saver)[0x1C / 4])(saver, 0);
+	return ((IXmlChunkSaver*)saver)->child_count();
 }
 
 static std::string template_name(char* tmpl) {
@@ -92,7 +87,7 @@ static std::string teams_text(const std::vector<int>& teams) {
 }
 
 static void __fastcall rmg_read_teams(char* tmpl, int* saver) {
-	char reading = ((SaverBoolFn)(*(int**)saver)[0x48 / 4])(saver, 0);
+	char reading = ((IXmlChunkSaver*)saver)->is_reading();
 	std::string name = template_name(tmpl);
 	char has_teams = reading ? saver_start(saver, "Teams", 0) : 0;
 	writeLog(INFO, "RmgTeams: read hook, template \"" + name + "\", reading " + std::to_string((int)reading)
@@ -155,9 +150,9 @@ static bool set_property(int* object, const char* path, int type, int value) {
 	char* str[3] = { nullptr, nullptr, nullptr };
 	make_string(str, 0, path, path + strlen(path));
 	int prop[2] = { type, value };   // 1 int, 4 bool (destructor 0x00A456C0 has nothing to free for those)
-	char ok = ((SetPropertyFn)(*(int**)object)[0x2C / 4])(object, 0, str, prop);
+	bool ok = ((IEditorObject*)object)->set_property(str, prop);
 	engine_free(str[0]);
-	return ok != 0;
+	return ok;
 }
 
 static std::string adv_map_desc_teams(char* desc, int count) {
@@ -288,8 +283,8 @@ static void apply_teams(int generator) {
 		}
 	}
 
-	int* db = (int*)*editor_db;
-	int* object = db ? ((GetEditorObjectFn)(*(int**)db)[0x44 / 4])(db, 0, (int*)(rmap + 0x14)) : nullptr;
+	IEditorDatabase* db = (IEditorDatabase*)*editor_db;
+	int* object = db ? (int*)db->object((int*)(rmap + 0x14)) : nullptr;
 	if (!object) {
 		writeLog(ERRROR, "RmgTeams: no editor object for the map, map left without teams");
 		return;

@@ -128,7 +128,7 @@ __declspec(naked) void MeleeDamageOutputFork() {
         fstp dword ptr [esp + 0x18]
         mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr [eax]
+        call dword ptr [eax]CombatHeroInterface_vtable.get_hero
         jmp [MeleeDamageOutput_return]
     }
 }
@@ -156,7 +156,7 @@ __declspec(naked) void AllDamageOutputFork() {
         fstp dword ptr [esp + 0x18]
         mov edx, dword ptr [ebx]
         mov ecx, ebx
-        call dword ptr [edx + 0xC]
+        call dword ptr [edx]CombatUnit_vtable.get_side
         jmp [AllDamageOutput_return]
     }
 }

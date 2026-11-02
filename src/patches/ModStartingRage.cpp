@@ -17,8 +17,8 @@ void StartingRage_init(pugi::xml_document& doc) {
 }
 
 // hero_interface = NWorld::ICombatHero (vtable slot 0 = IHero), creature = complete object (ICombatStack at +0xA0)
-static void __fastcall starting_rage(int* hero_interface, char* creature) {
-    IHero* hero = (IHero*)((GetPtr)(*(int***)hero_interface)[0])(hero_interface);
+static void __fastcall starting_rage(ICombatHeroInterface* hero_interface, char* creature) {
+    IHero* hero = hero_interface->hero();
     if (!hero) return;
     int rage = artfset_orcs_starting_rage(hero);
     if (hero->has_artifact(ARTIFACT_COLLAR_OF_PRIMAL_RAGE)) rage += collar_starting_rage;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "LuaScript.h"
+#include "structs/Combat.h"
 
 // LUA: UnitCastAreaSpell(unit, spell, x, y) accepts -1 for x and / or y, like SummonCreature
 // lua_UnitCastAreaSpell (0x00569E60) casts through FUN_00566940 (validation FUN_00982010, then the cast command
@@ -34,10 +35,9 @@ static bool vanilla_cast(int* caster, int target, int* arena, int spell, int* ce
 
 static bool __stdcall cast_area_spell(int* caster, int target, int* arena, int spell, int* cell) {
 	if (cell[0] != -1 && cell[1] != -1) return vanilla_cast(caster, target, arena, spell, cell);
-	int* combat = ((ThiscallIntPtr_IntPtr)(*(int***)arena)[0x08 / 4])(arena);
-	typedef void(__thiscall* GridSizeFn)(int*, int*, int*);
+	ICombat* combat = ((IArena*)arena)->combat();
 	int width = 0, height = 0;
-	((GridSizeFn)(*(int***)combat)[0x44 / 4])(combat, &width, &height);
+	combat->grid_size(&width, &height);
 	std::vector<int> cells;   // x * 0x10000 + y
 	for (int x = 0; x < width; ++x) {
 		if (cell[0] != -1 && cell[0] != x) continue;
@@ -47,7 +47,7 @@ static bool __stdcall cast_area_spell(int* caster, int target, int* arena, int s
 		}
 	}
 	for (size_t left = cells.size(); left > 0; --left) {
-		size_t pick = combat_script_random(combat, (unsigned int)left);
+		size_t pick = combat_script_random((int*)combat, (unsigned int)left);
 		int candidate = cells[pick];
 		cells[pick] = cells[left - 1];
 		int target_cell[2] = { candidate / 0x10000, candidate % 0x10000 };

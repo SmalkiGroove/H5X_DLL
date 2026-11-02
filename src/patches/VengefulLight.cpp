@@ -20,14 +20,14 @@ __declspec(naked) void VengefulLightFork() {
     {
         mov ecx, edi
         push HERO_SPEC_VESSEL_OF_ELRATH
-        call dword ptr [eax + 0x294]
+        call dword ptr [eax]CombatUnit_vtable.has_hero_spec
         test al, al
         jnz VENGEFUL_LIGHT_RETURN
 
         mov eax, dword ptr [edi]
         mov ecx, edi
         push 0xA5
-        call dword ptr [eax + 0x290]
+        call dword ptr [eax]CombatUnit_vtable.has_skill
         test al, al
         jnz VENGEFUL_LIGHT_RETURN
 

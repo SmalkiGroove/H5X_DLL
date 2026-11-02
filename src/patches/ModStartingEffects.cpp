@@ -40,8 +40,7 @@ static void add_display_effect(ICombatUnit* unit, int effect, ICombatUnit* caste
 static void __fastcall starting_effects(char* creature) {
 	ICombatUnit* unit = (ICombatUnit*)(creature + 4 + *(int*)(*(int*)(creature + 4) + 8));
 	// enemy side (vtable +0x10) -> its NWorld::ICombatHero (vtable +0x0C)
-	int* enemy_side = ((ThiscallIntPtr_IntPtr)unit->instance->notify_owner)((int*)unit);
-	ICombatHero* enemy = combat_creature_detail::combat_hero_from_outer(combat_creature_detail::call_unit_ref(enemy_side));
+	ICombatHero* enemy = combat_creature_detail::combat_hero_from_outer(combat_creature_detail::side_combat_hero(unit->enemy_side()));
 	if (!enemy) return;
 	IHero* hero = enemy->hero();
 	if (!hero) return;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "LuaScript.h"
+#include "structs/Combat.h"
 
 // LUA: H5X COMBAT SCRIPT FUNCTIONS
 // The combat context gets an extra function table: the engine builds its context registry (0x00837790, from the CRT
@@ -43,48 +44,42 @@ void LuaCombatFunctions_init(pugi::xml_document& doc) {
 	lua_replace_context_table("combat", lua_cinematic_table, H5X_COMBAT_FUNCTIONS);
 }
 
-typedef int*(__thiscall* FindUnitFn)(int*, const char**);
 typedef char(__thiscall* HasItemFn)(int*, int);
 typedef int(__thiscall* SetCountFn)(int*, int, int);
 typedef int(__fastcall* CountFn)();
 typedef char(__fastcall* IsSchoolSpellFn)(int);
 
-static int** vtable(int* object) {
-	return *(int***)object;
-}
-
 // IHero of a combat hero unit, nullptr if the unit doesn't exist or isn't a hero.
-static int* unit_hero(int* combat, const char* unit_name) {
-	int* names = ((ThiscallIntPtr_IntPtr)vtable(combat)[0x120 / 4])(combat);
+static IHero* unit_hero(ICombat* combat, const char* unit_name) {
 	size_t length = strlen(unit_name);
 	const char* name[3] = { unit_name, unit_name + length, unit_name + length };   // engine string {begin, end, capacity}
-	int* unit = ((FindUnitFn)vtable(names)[0x04 / 4])(names, name);
+	ICombatUnit* unit = (ICombatUnit*)combat->unit_names()->find_unit(name);
 	if (!unit) return nullptr;
-	int* combat_hero = ((ThiscallIntPtr_IntPtr)vtable(unit)[0x74 / 4])(unit);
-	if (!combat_hero || engine_object_released(combat_hero)) return nullptr;
-	return ((ThiscallIntPtr_IntPtr)vtable(combat_hero)[0x00])(combat_hero);
+	ICombatHeroInterface* combat_hero = (ICombatHeroInterface*)unit->hero_interface();
+	if (!combat_hero || engine_object_released((int*)combat_hero)) return nullptr;
+	return combat_hero->hero();
 }
 
-static bool hero_has_name(int* hero, const char* name) {
-	const char** script_name = (const char**)((ThiscallIntPtr_IntPtr)vtable(hero)[0x38 / 4])(hero);
+static bool hero_has_name(IHero* hero, const char* name) {
+	const char** script_name = hero->script_name();
 	size_t length = strlen(name);
 	return (size_t)(script_name[1] - script_name[0]) == length && memcmp(script_name[0], name, length) == 0;
 }
 
 // Argument 1: hero script name or combat hero unit name. Reports the error and returns nullptr on failure.
-static int* combat_hero_arg(int* state, const char* function) {
+static IHero* combat_hero_arg(int* state, const char* function) {
 	const char* name = lua_string_arg(state, 1);
 	if (!name || !*name) {
 		lua_error(state, "%s: hero name is not specified", function);
 		return nullptr;
 	}
-	int* arena = lua_owner(state, RTTI_COMBAT_ARENA);
+	IArena* arena = (IArena*)lua_owner(state, RTTI_COMBAT_ARENA);
 	if (!arena) {
 		lua_error(state, "%s: can't get combat arena", function);
 		return nullptr;
 	}
-	int* combat = ((ThiscallIntPtr_IntPtr)vtable(arena)[0x08 / 4])(arena);
-	int* hero = unit_hero(combat, name);
+	ICombat* combat = arena->combat();
+	IHero* hero = unit_hero(combat, name);
 	if (hero) return hero;
 	static const char* const hero_units[] = { "attacker-hero", "defender-hero" };
 	for (const char* unit_name : hero_units) {
@@ -97,9 +92,9 @@ static int* combat_hero_arg(int* state, const char* function) {
 
 int __fastcall lua_combat_GetHeroLevel(int* state) {
 	if (!state) return 0;
-	int* hero = combat_hero_arg(state, "GetHeroLevel");
+	IHero* hero = combat_hero_arg(state, "GetHeroLevel");
 	if (!hero) return 0;
-	lua_push_number(state, ((ThiscallInt_IntPtr)vtable(hero)[0x20 / 4])(hero));
+	lua_push_number(state, hero->level());
 	return 1;
 }
 
@@ -113,7 +108,7 @@ static const HeroStatGetter* const hero_stat_getters = (const HeroStatGetter*)0x
 
 int __fastcall lua_combat_GetHeroStat(int* state) {
 	if (!state) return 0;
-	int* hero = combat_hero_arg(state, "GetHeroStat");
+	IHero* hero = combat_hero_arg(state, "GetHeroStat");
 	if (!hero) return 0;
 	int stat;
 	if (!lua_number_arg(state, 2, &stat) || stat < 0 || stat > 9) {
@@ -129,20 +124,20 @@ int __fastcall lua_combat_GetHeroStat(int* state) {
 
 int __fastcall lua_combat_GetHeroSkillMastery(int* state) {
 	if (!state) return 0;
-	int* hero = combat_hero_arg(state, "GetHeroSkillMastery");
+	IHero* hero = combat_hero_arg(state, "GetHeroSkillMastery");
 	if (!hero) return 0;
 	int skill;
 	if (!lua_number_arg(state, 2, &skill) || skill < 0 || skill >= ((CountFn)0x008478B0)()) {
 		lua_error(state, "GetHeroSkillMastery: invalid skill id");
 		return 0;
 	}
-	lua_push_number(state, ((ThiscallInt_IntPtr_Int)vtable(hero)[0x174 / 4])(hero, skill));
+	lua_push_number(state, hero->skill_mastery(skill));
 	return 1;
 }
 
 int __fastcall lua_combat_HasArtefact(int* state) {
 	if (!state) return 0;
-	int* hero = combat_hero_arg(state, "HasArtefact");
+	IHero* hero = combat_hero_arg(state, "HasArtefact");
 	if (!hero) return 0;
 	int artifact, equipped_only = 0;
 	if (!lua_number_arg(state, 2, &artifact) || artifact < 0 || artifact >= ((CountFn)0x008478A0)()) {
@@ -153,10 +148,10 @@ int __fastcall lua_combat_HasArtefact(int* state) {
 		lua_error(state, "HasArtefact: the third argument must be a number");
 		return 0;
 	}
-	int* equipped = ((ThiscallIntPtr_IntPtr)vtable(hero)[0x74 / 4])(hero);
+	int* equipped = hero->inventory();
 	bool found = ((HasItemFn)0x004BA880)(equipped, artifact) != 0;
 	if (!found && !equipped_only) {
-		int* backpack = ((ThiscallIntPtr_IntPtr)vtable(hero)[0x78 / 4])(hero);
+		int* backpack = hero->backpack();
 		found = ((HasItemFn)0x005C06F0)(backpack, artifact) != 0;
 	}
 	lua_push_bool(state, found);
@@ -165,7 +160,7 @@ int __fastcall lua_combat_HasArtefact(int* state) {
 
 int __fastcall lua_combat_GetArtifactSetItemsCount(int* state) {
 	if (!state) return 0;
-	int* hero = combat_hero_arg(state, "GetArtifactSetItemsCount");
+	IHero* hero = combat_hero_arg(state, "GetArtifactSetItemsCount");
 	if (!hero) return 0;
 	int set, equipped = 1;
 	if (!lua_number_arg(state, 2, &set)) {
@@ -176,14 +171,14 @@ int __fastcall lua_combat_GetArtifactSetItemsCount(int* state) {
 		lua_error(state, "GetArtifactSetItemsCount: the third argument must be a number");
 		return 0;
 	}
-	int* sets = ((ThiscallIntPtr_IntPtr)vtable(hero)[0x32C / 4])(hero);
+	int* sets = hero->artifact_sets();
 	lua_push_number(state, ((SetCountFn)0x00B09FD0)(sets, set, equipped != 0));
 	return 1;
 }
 
 int __fastcall lua_combat_KnowHeroSpell(int* state) {
 	if (!state) return 0;
-	int* hero = combat_hero_arg(state, "KnowHeroSpell");
+	IHero* hero = combat_hero_arg(state, "KnowHeroSpell");
 	if (!hero) return 0;
 	int spell;
 	if (!lua_number_arg(state, 2, &spell)) {
@@ -195,6 +190,6 @@ int __fastcall lua_combat_KnowHeroSpell(int* state) {
 		lua_error(state, "KnowHeroSpell: invalid spell id #%i", spell);
 		return 0;
 	}
-	lua_push_bool(state, ((HasItemFn)vtable(hero)[0xD0 / 4])(hero, checked) != 0);
+	lua_push_bool(state, hero->knows_spell(checked));
 	return 1;
 }

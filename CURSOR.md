@@ -87,7 +87,7 @@ Low-level primitives used by `mainH5.cpp`'s apply loop:
 ### `types/` and `structs/`
 Reverse-engineered definitions:
 - `ARTIFACT_ID`, `SKILL_ID` enums — map game IDs to named constants for use in patches.
-- `Skill_vtable`, `Hero_vtable`, `IHero` — struct/vtable layouts enabling typed vtable calls from inline asm.
+- `structs/`: every vtable the DLL calls (`Hero_vtable` / `IHero`, `CombatUnit_vtable` / `ICombatUnit`, `Combat_vtable` / `ICombat`, …): typed slots plus a wrapper with methods. C++ calls the wrapper methods, asm uses `call dword ptr [edx]Hero_vtable.get_inventory`; never a raw slot offset. `tools/vtables/check_vtables.py` checks the slot offsets.
 - Helper functions: `count_equipped_artifact`, `get_skill_data`, `skill_mastery`, etc.
 
 ## Build & Deploy

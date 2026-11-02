@@ -49,10 +49,9 @@ static bool is_sylvan_class(IHero* hero) {
 }
 
 static bool is_favored_enemy(IHero* hero, ICreature* creature) {
-	typedef char(__thiscall* ContainsFn)(int*, int);
-	int* favored = hero->favored_enemies();
+	IFavoredEnemies* favored = (IFavoredEnemies*)hero->favored_enemies();
 	if (!favored) return false;
-	return ((ContainsFn)(*(int***)favored)[0x0C / 4])(favored, creature->type_id) != 0;
+	return favored->contains(creature->type_id);
 }
 
 void artfset_sylvan_teach_spells(IHero* hero) {

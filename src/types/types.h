@@ -42,6 +42,8 @@ typedef int(__fastcall* FastcallInt_Int_IntPtr_IntPtr_IntPtr_Int_Int_Float_Int)(
 typedef int(__fastcall* FastcallInt_Int_Int_IntPtr_IntPtr_Int_Int)(int, int, int*, int*, int, int);
 typedef void(__fastcall* FastcallVoid_IntPtr_IntPtr)(int*, int*);
 typedef char(__fastcall* FastcallByte_IntPtr_IntPtr)(int*, int*);
+typedef char(__thiscall* ThiscallByte_IntPtr_Int)(int*, int);
+typedef void(__fastcall* FastcallVoid_CharPtrPtr_Int_CharPtr_CharPtr)(char**, int, const char*, const char*);
 
 // CombatUnit vtable slot types
 using Const = ThisCallInt;
@@ -58,6 +60,7 @@ using GetSpellpowerForSpell = ThiscallInt_IntPtr_IntPtr;
 using GetNameWString = ThiscallIntPtr_IntPtr_IntPtr;
 using GetPortraitTexture = ThiscallInt_IntPtr;
 using GetAdvMapShared = ThiscallIntPtr_Int;
+using HasValue = ThiscallByte_IntPtr_Int;
 
 // AdvMap creature (NWorld::CCreature) vtable slot types
 using GetCreatureCostResources = ThiscallVoid_IntPtr_IntPtr;

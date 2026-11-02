@@ -16,33 +16,35 @@ void OverheaterTweak_init(pugi::xml_document& doc) {
 }
 
 
+// 1 - level%, with the x87 instructions of the original code (same rounding at the game's FPU precision)
+static float one_minus_percent(int level) {
+	float result;
+	__asm {
+		fild dword ptr [level]
+		fmul dword ptr [constf_percent]
+		fsubr dword ptr [constf_1]
+		fstp dword ptr [result]
+	}
+	return result;
+}
+
+// Ice damage taken by an Overheater hero's units: x (1 - level%)
+static void __fastcall overheater_ice_proof(IHero* hero, float* damage_factor) {
+	if (!hero->has_spec(HERO_SPEC_INFERNAL_MACHINE)) return;
+	*damage_factor *= one_minus_percent(hero->level());
+}
+
+// ebx = defending IHero, [esp+0x4C] = damage factor
 __declspec(naked) void IceProofAbilityFork() {
     __asm
     {
-        mov edx, [ebx]
+		lea edx, [esp + 0x4C]
 		mov ecx, ebx
-		push HERO_SPEC_INFERNAL_MACHINE
-		call dword ptr [edx + 0x190]
-		test eax, eax
-		je OVERHEATER_RETURN
-		mov edx, [ebx]
-		mov ecx, ebx
-		call dword ptr [edx + 0x20]
-		push 0x0
-		mov dword ptr [esp], eax
-		fild dword ptr [esp]
-		fmul dword ptr [constf_percent]
-		fsubr dword ptr [constf_1]
-		fstp dword ptr [esp]
-		fld dword ptr [esp + 0x4C]
-        fmul dword ptr [esp]
-        fstp dword ptr [esp + 0x4C]
-		pop eax
+		call overheater_ice_proof
 
-		OVERHEATER_RETURN:
 		mov edx, [ebx]
 		mov ecx, ebx
-		call dword ptr [edx + 0x74]
-		jmp[IceProofAbility_return]
+		call dword ptr [edx]Hero_vtable.get_inventory
+		jmp [IceProofAbility_return]
     }
 }

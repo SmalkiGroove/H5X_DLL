@@ -52,9 +52,9 @@ static int __fastcall caster_mana_doubled(IHero* hero) {
 }
 
 // side = side of the creature (CombatUnit +0x0C)
-static int __fastcall caster_spellpower_doubled(int* side) {
+static int __fastcall caster_spellpower_doubled(ICombatArmy* side) {
 	using namespace combat_creature_detail;
-	ICombatHero* hero = combat_hero_from_outer(call_unit_ref(side));
+	ICombatHero* hero = combat_hero_from_outer(side_combat_hero(side));
 	return hero && hero->has_spec(HERO_SPEC_RESEARCHER);
 }
 

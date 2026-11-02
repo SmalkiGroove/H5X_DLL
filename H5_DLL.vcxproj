@@ -382,6 +382,10 @@
     <ClInclude Include="src\structs\CombatUnit.h" />
     <ClInclude Include="src\structs\Creature.h" />
     <ClInclude Include="src\structs\Spell.h" />
+    <ClInclude Include="src\structs\AdvMap.h" />
+    <ClInclude Include="src\structs\Combat.h" />
+    <ClInclude Include="src\structs\Database.h" />
+    <ClInclude Include="src\structs\Script.h" />
     <ClInclude Include="src\types\Abilities.h" />
     <ClInclude Include="src\types\HeroSpecs.h" />
     <ClInclude Include="src\types\Spells.h" />

@@ -19,8 +19,8 @@ void NagaCommandersHelmet_init(pugi::xml_document& doc) {
 }
 
 // obj = the join check's hero holder (vtable +0x14 returns the IHero), level = diplomacy level of the game
-static int __fastcall naga_helmet_diplomacy_level(int* obj, int level) {
-    IHero* hero = (IHero*)((GetPtr)(*(int***)obj)[0x14 / 4])(obj);
+static int __fastcall naga_helmet_diplomacy_level(IHeroHolder* obj, int level) {
+    IHero* hero = obj->hero();
     return hero && hero->has_artifact(ARTIFACT_NAGA_COMMANDERS_HELMET) ? level + 1 : level;
 }
 

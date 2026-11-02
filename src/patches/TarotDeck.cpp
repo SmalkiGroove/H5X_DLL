@@ -49,7 +49,7 @@ __declspec(naked) void TarotDeckFork() {
 
         mov eax, dword ptr [edi]                // replicate overwritten game code: caster luck roll
         mov ecx, edi
-        call dword ptr [eax + 0x1D0]            // st0 = luck multiplier
+        call dword ptr [eax]CombatUnit_vtable.roll_luck            // st0 = luck multiplier
 
         mov tarot_spell_luck_bonus, 0
         jmp [TarotDeck_return]

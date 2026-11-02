@@ -16,13 +16,13 @@ struct Hero_vtable {
 	GetInt get_defense; // 0x14 (20) - 0x00B4CCC0, total
 	GetInt get_spellpower; // 0x18 (24) - 0x00B4CCF0, total
 	GetInt get_knowledge; // 0x1C (28) - 0x00B4CD80, total, clamped >= 1
-	int* call_32;
+	GetInt get_level; // 0x20 (32) - 0x00B4C0D0, returns [this+0x64]
 	int* call_36;
 	int* call_40;
 	int* call_44;
 	int* call_48;
 	int* call_52;
-	int* call_56;
+	GetPtr get_script_name; // 0x38 (56) - 0x00B4B340, returns &[this+0x24]: engine string {begin, end, capacity end}
 	int* call_60;
 	int* call_64;
 	int* call_68;
@@ -60,7 +60,7 @@ struct Hero_vtable {
 	int* call_196;
 	int* call_200;
 	int* call_204;
-	int* call_208;
+	HasValue knows_spell; // 0xD0 (208) - 0x00B4C640, arg = spell ID, char: in the known spell vector [this+0x1C4..0x1C8]
 	int* call_212;
 	int* call_216;
 	int* call_220;
@@ -211,6 +211,7 @@ struct Hero_vtable {
 	int* call_800;
 	int* call_804;
 	CheckValue get_artifact_set_count; // 0x328 (808) - 0x00B5AD70, arg = set ID, equipped pieces of the set (vector at [this+0x264])
+	GetPtr get_artifact_sets; // 0x32C (812) - 0x00B5AC20, returns &[this+0x24C]: set piece counter, 0x00B09FD0 thiscall(set ID, equipped only) -> pieces
 };
 
 struct IHero {
@@ -233,6 +234,10 @@ struct IHero {
 	}
 	int knowledge() {
 		return instance->get_knowledge((int*)this);
+	}
+	// Maximum mana for a knowledge value (Intelligence bonus applied)
+	int max_mana(int knowledge) {
+		return instance->get_max_mana((int*)this, knowledge);
 	}
 	int luck() {
 		return instance->get_luck((int*)this);
@@ -262,6 +267,19 @@ struct IHero {
 	bool learn_spell(int spell) {
 		typedef char(__thiscall* LearnSpellFn)(int*, int, int);
 		return ((LearnSpellFn)instance->learn_spell)((int*)this, spell, 0) != 0;
+	}
+	int level() {
+		return instance->get_level((int*)this);
+	}
+	// Script name as an engine string {begin, end, capacity end}
+	const char** script_name() {
+		return (const char**)instance->get_script_name((int*)this);
+	}
+	bool knows_spell(int spell) {
+		return instance->knows_spell((int*)this, spell) != 0;
+	}
+	int* artifact_sets() {
+		return instance->get_artifact_sets((int*)this);
 	}
 	int artifact_set_count(int set_id) {
 		return instance->get_artifact_set_count((int*)this, set_id);
@@ -318,6 +336,58 @@ struct ICombatHero : ICombatUnit {
 	bool has_artifact(int artifact_id) {
 		IHero* advHero = hero();
 		return advHero && advHero->instance && advHero->has_artifact(artifact_id);
+	}
+};
+
+// NWorld::ICombatHero interface (NWorld::CCombatHero subobject +0xA0, vtable 0x00E84CC4), the hero counterpart of
+// ICombatStack (Creature.h): returned by CombatUnit vtable +0x74 get_combat_hero and by ICombatArmy vtable +0x0C get_combat_hero.
+enum {
+	CombatHeroInterface_vtable_addr = 0x00E84CC4
+};
+
+struct CombatHeroInterface_vtable {
+	GetPtr get_hero; // 0x00 (0) - 0x00819270, returns [this+0x10]: IHero
+};
+
+struct ICombatHeroInterface {
+	CombatHeroInterface_vtable* instance;
+
+	IHero* hero() {
+		return (IHero*)instance->get_hero((int*)this);
+	}
+};
+
+// Favored enemy set of a hero (Hero_vtable get_favored_enemies). Concrete vtable not identified.
+struct FavoredEnemies_vtable {
+	int* call_0;
+	int* call_4;
+	int* call_8;
+	HasValue contains; // 0x0C (12) - thiscall(creature ID) -> char
+};
+
+struct IFavoredEnemies {
+	FavoredEnemies_vtable* instance;
+
+	bool contains(int creature) {
+		return instance->contains((int*)this, creature) != 0;
+	}
+};
+
+// Hero side of the neutral creature join check (0x008E1AD0, edx; caller 0x004EE640). Concrete vtable not identified.
+struct HeroHolder_vtable {
+	int* call_0;
+	int* call_4;
+	int* call_8;
+	int* call_12;
+	int* call_16;
+	GetPtr get_hero; // 0x14 (20) - IHero
+};
+
+struct IHeroHolder {
+	HeroHolder_vtable* instance;
+
+	IHero* hero() {
+		return (IHero*)instance->get_hero((int*)this);
 	}
 };
 

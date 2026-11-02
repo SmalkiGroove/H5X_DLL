@@ -12,32 +12,25 @@ void PhoenixFeatherCape_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, PhoenixFeatherCape_fork, 5, PhoenixFeatherCapeFork, 0, 0, 0 });
 }
 
+// target = unit hit by Frost Power: immune when its own hero wears the cape
+static bool __fastcall phoenix_feather_cape_protects(ICombatUnit* target) {
+    IHero* hero = owner_hero(target);
+    return hero && hero->has_artifact(ARTIFACT_PHOENIX_FEATHER_CAPE);
+}
+
+// edi = target unit
 __declspec(naked) void PhoenixFeatherCapeFork() {
     __asm
     {
-        mov eax, dword ptr [edi]
         mov ecx, edi
-        call dword ptr [eax + 0xC]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0xC]
-        test eax, eax
-        je PHOENIX_FEATHER_CAPE_RETURN
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx]
-        mov edx, dword ptr [eax]
-        mov ecx, eax
-        call dword ptr [edx + 0x74]
-        mov ecx, eax
-        push 0x55
-        call[count_equipped_artifact]
-        test eax, eax
-        je PHOENIX_FEATHER_CAPE_RETURN
-        jmp[PhoenixFeatherCape_end]
-        
-     PHOENIX_FEATHER_CAPE_RETURN:
-        call[get_defaultstats]
-        jmp[PhoenixFeatherCape_return]
+        call phoenix_feather_cape_protects
+        test al, al
+        jne PHOENIX_FEATHER_CAPE_END
+
+        call [get_defaultstats]
+        jmp [PhoenixFeatherCape_return]
+
+    PHOENIX_FEATHER_CAPE_END:
+        jmp [PhoenixFeatherCape_end]
     }
 }

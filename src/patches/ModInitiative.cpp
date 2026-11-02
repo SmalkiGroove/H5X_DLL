@@ -96,7 +96,7 @@ __declspec(naked) void CreatureInitiativeFork() {
     __asm
     {
         push ecx                            // hero
-        call dword ptr [edx + 0x74]         // eax = hero inventory (replicates overwritten code)
+        call dword ptr [edx]Hero_vtable.get_inventory         // eax = hero inventory (replicates overwritten code)
         mov edi, eax                        // game code after the hook expects it in edi
 
         pop ecx
@@ -119,7 +119,7 @@ __declspec(naked) void CreatureInitlessFork() {
     __asm
     {
         mov ecx, eax
-        call dword ptr [edx + 0x74]         // eax = enemy hero inventory
+        call dword ptr [edx]Hero_vtable.get_inventory         // eax = enemy hero inventory
 
         mov ecx, eax
         call creature_initless_multiplier   // st0 = combined multiplier

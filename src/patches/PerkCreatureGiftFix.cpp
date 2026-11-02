@@ -19,12 +19,12 @@ void PerkCreatureGiftFix_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, PerkCreatureGift_fork, 5, (void*)perk_creature_gift, 0, 0, 0 });
 }
 
-// Army slots (army vtable +0x08): vector of ICreature*, 0 = free slot.
+// Army slots (IArmy, Creature.h): ICreature*, 0 = free slot.
 static int** army_slots(int* army, int*** end) {
-	typedef int***(__thiscall* SlotsFn)(int*);
-	int*** slots = ((SlotsFn)(*(int***)army)[0x08 / 4])(army);
-	*end = (int**)slots[1];
-	return (int**)slots[0];
+	ICreature** slots_end;
+	ICreature** slots = ((IArmy*)army)->slots(&slots_end);
+	*end = (int**)slots_end;
+	return (int**)slots;
 }
 
 // Slot holding a live stack of `creature` (same test as func_FindArmySlotOfCreature: the object's flag 0x80 marks a dead one).

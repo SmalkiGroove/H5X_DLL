@@ -1,6 +1,8 @@
 #include "pch.h"
+#include "types/Abilities.h"
 
 // COLD DEATH SHOULD NOT APPLY ON MECHANICAL AND CRYSTAL SCALES UNITS
+// (nor on units whose own hero wears Dragon Flame Tongue)
 
 void ColdDeathFork();
 
@@ -12,53 +14,27 @@ void ColdDeathFix_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, ColdDeath_fork, 10, ColdDeathFork, 0, 0, 0 });
 }
 
+static bool __fastcall cold_death_immune(ICombatUnit* target) {
+	if (target->has_ability(ABILITY_CRYSTAL_SCALES) || target->has_ability(ABILITY_MECHANICAL)) return true;
+	IHero* hero = owner_hero(target);
+	return hero && hero->has_artifact(ARTIFACT_DRAGON_FLAME_TONGUE);
+}
+
+// esi = target unit
 __declspec(naked) void ColdDeathFork() {
 	__asm
 	{
-		// crystal scales
-		mov eax, dword ptr [esi]
-		push 0x42
 		mov ecx, esi
-		call dword ptr [eax + 0x28C]
+		call cold_death_immune
 		test al, al
 		jne FUNCTION_END
 
-		// mechanical
-		mov eax, dword ptr [esi]
-		push 0x9
-		mov ecx, esi
-		call dword ptr [eax + 0x28C]
-		test al, al
-		jne FUNCTION_END
-
-		// dragon flame tongue
-		mov eax, dword ptr [esi]
-		mov ecx, esi
-		call dword ptr [eax + 0xC]
-		mov edx, dword ptr [eax]
-		mov ecx, eax
-		call dword ptr [edx + 0xC]
-		test eax, eax
-		je FUNCTION_RETURN
-		mov edx, dword ptr [eax]
-		mov ecx, eax
-		call dword ptr [edx]
-		mov edx, dword ptr [eax]
-		mov ecx, eax
-		call dword ptr [edx + 0x74]
-		mov ecx, eax
-		push 0x2B
-		call[count_equipped_artifact]
-		test eax, eax
-		jne FUNCTION_END
-
-	FUNCTION_RETURN:
 		mov edx, dword ptr [esi]
 		mov ecx, esi
-		call dword ptr [edx + 0x1A8]
-		jmp[ColdDeath_return]
+		call dword ptr [edx]CombatUnit_vtable.get_creature_max_hp
+		jmp [ColdDeath_return]
 
 	FUNCTION_END:
-		jmp[ColdDeath_end]
+		jmp [ColdDeath_end]
 	}
 }

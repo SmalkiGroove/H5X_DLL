@@ -57,6 +57,7 @@ extern FastcallVoid_IntPtr_IntPtr collect_all_combat_units;
 
 extern CdeclPtr_Uint engine_alloc;
 extern CdeclVoid_Ptr engine_free;
+extern FastcallVoid_CharPtrPtr_Int_CharPtr_CharPtr make_engine_string;
 
 // --- Buff notification (engine UI hooks) ---
 
@@ -73,6 +74,8 @@ extern ThiscallVoid_IntPtr_Float set_atb_info_value;
 
 struct IHero;
 struct ICombatUnit;
+struct ICombatHero;
+struct ICombatArmy;
 
 // func_ComputeSpellHitChance (0x0097C9F0): % of `spell` (ID) resisted by `target` when cast by `caster` (may be null),
 // 100 = immune (magic / element / artifact immunities, plus the resistance chance otherwise).
@@ -80,7 +83,13 @@ int __stdcall spell_hit_chance(ICombatUnit* target, int spell, ICombatUnit* cast
 // func_GetTurnDuration (0x00A2D700): time units of one turn (DefaultStats +0x50 / +0x48), for effect durations.
 float turn_duration();
 
+// Adventure map hero of a combat side, nullptr without a side or a hero.
+IHero* side_hero(ICombatArmy* side);
+// Combat unit (CombatUnit subobject) of the hero of a combat side, nullptr without a side or a hero.
+ICombatHero* side_hero_unit(ICombatArmy* side);
 // Adventure map hero of the side owning a combat unit (CombatUnit subobject), nullptr without hero.
 IHero* owner_hero(ICombatUnit* unit);
+// Adventure map hero of the enemy side of a combat unit (CombatUnit subobject), nullptr without hero.
+IHero* enemy_hero(ICombatUnit* unit);
 
 #endif

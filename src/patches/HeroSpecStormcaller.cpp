@@ -15,10 +15,17 @@ void StormcallerTweak_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, Stormcaller_fork, 5, StormcallerFork, 0, 0, 0 });
 }
 
+// Hero level of a Stormcaller caster, 0 otherwise
+static int __fastcall stormcaller_level(ICombatHero* caster) {
+	return caster->has_spec(HERO_SPEC_STORMCALLER) ? caster->hero_level() : 0;
+}
+
+// ecx = spell, esi = caster unit (may be 0). Lightning bolt (3) and chain lightning (7) only.
+// The bonus damage computation below continues the game's own code (stack slots, FPU control word).
 __declspec(naked) void StormcallerFork() {
 	__asm
 	{
-        call[get_spell_id]
+        call [get_spell_id]
         cmp eax, 0x3
         je STORMCALLER_START
         cmp eax, 0x7
@@ -27,20 +34,15 @@ __declspec(naked) void StormcallerFork() {
     STORMCALLER_START:
         test esi, esi
         je STORMCALLER_ENDSUB
-        
-        mov eax, dword ptr [esi]
+
         mov ecx, esi
-        push HERO_SPEC_STORMCALLER
-        call dword ptr [eax + 0x294]
-        test al, al
+        call stormcaller_level
+        test eax, eax
         jz STORMCALLER_END
-        mov edx, dword ptr [esi]
-        mov ecx, esi
-        call dword ptr [edx + 0x23C]
         mov dword ptr [esp + 0x14], eax
         fild word ptr [esp + 0x14]
         fstp dword ptr [esp + 0x14]
-        call[get_defaultstats]
+        call [get_defaultstats]
         fld dword ptr [esp + 0x14]
         push 0x0
         fmul dword ptr [eax + 0x850]
@@ -55,13 +57,13 @@ __declspec(naked) void StormcallerFork() {
         fldcw word ptr [esp + 0x1C]
         fistp dword ptr [esp + 0x1C]
         fldcw word ptr [esp + 0x20]
-        jmp[Stormcaller_end1]
+        jmp [Stormcaller_end1]
 
     STORMCALLER_RETURN:
-        jmp[Stormcaller_return]
+        jmp [Stormcaller_return]
     STORMCALLER_END:
-        jmp[Stormcaller_end2]
+        jmp [Stormcaller_end2]
     STORMCALLER_ENDSUB:
-        jmp[Stormcaller_endsub]
+        jmp [Stormcaller_endsub]
 	}
 }

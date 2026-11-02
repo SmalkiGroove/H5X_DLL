@@ -13,23 +13,25 @@ void SecretsOfDestruct_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, SecretsOfDestruct_fork, 6, SecretsOfDestructFork, 0, 0, 0 });
 }
 
+// hero = casting hero (ICombatHeroInterface, vbptr at +4)
+static bool __fastcall secrets_of_destruction(int* hero) {
+	return combat_creature_detail::combat_hero_from_outer(hero)->has_perk(PERK_SECRETS_OF_DESTRUCT);
+}
+
+// ebx = casting hero (ICombatHeroInterface)
 __declspec(naked) void SecretsOfDestructFork() {
 	__asm
 	{
-		mov eax, [ebx + 0x4]
-        mov ecx, [eax + 0x8]
-        mov edx, [ecx + ebx + 0x4]
-        lea ecx, [ecx + ebx + 0x4]
-        push PERK_SECRETS_OF_DESTRUCT
-        call dword ptr [edx + 0x290]
-        test al, al
-        je SECRETS_OF_DESTRUCT_RETURN
-		jmp[SecretsOfDestruct_end]
-		
-		SECRETS_OF_DESTRUCT_RETURN:
+		mov ecx, ebx
+		call secrets_of_destruction
+		test al, al
+		je SECRETS_OF_DESTRUCT_RETURN
+		jmp [SecretsOfDestruct_end]
+
+	SECRETS_OF_DESTRUCT_RETURN:
 		mov edx, dword ptr [ebx]
 		mov ecx, ebx
-        call dword ptr [edx]
-		jmp[SecretsOfDestruct_return]
+		call dword ptr [edx]CombatHeroInterface_vtable.get_hero
+		jmp [SecretsOfDestruct_return]
 	}
 }

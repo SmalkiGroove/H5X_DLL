@@ -34,9 +34,9 @@ enum {
 struct CombatUnit_vtable {
 	GetInt get_unit_kind; // 0x000 (0) - hero 0x00A83AA0 (no Ghidra function: mov eax,0x2; ret); creature 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret)
 	int* scalar_deleting_dtor; // 0x004 (4) - 0x008AEDC0 [shared] func_CombatUnit_ScalarDeletingDtor
-	int* get_owner_ref; // 0x008 (8) - 0x008ACDC0 [shared] func_CombatUnit_GetOwnerRef (returns dword [this-0x78])
-	GetPtr get_unit_ref; // 0x00C (12) - 0x008AEAF0 [shared] func_CombatUnit_GetUnitRef (returns dword [this-0x74])
-	int* notify_owner; // 0x010 (16) - 0x00A6B0E0 [shared] func_CombatUnit_NotifyOwner
+	GetPtr get_combat; // 0x008 (8) - 0x008ACDC0 [shared] func_CombatUnit_GetOwnerRef (returns dword [this-0x78]) — CCombat (ICombat, Combat.h)
+	GetPtr get_side; // 0x00C (12) - 0x008AEAF0 [shared] func_CombatUnit_GetUnitRef (returns dword [this-0x74]) — own side: ICombatArmy
+	GetPtr get_enemy_side; // 0x010 (16) - 0x00A6B0E0 [shared] func_CombatUnit_NotifyOwner — enemy side: ICombatArmy, through CCombat vtable +0xE0(own side)
 	int* init_owner_timed_stats; // 0x014 (20) - hero 0x008B1780 func_CombatHero_InitOwnerTimedStats; creature 0x008A0950 func_CombatCreature_ResolveBuffTargetUnit
 	int* get_timed_stats_subobject; // 0x018 (24) - hero 0x00A747A0 func_CombatHero_GetTimedStatsSubobject; creature 0x008A08D0 func_CombatCreature_GetTimedStatsSubobject
 	int* get_owner_army_slot; // 0x01C (28) - hero 0x00BC2A10 func_CombatHero_ReturnOne; creature 0x008A42C0 func_CombatCreature_GetOwnerArmySlot
@@ -59,10 +59,10 @@ struct CombatUnit_vtable {
 	int* get_combat_unit_ptr; // 0x060 (96) - 0x008AE230 [shared] func_CombatUnit_GetCombatUnitPtr
 	int* get_combat_unit_ptr_mi; // 0x064 (100) - 0x008AE230 [shared] func_CombatUnit_GetCombatUnitPtr
 	int* build_runtime_data; // 0x068 (104) - hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData
-	int* get_side_ptr_a; // 0x06C (108) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — same impl as +0x070 get_combat_stack
+	GetPtr get_combat_stack_alt; // 0x06C (108) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — same impl as +0x070 get_combat_stack
 	GetPtr get_combat_stack; // 0x070 (112) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — combat stack interface (NWorld::ICombatCreature, complete +0xA0; ICombatStack in Creature.h), 0 for heroes
-	int* get_hero_aux_subobject; // 0x074 (116) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret)
-	int* get_hero_aux_subobject_b; // 0x078 (120) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret)
+	GetPtr get_combat_hero; // 0x074 (116) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) — hero: 0x00BC2B30 returns this-0x7C, ICombatHeroInterface (Hero.h, complete +0xA0), whose slot 0 returns the IHero
+	int* get_combat_hero_alt; // 0x078 (120) - hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret)
 	int* stub_return_zero_a; // 0x07C (124) - 0x00C98940 [shared] func_CombatUnit_ReturnZero (xor eax,eax; ret)
 	int* stub_return_zero_b; // 0x080 (128) - 0x00C98940 [shared] func_CombatUnit_ReturnZero (xor eax,eax; ret)
 	int* stub_return_zero_c; // 0x084 (132) - 0x00C98940 [shared] func_CombatUnit_ReturnZero (xor eax,eax; ret)
@@ -148,7 +148,7 @@ struct CombatUnit_vtable {
 	int* get_ranged_penalty; // 0x1C4 (452) - hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008A2610 func_CombatCreature_GetRangedPenalty
 	int* roll_bad_morale; // 0x1C8 (456) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x008A3E90 func_CombatCreature_StubReturnFalse — bad morale roll, returns 1 = turn lost: creature table flag check, then tail-calls 0x00A6B8F0 func_RollUnitMorale (undead never, rolls only at morale < 0)
 	int* roll_good_morale; // 0x1CC (460) - hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x00A6BA00 func_CombatCreature_CanCast — good morale roll, returns 1 = success (undead never, rolls only at morale > 0, chance morale*10%)
-	int* roll_luck; // 0x1D0 (464) - hero 0x00A6B820 func_CombatHero_OnBuffRefresh; creature 0x008A3EF0 func_CombatCreature_OnBuffRefresh — luck roll, returns the damage multiplier (float, 1.0 = no luck); creature version: own hero skill 0x7C (Supernatural Luck) forces good luck, enemy hero skill 0xA7 cancels good luck, else calls the hero impl
+	GetStatFloat roll_luck; // 0x1D0 (464) - hero 0x00A6B820 func_CombatHero_OnBuffRefresh; creature 0x008A3EF0 func_CombatCreature_OnBuffRefresh — luck roll, returns the damage multiplier (float, 1.0 = no luck); creature version: own hero skill 0x7C (Supernatural Luck) forces good luck, enemy hero skill 0xA7 cancels good luck, else calls the hero impl
 	int* get_stack_constant; // 0x1D4 (468) - hero 0x008B6BD0 (no Ghidra function: mov eax,0x64; ret); creature 0x008A4270 func_CombatCreature_GetStackCount — returns [top entry - 8] of the list at [this-0x98]
 	GetInt get_current_count; // 0x1D8 (472) - hero 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) — same function as creature +0x000; creature 0x008A42E0 func_CombatCreature_GetTier — current creature count: last stack history entry +0x4 (ICombatStack +0x10, complete +0xB0); 1 for heroes
 	int* get_hero_stat_stub_dc; // 0x1DC (476) - hero 0x00BBF580 func_CombatHero_GetStatStubDC; creature 0x008A4190 func_CombatCreature_GetStatStubDC
@@ -218,18 +218,50 @@ struct CombatUnit_vtable {
 using CombatHero_vtable = CombatUnit_vtable;
 using CombatCreature_vtable = CombatUnit_vtable;
 
+struct IPlayer;   // AdvMap.h
+
+// NWorld::ICombatArmy: side of a combat (NWorld::CCombatArmy subobject +0x20, vtable 0x00E17BCC), from CombatUnit
+// vtable +0x0C (own side) / +0x10 (enemy side) and CCombat vtable +0x84.
+enum {
+	CombatArmy_vtable_addr = 0x00E17BCC
+};
+
+struct CombatArmy_vtable {
+	int* call_0;
+	GetPtr get_owner; // 0x04 (4) - 0x004D8F00, returns [this+0xC]: IPlayer, nullptr for neutrals
+	int* call_8;
+	GetPtr get_combat_hero; // 0x0C (12) - 0x004D8F50, returns [this+0x10]: ICombatHeroInterface (Hero.h), nullptr without a hero
+};
+
+struct ICombatArmy {
+	CombatArmy_vtable* instance;
+
+	IPlayer* owner() {
+		return (IPlayer*)instance->get_owner((int*)this);
+	}
+	// ICombatHeroInterface (Hero.h); combat_creature_detail::combat_hero_from_outer gives its CombatUnit
+	int* combat_hero() {
+		return instance->get_combat_hero((int*)this);
+	}
+};
+
 struct ICombatUnit {
 	CombatUnit_vtable* instance;
 
 	int unit_kind() {
 		return instance->get_unit_kind((int*)this);
 	}
-	int* unit_ref() {
-		return instance->get_unit_ref((int*)this);
+	// Own side (vtable +0x0C)
+	ICombatArmy* side() {
+		return (ICombatArmy*)instance->get_side((int*)this);
 	}
-	// Combat object (CCombat) of the unit (vtable +0x08); its vtable +0x108 = silent / estimate combat.
+	// Enemy side (vtable +0x10)
+	ICombatArmy* enemy_side() {
+		return (ICombatArmy*)instance->get_enemy_side((int*)this);
+	}
+	// Combat object (CCombat, ICombat in Combat.h) of the unit (vtable +0x08).
 	int* combat() {
-		return ((GetPtr)instance->get_owner_ref)((int*)this);
+		return instance->get_combat((int*)this);
 	}
 	// Tile {x, y} of the unit (vtable +0x40); with size n it covers x-n+1..x, y-n+1..y.
 	void position(int* out) {
@@ -262,6 +294,10 @@ struct ICombatUnit {
 	// Combat stack interface (ICombatStack, Creature.h), nullptr for heroes (vtable +0x70).
 	int* combat_stack() {
 		return instance->get_combat_stack((int*)this);
+	}
+	// Hero interface (ICombatHeroInterface, Hero.h), nullptr for creatures (vtable +0x74).
+	int* hero_interface() {
+		return instance->get_combat_hero((int*)this);
 	}
 	// Dead stack (vtable +0x5C, false for heroes): func_CastSpell and the damage code skip such units.
 	bool is_dead() {

@@ -5,7 +5,8 @@
 #include "structs/CombatUnit.h"
 #include "structs/Hero.h"
 
-// AdvMap army stack unit (vtable 0x00E0F734, NWorld::CCreature, vtordisp -0x14).
+// AdvMap army stack unit (NWorld::CCreature, vtordisp -0x14). The slots below are those of the table at 0x00E11134
+// (no RTTI pointer before it); 0x00E0F734, noted before, is NWorld::CNotifyAdvMapChangedDialog.
 // Ctor FUN_0043cfa0 (EngineAlloc 0x24). RTTI .?AVCCreature@NWorld@@ @ 0x00F29C58.
 // Stat helpers (func_GetCreatureHealth, func_GetCreatureStats, func_GetCreatureCostResources, …)
 // are static DB/hero-context functions — not vtable slots on this interface.
@@ -17,10 +18,10 @@
 //
 // Object size 0x24. Timed-stats blob at +0x2C lives on a base/MI subobject (vtordisp -0x14).
 //
-// Army container (separate): CArmy vtable 0x00E7FF50; army slot node vtable 0x00E800AC.
+// Army container (separate): NWorld::CArmy, Army_vtable below.
 
 enum {
-	Creature_vtable_addr = 0x00E0F734,
+	Creature_vtable_addr = 0x00E11134,
 	Creature_vtordisp = 0x14
 };
 
@@ -80,6 +81,7 @@ struct Creature_vtable {
 	int* call_208;
 	int* call_212;
 	int* call_216;
+	int* call_220;
 	GetCreatureCostResources get_cost_resources; // 0xE0 (224) - 0x00458770, wraps db tuple @ creature+0xAC
 	int* get_upgrade_cost; // 0xE4 (228) - 0x00458780
 	int* get_resource_tuple_a; // 0xE8 (232) - 0x00458790
@@ -244,37 +246,32 @@ inline ICombatUnit* combat_unit_mi(char* base) {
 	return (ICombatUnit*)((char*)base - CombatCreature_vbptr_offset + (uintptr_t)vbtable[2]);
 }
 
-inline int* call_unit_ref(int* obj) {
-	if (!obj)
+// ICombatHeroInterface of a side (ICombatArmy vtable +0x0C), nullptr without a side or a hero.
+inline int* side_combat_hero(ICombatArmy* side) {
+	if (!side || !side->instance)
 		return nullptr;
-	int** vt = *(int***)obj;
-	if (!vt)
-		return nullptr;
-	return ((GetPtr)vt[3])(obj);
+	return side->combat_hero();
 }
 
-inline ICombatHero* combat_hero_from_outer(int* outer) {
+// CombatUnit subobject of an object whose vbptr is at +4 (ICombatHeroInterface, ICombatStack, ...):
+// object + 4 + [[object + 4] + 8].
+inline ICombatUnit* combat_unit_from_outer(void* outer) {
 	if (!outer)
 		return nullptr;
 	int** vbtable = *(int***)((char*)outer + 4);
 	if (!vbtable)
 		return nullptr;
-	return (ICombatHero*)((char*)outer + (uintptr_t)vbtable[2] + 4);
+	return (ICombatUnit*)((char*)outer + (uintptr_t)vbtable[2] + 4);
 }
 
-// ModAttack uses eax after notify_owner (+0x10) as the next this pointer.
-inline int* call_notify_owner_side(ICombatUnit* unit) {
-	if (!unit || !unit->instance)
-		return nullptr;
-	return ((ThiscallIntPtr_IntPtr)unit->instance->notify_owner)((int*)unit);
+inline ICombatHero* combat_hero_from_outer(int* outer) {
+	return (ICombatHero*)combat_unit_from_outer(outer);
 }
+
 
 } // namespace combat_creature_detail
 
 struct ICombatCreature : ICombatUnit {
-	int* creature_ref() {
-		return instance->get_unit_ref((int*)this);
-	}
 	// Max HP of one creature, after the stack's HP reduction (ICombatStack::add_health_reduction)
 	int hit_points() {
 		return instance->get_creature_max_hp((int*)this);
@@ -301,23 +298,43 @@ struct ICombatCreature : ICombatUnit {
 		int growth = get_creature_data(army_stack->type_id)[0xA8 / 4];  // WeeklyGrowth
 		return (float)instance->get_current_count((int*)this) / (growth > 0 ? growth : 1);
 	}
-	// Friendly side ICombatHero: 2x get_unit_ref on MI subobject (no notify_owner).
+	// Friendly side ICombatHero: own side (vtable +0x0C), then its combat hero.
 	ICombatHero* owner() {
 		using namespace combat_creature_detail;
 		ICombatUnit* unit = combat_unit_mi(combat_stack_root(this));
 		if (!unit || !unit->instance) return nullptr;
-		int* sideRef = call_unit_ref((int*)unit);
-		int* heroOuter = call_unit_ref(sideRef);
+		int* heroOuter = side_combat_hero(unit->side());
 		return combat_hero_from_outer(heroOuter);
 	}
-	// Enemy side ICombatHero: notify_owner (+0x10) then get_unit_ref (ModAttack chain).
+	// Enemy side ICombatHero: enemy side (vtable +0x10), then its combat hero (ModAttack chain).
 	ICombatHero* opponent() {
 		using namespace combat_creature_detail;
 		ICombatUnit* unit = combat_unit_mi(combat_stack_root(this));
 		if (!unit || !unit->instance) return nullptr;
-		int* sideObj = call_notify_owner_side(unit);
-		int* heroOuter = call_unit_ref(sideObj);
+		int* heroOuter = side_combat_hero(unit->enemy_side());
 		return combat_hero_from_outer(heroOuter);
+	}
+};
+
+// Army (NWorld::CArmy, vtable 0x00E8F43C, primary): hero, town or map object army.
+enum {
+	Army_vtable_addr = 0x00E8F43C
+};
+
+struct Army_vtable {
+	int* call_0;
+	int* call_4;
+	GetPtr get_slots; // 0x08 (8) - 0x00A367B0, returns &[this+0x24]: vector {begin, end} of ICreature*, 0 = free slot
+};
+
+struct IArmy {
+	Army_vtable* instance;
+
+	// Slots [begin, end): ICreature*, nullptr for a free slot
+	ICreature** slots(ICreature*** end) {
+		ICreature*** vector = (ICreature***)instance->get_slots((int*)this);
+		*end = vector[1];
+		return vector[0];
 	}
 };
 

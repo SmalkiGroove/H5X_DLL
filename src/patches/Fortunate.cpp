@@ -1,6 +1,8 @@
 #include "pch.h"
+#include "types/Abilities.h"
 
-// ABILITY BONUS LUCK 
+// ABILITY BONUS LUCK
+// Natural Luck (ability 147): +2 luck
 
 void FortunateFork();
 
@@ -11,22 +13,23 @@ void Fortunate_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, Fortunate_fork, 5, FortunateFork, 0, 0, 0 });
 }
 
+// object = the luck function's this (esi): its CombatUnit is reached through the vbptr at -0xB0
+static int __fastcall fortunate_luck_bonus(char* object) {
+	char* base = object - 0xB0;
+	ICombatUnit* unit = (ICombatUnit*)(base + (*(int**)base)[2]);
+	return unit->has_ability(ABILITY_NATURAL_LUCK) ? 2 : 0;
+}
+
+// edi = luck
 __declspec(naked) void FortunateFork() {
 	__asm
 	{
-		mov eax, dword ptr [esi - 0xB0]
-		mov ecx, dword ptr [eax + 0x8]
-		mov edx, dword ptr [ecx + esi - 0xB0]
-		lea ecx, dword ptr [ecx + esi - 0xB0]
-		push 0x93
-		call dword ptr [edx + 0x28C]
-		test al, al
-		je FORTUNATE_END
-		add edi, 2
+		mov ecx, esi
+		call fortunate_luck_bonus
+		add edi, eax
 
-		FORTUNATE_END:
 		mov ecx, ebx
-		call[check_week_of_balance_luck]
-		jmp[Fortunate_return]
+		call [check_week_of_balance_luck]
+		jmp [Fortunate_return]
 	}
 }

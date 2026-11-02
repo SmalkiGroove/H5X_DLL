@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "structs/Combat.h"
 
 // COMBAT SCRIPTS IN MULTIPLAYER: LOADED ON ONE MACHINE ONLY
 // Vanilla gates every script context with func_IsTriggerScriptHost (0x006B9DE0): true when the world params (CWorld
@@ -34,33 +35,20 @@ void Scripts_init(pugi::xml_document& doc) {
 static char* local_world_params = nullptr;   // params (CWorld +0x88) of the last adventure screen's world, only compared
 static int local_player_id = -1;             // its local player
 
-static char* world_params(int* world) {
-	return (char*)((ThiscallIntPtr_IntPtr)(*(int***)world)[0x14 / 4])(world);
-}
-
-static int player_id(int* player) {
-	return ((ThiscallInt_IntPtr)(*(int***)player)[0x2C / 4])(player);
-}
-
-static bool is_human(int* player) {
-	return ((ThiscallInt_IntPtr)(*(int***)player)[0x188 / 4])(player) == 0;
-}
-
 // IPlayer owning a combat side (0 attacker, 1 defender), nullptr for a neutral or missing army.
-static int* side_player(int* combat, int side) {
-	typedef int*(__thiscall* GetArmyFn)(int*, int);
-	int* army = ((GetArmyFn)(*(int***)combat)[0x84 / 4])(combat, side == 0 ? 1 : 0);
+static IPlayer* side_player(ICombat* combat, int side) {
+	ICombatArmy* army = combat->army(side);
 	if (!army) return nullptr;
-	int vbase = (*(int**)(army + 1))[1];
+	int vbase = (*(int**)((int*)army + 1))[1];
 	if (*((unsigned char*)army + vbase + 0xB) & 0x80) return nullptr;   // released object (0x004E9280)
-	return ((ThiscallIntPtr_IntPtr)(*(int***)army)[0x04 / 4])(army);
+	return army->owner();
 }
 
 static void __stdcall capture_local_player(int* screen) {
-	int* world = (int*)screen[0x18 / 4];
-	int* player = (int*)screen[0x3C / 4];
-	local_world_params = world ? world_params(world) : nullptr;
-	local_player_id = player ? player_id(player) : -1;
+	IWorld* world = (IWorld*)screen[0x18 / 4];
+	IPlayer* player = (IPlayer*)screen[0x3C / 4];
+	local_world_params = world ? world->game_params() : nullptr;
+	local_player_id = player ? player->id() : -1;
 	writeLog(INFO, "CombatScriptHost: adventure screen local player " + std::to_string(local_player_id));
 }
 
@@ -71,14 +59,14 @@ static bool __stdcall combat_script_allowed(char* params, int* manager) {
 		writeLog(INFO, "CombatScriptHost: no local player for this world, the combat script is loaded");
 		return true;
 	}
-	int* combat = *(int**)((char*)manager + 0x2A0);
-	int* host = side_player(combat, 0);
-	if (!host || !is_human(host)) host = side_player(combat, 1);
-	if (!host || !is_human(host)) {
+	ICombat* combat = *(ICombat**)((char*)manager + 0x2A0);
+	IPlayer* host = side_player(combat, 0);
+	if (!host || !host->is_human()) host = side_player(combat, 1);
+	if (!host || !host->is_human()) {
 		writeLog(INFO, "CombatScriptHost: no human side, the combat script is loaded");
 		return true;
 	}
-	int host_id = player_id(host);
+	int host_id = host->id();
 	bool allowed = host_id == local_player_id;
 	writeLog(INFO, "CombatScriptHost: script player " + std::to_string(host_id) + ", local player "
 		+ std::to_string(local_player_id) + (allowed ? ", the combat script is loaded" : ", no combat script"));

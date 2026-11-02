@@ -134,7 +134,7 @@ static bool adjacent(ICombatUnit* a, ICombatUnit* b) {
 static bool next_to_mage(ICombatUnit* defender) {
 	int* combat = defender->combat();
 	if (!combat) return false;
-	int* side = defender->unit_ref();
+	ICombatArmy* side = defender->side();
 	int units[3] = { 0, 0, 0 };
 	collect_all_combat_units(combat, units);
 	bool found = false;
@@ -142,7 +142,7 @@ static bool next_to_mage(ICombatUnit* defender) {
 		char* object = *entry;
 		if (!object) continue;
 		ICombatUnit* unit = (ICombatUnit*)(object + 4 + *(int*)(*(int*)(object + 4) + 8));
-		if (unit == defender || !unit->combat_stack() || unit->is_dead() || unit->unit_ref() != side) continue;
+		if (unit == defender || !unit->combat_stack() || unit->is_dead() || unit->side() != side) continue;
 		found = is_mage(unit) && adjacent(unit, defender);
 	}
 	if (units[0]) engine_free((void*)units[0]);
@@ -188,7 +188,7 @@ __declspec(naked) void AcademyCreatureStartAtbFork() {
 	{
 		mov eax, dword ptr [ebp]
 		mov ecx, ebp
-		call dword ptr [eax]
+		call dword ptr [eax]CombatHeroInterface_vtable.get_hero
 		push eax
 		mov edx, eax
 		mov ecx, esi
@@ -219,7 +219,7 @@ __declspec(naked) void AcademyCreatureCastAtbFork() {
 		sub esp, 0x4
 		fstp dword ptr [esp]
 		mov eax, dword ptr [ecx]
-		call dword ptr [eax + 0x184]
+		call dword ptr [eax]CombatUnit_vtable.get_atb_info_dup
 		jmp [AcademyCreatureCastAtb_return]
 	}
 }

@@ -30,7 +30,7 @@ __declspec(naked) void MagicDisruptionFork() {
 
         mov edx, dword ptr [esi]
         mov ecx, esi
-        call dword ptr [edx+0x74]
+        call dword ptr [edx]Hero_vtable.get_inventory
         jmp[MagicDisruption_return]
     }
 }

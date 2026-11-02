@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "structs/Combat.h"
 #include "types/Spells.h"
 #include "structs/Spell.h"
 
@@ -74,7 +75,7 @@ static int __stdcall earthquake_hit_creatures(char* frame, int* combat, ICombatU
 	float multiplier = *(float*)(frame + 0x78);
 	int cast_arg = *(int*)(frame + 0xC4);
 	int target = spell_target(spell);
-	int* week = ((GetPtr)(*(int***)combat)[0x3C / 4])(combat);  // as [esp+0x20] for the other damage spells
+	int* week = ((ICombat*)combat)->week();  // as [esp+0x20] for the other damage spells
 	float atb_loss = *(float*)((char*)get_defaultstats() + earthquake_atb_loss);
 
 	int units[3] = { 0, 0, 0 };

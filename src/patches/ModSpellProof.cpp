@@ -16,81 +16,36 @@ void SpellProof_init(pugi::xml_document& doc) {
     assembly_patches.push_back({ PATCH_HOOK, SpellProof_fork, 7, SpellProofFork, 0, 0, 0 });
 }
 
-// Artifact sets of the defending hero, for spells with a target unit.
-static void __fastcall artfset_spell_proof(IHero* defender, ICombatUnit* target, float* resisted) {
-    if (target && artfset_dwarven_spell_proof(defender))
-        *resisted *= 0.5f;
+// Each artifact the defender wears multiplies the damage factor and shows its buff on the notified unit
+static void proof_artifact(IHero* defender, int artifact, float factor, float* damage_factor, int* notified) {
+    if (!defender->has_artifact(artifact)) return;
+    notify_artifact_buff(notified, 0, artifact, 0, 0);
+    *damage_factor *= factor;
 }
 
-// ebx = defending IHero (not null), edi = target unit (may be 0), ebp = spell, [esp+0x48] = damage factor
+static void __fastcall spell_proof(IHero* defender, ICombatUnit* target, float* damage_factor, int* notified) {
+    proof_artifact(defender, ARTIFACT_SENTINELS_BREASTPLATE, constf_0_85, damage_factor, notified);
+    proof_artifact(defender, ARTIFACT_ANCIENT_PROTECTION_CHARM, constf_0_9, damage_factor, notified);
+    proof_artifact(defender, ARTIFACT_GENJIS_VEST, constf_0_8, damage_factor, notified);
+    // artifact sets, for spells with a target unit
+    if (target && artfset_dwarven_spell_proof(defender))
+        *damage_factor *= 0.5f;
+}
+
+// ebx = defending IHero (not null), edi = target unit (may be 0), ebp = spell, [esp+0x48] = damage factor,
+// [esp+0x4C] = unit notified of the artifact buffs
 __declspec(naked) void SpellProofFork() {
     __asm
     {
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0xD
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MAGICPROOF_2
-        mov ecx, dword ptr ss: [esp + 0x4C]
-        push 0x0
-        push 0x0
-        push 0xD
-        xor dl, dl
-        call[notify_artifact_buff]
-        fld dword ptr ss: [esp + 0x48]
-        fmul dword ptr [constf_0_85]
-        fstp dword ptr ss: [esp + 0x48]
-
-    MAGICPROOF_2:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0xAE
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MAGICPROOF_3
-        mov ecx, dword ptr ss: [esp + 0x4C]
-        push 0x0
-        push 0x0
-        push 0xAE
-        xor dl, dl
-        call[notify_artifact_buff]
-        fld dword ptr ss: [esp + 0x48]
-        fmul dword ptr [constf_0_9]
-        fstp dword ptr ss: [esp + 0x48]
-
-    MAGICPROOF_3:
-        mov edx, dword ptr [ebx]
-        mov ecx, ebx
-        call dword ptr [edx + 0x74]
-        push 0x75
-        mov ecx, eax
-        call[count_equipped_artifact]
-        test eax, eax
-        je MAGICPROOF_END
-        mov ecx, dword ptr ss: [esp + 0x4C]
-        push 0x0
-        push 0x0
-        push 0x75
-        xor dl, dl
-        call[notify_artifact_buff]
-        fld dword ptr ss: [esp + 0x48]
-        fmul dword ptr [constf_0_8]
-        fstp dword ptr ss: [esp + 0x48]
-
-    MAGICPROOF_END:
-        lea eax, dword ptr [esp + 0x48]
-        push eax                        // resisted
+        push dword ptr [esp + 0x4C]     // notified
+        lea eax, [esp + 0x4C]
+        push eax                        // damage factor ([esp+0x48] before the push)
         mov edx, edi
         mov ecx, ebx
-        call artfset_spell_proof
+        call spell_proof
 
         mov ecx, ebp
-        call[get_spell_school]
-        jmp[SpellProof_return]
+        call [get_spell_school]
+        jmp [SpellProof_return]
     }
 }

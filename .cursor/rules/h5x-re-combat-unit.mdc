@@ -23,9 +23,9 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | Slot | Field | Impl | Ghidra name / notes |
 |---|---|---|---|
 | `0x004` | **scalar_deleting_dtor** | `0x008AEDC0` | func_CombatUnit_ScalarDeletingDtor |
-| `0x008` | **get_owner_ref** | `0x008ACDC0` | func_CombatUnit_GetOwnerRef (returns dword [this-0x78]) |
-| `0x00C` | **get_unit_ref** | `0x008AEAF0` | func_CombatUnit_GetUnitRef (returns dword [this-0x74]) |
-| `0x010` | **notify_owner** | `0x00A6B0E0` | func_CombatUnit_NotifyOwner |
+| `0x008` | **get_combat** | `0x008ACDC0` | func_CombatUnit_GetOwnerRef (returns dword [this-0x78]) — CCombat (ICombat, Combat.h) |
+| `0x00C` | **get_side** | `0x008AEAF0` | func_CombatUnit_GetUnitRef (returns dword [this-0x74]) — own side: ICombatArmy |
+| `0x010` | **get_enemy_side** | `0x00A6B0E0` | func_CombatUnit_NotifyOwner — enemy side: ICombatArmy, through CCombat vtable +0xE0(own side) |
 | `0x020` | **get_timeline_field_7c** | `0x00A69F00` | func_CombatUnit_GetTimelineField_7C (returns dword [this-0x7c]) |
 | `0x028` | **get_active_buff** | `0x00A6D330` | func_CombatUnit_GetActiveBuff |
 | `0x02C` | **get_buff_stack_state** | `0x00A6D380` | func_CombatUnit_GetBuffStackState |
@@ -138,10 +138,10 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x058` | **get_state_flag_70** | hero 0x00412B40 func_ReturnFalse (xor al,al; ret); creature 0x008AE210 (no Ghidra function: returns byte [this-0x70]) |
 | `0x05C` | **get_state_flag_7c** | hero 0x00BBF550 func_CombatHero_ReturnFalse (xor al,al; ret); creature 0x008A0F20 func_CombatCreature_GetStateFlag7C (returns byte [this-0x7c]) |
 | `0x068` | **build_runtime_data** | hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData |
-| `0x06C` | **get_side_ptr_a** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — same impl as +0x070 get_combat_stack |
+| `0x06C` | **get_combat_stack_alt** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — same impl as +0x070 get_combat_stack |
 | `0x070` | **get_combat_stack** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — combat stack interface (NWorld::ICombatCreature, complete +0xA0; ICombatStack in Creature.h), 0 for heroes |
-| `0x074` | **get_hero_aux_subobject** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
-| `0x078` | **get_hero_aux_subobject_b** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
+| `0x074` | **get_combat_hero** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) — hero: 0x00BC2B30 returns this-0x7C, ICombatHeroInterface (Hero.h, complete +0xA0), whose slot 0 returns the IHero |
+| `0x078` | **get_combat_hero_alt** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x09C` | **schedule_linked_spell_fx** | hero 0x00BC0EB0 func_CombatHero_ScheduleLinkedSpellFx; creature 0x008AAAA0 func_CombatCreature_ScheduleLinkedSpellFx |
 | `0x0B8` | **get_attack_pattern** | hero 0x00CC2180 func_CombatHero_Noop; creature 0x008AA990 func_CombatCreature_Noop — thiscall(3 args), ret 0xC: NDb::SPatternAttack* of the attack, or 0. Creature: 0 for shooters (unless flag) / melee-only units; Champion Charge (ability 0x66) beyond DefaultStats +0x214 -> DefaultStats +0x218 pattern; ability 0x9A -> DefaultStats +0x338 (AcidicHydraPattern); else creature data +0xE0 (PatternAttack) |
 | `0x0D0` | **on_timeline_refresh** | hero 0x00BC0910 func_CombatHero_OnTimelineRefresh; creature 0x008A6210 func_CombatCreature_OnTimelineRefresh |
@@ -215,9 +215,9 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 |---|---|---|
 | `0x000` | **get_unit_kind** | hero 0x00A83AA0 (no Ghidra function: mov eax,0x2; ret); creature 0x008B1E10 func_CombatCreature_GetUnitKind (mov eax,0x1; ret) |
 | `0x004` | **scalar_deleting_dtor** | shared `0x008AEDC0` func_CombatUnit_ScalarDeletingDtor |
-| `0x008` | **get_owner_ref** | shared `0x008ACDC0` func_CombatUnit_GetOwnerRef (returns dword [this-0x78]) |
-| `0x00C` | **get_unit_ref** | shared `0x008AEAF0` func_CombatUnit_GetUnitRef (returns dword [this-0x74]) |
-| `0x010` | **notify_owner** | shared `0x00A6B0E0` func_CombatUnit_NotifyOwner |
+| `0x008` | **get_combat** | shared `0x008ACDC0` func_CombatUnit_GetOwnerRef (returns dword [this-0x78]) — CCombat (ICombat, Combat.h) |
+| `0x00C` | **get_side** | shared `0x008AEAF0` func_CombatUnit_GetUnitRef (returns dword [this-0x74]) — own side: ICombatArmy |
+| `0x010` | **get_enemy_side** | shared `0x00A6B0E0` func_CombatUnit_NotifyOwner — enemy side: ICombatArmy, through CCombat vtable +0xE0(own side) |
 | `0x014` | **init_owner_timed_stats** | hero 0x008B1780 func_CombatHero_InitOwnerTimedStats; creature 0x008A0950 func_CombatCreature_ResolveBuffTargetUnit |
 | `0x018` | **get_timed_stats_subobject** | hero 0x00A747A0 func_CombatHero_GetTimedStatsSubobject; creature 0x008A08D0 func_CombatCreature_GetTimedStatsSubobject |
 | `0x01C` | **get_owner_army_slot** | hero 0x00BC2A10 func_CombatHero_ReturnOne; creature 0x008A42C0 func_CombatCreature_GetOwnerArmySlot |
@@ -240,10 +240,10 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 | `0x060` | **get_combat_unit_ptr** | shared `0x008AE230` func_CombatUnit_GetCombatUnitPtr |
 | `0x064` | **get_combat_unit_ptr_mi** | shared `0x008AE230` func_CombatUnit_GetCombatUnitPtr |
 | `0x068` | **build_runtime_data** | hero 0x00BBFBE0 func_CombatHero_NotifyOwnerRefresh; creature 0x008AC990 func_CombatCreature_BuildRuntimeData |
-| `0x06C` | **get_side_ptr_a** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — same impl as +0x070 get_combat_stack |
+| `0x06C` | **get_combat_stack_alt** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — same impl as +0x070 get_combat_stack |
 | `0x070` | **get_combat_stack** | hero 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret); creature 0x008AE260 (no Ghidra function) — combat stack interface (NWorld::ICombatCreature, complete +0xA0; ICombatStack in Creature.h), 0 for heroes |
-| `0x074` | **get_hero_aux_subobject** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
-| `0x078` | **get_hero_aux_subobject_b** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
+| `0x074` | **get_combat_hero** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) — hero: 0x00BC2B30 returns this-0x7C, ICombatHeroInterface (Hero.h, complete +0xA0), whose slot 0 returns the IHero |
+| `0x078` | **get_combat_hero_alt** | hero 0x00BC2B30 (no Ghidra function); creature 0x00C98940 func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x07C` | **stub_return_zero_a** | shared `0x00C98940` func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x080` | **stub_return_zero_b** | shared `0x00C98940` func_CombatUnit_ReturnZero (xor eax,eax; ret) |
 | `0x084` | **stub_return_zero_c** | shared `0x00C98940` func_CombatUnit_ReturnZero (xor eax,eax; ret) |
@@ -398,7 +398,8 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 ## `ICombatUnit` helpers (C++ patches)
 
 - `unit_kind()`
-- `unit_ref()`
+- `side()`
+- `enemy_side()`
 - `combat()`
 - `position()`
 - `size()`
@@ -407,6 +408,7 @@ Tables list the impl reached after the thunk with its Ghidra name (`FUN_*` = unn
 - `add_timed_effect()`
 - `has_ability()`
 - `combat_stack()`
+- `hero_interface()`
 - `is_dead()`
 - `atb_info()`
 - `atb()`

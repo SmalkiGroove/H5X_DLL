@@ -12,16 +12,20 @@ void LoneHunterTweak_init(pugi::xml_document& doc) {
 	assembly_patches.push_back({ PATCH_HOOK, LoneHunter_fork, 28, LoneHunterFork, 0, 0, 0 });
 }
 
+static bool __fastcall lone_hunter_restores_atb(IHero* hero) {
+	return (char)hero->skill_mastery(SPEC_RAIN_OF_ARROWS) != 0;
+}
+
+// ecx = attacking IHero
 __declspec(naked) void LoneHunterFork() {
 	__asm
 	{
-		push 0x40
-		call dword ptr [edx + 0x174]
+		call lone_hunter_restores_atb
 		test al, al
 		jz LONEHUNTER_END
-		jmp[LoneHunter_return]
+		jmp [LoneHunter_return]
 
 	LONEHUNTER_END:
-		jmp[LoneHunter_end]
+		jmp [LoneHunter_end]
 	}
 }

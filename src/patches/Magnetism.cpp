@@ -90,7 +90,7 @@ __declspec(naked) void MagnetismFork() {
 		MAGNETISM_CONTINUE_ORIGINAL:
 		mov eax, dword ptr [esi]
 		mov ecx, esi
-		call dword ptr [eax + 0x6C]
+		call dword ptr [eax]CombatUnit_vtable.get_combat_stack_alt
 		jmp[Magnetism_continue]
 	}
 }

@@ -126,6 +126,18 @@
     <ClInclude Include="src\structs\Spell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\structs\AdvMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\structs\Combat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\structs\Database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\structs\Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src/dllmain.cpp">
